@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --diagnova-blue: #345DAB;
+  --nova-blue: #56ADE2;
+  --diagnova-light: #CAE2F1;
+  --diagnova-navy: #0E234B;
+  --diagnova-deep: #08152E;
+  --diagnova-white: #FFFFFF;
+  --diagnova-black: #000000;
+  --diagnova-gradient: linear-gradient(135deg, #345DAB 0%, #56ADE2 100%);
+  
+  /* Fallback display font stack (Mokoto placeholder fallback to Sora / geometric sans) */
+  --font-display: var(--font-sora), "Space Grotesk", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-slate-800 antialiased selection:bg-nova-blue selection:text-white;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-diagnova-navy;
+  }
+}
+
+/* Custom Gradient Utilities */
+.bg-diagnova-gradient {
+  background: var(--diagnova-gradient);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #345DAB 0%, #56ADE2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
