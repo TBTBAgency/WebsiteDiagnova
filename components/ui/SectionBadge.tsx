@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 interface SectionBadgeProps {
   children: React.ReactNode;
-  variant?: "light" | "dark" | "blue" | "white";
+  variant?: "light" | "dark" | "blue" | "white" | "gray";
   className?: string;
 }
 
@@ -14,21 +14,21 @@ export function SectionBadge({
 }: SectionBadgeProps) {
   const variantStyles = {
     light:
-      "bg-diagnova-light/60 text-diagnova-blue border-diagnova-light/80 shadow-sm",
-    dark: "bg-white/10 text-nova-light border-white/20 backdrop-blur-md",
-    blue: "bg-diagnova-blue/10 text-diagnova-blue border-diagnova-blue/20",
-    white: "bg-white text-diagnova-navy border-white shadow-sm",
+      "bg-[#EAF3FA] text-[#1D3F82] border-blue-100",
+    dark: "bg-white/15 text-white border-white/25 backdrop-blur-md",
+    blue: "bg-[#345DAB]/10 text-[#345DAB] border-[#345DAB]/20",
+    white: "bg-white text-[#1D3F82] border-slate-200 shadow-xs",
+    gray: "bg-slate-100 text-slate-700 border-slate-200",
   };
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-xs font-semibold tracking-wider uppercase transition-all duration-200",
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-[11px] font-semibold tracking-wide uppercase transition-all duration-200 select-none",
         variantStyles[variant],
         className
       )}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-nova-blue animate-pulse" />
       <span>{children}</span>
     </div>
   );

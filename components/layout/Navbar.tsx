@@ -7,7 +7,6 @@ import {
   ChevronDown,
   Menu,
   X,
-  Globe,
   Activity,
   Layers,
   Sparkles,
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 interface NavItem {
   label: string;
@@ -44,7 +44,7 @@ const navItems: NavItem[] = [
         title: "Platform Overview",
         description: "Buku catatan super pintar yang menghubungkan instrumen lab dengan dokter",
         href: "/platform",
-        icon: <Layers className="h-4 w-4 text-nova-blue" />,
+        icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
       },
       {
         title: "Workflow",
@@ -56,7 +56,7 @@ const navItems: NavItem[] = [
         title: "100% Automation",
         description: "Direct analyzer interfacing & auto-verification memangkas TAT 70%",
         href: "/platform/automation",
-        icon: <Cpu className="h-4 w-4 text-nova-blue" />,
+        icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
       },
       {
         title: "Reporting & Audit Trail",
@@ -227,7 +227,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -242,116 +242,135 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md transition-all duration-200 border-b",
         isScrolled
-          ? "bg-diagnova-navy/95 backdrop-blur-md shadow-lg shadow-diagnova-navy/20 py-3"
-          : "bg-transparent py-5"
+          ? "border-slate-200/80 shadow-sm py-3"
+          : "border-slate-100 py-3.5"
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo Lockup */}
-        <Link
-          href="/"
-          className="group flex items-center gap-2.5 text-white transition-opacity hover:opacity-90"
-        >
-          {/* Stylized DNA / Helix Brand Mark */}
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-diagnova-blue via-nova-blue to-white p-0.5 shadow-md shadow-nova-blue/30">
-            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-diagnova-navy font-display text-base font-black text-white">
-              <span className="text-nova-blue">§</span>
-              <span className="font-extrabold text-white">D</span>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-display text-lg font-bold tracking-wider text-white">
-              DIAGNOVA
-            </span>
-            <span className="text-[9px] font-medium uppercase tracking-widest text-nova-light/80 -mt-1">
-              Laboratory Intelligence
-            </span>
-          </div>
-        </Link>
+        <BrandLogo variant="dark" />
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-1 lg:flex">
-          {navItems.map((item) => (
-            <div
-              key={item.label}
-              className="relative"
-              onMouseEnter={() => setActiveDropdown(item.label)}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <Link
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200",
-                  pathname.startsWith(item.href)
-                    ? "bg-white/15 text-white shadow-sm"
-                    : "text-slate-100 hover:bg-white/10 hover:text-white"
-                )}
+          {navItems.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <div
+                key={item.label}
+                className="relative"
+                onMouseEnter={() => setActiveDropdown(item.label)}
+                onMouseLeave={() => setActiveDropdown(null)}
               >
-                <span>{item.label}</span>
-                {item.children && (
-                  <ChevronDown
-                    className={cn(
-                      "h-3.5 w-3.5 transition-transform duration-200",
-                      activeDropdown === item.label && "rotate-180 text-nova-blue"
-                    )}
-                  />
-                )}
-              </Link>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors duration-150",
+                    isActive
+                      ? "text-diagnova-blue font-semibold bg-diagnova-ice/60"
+                      : "text-slate-600 hover:text-diagnova-navy hover:bg-slate-100/70"
+                  )}
+                >
+                  <span>{item.label}</span>
+                  {item.children && (
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-400",
+                        activeDropdown === item.label && "rotate-180 text-diagnova-blue"
+                      )}
+                    />
+                  )}
+                </Link>
 
-              {/* Mega Dropdown Menu */}
-              {item.children && activeDropdown === item.label && (
-                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 w-[440px]">
-                  <div className="overflow-hidden rounded-2xl border border-white/15 bg-diagnova-navy/95 p-3 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="grid grid-cols-1 gap-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="group/item flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-white/10"
-                        >
-                          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 group-hover/item:bg-nova-blue/20">
-                            {child.icon}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-1.5 text-sm font-semibold text-white group-hover/item:text-nova-light">
-                              <span>{child.title}</span>
-                              <ArrowRight className="h-3 w-3 opacity-0 transition-all -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 text-nova-blue" />
+                {/* Mega Dropdown Menu */}
+                {item.children && activeDropdown === item.label && (
+                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 w-[420px]">
+                    <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white p-2.5 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="grid grid-cols-1 gap-1">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="group/item flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-diagnova-ice/50"
+                          >
+                            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 group-hover/item:bg-diagnova-light/60">
+                              {child.icon}
                             </div>
-                            <p className="text-xs text-slate-300 leading-snug">
-                              {child.description}
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
+                            <div>
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-diagnova-navy group-hover/item:text-diagnova-blue">
+                                <span>{child.title}</span>
+                                <ArrowRight className="h-3 w-3 opacity-0 transition-all -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 text-diagnova-blue" />
+                              </div>
+                              <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                                {child.description}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         {/* Right Section: Language Switcher & Request Demo Button */}
         <div className="hidden items-center gap-3 lg:flex">
-          {/* Language Switcher UI (Placeholder) */}
-          <button
-            type="button"
-            onClick={() => setLanguage(language === "ID" ? "EN" : "ID")}
-            className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/90 transition-colors hover:bg-white/15 hover:text-white"
-            title="Ganti Bahasa (Placeholder)"
-          >
-            <Globe className="h-3.5 w-3.5 text-nova-blue" />
-            <span>{language}</span>
-          </button>
+          {/* Language Selector UI matching Figma */}
+          <div className="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50 px-2.5 py-1 text-xs text-slate-600">
+            <button
+              type="button"
+              onClick={() => setLanguage("ID")}
+              className={cn(
+                "flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold transition-colors",
+                language === "ID"
+                  ? "bg-white text-diagnova-navy shadow-xs"
+                  : "text-slate-400 hover:text-slate-600"
+              )}
+              title="Bahasa Indonesia"
+            >
+              {/* Flag ID SVG */}
+              <svg className="h-3 w-4 rounded-xs overflow-hidden" viewBox="0 0 640 480">
+                <g fillRule="evenodd" strokeWidth="1pt">
+                  <path fill="#e70011" d="M0 0h640v240H0z"/>
+                  <path fill="#fff" d="M0 240h640v240H0z"/>
+                </g>
+              </svg>
+              <span>ID</span>
+            </button>
+            <span className="text-slate-300">|</span>
+            <button
+              type="button"
+              onClick={() => setLanguage("EN")}
+              className={cn(
+                "flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold transition-colors",
+                language === "EN"
+                  ? "bg-white text-diagnova-navy shadow-xs"
+                  : "text-slate-400 hover:text-slate-600"
+              )}
+              title="English"
+            >
+              {/* Flag EN/UK SVG */}
+              <svg className="h-3 w-4 rounded-xs overflow-hidden" viewBox="0 0 640 480">
+                <path fill="#012169" d="M0 0h640v480H0z"/>
+                <path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-179L0 64V0h75z"/>
+                <path fill="#C8102E" d="m424 288 216 159v33h-44L380 321l44-33zM640 0v10L446 156l-43-32L601 0h39zM0 480v-10l194-145 43 32L39 480H0zM0 0l217 161-44 33L0 33V0z"/>
+                <path fill="#FFF" d="M240 0v480h160V0H240zM0 160v160h640V160H0z"/>
+                <path fill="#C8102E" d="M267 0v480h106V0H267zM0 187v106h640V187H0z"/>
+              </svg>
+              <span>EN</span>
+            </button>
+          </div>
 
-          {/* Primary CTA */}
+          {/* Primary CTA matching Figma blue button */}
           <Button
             href="/request-demo"
-            variant="secondary"
+            variant="primary"
             size="sm"
-            className="font-semibold shadow-nova-blue/30"
+            className="font-semibold px-4 py-2 rounded-full shadow-xs"
           >
             Request Demo
           </Button>
@@ -361,16 +380,16 @@ export function Navbar() {
         <div className="flex items-center gap-2 lg:hidden">
           <Button
             href="/request-demo"
-            variant="secondary"
+            variant="primary"
             size="sm"
-            className="text-xs px-3 py-1.5"
+            className="text-xs px-3 py-1.5 rounded-full"
           >
             Demo
           </Button>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white hover:bg-white/20"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100"
             aria-label="Buka Navigasi"
           >
             {mobileMenuOpen ? (
@@ -384,25 +403,25 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-white/15 bg-diagnova-navy/98 px-4 py-6 shadow-2xl backdrop-blur-xl">
-          <div className="space-y-4">
+        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-5 shadow-xl animate-in fade-in duration-150">
+          <div className="space-y-3">
             {navItems.map((item) => (
-              <div key={item.label} className="border-b border-white/10 pb-3">
+              <div key={item.label} className="border-b border-slate-100 pb-2.5">
                 <Link
                   href={item.href}
-                  className="block text-base font-bold text-white mb-2 hover:text-nova-blue"
+                  className="block text-sm font-bold text-diagnova-navy mb-1.5 hover:text-diagnova-blue"
                 >
                   {item.label}
                 </Link>
                 {item.children && (
-                  <div className="grid grid-cols-1 gap-2 pl-3">
+                  <div className="grid grid-cols-1 gap-1 pl-2">
                     {item.children.map((child) => (
                       <Link
                         key={child.href}
                         href={child.href}
-                        className="flex items-center gap-2 text-xs text-slate-300 hover:text-nova-light py-1"
+                        className="flex items-center gap-2 text-xs text-slate-600 hover:text-diagnova-blue py-1"
                       >
-                        <span className="h-1.5 w-1.5 rounded-full bg-nova-blue" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-diagnova-blue" />
                         <span>{child.title}</span>
                       </Link>
                     ))}
@@ -412,16 +431,18 @@ export function Navbar() {
             ))}
 
             <div className="flex items-center justify-between pt-2">
-              <button
-                type="button"
-                onClick={() => setLanguage(language === "ID" ? "EN" : "ID")}
-                className="flex items-center gap-2 rounded-lg border border-white/20 px-3 py-1.5 text-xs text-white"
-              >
-                <Globe className="h-4 w-4 text-nova-blue" />
-                <span>Bahasa: {language}</span>
-              </button>
+              <div className="flex items-center gap-2 text-xs text-slate-600">
+                <span>Bahasa:</span>
+                <button
+                  type="button"
+                  onClick={() => setLanguage(language === "ID" ? "EN" : "ID")}
+                  className="font-bold text-diagnova-blue underline"
+                >
+                  {language === "ID" ? "Indonesia (ID)" : "English (EN)"}
+                </button>
+              </div>
 
-              <Button href="/request-demo" variant="secondary" size="sm">
+              <Button href="/request-demo" variant="primary" size="sm" className="rounded-full">
                 Request Demo
               </Button>
             </div>

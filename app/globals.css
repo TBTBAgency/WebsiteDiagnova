@@ -42,3 +42,51 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* 3D DNA Floating & Ambient Keyframe Animations (Polished Subtle Organic Motion) */
+@keyframes dnaHelixFloat {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate3d(6px, -4px, 0) rotate(0.6deg) scale(1.008);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) rotate(-0.4deg) scale(1.012);
+  }
+  75% {
+    transform: translate3d(-5px, -2px, 0) rotate(-0.6deg) scale(1.006);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes dnaGlowPulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.015);
+  }
+}
+
+.animate-dna-float {
+  animation: dnaHelixFloat 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-dna-glow {
+  animation: dnaGlowPulse 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-dna-float,
+  .animate-dna-glow {
+    animation: none !important;
+  }
+}
+
