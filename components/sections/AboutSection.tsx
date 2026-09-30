@@ -33,9 +33,9 @@ export function AboutSection() {
       const rect = containerRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Extended scroll zone for a gradual and cinematic reveal
-      const start = windowHeight * 0.92;
-      const end = windowHeight * 0.18;
+      // Substantially extended scroll track for a slower, calmer reveal experience
+      const start = windowHeight * 0.95;
+      const end = -windowHeight * 0.05; // Finishes smoothly as section crosses upper viewport
 
       const current = rect.top;
       const rawProgress = (start - current) / (start - end);
@@ -85,8 +85,8 @@ export function AboutSection() {
               {headlineWords.map((word, index) => {
                 const totalWords = headlineWords.length;
                 const step = 1 / totalWords;
-                const wordStart = index * step * 0.85; // Slightly condensed timeline so it finishes gracefully
-                const windowSize = step * 2.2; // Soft overlapping window for gradual fade
+                const wordStart = index * step * 0.9;
+                const windowSize = step * 2.8; // Extended soft overlapping window for a much slower, gradual fade
 
                 const raw = (scrollProgress - wordStart) / windowSize;
                 const p = Math.min(Math.max(raw, 0), 1);
@@ -103,7 +103,7 @@ export function AboutSection() {
                     style={{
                       color: `rgb(${r}, ${g}, ${b})`,
                       opacity: Number(opacity),
-                      transition: "color 0.12s ease-out, opacity 0.12s ease-out",
+                      transition: "color 0.2s ease-out, opacity 0.2s ease-out",
                     }}
                     className="inline-block"
                   >
