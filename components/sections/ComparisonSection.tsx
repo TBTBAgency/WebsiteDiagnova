@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 
 export function ComparisonSection() {
   return (
-    <section className="relative overflow-hidden bg-slate-50/80 py-20 lg:py-28 border-y border-slate-200/60">
+    <section className="relative overflow-hidden bg-white py-20 lg:py-28 border-y border-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">

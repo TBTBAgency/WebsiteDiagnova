@@ -1,166 +1,220 @@
-import React from "react";
-import { ArrowRight, CheckCircle2, Cpu, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { SectionBadge } from "@/components/ui/SectionBadge";
+"use client";
 
-interface HeroProps {
-  badge?: string;
-  title?: string;
-  subtitle?: string;
-  primaryCTA?: { label: string; href: string };
-  secondaryCTA?: { label: string; href: string };
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+
+interface SlideData {
+  id: number;
+  image: string;
+  alt: string;
+  title: React.ReactNode;
+  objectPosition?: string;
 }
 
-export function Hero({
-  badge = "AI-Powered Laboratory Intelligence Platform",
-  title = "From Results to Intelligence",
-  subtitle = "Solusi Laboratory Information System (LIS) end-to-end yang menghubungkan instrumen analyzer, staf medis, dokter, dan SIMRS dalam satu ekosistem cerdas.",
-  primaryCTA = { label: "Request Live Demo", href: "/request-demo" },
-  secondaryCTA = { label: "Jelajahi 5 Modul", href: "/modules" },
-}: HeroProps) {
+const slides: SlideData[] = [
+  {
+    id: 1,
+    image: "/images/hero-bg-1.webp",
+    alt: "Diagnova Laboratory Intelligence Specialist",
+    title: (
+      <>
+        From Raw Lab Results To <br className="hidden sm:inline" />
+        Clinical Intelligence
+      </>
+    ),
+    objectPosition: "object-bottom",
+  },
+  {
+    id: 2,
+    image: "/images/hero-bg-2.webp",
+    alt: "Diagnova Seamless Interoperability & Automation",
+    title: (
+      <>
+        Connected Laboratory, <br className="hidden sm:inline" />
+        Zero Data Silos
+      </>
+    ),
+    objectPosition: "object-center",
+  },
+  {
+    id: 3,
+    image: "/images/hero-bg-3.webp",
+    alt: "Nova AI Clinical Decision Support",
+    title: (
+      <>
+        Precision AI Diagnostics, <br className="hidden sm:inline" />
+        Empowered Clinicians
+      </>
+    ),
+    objectPosition: "object-center",
+  },
+];
+
+const AUTOPLAY_INTERVAL = 5000; // 5 seconds per slide
+
+export function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [prevSlide, setPrevSlide] = useState<number | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const nextSlide = useCallback(() => {
+    setPrevSlide(currentSlide);
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [currentSlide]);
+
+  const goToSlide = (index: number) => {
+    if (index === currentSlide) return;
+    setPrevSlide(currentSlide);
+    setCurrentSlide(index);
+  };
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      nextSlide();
+    }, AUTOPLAY_INTERVAL);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [nextSlide, currentSlide]);
+
   return (
-    <section className="relative overflow-hidden bg-diagnova-navy pt-32 pb-24 text-white lg:pt-40 lg:pb-32">
-      {/* Background Rich Gradient & Radial Glow Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-br from-diagnova-deep via-diagnova-navy to-diagnova-blue opacity-95" />
-      <div className="absolute -top-32 -right-32 h-[550px] w-[550px] rounded-full bg-nova-blue/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-10 h-[400px] w-[400px] rounded-full bg-diagnova-blue/30 blur-[100px] pointer-events-none" />
+    <section
+      className="relative w-full h-[100dvh] min-h-[580px] pt-[92px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col"
+      aria-label="Diagnova Hero Highlights"
+    >
+      <style>{`
+        @keyframes heroBarProgress {
+          from {
+            width: 0%;
+          }
+          to {
+            width: 100%;
+          }
+        }
+      `}</style>
 
-      {/* Subtle Grid Pattern Overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.07] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(#56ADE2 1px, transparent 1px)`,
-          backgroundSize: "28px 28px",
-        }}
-      />
+      {/* Hero Card Container with Rounded Corners - Fits 100% in viewport */}
+      <div className="relative w-full h-full rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden flex items-center bg-[#1A4B8C]">
+        {/* Background Images with True Direct Cross-Dissolve (Zero White Flash) */}
+        {slides.map((slide, index) => {
+          const isActive = index === currentSlide;
+          const isPrevious = index === prevSlide;
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-          {/* Left Column: Copy & CTAs */}
-          <div className="text-center lg:text-left lg:col-span-7 space-y-6">
-            <div className="inline-flex">
-              <SectionBadge variant="dark" className="border-white/20">
-                {badge}
-              </SectionBadge>
+          return (
+            <div
+              key={slide.id}
+              className={cn(
+                "absolute inset-0 pointer-events-none transition-opacity duration-1000 ease-in-out",
+                isActive
+                  ? "opacity-100 z-[2]"
+                  : isPrevious
+                  ? "opacity-100 z-[1]"
+                  : "opacity-0 z-0 duration-0"
+              )}
+            >
+              <Image
+                src={slide.image}
+                alt={slide.alt}
+                fill
+                priority
+                className={cn(
+                  "object-cover",
+                  slide.objectPosition || "object-center"
+                )}
+                sizes="100vw"
+              />
             </div>
+          );
+        })}
 
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
-              {title}
-            </h1>
+        {/* Static Full-Cover Thin White Fade Overlay */}
+        <div className="absolute inset-0 bg-white/15 pointer-events-none z-[3]" />
 
-            <p className="text-base sm:text-lg text-slate-200/90 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-              {subtitle}
-            </p>
+        {/* Soft Contrast Gradient Overlay on Left Side */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1A4B8C]/95 via-[#225FA8]/75 to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
 
-            {/* Key Value Points */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-xs text-slate-200">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-nova-blue shrink-0" />
-                <span>Interfacing 500+ Mesin</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-nova-blue shrink-0" />
-                <span>Pangkas TAT s.d. 70%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-nova-blue shrink-0" />
-                <span>Siap SATUSEHAT &amp; RME</span>
-              </div>
-            </div>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-              <Button
-                href={primaryCTA.href}
-                variant="white"
-                size="lg"
-                icon={<ArrowRight className="h-4 w-4 text-diagnova-blue" />}
-                className="w-full sm:w-auto font-bold shadow-xl shadow-diagnova-navy/40"
-              >
-                {primaryCTA.label}
-              </Button>
-
-              <Button
-                href={secondaryCTA.href}
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto"
-              >
-                {secondaryCTA.label}
-              </Button>
+        {/* Left Hero Content: Static Layout with Only Headline Transitioning - Vertically Centered */}
+        <div className="relative z-10 max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-6 sm:px-12 lg:px-16 xl:px-20 my-auto text-white flex flex-col justify-center">
+          {/* Static Badge */}
+          <div>
+            <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6">
+              AI-Powered Laboratory Intelligence Platform
             </div>
           </div>
 
-          {/* Right Column: Interactive Command Center Dashboard Preview Card */}
-          <div className="lg:col-span-5">
-            <div className="relative mx-auto max-w-md rounded-2xl border border-white/20 bg-gradient-to-br from-white/15 via-white/10 to-white/5 p-5 shadow-2xl backdrop-blur-xl animate-in fade-in duration-500">
-              {/* Header Card */}
-              <div className="flex items-center justify-between border-b border-white/15 pb-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-rose-500/80" />
-                  <div className="h-3 w-3 rounded-full bg-amber-500/80" />
-                  <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
-                  <span className="ml-2 text-xs font-semibold uppercase tracking-wider text-slate-300">
-                    Live Lab Status
-                  </span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  Online
-                </span>
-              </div>
+          {/* Locked Grid Container for Headline - 0 Layout Shift */}
+          <div className="grid grid-cols-1 grid-rows-1 mb-4 sm:mb-5 min-h-[96px] sm:min-h-[120px] lg:min-h-[145px] xl:min-h-[165px] items-center">
+            {slides.map((slide, index) => {
+              const isActive = index === currentSlide;
+              return (
+                <h1
+                  key={slide.id}
+                  className={cn(
+                    "col-start-1 row-start-1 text-4xl sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.1] font-display transition-all duration-700 ease-out",
+                    isActive
+                      ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                      : "opacity-0 translate-y-3 scale-[0.99] pointer-events-none"
+                  )}
+                >
+                  {slide.title}
+                </h1>
+              );
+            })}
+          </div>
 
-              {/* Stat Metric Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="rounded-xl bg-white/10 p-3">
-                  <span className="block text-[11px] font-medium text-slate-300">
-                    Avg. Turnaround Time
-                  </span>
-                  <span className="font-display text-2xl font-bold text-white">
-                    18.4 <span className="text-xs text-nova-light">menit</span>
-                  </span>
-                  <span className="text-[10px] text-emerald-300 font-semibold">
-                    ↓ 68% vs konvensional
-                  </span>
-                </div>
+          {/* Static Subtitle - Constant Position (Justified) */}
+          <p className="text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-xl mb-6 sm:mb-8 text-justify">
+            Sistem Informasi Laboratorium Generasi Baru Yang Menghubungkan Mesin Medis Secara Otonom Dengan Para Klinisi. Mengubah Data Diagnostik Yang Kompleks Menjadi Keputusan Medis Yang Cepat, Akurat, Dan Transparan.
+          </p>
 
-                <div className="rounded-xl bg-white/10 p-3">
-                  <span className="block text-[11px] font-medium text-slate-300">
-                    Auto-Verification Rate
-                  </span>
-                  <span className="font-display text-2xl font-bold text-nova-light">
-                    94.2%
-                  </span>
-                  <span className="text-[10px] text-slate-300 font-medium">
-                    1.420 sampel hari ini
-                  </span>
-                </div>
-              </div>
+          {/* Static CTA Buttons - Always Schedule Demo & Explore Modules */}
+          <div className="flex flex-wrap items-center gap-4 sm:gap-5">
+            <Link
+              href="/request-demo"
+              className="inline-flex items-center justify-center rounded-full bg-white text-slate-900 font-semibold px-8 py-3.5 text-sm sm:text-base hover:bg-slate-50 transition-all duration-200 shadow-xl active:scale-[0.98]"
+            >
+              Schedule Demo
+            </Link>
 
-              {/* Live Sample Alert Notification item */}
-              <div className="rounded-xl border border-nova-blue/40 bg-nova-blue/15 p-3 text-xs space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-white flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-nova-light" />
-                    Nova AI • Smart Delta Alert
-                  </span>
-                  <span className="text-[10px] text-nova-light">Baru saja</span>
-                </div>
-                <p className="text-slate-200 leading-snug">
-                  Sampel <strong className="text-white">#LAB-8842 (Ny. Ratna - Rawat Inap)</strong>:
-                  Terdeteksi penurunan Hb dari 12.1 ke 8.4 g/dL. Rekomendasi verifikasi DPJP terkirim ke SIMRS.
-                </p>
-              </div>
+            <Link
+              href="/modules"
+              className="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-3.5 text-sm sm:text-base backdrop-blur-md transition-all duration-200 active:scale-[0.98]"
+            >
+              Explore Modules
+            </Link>
+          </div>
 
-              {/* Analyzer Connectivity Strip */}
-              <div className="mt-4 flex items-center justify-between rounded-lg bg-black/20 px-3 py-2 text-[11px] text-slate-300">
-                <span className="flex items-center gap-1.5">
-                  <Cpu className="h-3.5 w-3.5 text-nova-blue" />
-                  Sysmex XN-1000 &amp; Cobas 6000
-                </span>
-                <span className="text-emerald-400 font-semibold">HL7 Bridged</span>
-              </div>
-            </div>
+          {/* Thin Sleek Progress Bars under Text (GPU-accelerated CSS Keyframe Animation) */}
+          <div className="flex items-center gap-2.5 pt-8 sm:pt-10 max-w-[260px] sm:max-w-xs">
+            {slides.map((_, index) => {
+              const isActive = index === currentSlide;
+              const isPassed = index < currentSlide;
+              return (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Pindah ke slide ${index + 1}`}
+                  className="group relative flex-1 py-2 cursor-pointer focus:outline-none"
+                >
+                  <div className="h-[2px] w-full rounded-full bg-white/25 overflow-hidden transition-colors group-hover:bg-white/45">
+                    <div
+                      key={`progress-${currentSlide}-${index}`}
+                      className="h-full bg-white rounded-full"
+                      style={{
+                        animation: isActive
+                          ? `heroBarProgress ${AUTOPLAY_INTERVAL}ms linear forwards`
+                          : "none",
+                        width: isPassed ? "100%" : "0%",
+                      }}
+                    />
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

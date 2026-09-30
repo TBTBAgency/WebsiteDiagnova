@@ -11,7 +11,7 @@ const partners = [
 
 export function TrustedByBar() {
   return (
-    <section className="border-b border-slate-100 bg-slate-50/70 py-10">
+    <section className="border-b border-slate-100 bg-white py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <p className="text-center text-xs font-semibold uppercase tracking-widest text-slate-400 mb-6">
           Dirancang untuk Memenuhi Standar Rumah Sakit, Klinik, dan Laboratorium Rujukan Modern
