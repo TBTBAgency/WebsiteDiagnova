@@ -12,8 +12,8 @@
   --diagnova-black: #000000;
   --diagnova-gradient: linear-gradient(135deg, #345DAB 0%, #56ADE2 100%);
   
-  /* Fallback display font stack (Mokoto placeholder fallback to Sora / geometric sans) */
-  --font-display: var(--font-sora), "Space Grotesk", sans-serif;
+  /* Display font stack (Mokoto with Sora & Space Grotesk fallback) */
+  --font-display: "Mokoto", var(--font-sora), "Space Grotesk", sans-serif;
 }
 
 @layer base {
