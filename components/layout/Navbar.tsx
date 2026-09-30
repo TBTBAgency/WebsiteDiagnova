@@ -336,10 +336,19 @@ function LanguageSwitcher({
 }
 
 export function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"ID" | "EN">("EN");
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -348,7 +357,14 @@ export function Navbar() {
   }, [pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white py-6">
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 bg-white py-6",
+        isScrolled
+          ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.05)]"
+          : "shadow-none"
+      )}
+    >
       <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 sm:px-8 lg:px-12">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
