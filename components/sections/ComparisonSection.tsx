@@ -1,3 +1,4 @@
+
 import React from "react";
 import { ArrowRight, Cpu, Sparkles, Network } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
