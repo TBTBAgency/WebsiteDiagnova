@@ -6,7 +6,7 @@ const logos = Array.from({ length: 8 });
 
 export function TrustedByBar() {
   return (
-    <section className="relative w-full bg-white pt-6 sm:pt-7 pb-9 sm:pb-11 overflow-hidden">
+    <section className="relative w-full bg-white py-8 sm:py-10 lg:py-12 overflow-hidden">
       <style>{`
         @keyframes marqueeTrust {
           0% {

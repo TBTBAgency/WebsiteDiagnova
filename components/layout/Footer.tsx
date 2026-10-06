@@ -1,211 +1,92 @@
 import React from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, ArrowUpRight, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
+  const footerLinks = [
+    { label: "Platform", href: "/platform" },
+    { label: "Overview", href: "/platform" },
+    { label: "Modules", href: "/modules" },
+    { label: "Nova AI", href: "/nova-ai" },
+    { label: "Integrations", href: "/integration" },
+    { label: "Log in", href: "/login" },
+  ];
+
   return (
-    <footer className="relative overflow-hidden bg-diagnova-deep text-slate-300 pt-16 pb-12 border-t border-white/10">
-      {/* Background Decorative Glow */}
-      <div className="absolute top-0 right-1/4 h-96 w-96 rounded-full bg-diagnova-blue/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 h-80 w-80 rounded-full bg-nova-blue/10 blur-3xl pointer-events-none" />
+    <footer className="relative overflow-hidden bg-gradient-to-b from-[#225FA9] via-[#327AC7] to-[#4C9BE6] text-white pt-20 sm:pt-24 lg:pt-28 pb-0">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-10 lg:px-14">
+        {/* Main Footer Top Grid */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 pb-6 sm:pb-8 items-stretch">
+          {/* Col 1 (Left): Brand Logo at Top & Legal / Copyright aligned at Bottom */}
+          <div className="lg:col-span-5 flex flex-col justify-between py-0.5 space-y-8 lg:space-y-0">
+            <div>
+              <Link href="/" className="inline-block transition-opacity hover:opacity-90 -translate-x-1.5 sm:-translate-x-2 lg:-translate-x-2.5">
+                <Image
+                  src="/images/logo-diagnova.svg"
+                  alt="Diagnova Logo"
+                  width={210}
+                  height={52}
+                  className="h-8 sm:h-9 md:h-10 w-auto brightness-0 invert object-contain"
+                />
+              </Link>
+            </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5 pb-12 border-b border-white/10">
-          {/* Col 1: Brand Info & Contacts */}
-          <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5 text-white">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-diagnova-blue via-nova-blue to-white p-0.5">
-                <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-diagnova-navy font-display text-base font-black text-white">
-                  <span className="text-nova-blue">§</span>
-                  <span className="font-extrabold text-white">D</span>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display text-xl font-bold tracking-wider text-white">
-                  DIAGNOVA
-                </span>
-                <span className="text-[10px] font-medium uppercase tracking-widest text-nova-light/90 -mt-1">
-                  Laboratory Intelligence Platform
-                </span>
-              </div>
-            </Link>
-
-            <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
-              Solusi manajemen laboratorium medis end-to-end yang menjamin akurasi data,
-              efisiensi operasional, dan kecepatan penyampaian hasil analisis klinis bagi
-              Rumah Sakit &amp; Laboratorium Modern.
-            </p>
-
-            <div className="space-y-2.5 pt-2 text-sm">
-              <a
-                href="mailto:hello@tibatibagency.com"
-                className="flex items-center gap-2.5 text-slate-300 hover:text-nova-blue transition-colors"
-              >
-                <Mail className="h-4 w-4 text-nova-blue shrink-0" />
-                <span>hello@tibatibagency.com</span>
-              </a>
-              <a
-                href="tel:081991070928"
-                className="flex items-center gap-2.5 text-slate-300 hover:text-nova-blue transition-colors"
-              >
-                <Phone className="h-4 w-4 text-nova-blue shrink-0" />
-                <span>0819 9107 0928</span>
-              </a>
-              <div className="flex items-start gap-2.5 text-slate-400 text-xs">
-                <MapPin className="h-4 w-4 text-nova-blue shrink-0 mt-0.5" />
-                <span>Jakarta, Indonesia — Melayani Implementasi LIS Seluruh Indonesia</span>
-              </div>
+            <div className="space-y-1 text-xs sm:text-[13px] text-white/90 font-normal leading-relaxed">
+              <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
+              <p className="flex items-center gap-1.5 text-white/80">
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms of Service
+                </Link>
+                <span>|</span>
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </p>
             </div>
           </div>
 
-          {/* Col 2: Platform Links */}
-          <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white mb-4">
-              Platform
-            </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/platform" className="hover:text-nova-blue transition-colors">
-                  Overview
-                </Link>
-              </li>
-              <li>
-                <Link href="/platform/workflow" className="hover:text-nova-blue transition-colors">
-                  End-to-End Workflow
-                </Link>
-              </li>
-              <li>
-                <Link href="/platform/automation" className="hover:text-nova-blue transition-colors">
-                  100% Automation &amp; Barcode
-                </Link>
-              </li>
-              <li>
-                <Link href="/platform/reporting" className="hover:text-nova-blue transition-colors">
-                  Digital Audit Trail
-                </Link>
-              </li>
-              <li>
-                <Link href="/platform/analytics" className="hover:text-nova-blue transition-colors">
-                  Lab Intelligence Analytics
-                </Link>
-              </li>
-              <li>
-                <Link href="/nova-ai" className="inline-flex items-center gap-1 text-nova-light hover:text-white font-medium">
-                  <span>Nova AI Copilot</span>
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Solutions & Modules */}
-          <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white mb-4">
-              Solusi &amp; Modul
-            </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/solutions/hospital-laboratory" className="hover:text-nova-blue transition-colors">
-                  Hospital Laboratory
-                </Link>
-              </li>
-              <li>
-                <Link href="/solutions/clinical-laboratory" className="hover:text-nova-blue transition-colors">
-                  Clinical Laboratory
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/routine-hematology" className="hover:text-nova-blue transition-colors">
-                  Routine &amp; Hematology
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/blood-bank" className="hover:text-nova-blue transition-colors">
-                  Blood Bank Management
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/inventory-reagent" className="hover:text-nova-blue transition-colors">
-                  Inventory &amp; Reagent
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/pathology" className="hover:text-nova-blue transition-colors">
-                  Anatomical Pathology
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/microbiology" className="hover:text-nova-blue transition-colors">
-                  Microbiology &amp; PPRA
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Integrations & Demo */}
-          <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white mb-4">
-              Integrasi &amp; Kontak
-            </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/integration/simrs-his" className="hover:text-nova-blue transition-colors">
-                  SIMRS / HIS Native Bridging
-                </Link>
-              </li>
-              <li>
-                <Link href="/integration/rme" className="hover:text-nova-blue transition-colors">
-                  Rekam Medis Elektronik (RME)
-                </Link>
-              </li>
-              <li>
-                <Link href="/integration/analyzer" className="hover:text-nova-blue transition-colors">
-                  500+ Medical Analyzers
-                </Link>
-              </li>
-              <li>
-                <Link href="/integration/satusehat" className="hover:text-nova-blue transition-colors">
-                  SATUSEHAT Kemenkes RI
-                </Link>
-              </li>
-              <li>
-                <Link href="/integration/connectivity" className="hover:text-nova-blue transition-colors">
-                  Smart Resilient Gateway
-                </Link>
-              </li>
-              <li className="pt-2">
-                <Link
-                  href="/request-demo"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-nova-blue px-3.5 py-1.5 text-xs font-bold text-diagnova-navy hover:bg-white transition-colors"
-                >
-                  <span>Request Live Demo</span>
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </Link>
-              </li>
-            </ul>
+          {/* Col 2-5 (Right): 4 Platform Link Columns */}
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+            {[1, 2, 3, 4].map((colIdx) => (
+              <div key={colIdx} className="space-y-3">
+                <h4 className="font-bold text-white text-sm sm:text-base tracking-wide">
+                  Platform
+                </h4>
+                <ul className="space-y-2 text-xs sm:text-[13px] text-white/90">
+                  {footerLinks.map((link, idx) => (
+                    <li key={idx}>
+                      <Link
+                        href={link.href}
+                        className="hover:text-white hover:translate-x-0.5 transition-all inline-block text-white/85"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar: Copyright & Compliance */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 text-xs text-slate-500">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-emerald-500" />
-            <span>
-              &copy; {new Date().getFullYear()} Diagnova. All rights reserved. Intelligent Laboratory Information System.
-            </span>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span>Privasi Data Medis Terproteksi</span>
-            <span>HL7 FHIR &amp; ASTM Compliant</span>
-          </div>
-        </div>
-
-        {/* Watermark Logo Raksasa di Bagian Bawah Footer (Sesuai Design Guidelines 6.1 Section 9) */}
-        <div className="relative mt-8 select-none overflow-hidden text-center">
-          <span className="block font-display text-[80px] sm:text-[130px] md:text-[180px] font-black tracking-widest text-white/[0.03] leading-none">
-            DIAGNOVA
-          </span>
+      {/* Giant Cropped Logo Watermark at Bottom (100% exact alignment, width, and gradient) */}
+      <div className="relative w-full overflow-hidden select-none pointer-events-none mt-8 sm:mt-12 lg:mt-14 -mb-8 sm:-mb-14 md:-mb-20 lg:-mb-26 flex justify-center">
+        <div
+          className="relative w-full min-w-full h-36 sm:h-56 md:h-76 lg:h-96 xl:h-[430px] flex items-start justify-center"
+          style={{
+            maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.52) 55%, rgba(0,0,0,0.18) 80%, rgba(0,0,0,0.02) 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.52) 55%, rgba(0,0,0,0.18) 80%, rgba(0,0,0,0.02) 100%)",
+          }}
+        >
+          {/* Logo spanning edge-to-edge with crisp white and gradient mask */}
+          <Image
+            src="/images/logo-diagnova.svg"
+            alt="Diagnova Brand Watermark"
+            fill
+            className="object-contain object-top brightness-0 invert scale-[1.08] sm:scale-[1.12] lg:scale-[1.06] transform origin-top"
+            priority
+          />
         </div>
       </div>
     </footer>

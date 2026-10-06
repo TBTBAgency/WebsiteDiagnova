@@ -53,7 +53,7 @@ export function AboutSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-white py-20 sm:py-24 lg:py-32 overflow-hidden border-b border-slate-100"
+      className="relative w-full bg-white pt-3 sm:pt-4 pb-20 sm:pb-24 lg:pb-32 overflow-hidden border-b border-slate-100"
     >
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
