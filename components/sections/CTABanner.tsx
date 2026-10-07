@@ -19,40 +19,29 @@ export function CTABanner() {
   };
 
   return (
-    <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Main Rounded CTA Container */}
-        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-r from-[#EBF3FB] via-[#E4EFF9] to-[#D5E6F7] border border-blue-100/80 shadow-[0_10px_40px_-15px_rgba(40,90,165,0.07)]">
-          {/* Subtle Vertical DNA Background Motif Patterns */}
-          <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 pointer-events-none opacity-20 overflow-hidden flex justify-end gap-12 pr-6">
-            {[1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="w-16 h-full flex flex-col justify-around py-4"
-              >
-                {Array.from({ length: 6 }).map((_, idx) => (
-                  <svg
-                    key={idx}
-                    viewBox="0 0 40 40"
-                    fill="none"
-                    className="w-10 h-10 text-[#345DAB]"
-                  >
-                    <path
-                      d="M8 8 C16 16, 24 16, 32 8 M8 32 C16 24, 24 24, 32 32 M12 12 L28 28 M28 12 L12 28"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                ))}
-              </div>
-            ))}
-          </div>
+    <section className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Gradient fade background: #F9F9F9 at the top seamlessly blending to #3880DB at the bottom */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to bottom, #F9F9F9 0%, #F9F9F9 20%, rgba(249, 249, 249, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)",
+        }}
+      />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center min-h-[440px] lg:min-h-[480px]">
-            {/* Left Column: Heading, Subtitle & Email Input Form */}
-            <div className="lg:col-span-7 p-8 sm:p-12 lg:p-16 xl:p-20 flex flex-col justify-center">
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[44px] xl:text-[48px] font-bold text-[#275EA8] tracking-tight leading-[1.15] mb-4 sm:mb-5">
+      {/* Background biru footer di bagian bawah dibuat tipis pas di area lengkungan sudut bawah saja */}
+      <div className="absolute inset-x-0 bottom-0 h-8 sm:h-10 lg:h-12 bg-[#2568BA] pointer-events-none" />
+
+      <div className="relative z-10 mx-auto max-w-7xl">
+        {/* Main Rounded CTA Container (Ukuran Asli max-w-7xl, tanpa inline stroke) */}
+        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-r from-[#EBF3FB] via-[#E4EFF9] to-[#D5E6F7] shadow-[0_10px_40px_-15px_rgba(40,90,165,0.07)]">
+          {/* Subtle white gradient fade at top edge */}
+          <div className="absolute inset-x-0 top-0 h-24 sm:h-32 lg:h-40 bg-gradient-to-b from-white/90 via-white/35 to-transparent pointer-events-none z-10" />
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center min-h-[400px] lg:min-h-[440px]">
+            {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
+            <div className="lg:col-span-7 p-8 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-bold text-[#275EA8] tracking-tight leading-[1.15] mb-4 sm:mb-5">
                 Transform Your Laboratory <br className="hidden sm:inline" />
                 with Diagnova
               </h2>
@@ -84,71 +73,20 @@ export function CTABanner() {
               </form>
             </div>
 
-            {/* Right Column: Laptop Mockup Area on Blue Chair (Asset Container) */}
+            {/* Right Column: Official CTA Image (Fine-Tuned Position) */}
             <div
-              id="cta-laptop-container"
-              className="lg:col-span-5 relative h-full min-h-[340px] sm:min-h-[400px] lg:min-h-[480px] flex items-center justify-center lg:justify-end overflow-hidden p-6 sm:p-10 lg:pr-12"
+              id="cta-image-container"
+              className="lg:col-span-5 relative w-full h-[360px] sm:h-[400px] lg:h-full min-h-[360px] sm:min-h-[400px] lg:min-h-[440px] self-stretch flex items-end justify-end pointer-events-none"
             >
-              {/* Laptop on Blue Chair Mockup Presentation Container */}
-              <div className="relative w-full max-w-md lg:max-w-none transform lg:scale-105 xl:scale-110 lg:translate-x-4 transition-transform duration-500">
-                {/* Modern Laptop Mockup Frame */}
-                <div className="relative mx-auto rounded-xl border border-slate-400/40 bg-slate-900 p-2 sm:p-2.5 shadow-2xl">
-                  {/* Laptop Notch */}
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 h-1.5 w-12 rounded-b-md bg-slate-900 z-20" />
-                  
-                  {/* Laptop Screen Content: Diagnova Login & Dashboard Preview */}
-                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-white shadow-inner flex">
-                    {/* Left: Login Form UI */}
-                    <div className="w-1/2 p-3 sm:p-4 bg-white flex flex-col justify-center">
-                      <div className="flex items-center gap-1 mb-2">
-                        <div className="h-3.5 w-3.5 rounded bg-[#345DAB] flex items-center justify-center text-[7px] font-bold text-white">
-                          §D
-                        </div>
-                        <span className="text-[10px] font-bold tracking-wider text-[#0E234B] font-display">
-                          DIAGNOVA
-                        </span>
-                      </div>
-                      <h4 className="text-[11px] font-bold text-slate-800 leading-tight">Welcome back!</h4>
-                      <p className="text-[7px] text-slate-400 mb-2">Log in to manage your laboratory data.</p>
-                      <div className="space-y-1">
-                        <div className="h-4 rounded border border-slate-200 bg-slate-50 flex items-center px-2 text-[7px] text-slate-400">
-                          email@hospital.org
-                        </div>
-                        <div className="h-4 rounded border border-slate-200 bg-slate-50 flex items-center px-2 text-[7px] text-slate-400">
-                          ••••••••••••
-                        </div>
-                      </div>
-                      <div className="mt-2 h-4 rounded bg-[#345DAB] flex items-center justify-center text-[8px] font-semibold text-white">
-                        Log In →
-                      </div>
-                    </div>
-
-                    {/* Right: Blue Feature Highlight */}
-                    <div className="w-1/2 p-3 sm:p-4 bg-gradient-to-br from-[#2E68B4] to-[#1E4B88] text-white flex flex-col justify-between">
-                      <div className="space-y-1">
-                        <div className="h-4 w-4 rounded-md bg-white/20 flex items-center justify-center text-[8px]">
-                          ⚡
-                        </div>
-                        <h5 className="text-[10px] font-bold leading-tight">
-                          Smarter Laboratory for Better Decisions
-                        </h5>
-                        <p className="text-[7px] text-white/80 leading-tight">
-                          Connect people, specimens, instruments, and clinicians in one ecosystem.
-                        </p>
-                      </div>
-                      <div className="flex gap-1 justify-center">
-                        <div className="h-1 w-3 rounded-full bg-white" />
-                        <div className="h-1 w-1 rounded-full bg-white/40" />
-                        <div className="h-1 w-1 rounded-full bg-white/40" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Laptop Base Stand */}
-                <div className="relative mx-auto -mt-0.5 h-2 w-full max-w-[96%] rounded-b-xl bg-gradient-to-b from-slate-400 to-slate-500 shadow-lg">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-1 w-16 rounded-b bg-slate-600/40" />
-                </div>
+              <div className="absolute right-0 bottom-0 w-[480px] sm:w-[550px] lg:w-[659px] xl:w-[659px] max-w-none flex items-end justify-end translate-x-0 sm:translate-x-0.5 lg:translate-x-1 z-10">
+                <Image
+                  src="/images/CTA-image.webp"
+                  alt="Diagnova Platform on Laptop"
+                  width={1200}
+                  height={960}
+                  className="w-full h-auto object-contain object-bottom select-none pointer-events-none"
+                  priority
+                />
               </div>
             </div>
           </div>
