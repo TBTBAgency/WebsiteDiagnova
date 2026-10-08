@@ -53,7 +53,7 @@ export function AboutSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-white pt-3 sm:pt-4 pb-20 sm:pb-24 lg:pb-32 overflow-hidden border-b border-slate-100"
+      className="relative w-full bg-white pt-3 sm:pt-4 pb-6 sm:pb-8 lg:pb-10 overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
@@ -74,7 +74,7 @@ export function AboutSection() {
           {/* Right Column: About Narrative with Gradual Continuous Scroll Reveal */}
           <div className="flex flex-col justify-center lg:col-span-7">
             {/* Pill Badge */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-5">
               <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
                 About
               </span>
