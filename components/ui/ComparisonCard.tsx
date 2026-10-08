@@ -22,7 +22,7 @@ export function ComparisonCard({ item, className }: ComparisonCardProps) {
           {String(item.id).padStart(2, "0")}
         </span>
         {item.impactMetric && (
-          <span className="rounded-full bg-nova-blue/10 px-3 py-1 text-xs font-semibold text-diagnova-blue">
+          <span className="rounded-full bg-nova-blue/10 px-4 py-1.5 text-xs sm:text-sm font-medium text-diagnova-blue">
             {item.impactMetric}
           </span>
         )}

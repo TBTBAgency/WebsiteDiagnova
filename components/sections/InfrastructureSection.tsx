@@ -92,7 +92,7 @@ export function InfrastructureSection() {
                   </div>
 
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span className="inline-flex items-center rounded-full bg-diagnova-light/50 px-2.5 py-0.5 text-xs font-semibold text-diagnova-blue">
+                    <span className="inline-flex items-center rounded-full bg-diagnova-light/50 px-4 py-1.5 text-xs sm:text-sm font-medium text-diagnova-blue">
                       {item.badge}
                     </span>
                     <Link
