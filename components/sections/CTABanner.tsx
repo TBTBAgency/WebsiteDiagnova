@@ -19,13 +19,13 @@ export function CTABanner() {
   };
 
   return (
-    <section className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Gradient fade background: #F9F9F9 at the top seamlessly blending to #3880DB at the bottom */}
+    <section className="relative w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Gradient fade background: white at the top seamlessly blending to #3880DB at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to bottom, #F9F9F9 0%, #F9F9F9 20%, rgba(249, 249, 249, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)",
+            "linear-gradient(to bottom, #FFFFFF 0%, #FFFFFF 20%, rgba(255, 255, 255, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)",
         }}
       />
 
@@ -65,7 +65,7 @@ export function CTABanner() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2E68B4] hover:bg-[#235899] text-white font-medium px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-colors shadow-sm cursor-pointer active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark text-white font-medium px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-all shadow-md shadow-diagnova-blue/20 hover:shadow-lg hover:shadow-diagnova-blue/30 cursor-pointer active:scale-[0.98]"
                 >
                   <span>Request Demo</span>
                   <ArrowUpRight className="h-4 w-4" />
