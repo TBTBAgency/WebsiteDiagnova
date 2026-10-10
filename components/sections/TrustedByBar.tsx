@@ -6,7 +6,7 @@ const logos = Array.from({ length: 8 });
 
 export function TrustedByBar() {
   return (
-    <section className="relative w-full bg-white py-8 sm:py-10 lg:py-12 overflow-hidden">
+    <section className="relative w-full bg-white py-10 sm:py-12 lg:py-14 overflow-hidden">
       <style>{`
         @keyframes marqueeTrust {
           0% {
@@ -27,8 +27,8 @@ export function TrustedByBar() {
       `}</style>
 
       {/* Centered Heading Label */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6 sm:mb-7">
-        <p className="text-xs sm:text-[13px] font-bold tracking-wider uppercase text-slate-500">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6 sm:mb-8">
+        <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
           DIPERCAYA OLEH
         </p>
       </div>

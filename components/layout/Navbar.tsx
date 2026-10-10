@@ -437,11 +437,8 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right Section: Language Switcher & Request Demo Button */}
+        {/* Right Section: Request Demo Button */}
         <div className="hidden items-center justify-end gap-5 lg:flex flex-1">
-          {/* Animated Smooth Language Switcher */}
-          <LanguageSwitcher language={language} setLanguage={setLanguage} />
-
           {/* Primary CTA: Request Demo */}
           <Link
             href="/request-demo"
@@ -503,12 +500,10 @@ export function Navbar() {
               </div>
             ))}
 
-            <div className="flex items-center justify-between pt-2">
-              <LanguageSwitcher language={language} setLanguage={setLanguage} />
-
+            <div className="flex items-center justify-end pt-2">
               <Link
                 href="/request-demo"
-                className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-4 py-2 text-xs font-medium text-white shadow-md shadow-diagnova-blue/20"
+                className="w-full text-center rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-diagnova-blue/20"
               >
                 Request Demo
               </Link>

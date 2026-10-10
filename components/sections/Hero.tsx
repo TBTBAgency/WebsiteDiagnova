@@ -165,8 +165,8 @@ export function Hero() {
             })}
           </div>
 
-          {/* Static Subtitle - Constant Position (Justified) */}
-          <p className="text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-xl mb-6 sm:mb-8 text-justify">
+          {/* Static Subtitle - Constant Position */}
+          <p className="text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-xl mb-6 sm:mb-8 text-left">
             Sistem Informasi Laboratorium Generasi Baru Yang Menghubungkan Mesin Medis Secara Otonom Dengan Para Klinisi. Mengubah Data Diagnostik Yang Kompleks Menjadi Keputusan Medis Yang Cepat, Akurat, Dan Transparan.
           </p>
 

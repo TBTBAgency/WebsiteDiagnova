@@ -111,35 +111,33 @@ export function ComparisonSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-white pt-1 sm:pt-2 lg:pt-3 pb-10 sm:pb-12 lg:pb-14 border-b border-slate-100 flex flex-col justify-center"
+      className="relative w-full overflow-hidden bg-white py-12 sm:py-16 lg:py-20 border-b border-slate-100 flex flex-col justify-center"
     >
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 w-full">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
         {/* Section Header */}
         <div
-          className={`mb-6 sm:mb-8 transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          className={`mb-8 sm:mb-10 lg:mb-12 transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
         >
-          <span className="mb-2.5 inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
-            Comparison
-          </span>
-          <h2 className="font-display text-2xl sm:text-3xl lg:text-[36px] font-bold leading-[1.2] tracking-tight text-[#0E234B]">
-            Why Choose{" "}
-            <span className="bg-gradient-to-r from-[#345DAB] to-[#56ADE2] bg-clip-text text-transparent">
-              Diagnova
+          <div className="mb-4 sm:mb-5">
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
+              Comparison
             </span>
-            ?
+          </div>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#345DAB]">
+            Why Choose Diagnova?
           </h2>
-          <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-slate-500">
+          <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
             Perbandingan komprehensif antara keterbatasan Laboratory Information System (LIS) konvensional dengan keunggulan ekosistem cerdas Diagnova.
           </p>
         </div>
 
         {/* 2-Column Comparison Layout with Center VS Emblem */}
         <div className="relative">
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6 items-stretch">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 items-stretch">
             {/* Left Card: 6 Kekurangan LIS di Indonesia (Neutral / Conventional) */}
             <div
-              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-[#F5F7FA] border border-slate-200/90 p-5 sm:p-6 lg:p-7 shadow-sm transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-[#F5F7FA] border border-slate-200/90 p-6 sm:p-7 lg:p-8 shadow-sm transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
               style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
             >
@@ -157,7 +155,7 @@ export function ComparisonSection() {
                     <div
                       key={item.number}
                       className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== conventionalDrawbacks.length - 1
-                          ? "border-b border-slate-200/90 pb-3 sm:pb-3.5 mb-3 sm:mb-3.5"
+                          ? "border-b border-slate-200/90 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
                           : "pb-0 mb-0"
                         } ${isVisible
                           ? "opacity-100 translate-y-0"
@@ -173,10 +171,10 @@ export function ComparisonSection() {
                         {item.number}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-slate-900 text-sm sm:text-[15px] leading-snug tracking-tight mb-0.5">
+                        <h3 className="font-semibold text-slate-900 text-sm sm:text-base leading-snug tracking-tight mb-1">
                           {item.title}
                         </h3>
-                        <p className="text-[11px] sm:text-xs text-slate-500 leading-snug sm:leading-relaxed">
+                        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                           {item.description}
                         </p>
                       </div>
@@ -187,7 +185,7 @@ export function ComparisonSection() {
             </div>
 
             {/* Center VS Badge (Mobile) */}
-            <div className="flex lg:hidden items-center justify-center -my-2.5 z-10 relative">
+            <div className="flex lg:hidden items-center justify-center -my-3 z-10 relative">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-md border-2 border-slate-100">
                 <span className="font-display text-[11px] font-black tracking-wider text-[#1A4B8C]">
                   VS
@@ -197,7 +195,7 @@ export function ComparisonSection() {
 
             {/* Right Card: 6 Keunggulan Diagnova (Vibrant Diagnova Blue) */}
             <div
-              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-5 sm:p-6 lg:p-7 text-white shadow-xl shadow-[#2E68B4]/20 overflow-hidden transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-6 sm:p-7 lg:p-8 text-white shadow-xl shadow-[#2E68B4]/20 overflow-hidden transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
               style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
             >
@@ -219,7 +217,7 @@ export function ComparisonSection() {
                     <div
                       key={item.number}
                       className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== diagnovaAdvantages.length - 1
-                          ? "border-b border-white/15 pb-3 sm:pb-3.5 mb-3 sm:mb-3.5"
+                          ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
                           : "pb-0 mb-0"
                         } ${isVisible
                           ? "opacity-100 translate-y-0"
@@ -235,10 +233,10 @@ export function ComparisonSection() {
                         {item.number}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-white text-sm sm:text-[15px] leading-snug tracking-tight mb-0.5">
+                        <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
                           {item.title}
                         </h3>
-                        <p className="text-[11px] sm:text-xs text-white/90 leading-snug sm:leading-relaxed">
+                        <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
                           {item.description}
                         </p>
                       </div>
