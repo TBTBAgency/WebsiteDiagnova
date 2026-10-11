@@ -338,17 +338,30 @@ function LanguageSwitcher({
 }
 
 export function Navbar() {
+  const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"ID" | "EN">("EN");
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [barHeight, setBarHeight] = useState(42);
   const pathname = usePathname();
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const y = window.scrollY;
+          setScrollY(y);
+          setIsScrolled(y > 15);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -358,12 +371,41 @@ export function Navbar() {
     setActiveDropdown(null);
   }, [pathname]);
 
+  const effectiveBarHeight = isDismissed ? 0 : barHeight;
+  const navTop = Math.max(0, effectiveBarHeight - scrollY);
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex flex-col">
-      <AnnouncementBar language={language} isScrolled={isScrolled} />
+    <>
+      {/* ── Fixed Announcement Bar: Stays at top:0 (z-30). Navbar slides over it when scrolling ── */}
       <div
         className={cn(
-          "w-full bg-white transition-all duration-300 py-4 sm:py-5 lg:py-5",
+          "fixed top-0 left-0 right-0 z-30 transition-opacity duration-300",
+          isDismissed ? "opacity-0 pointer-events-none" : "opacity-100"
+        )}
+      >
+        <AnnouncementBar
+          language={language}
+          onHeightChange={(h) => setBarHeight(h)}
+          onDismiss={() => {
+            setIsDismissed(true);
+            document.documentElement.style.setProperty(
+              "--announcement-bar-height",
+              "0px"
+            );
+          }}
+        />
+      </div>
+
+      {/* ── Main Navbar: z-40 with solid bg-white. Slides up and overlaps AnnouncementBar ── */}
+      <header
+        style={{
+          top: `${navTop}px`,
+          transition: isDismissed
+            ? "top 0.3s ease-out, box-shadow 0.3s"
+            : "box-shadow 0.3s",
+        }}
+        className={cn(
+          "fixed left-0 right-0 z-40 bg-white transition-shadow duration-300 py-4 sm:py-5 lg:py-5",
           isScrolled
             ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.06)]"
             : "shadow-none"
@@ -476,7 +518,6 @@ export function Navbar() {
           </button>
         </div>
       </div>
-      </div>
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
@@ -521,6 +562,7 @@ export function Navbar() {
         </div>
       )}
     </header>
+    </>
   );
 }
 
