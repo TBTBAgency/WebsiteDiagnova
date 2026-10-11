@@ -19,14 +19,14 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
           <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-88 xl:w-[380px]">
-            <div>
+            <div className="flex items-center">
               <Link
                 href="/"
-                className="inline-block transition-opacity hover:opacity-90 -translate-x-1.5 sm:-translate-x-2 lg:-translate-x-2.5"
+                className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-1.5 sm:-translate-x-2 lg:-translate-x-2.5"
               >
                 <Image
                   src="/images/logo-diagnova.svg"
-                  alt="Diagnova Logo"
+                  alt="Diagnova"
                   width={215}
                   height={60}
                   className="h-9 sm:h-10 md:h-11 w-auto brightness-0 invert object-contain"
