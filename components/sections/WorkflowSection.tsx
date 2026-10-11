@@ -26,10 +26,10 @@ const workflowSteps: WorkflowStep[] = [
     description:
       "Each Sample Tube Receives A Unique Barcode, Ensuring No Specimens Are Mixed Up In The Laboratory.",
     cardLeft: "0%",
-    cardTop: "5%",
-    cardWidthPx: 295,
-    lineHeightPx: 130,
-    lineOffsetPx: 135,
+    cardTop: "2%",
+    cardWidthPx: 330,
+    lineHeightPx: 175,
+    lineOffsetPx: 155,
   },
   {
     id: "step-2",
@@ -38,10 +38,10 @@ const workflowSteps: WorkflowStep[] = [
     description:
       "After Instrument Processing, Diagnova Saves All Test Results In Real-Time Without The Need For Manual Retyping.",
     cardLeft: "26%",
-    cardTop: "28%",
-    cardWidthPx: 295,
-    lineHeightPx: 200,
-    lineOffsetPx: 140,
+    cardTop: "16%",
+    cardWidthPx: 330,
+    lineHeightPx: 290,
+    lineOffsetPx: 155,
   },
   {
     id: "step-3",
@@ -50,10 +50,10 @@ const workflowSteps: WorkflowStep[] = [
     description:
       "If Abnormal Numbers Are Detected, The System Automatically Triggers An Alert So Analysts And Doctors Can Act Quickly.",
     cardLeft: "53%",
-    cardTop: "33%",
-    cardWidthPx: 305,
-    lineHeightPx: 180,
-    lineOffsetPx: 145,
+    cardTop: "20%",
+    cardWidthPx: 340,
+    lineHeightPx: 280,
+    lineOffsetPx: 160,
   },
   {
     id: "step-4",
@@ -61,11 +61,11 @@ const workflowSteps: WorkflowStep[] = [
     title: "Accurate Results Ready",
     description:
       "Validated Laboratory Results Are Instantly Delivered To The Doctor And Seamlessly Integrated With The Hospital's EMR.",
-    cardLeft: "calc(100% - 295px)",
-    cardTop: "8%",
-    cardWidthPx: 295,
-    lineHeightPx: 190,
-    lineOffsetPx: 140,
+    cardLeft: "calc(100% - 330px)",
+    cardTop: "3%",
+    cardWidthPx: 330,
+    lineHeightPx: 250,
+    lineOffsetPx: 155,
   },
 ];
 
@@ -124,7 +124,7 @@ export function WorkflowSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden text-white select-none pt-20 sm:pt-28 lg:pt-32 xl:pt-36 pb-12 sm:pb-16 lg:pb-24"
+      className="relative w-full overflow-hidden text-white select-none pt-16 sm:pt-22 lg:pt-28 xl:pt-32 pb-8 sm:pb-10 lg:pb-12 xl:pb-14"
       aria-label="Diagnova Workflow Section"
     >
       <style>{`
@@ -196,7 +196,6 @@ export function WorkflowSection() {
               #345DAB 0%,
               #56ADE2 33%,
               #69C6FF 49%,
-              #FFFFFF 96%,
               #F9F9F9 100%
             )
           `,
@@ -237,14 +236,14 @@ export function WorkflowSection() {
           ref={canvasRef}
           className="relative hidden lg:block w-full"
           style={{
-            height: "calc(100vw * 858 / 1728)",
+            height: "calc(100vw * 860 / 1728)",
             minHeight: "780px",
           }}
         >
           {/* ── DNA HELIX: Full bleed, object-contain object-bottom ── */}
           <div
             className={cn(
-              "absolute inset-x-0 bottom-0 pointer-events-none overflow-visible transition-opacity duration-1000",
+              "absolute inset-x-0 bottom-0 pointer-events-none overflow-visible transition-opacity duration-1000 translate-y-3 lg:translate-y-6",
               isHeaderVisible ? "opacity-100" : "opacity-0"
             )}
             style={{
@@ -293,10 +292,10 @@ export function WorkflowSection() {
                 onMouseEnter={() => setHoveredStep(i)}
                 onMouseLeave={() => setHoveredStep(null)}
               >
-                {/* Frosted Liquid Glass Card (Explicit 124px height keeps line and DNA dot precisely anchored) */}
+                {/* Frosted Liquid Glass Card (Explicit 138px height keeps line and DNA dot precisely anchored) */}
                 <div
                   className={cn(
-                    "relative h-[124px] rounded-2xl p-4.5 sm:p-5 backdrop-blur-xl border transition-all duration-300 ease-out cursor-pointer select-none flex flex-col justify-between overflow-hidden",
+                    "relative h-[138px] rounded-2xl p-4.5 sm:p-5 backdrop-blur-xl border transition-all duration-300 ease-out cursor-pointer select-none flex flex-col justify-between overflow-hidden",
                     hovered
                       ? "bg-white/[0.20] border-white/35 shadow-[0_4px_16px_rgba(0,0,0,0.06)] -translate-y-0.5"
                       : dimmed
@@ -328,16 +327,16 @@ export function WorkflowSection() {
 
                   {/* Header: Title on Left, Step Number on Right */}
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-semibold text-white text-[14px] xl:text-[14.5px] leading-snug tracking-tight">
+                    <h3 className="font-semibold text-white text-[14.5px] xl:text-[15px] leading-snug tracking-tight">
                       {step.title}
                     </h3>
-                    <span className="shrink-0 font-sans font-medium text-xs text-white/70 tracking-normal select-none pt-0.5">
+                    <span className="shrink-0 font-sans font-medium text-xs xl:text-[13px] text-white/70 tracking-normal select-none pt-0.5">
                       {step.number}
                     </span>
                   </div>
 
                   {/* Description: Clean left-aligned copy */}
-                  <p className="text-[12px] text-white/80 font-light leading-[1.6] text-left">
+                  <p className="text-[12.5px] xl:text-[13px] text-white/80 font-light leading-[1.6] text-left">
                     {step.description}
                   </p>
                 </div>
@@ -347,7 +346,7 @@ export function WorkflowSection() {
                   className="absolute pointer-events-none origin-bottom"
                   style={{
                     left: `${step.lineOffsetPx}px`,
-                    top: "124px",
+                    top: "138px",
                     width: "1px",
                     height: `${step.lineHeightPx}px`,
                     background:
@@ -370,7 +369,7 @@ export function WorkflowSection() {
                   className="absolute pointer-events-none flex items-center justify-center"
                   style={{
                     left: `${step.lineOffsetPx - 4}px`,
-                    top: `${124 + step.lineHeightPx - 4}px`,
+                    top: `${138 + step.lineHeightPx - 4}px`,
                     width: "8px",
                     height: "8px",
                     ...(isStepActive

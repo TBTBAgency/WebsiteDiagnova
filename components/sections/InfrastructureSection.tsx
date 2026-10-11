@@ -114,32 +114,16 @@ export function InfrastructureSection() {
           const dot1Frac = (dotTops[1] || 196) / cH;
           const dot2Frac = (dotTops[2] || 356) / cH;
 
-          // Map scroll progress to smooth line fill fraction (0 to 1):
-          // - 0.00 to 0.14: Fill starts at Dot 0 (Step 1 active)
-          // - 0.14 to 0.50: Line fills down from Dot 0 to Dot 1
-          // - 0.50 to 0.86: Line fills down from Dot 1 to Dot 2
-          // - 0.86 to 1.00: Line finishes spanning the full bottom of Card 3
-          let fill = dot0Frac;
-          if (progress <= 0.14) {
-            fill = dot0Frac;
-          } else if (progress <= 0.5) {
-            fill = dot0Frac + ((progress - 0.14) / 0.36) * (dot1Frac - dot0Frac);
-          } else if (progress <= 0.86) {
-            fill = dot1Frac + ((progress - 0.5) / 0.36) * (dot2Frac - dot1Frac);
-          } else {
-            fill = dot2Frac + ((progress - 0.86) / 0.14) * (1 - dot2Frac);
-          }
-
+          // Linear, continuous line fill tracking from dot 0 to dot 2 (and slight terminal extension)
+          const endFrac = Math.min(1, dot2Frac + 0.05);
+          const fill = dot0Frac + progress * (endFrac - dot0Frac);
           const clampedFill = Math.max(0, Math.min(1, fill));
           setLineFillFraction(clampedFill);
 
-          // Synchronized active step switching based on line position:
-          const mid01 = (dot0Frac + dot1Frac) / 2;
-          const mid12 = (dot1Frac + dot2Frac) / 2;
-
-          if (clampedFill >= mid12) {
+          // Evenly partitioned active step switching across the 3 scroll segments
+          if (progress >= 0.67) {
             setActiveIndex(2);
-          } else if (clampedFill >= mid01) {
+          } else if (progress >= 0.33) {
             setActiveIndex(1);
           } else {
             setActiveIndex(0);
@@ -165,8 +149,8 @@ export function InfrastructureSection() {
     const sectionHeight = containerRef.current.offsetHeight;
     const totalScrollable = sectionHeight - window.innerHeight;
 
-    // Target progress points for each step
-    const targetProgress = index === 0 ? 0.06 : index === 1 ? 0.5 : 0.92;
+    // Center of each step range: [0, 0.33) -> 0.16, [0.33, 0.67) -> 0.50, [0.67, 1.0] -> 0.84
+    const targetProgress = index === 0 ? 0.16 : index === 1 ? 0.5 : 0.84;
     const targetY = containerTop + targetProgress * totalScrollable;
 
     window.scrollTo({
@@ -213,7 +197,7 @@ export function InfrastructureSection() {
                     className="w-full h-full bg-gradient-to-b from-[#2A66CC] to-[#4EA1F0] rounded-full will-change-transform"
                     style={{
                       transform: `translateY(-${(1 - lineFillFraction) * 100}%)`,
-                      transition: "transform 0.12s ease-out",
+                      transition: "transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1)",
                     }}
                   />
                 </div>
@@ -237,7 +221,7 @@ export function InfrastructureSection() {
                     >
                       {/* Outer Glowing Halo on Active Dot */}
                       <span
-                        className={`absolute inset-0 rounded-full transition-all duration-500 pointer-events-none ${
+                        className={`absolute inset-0 rounded-full transition-all duration-500 ease-in-out pointer-events-none ${
                           isActive
                             ? "ring-4 ring-[#93C5FD]/60 shadow-[0_0_14px_rgba(42,102,204,0.5)] scale-125"
                             : "ring-0 shadow-none scale-100"
@@ -246,7 +230,7 @@ export function InfrastructureSection() {
 
                       {/* Main Dot Body */}
                       <span
-                        className={`relative rounded-full transition-all duration-500 ${
+                        className={`relative rounded-full transition-all duration-500 ease-in-out ${
                           isActive
                             ? "h-4 w-4 bg-[#2A66CC] z-20"
                             : isPassed
@@ -274,41 +258,45 @@ export function InfrastructureSection() {
                         cardRefs.current[idx] = el;
                       }}
                       onClick={() => scrollToStep(idx)}
-                      className={`relative cursor-pointer transition-all duration-600 ease-out select-text ${
+                      className={`relative cursor-pointer transition-all duration-500 ease-in-out select-text ${
                         isActive
-                          ? "drop-shadow-[0_16px_32px_rgba(40,100,201,0.22)] scale-[1.01]"
-                          : "hover:scale-[1.005] drop-shadow-[0_4px_16px_rgba(0,0,0,0.02)] scale-100"
+                          ? "drop-shadow-[0_16px_28px_rgba(46,104,180,0.22)]"
+                          : "drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
                       }`}
                     >
                       <div
-                        className="relative overflow-hidden p-6 sm:p-7 lg:p-8 rounded-tl-[22px] sm:rounded-tl-[26px] rounded-br-[22px] sm:rounded-br-[26px]"
+                        className="relative overflow-hidden rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px]"
                         style={{
                           clipPath:
-                            "polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 32px 100%, 0 calc(100% - 32px))",
+                            "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
                         }}
                       >
-                        {/* Inactive Soft Pastel Base Layer */}
-                        <div className="absolute inset-0 bg-[#EDF4FC] rounded-tl-[22px] sm:rounded-tl-[26px] rounded-br-[22px] sm:rounded-br-[26px] transition-colors duration-600" />
+                        {/* Layer 1: Inactive Base Card Background */}
+                        <div className="absolute inset-0 bg-[#F5F7FA] border border-slate-200/90 shadow-sm" />
 
-                        {/* Active Vibrant Gradient Layer: Silky smooth opacity cross-fade */}
+                        {/* Layer 2: Active Card Blue Gradient Overlay */}
                         <div
-                          className={`absolute inset-0 bg-gradient-to-r from-[#2864C9] via-[#3577D5] to-[#4EA3ED] rounded-tl-[22px] sm:rounded-tl-[26px] rounded-br-[22px] sm:rounded-br-[26px] transition-opacity duration-600 ease-out ${
-                            isActive ? "opacity-100" : "opacity-0 pointer-events-none"
+                          className={`absolute inset-0 bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] transition-opacity duration-500 ease-in-out pointer-events-none ${
+                            isActive ? "opacity-100" : "opacity-0"
                           }`}
-                        />
+                        >
+                          {/* Subtle ambient light reflections matching Comparison right card */}
+                          <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#56ADE2]/25 blur-[50px]" />
+                          <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#1C478B]/40 blur-[50px]" />
+                        </div>
 
-                        {/* Card Content (z-10 ensures sharp readability above background layers) */}
-                        <div className="relative z-10">
+                        {/* Layer 3: Unified Single Text Content Layer (Seamlessly transitions color without ghosting) */}
+                        <div className="relative z-10 p-6 sm:p-7 lg:p-8">
                           <h3
-                            className={`font-display text-lg sm:text-xl lg:text-[22px] font-bold tracking-tight mb-3.5 sm:mb-4 lg:mb-5 transition-colors duration-500 ${
-                              isActive ? "text-white" : "text-[#4F688B]"
+                            className={`font-display text-lg sm:text-xl lg:text-[22px] font-bold tracking-tight mb-3.5 sm:mb-4 lg:mb-5 transition-colors duration-500 ease-in-out ${
+                              isActive ? "text-white" : "text-slate-900"
                             }`}
                           >
                             {card.title}
                           </h3>
                           <p
-                            className={`text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-xl transition-colors duration-500 ${
-                              isActive ? "text-white/95 font-normal" : "text-[#6A819F]"
+                            className={`text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-xl transition-colors duration-500 ease-in-out ${
+                              isActive ? "text-white/95" : "text-slate-500"
                             }`}
                           >
                             {card.description}

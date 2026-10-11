@@ -111,7 +111,7 @@ export function ComparisonSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-white pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-28 lg:pb-32 xl:pb-36 flex flex-col justify-center"
+      className="relative w-full overflow-hidden bg-white pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 xl:pb-28 flex flex-col justify-center"
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* Section Header */}
@@ -137,53 +137,57 @@ export function ComparisonSection() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 items-stretch">
             {/* Left Card: 6 Kekurangan LIS di Indonesia (Neutral / Conventional) */}
             <div
-              className={`relative flex flex-col justify-between rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-[#F5F7FA] border border-slate-200/90 p-6 sm:p-7 lg:p-8 shadow-sm transition-all duration-700 ease-out overflow-hidden ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
-              style={{
-                transitionDelay: isVisible ? "100ms" : "0ms",
-                clipPath:
-                  "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
-              }}
+              style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
             >
-              <div>
-                {/* Badge */}
-                <div className="mb-4 sm:mb-5">
-                  <span className="inline-flex items-center rounded-full bg-[#EBF3FB] border border-[#D5E5F7] px-4 py-1.5 text-xs sm:text-sm font-medium text-[#2A5EAA]">
-                    6 Kekurangan LIS di Indonesia
-                  </span>
-                </div>
+              <div
+                className="relative flex flex-col justify-between h-full rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-[#F5F7FA] border border-slate-200/90 p-6 sm:p-7 lg:p-8 overflow-hidden"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                }}
+              >
+                <div>
+                  {/* Badge */}
+                  <div className="mb-4 sm:mb-5">
+                    <span className="inline-flex items-center rounded-full bg-[#EBF3FB] border border-[#D5E5F7] px-4 py-1.5 text-xs sm:text-sm font-medium text-[#2A5EAA]">
+                      6 Kekurangan LIS di Indonesia
+                    </span>
+                  </div>
 
-                {/* Staggered Text Reveal List */}
-                <div className="flex flex-col">
-                  {conventionalDrawbacks.map((item, index) => (
-                    <div
-                      key={item.number}
-                      className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== conventionalDrawbacks.length - 1
-                          ? "border-b border-slate-200/90 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
-                          : "pb-0 mb-0"
-                        } ${isVisible
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 translate-y-3"
-                        }`}
-                      style={{
-                        transitionDelay: isVisible
-                          ? `${200 + index * 120}ms`
-                          : "0ms",
-                      }}
-                    >
-                      <span className="text-slate-400 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
-                        {item.number}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-slate-900 text-sm sm:text-base leading-snug tracking-tight mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                          {item.description}
-                        </p>
+                  {/* Staggered Text Reveal List */}
+                  <div className="flex flex-col">
+                    {conventionalDrawbacks.map((item, index) => (
+                      <div
+                        key={item.number}
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== conventionalDrawbacks.length - 1
+                            ? "border-b border-slate-200/90 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
+                            : "pb-0 mb-0"
+                          } ${isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-3"
+                          }`}
+                        style={{
+                          transitionDelay: isVisible
+                            ? `${200 + index * 120}ms`
+                            : "0ms",
+                        }}
+                      >
+                        <span className="text-slate-400 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
+                          {item.number}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-slate-900 text-sm sm:text-base leading-snug tracking-tight mb-1">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -199,57 +203,61 @@ export function ComparisonSection() {
 
             {/* Right Card: 6 Keunggulan Diagnova (Vibrant Diagnova Blue) */}
             <div
-              className={`relative flex flex-col justify-between rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-6 sm:p-7 lg:p-8 text-white shadow-xl shadow-[#2E68B4]/20 overflow-hidden transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_20px_32px_rgba(46,104,180,0.22)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
-              style={{
-                transitionDelay: isVisible ? "200ms" : "0ms",
-                clipPath:
-                  "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
-              }}
+              style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
             >
-              {/* Subtle ambient light reflections */}
-              <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#56ADE2]/25 blur-[60px]" />
-              <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#1C478B]/40 blur-[60px]" />
+              <div
+                className="relative flex flex-col justify-between h-full rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-6 sm:p-7 lg:p-8 text-white overflow-hidden"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                }}
+              >
+                {/* Subtle ambient light reflections */}
+                <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#56ADE2]/25 blur-[60px]" />
+                <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#1C478B]/40 blur-[60px]" />
 
-              <div className="relative z-10">
-                {/* Badge */}
-                <div className="mb-4 sm:mb-5">
-                  <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm">
-                    6 Keunggulan Diagnova
-                  </span>
-                </div>
+                <div className="relative z-10">
+                  {/* Badge */}
+                  <div className="mb-4 sm:mb-5">
+                    <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm">
+                      6 Keunggulan Diagnova
+                    </span>
+                  </div>
 
-                {/* Staggered Text Reveal List */}
-                <div className="flex flex-col">
-                  {diagnovaAdvantages.map((item, index) => (
-                    <div
-                      key={item.number}
-                      className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== diagnovaAdvantages.length - 1
-                          ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
-                          : "pb-0 mb-0"
-                        } ${isVisible
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 translate-y-3"
-                        }`}
-                      style={{
-                        transitionDelay: isVisible
-                          ? `${200 + index * 120}ms`
-                          : "0ms",
-                      }}
-                    >
-                      <span className="text-white/60 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
-                        {item.number}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                          {item.description}
-                        </p>
+                  {/* Staggered Text Reveal List */}
+                  <div className="flex flex-col">
+                    {diagnovaAdvantages.map((item, index) => (
+                      <div
+                        key={item.number}
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== diagnovaAdvantages.length - 1
+                            ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
+                            : "pb-0 mb-0"
+                          } ${isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-3"
+                          }`}
+                        style={{
+                          transitionDelay: isVisible
+                            ? `${200 + index * 120}ms`
+                            : "0ms",
+                        }}
+                      >
+                        <span className="text-white/60 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
+                          {item.number}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
