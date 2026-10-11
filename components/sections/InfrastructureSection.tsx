@@ -274,38 +274,46 @@ export function InfrastructureSection() {
                         cardRefs.current[idx] = el;
                       }}
                       onClick={() => scrollToStep(idx)}
-                      className={`relative overflow-hidden cursor-pointer rounded-[22px] sm:rounded-[26px] p-6 sm:p-7 lg:p-8 transition-all duration-600 ease-out select-text ${
+                      className={`relative cursor-pointer transition-all duration-600 ease-out select-text ${
                         isActive
-                          ? "shadow-[0_16px_36px_rgba(40,100,201,0.25)] scale-[1.01]"
-                          : "hover:bg-[#E4EFFB]/80 shadow-[0_4px_16px_rgba(0,0,0,0.02)] scale-100"
+                          ? "drop-shadow-[0_16px_32px_rgba(40,100,201,0.22)] scale-[1.01]"
+                          : "hover:scale-[1.005] drop-shadow-[0_4px_16px_rgba(0,0,0,0.02)] scale-100"
                       }`}
                     >
-                      {/* Inactive Soft Pastel Base Layer */}
-                      <div className="absolute inset-0 bg-[#EDF4FC] transition-colors duration-600" />
-
-                      {/* Active Vibrant Gradient Layer: Silky smooth opacity cross-fade */}
                       <div
-                        className={`absolute inset-0 bg-gradient-to-r from-[#2864C9] via-[#3577D5] to-[#4EA3ED] transition-opacity duration-600 ease-out ${
-                          isActive ? "opacity-100" : "opacity-0 pointer-events-none"
-                        }`}
-                      />
+                        className="relative overflow-hidden p-6 sm:p-7 lg:p-8 rounded-tl-[22px] sm:rounded-tl-[26px] rounded-br-[22px] sm:rounded-br-[26px]"
+                        style={{
+                          clipPath:
+                            "polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 32px 100%, 0 calc(100% - 32px))",
+                        }}
+                      >
+                        {/* Inactive Soft Pastel Base Layer */}
+                        <div className="absolute inset-0 bg-[#EDF4FC] rounded-tl-[22px] sm:rounded-tl-[26px] rounded-br-[22px] sm:rounded-br-[26px] transition-colors duration-600" />
 
-                      {/* Card Content (z-10 ensures sharp readability above background layers) */}
-                      <div className="relative z-10">
-                        <h3
-                          className={`font-display text-lg sm:text-xl lg:text-[22px] font-bold tracking-tight mb-3.5 sm:mb-4 lg:mb-5 transition-colors duration-500 ${
-                            isActive ? "text-white" : "text-[#4F688B]"
+                        {/* Active Vibrant Gradient Layer: Silky smooth opacity cross-fade */}
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-r from-[#2864C9] via-[#3577D5] to-[#4EA3ED] rounded-tl-[22px] sm:rounded-tl-[26px] rounded-br-[22px] sm:rounded-br-[26px] transition-opacity duration-600 ease-out ${
+                            isActive ? "opacity-100" : "opacity-0 pointer-events-none"
                           }`}
-                        >
-                          {card.title}
-                        </h3>
-                        <p
-                          className={`text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-xl transition-colors duration-500 ${
-                            isActive ? "text-white/95 font-normal" : "text-[#6A819F]"
-                          }`}
-                        >
-                          {card.description}
-                        </p>
+                        />
+
+                        {/* Card Content (z-10 ensures sharp readability above background layers) */}
+                        <div className="relative z-10">
+                          <h3
+                            className={`font-display text-lg sm:text-xl lg:text-[22px] font-bold tracking-tight mb-3.5 sm:mb-4 lg:mb-5 transition-colors duration-500 ${
+                              isActive ? "text-white" : "text-[#4F688B]"
+                            }`}
+                          >
+                            {card.title}
+                          </h3>
+                          <p
+                            className={`text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-xl transition-colors duration-500 ${
+                              isActive ? "text-white/95 font-normal" : "text-[#6A819F]"
+                            }`}
+                          >
+                            {card.description}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   );

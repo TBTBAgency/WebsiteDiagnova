@@ -137,9 +137,13 @@ export function ComparisonSection() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 items-stretch">
             {/* Left Card: 6 Kekurangan LIS di Indonesia (Neutral / Conventional) */}
             <div
-              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-[#F5F7FA] border border-slate-200/90 p-6 sm:p-7 lg:p-8 shadow-sm transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              className={`relative flex flex-col justify-between rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-[#F5F7FA] border border-slate-200/90 p-6 sm:p-7 lg:p-8 shadow-sm transition-all duration-700 ease-out overflow-hidden ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
-              style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
+              style={{
+                transitionDelay: isVisible ? "100ms" : "0ms",
+                clipPath:
+                  "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+              }}
             >
               <div>
                 {/* Badge */}
@@ -195,9 +199,13 @@ export function ComparisonSection() {
 
             {/* Right Card: 6 Keunggulan Diagnova (Vibrant Diagnova Blue) */}
             <div
-              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-6 sm:p-7 lg:p-8 text-white shadow-xl shadow-[#2E68B4]/20 overflow-hidden transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              className={`relative flex flex-col justify-between rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-6 sm:p-7 lg:p-8 text-white shadow-xl shadow-[#2E68B4]/20 overflow-hidden transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
-              style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
+              style={{
+                transitionDelay: isVisible ? "200ms" : "0ms",
+                clipPath:
+                  "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+              }}
             >
               {/* Subtle ambient light reflections */}
               <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#56ADE2]/25 blur-[60px]" />
