@@ -13,7 +13,6 @@ import {
   Network,
   Cpu,
   ArrowRight,
-  ArrowUpRight,
   ShieldCheck,
   Building2,
   Stethoscope,
@@ -491,7 +490,6 @@ export function Navbar() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-6 py-2.5 xl:px-7 xl:py-3 text-[15px] xl:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
           >
             <span>Request Demo</span>
-            <ArrowUpRight className="h-4 w-4 stroke-[2.5]" />
           </Link>
         </div>
 
@@ -502,7 +500,6 @@ export function Navbar() {
             className="inline-flex items-center gap-1.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm"
           >
             <span>Demo</span>
-            <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
           </Link>
           <button
             type="button"
@@ -555,7 +552,6 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span>Request Demo</span>
-                <ArrowUpRight className="h-4 w-4 stroke-[2.5]" />
               </Link>
             </div>
           </div>
