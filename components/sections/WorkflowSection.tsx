@@ -124,7 +124,7 @@ export function WorkflowSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden text-white select-none pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16 lg:pb-24"
+      className="relative w-full overflow-hidden text-white select-none pt-20 sm:pt-28 lg:pt-32 xl:pt-36 pb-12 sm:pb-16 lg:pb-24"
       aria-label="Diagnova Workflow Section"
     >
       <style>{`

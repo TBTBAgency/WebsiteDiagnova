@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections/Hero";
 import { TrustedByBar } from "@/components/sections/TrustedByBar";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
+import { InfrastructureSection } from "@/components/sections/InfrastructureSection";
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 
@@ -31,7 +32,10 @@ export default function HomePage() {
       {/* 5. Workflow Section */}
       <WorkflowSection />
 
-      {/* 6. Bottom CTA Banner */}
+      {/* 6. Infrastructure Section */}
+      <InfrastructureSection />
+
+      {/* 7. Bottom CTA Banner */}
       <CTABanner />
     </>
   );

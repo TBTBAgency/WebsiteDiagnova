@@ -111,7 +111,7 @@ export function ComparisonSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-white py-12 sm:py-16 lg:py-20 flex flex-col justify-center"
+      className="relative w-full overflow-hidden bg-white pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-28 lg:pb-32 xl:pb-36 flex flex-col justify-center"
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* Section Header */}
