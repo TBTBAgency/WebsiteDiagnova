@@ -22,14 +22,14 @@ export function Footer() {
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-2 sm:-translate-x-2.5 lg:-translate-x-3"
+                className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-0.5 sm:-translate-x-1 lg:-translate-x-1.5"
               >
                 <Image
                   src="/images/logo-diagnova.svg"
                   alt="Diagnova"
-                  width={240}
-                  height={66}
-                  className="h-10 sm:h-11 md:h-12 lg:h-[46px] xl:h-12 w-auto brightness-0 invert object-contain"
+                  width={270}
+                  height={75}
+                  className="h-11 sm:h-12 md:h-13 lg:h-[52px] xl:h-[54px] w-auto brightness-0 invert object-contain"
                   priority
                 />
               </Link>
