@@ -19,7 +19,7 @@ export function CTABanner() {
   };
 
   return (
-    <section className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 overflow-hidden">
       {/* Gradient fade background: #F9F9F9 at the top seamlessly blending to #3880DB at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -32,7 +32,7 @@ export function CTABanner() {
       {/* Background biru footer di bagian bawah dibuat tipis pas di area lengkungan sudut bawah saja */}
       <div className="absolute inset-x-0 bottom-0 h-8 sm:h-10 lg:h-12 bg-[#2568BA] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-7xl">
+      <div className="relative z-10 mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
         {/* Main Rounded CTA Container (Ukuran Asli max-w-7xl, tanpa inline stroke) */}
         <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-r from-[#EBF3FB] via-[#E4EFF9] to-[#D5E6F7] shadow-[0_10px_40px_-15px_rgba(40,90,165,0.07)]">
           {/* Subtle white gradient fade at top edge */}

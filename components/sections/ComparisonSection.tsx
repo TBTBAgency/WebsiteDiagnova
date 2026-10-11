@@ -111,9 +111,9 @@ export function ComparisonSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-white py-12 sm:py-16 lg:py-20 border-b border-slate-100 flex flex-col justify-center"
+      className="relative w-full overflow-hidden bg-white py-12 sm:py-16 lg:py-20 flex flex-col justify-center"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* Section Header */}
         <div
           className={`mb-8 sm:mb-10 lg:mb-12 transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"

@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { Hero } from "@/components/sections/Hero";
 import { TrustedByBar } from "@/components/sections/TrustedByBar";
 import { AboutSection } from "@/components/sections/AboutSection";
+import { WorkflowSection } from "@/components/sections/WorkflowSection";
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 
@@ -27,7 +28,10 @@ export default function HomePage() {
       {/* 4. Comparison Section */}
       <ComparisonSection />
 
-      {/* 5. Bottom CTA Banner */}
+      {/* 5. Workflow Section */}
+      <WorkflowSection />
+
+      {/* 6. Bottom CTA Banner */}
       <CTABanner />
     </>
   );

@@ -365,7 +365,7 @@ export function Navbar() {
           : "shadow-none"
       )}
     >
-      <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-[1560px] items-center justify-between px-6 sm:px-8 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
           <Link
