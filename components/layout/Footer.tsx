@@ -3,13 +3,50 @@ import Link from "next/link";
 import Image from "next/image";
 
 export function Footer() {
-  const footerLinks = [
-    { label: "Platform", href: "/platform" },
-    { label: "Overview", href: "/platform" },
-    { label: "Modules", href: "/modules" },
-    { label: "Nova AI", href: "/nova-ai" },
-    { label: "Integrations", href: "/integration" },
-    { label: "Log in", href: "/request-demo" },
+  const footerSections = [
+    {
+      title: "Platform",
+      links: [
+        { label: "Overview", href: "/platform" },
+        { label: "Workflow", href: "/platform/workflow" },
+        { label: "100% Automation", href: "/platform/automation" },
+        { label: "Audit & Reporting", href: "/platform/reporting" },
+        { label: "Lab Analytics", href: "/platform/analytics" },
+        { label: "Nova AI", href: "/nova-ai" },
+      ],
+    },
+    {
+      title: "Solutions",
+      links: [
+        { label: "Overview", href: "/solutions" },
+        { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
+        { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
+        { label: "Health Screening", href: "/solutions/health-screening" },
+        { label: "Multi-branch Network", href: "/solutions/multi-branch" },
+      ],
+    },
+    {
+      title: "Modules",
+      links: [
+        { label: "Overview", href: "/modules" },
+        { label: "Routine & Hematology", href: "/modules/routine-hematology" },
+        { label: "Blood Bank Management", href: "/modules/blood-bank" },
+        { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
+        { label: "Pathology", href: "/modules/pathology" },
+        { label: "Microbiology", href: "/modules/microbiology" },
+      ],
+    },
+    {
+      title: "Integration",
+      links: [
+        { label: "Overview", href: "/integration" },
+        { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
+        { label: "Rekam Medis (RME)", href: "/integration/rme" },
+        { label: "500+ Analyzers", href: "/integration/analyzer" },
+        { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
+        { label: "Request Demo", href: "/request-demo" },
+      ],
+    },
   ];
 
   return (
@@ -49,15 +86,15 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col Right: 4 Platform Link Columns berjarak lega menempel ke kanan */}
+          {/* Col Right: 4 Nav Link Columns berjarak lega menempel ke kanan */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 xl:gap-16 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
-            {[1, 2, 3, 4].map((colIdx) => (
-              <div key={colIdx} className="space-y-4">
+            {footerSections.map((section) => (
+              <div key={section.title} className="space-y-4">
                 <h4 className="font-semibold text-white text-base sm:text-[17px] tracking-normal">
-                  Platform
+                  {section.title}
                 </h4>
                 <ul className="space-y-2.5 text-sm sm:text-[15px] text-white/85 font-normal">
-                  {footerLinks.map((link, idx) => (
+                  {section.links.map((link, idx) => (
                     <li key={idx}>
                       <Link
                         href={link.href}
