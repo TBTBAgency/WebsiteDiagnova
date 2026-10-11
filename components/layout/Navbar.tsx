@@ -375,10 +375,10 @@ export function Navbar() {
             <Image
               src="/images/logo-diagnova.svg"
               alt="Diagnova"
-              width={215}
-              height={60}
+              width={240}
+              height={66}
               priority
-              className="h-9 sm:h-10 md:h-11 w-auto object-contain"
+              className="h-10 sm:h-11 md:h-12 lg:h-[46px] xl:h-12 w-auto object-contain"
             />
           </Link>
         </div>
@@ -395,7 +395,7 @@ export function Navbar() {
               <Link
                 href={item.href}
                 className={cn(
-                  "py-2 text-[15px] font-normal tracking-normal transition-colors duration-150",
+                  "py-2 text-[15.5px] xl:text-base font-normal tracking-normal transition-colors duration-150",
                   pathname.startsWith(item.href)
                     ? "text-diagnova-blue font-medium"
                     : "text-slate-800 hover:text-diagnova-blue"
@@ -442,7 +442,7 @@ export function Navbar() {
           {/* Primary CTA: Request Demo */}
           <Link
             href="/request-demo"
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-5 py-2 text-sm font-medium text-white shadow-md shadow-diagnova-blue/20 hover:shadow-lg hover:shadow-diagnova-blue/30 transition-all duration-200 active:scale-[0.98]"
+            className="inline-flex items-center justify-center rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-6 py-2.5 xl:px-7 xl:py-3 text-[15px] xl:text-base font-semibold text-white shadow-md shadow-diagnova-blue/20 hover:shadow-lg hover:shadow-diagnova-blue/30 transition-all duration-200 active:scale-[0.98]"
           >
             Request Demo
           </Link>
@@ -452,7 +452,7 @@ export function Navbar() {
         <div className="flex items-center gap-2 lg:hidden">
           <Link
             href="/request-demo"
-            className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue px-3.5 py-1.5 text-xs font-medium text-white shadow-sm"
+            className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm"
           >
             Demo
           </Link>
