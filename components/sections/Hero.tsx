@@ -136,8 +136,9 @@ export function Hero() {
         {/* Soft Contrast Gradient Overlay on Left Side */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A4B8C]/95 via-[#225FA8]/75 to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
 
-        {/* Left Hero Content: Static Layout with Only Headline Transitioning - Vertically Centered */}
-        <div className="relative z-10 max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-6 sm:px-12 lg:px-16 xl:px-20 my-auto text-white flex flex-col justify-center">
+        {/* Left Hero Content: Centered 2XL Grid Wrapper aligned with Navbar & Sections */}
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-6 sm:px-8 lg:px-10 my-auto flex items-center">
+          <div className="max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
           {/* Static Badge */}
           <div>
             <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6">
@@ -218,6 +219,7 @@ export function Hero() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }
