@@ -35,9 +35,9 @@ export function Footer() {
               </Link>
             </div>
 
-            <div className="space-y-1.5 text-xs sm:text-sm text-white/85 font-normal leading-relaxed">
+            <div className="space-y-1 text-[11px] sm:text-xs text-white/80 font-normal leading-relaxed translate-x-3 sm:translate-x-4 lg:translate-x-5">
               <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
-              <p className="flex items-center gap-1.5 text-white/75">
+              <p className="flex items-center gap-1.5 text-white/70">
                 <Link href="/terms" className="hover:text-white transition-colors">
                   Terms of Service
                 </Link>
