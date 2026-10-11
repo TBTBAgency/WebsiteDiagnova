@@ -10,9 +10,9 @@ export function Footer() {
         { label: "Overview", href: "/platform" },
         { label: "Workflow", href: "/platform/workflow" },
         { label: "100% Automation", href: "/platform/automation" },
-        { label: "Audit & Reporting", href: "/platform/reporting" },
+        { label: "Reporting & Audit", href: "/platform/reporting" },
         { label: "Lab Analytics", href: "/platform/analytics" },
-        { label: "Nova AI", href: "/nova-ai" },
+        { label: "Nova AI Copilot", href: "/nova-ai" },
       ],
     },
     {
@@ -21,8 +21,9 @@ export function Footer() {
         { label: "Overview", href: "/solutions" },
         { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
         { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
-        { label: "Health Screening", href: "/solutions/health-screening" },
-        { label: "Multi-branch Network", href: "/solutions/multi-branch" },
+        { label: "Health Screening Center", href: "/solutions/health-screening" },
+        { label: "Multi-branch Laboratory", href: "/solutions/multi-branch" },
+        { label: "How Nova AI Works", href: "/nova-ai/how-it-works" },
       ],
     },
     {
@@ -30,10 +31,10 @@ export function Footer() {
       links: [
         { label: "Overview", href: "/modules" },
         { label: "Routine & Hematology", href: "/modules/routine-hematology" },
+        { label: "Clinical Chemistry", href: "/modules/clinical-chemistry" },
         { label: "Blood Bank Management", href: "/modules/blood-bank" },
         { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
-        { label: "Pathology", href: "/modules/pathology" },
-        { label: "Microbiology", href: "/modules/microbiology" },
+        { label: "Anatomical Pathology", href: "/modules/pathology" },
       ],
     },
     {
@@ -42,9 +43,9 @@ export function Footer() {
         { label: "Overview", href: "/integration" },
         { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
         { label: "Rekam Medis (RME)", href: "/integration/rme" },
-        { label: "500+ Analyzers", href: "/integration/analyzer" },
+        { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
         { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-        { label: "Request Demo", href: "/request-demo" },
+        { label: "Request Live Demo", href: "/request-demo" },
       ],
     },
   ];
@@ -86,19 +87,19 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col Right: 4 Nav Link Columns berjarak lega menempel ke kanan */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 xl:gap-16 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
+          {/* Col Right: 4 Nav Link Columns berjarak lega dan seimbang rapi */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-11 xl:gap-14 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
             {footerSections.map((section) => (
-              <div key={section.title} className="space-y-4">
-                <h4 className="font-semibold text-white text-base sm:text-[17px] tracking-normal">
+              <div key={section.title} className="space-y-3.5">
+                <h4 className="font-semibold text-white text-[15px] sm:text-base tracking-normal">
                   {section.title}
                 </h4>
-                <ul className="space-y-2.5 text-sm sm:text-[15px] text-white/85 font-normal">
+                <ul className="space-y-2.5 text-[13.5px] sm:text-sm text-white/80 font-normal">
                   {section.links.map((link, idx) => (
                     <li key={idx}>
                       <Link
                         href={link.href}
-                        className="hover:text-white transition-colors inline-block text-white/85 hover:text-white"
+                        className="hover:text-white transition-colors inline-block hover:translate-x-0.5 duration-150"
                       >
                         {link.label}
                       </Link>
