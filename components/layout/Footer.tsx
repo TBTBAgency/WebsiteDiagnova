@@ -49,8 +49,8 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col Right: 4 Platform Link Columns spanning full width to the right edge */}
-          <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-14 xl:gap-20 justify-between pt-2.5 sm:pt-3.5 lg:pt-4">
+          {/* Col Right: 4 Platform Link Columns menempel ke kanan dan berdekatan */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 lg:gap-9 xl:gap-12 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
             {[1, 2, 3, 4].map((colIdx) => (
               <div key={colIdx} className="space-y-4">
                 <h4 className="font-semibold text-white text-base sm:text-[17px] tracking-normal">
