@@ -14,52 +14,53 @@ interface GoalItem {
 
 interface AnnouncementBarProps {
   language?: "ID" | "EN";
+  isScrolled?: boolean;
 }
 
-export function AnnouncementBar({ language = "EN" }: AnnouncementBarProps) {
-  const [isVisible, setIsVisible] = useState(false);
+export function AnnouncementBar({
+  language = "EN",
+  isScrolled = false,
+}: AnnouncementBarProps) {
+  // Fresh in-memory state: Always shows on page refresh / initial load
+  const [isDismissed, setIsDismissed] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
+  // Clear any previously persisted dismissal so it ALWAYS reappears on refresh
   useEffect(() => {
-    // Check if user previously closed it in this session
-    const isDismissed = sessionStorage.getItem("diagnova_goal_bar_dismissed");
-    if (!isDismissed) {
-      setIsVisible(true);
-    } else {
-      document.documentElement.style.setProperty("--announcement-bar-height", "0px");
+    try {
+      sessionStorage.removeItem("diagnova_goal_bar_dismissed");
+    } catch {
+      // Ignore if storage is inaccessible
     }
   }, []);
 
+  // Visible only at the top of the page (not following scroll) and if not dismissed
+  const isVisible = !isDismissed && !isScrolled;
+
   // Dynamically update CSS custom property so Hero padding adjusts with zero shift
   useEffect(() => {
-    if (!isVisible || !barRef.current) return;
-
-    const updateHeight = () => {
-      if (barRef.current) {
-        const height = barRef.current.offsetHeight;
-        document.documentElement.style.setProperty(
-          "--announcement-bar-height",
-          `${height}px`
-        );
-      }
-    };
-
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    observer.observe(barRef.current);
-
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.setProperty("--announcement-bar-height", "0px");
-    };
+    if (isVisible && barRef.current) {
+      const height = barRef.current.offsetHeight || 40;
+      document.documentElement.style.setProperty(
+        "--announcement-bar-height",
+        `${height}px`
+      );
+    } else {
+      document.documentElement.style.setProperty(
+        "--announcement-bar-height",
+        "0px"
+      );
+    }
   }, [isVisible]);
 
   const handleDismiss = () => {
-    setIsVisible(false);
-    sessionStorage.setItem("diagnova_goal_bar_dismissed", "true");
-    document.documentElement.style.setProperty("--announcement-bar-height", "0px");
+    setIsDismissed(true);
+    document.documentElement.style.setProperty(
+      "--announcement-bar-height",
+      "0px"
+    );
   };
 
   const handleGoalClick = (targetId: string, href?: string) => {
@@ -136,18 +137,24 @@ export function AnnouncementBar({ language = "EN" }: AnnouncementBarProps) {
           },
         ];
 
-  if (!isVisible) return null;
-
   return (
     <aside
       ref={barRef}
       aria-label="Interactive Goal Navigator"
       className={cn(
-        "relative w-full bg-[#2764B8] text-white transition-all duration-300 ease-in-out z-50 overflow-hidden",
-        "border-b border-[#1E5299]/60 shadow-sm select-none"
+        "relative w-full bg-[#2764B8] text-white select-none z-50 overflow-hidden",
+        "transition-all duration-300 ease-in-out",
+        isVisible
+          ? "max-h-24 opacity-100 translate-y-0 border-b border-[#1E5299]/60 shadow-sm"
+          : "max-h-0 opacity-0 -translate-y-full pointer-events-none border-b-0 py-0"
       )}
     >
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+      <div
+        className={cn(
+          "mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 transition-all duration-300",
+          !isVisible && "py-0"
+        )}
+      >
         <div className="flex flex-col lg:flex-row items-center justify-between gap-2 lg:gap-4 relative pr-8 lg:pr-10">
           {/* Prompt Headline */}
           <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto shrink-0">
@@ -158,7 +165,7 @@ export function AnnouncementBar({ language = "EN" }: AnnouncementBarProps) {
             </p>
           </div>
 
-          {/* Interactive Goal Pills (Tailored to Diagnova's Core Solutions) */}
+          {/* Interactive Goal Pills */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
             {goals.map((goal) => (
               <button
@@ -176,7 +183,7 @@ export function AnnouncementBar({ language = "EN" }: AnnouncementBarProps) {
             ))}
           </div>
 
-          {/* Close / Dismiss Button (Circular pill with X icon matching reference image) */}
+          {/* Close / Dismiss Button */}
           <button
             type="button"
             onClick={handleDismiss}

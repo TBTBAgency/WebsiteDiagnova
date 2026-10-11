@@ -360,7 +360,7 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex flex-col">
-      <AnnouncementBar language={language} />
+      <AnnouncementBar language={language} isScrolled={isScrolled} />
       <div
         className={cn(
           "w-full bg-white transition-all duration-300 py-4 sm:py-5 lg:py-5",
