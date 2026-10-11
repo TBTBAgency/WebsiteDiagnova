@@ -34,7 +34,7 @@ const infraItems = [
 export function InfrastructureSection() {
   return (
     <section className="relative overflow-hidden bg-white py-20 lg:py-28">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
           {/* Left Column: Headline & Value Proposition */}
           <div className="lg:col-span-5 space-y-6 sticky top-28">
@@ -92,7 +92,7 @@ export function InfrastructureSection() {
                   </div>
 
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span className="inline-flex items-center rounded-full bg-diagnova-light/50 px-2.5 py-0.5 text-xs font-semibold text-diagnova-blue">
+                    <span className="inline-flex items-center rounded-full bg-diagnova-light/50 px-4 py-1.5 text-xs sm:text-sm font-medium text-diagnova-blue">
                       {item.badge}
                     </span>
                     <Link

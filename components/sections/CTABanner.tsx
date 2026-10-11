@@ -19,20 +19,20 @@ export function CTABanner() {
   };
 
   return (
-    <section className="relative w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Gradient fade background: white at the top seamlessly blending to #3880DB at the bottom */}
+    <section className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 overflow-hidden">
+      {/* Gradient fade background: #F9F9F9 at the top seamlessly blending to #3880DB at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to bottom, #FFFFFF 0%, #FFFFFF 20%, rgba(255, 255, 255, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)",
+            "linear-gradient(to bottom, #F9F9F9 0%, #F9F9F9 20%, rgba(249, 249, 249, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)",
         }}
       />
 
       {/* Background biru footer di bagian bawah dibuat tipis pas di area lengkungan sudut bawah saja */}
       <div className="absolute inset-x-0 bottom-0 h-8 sm:h-10 lg:h-12 bg-[#2568BA] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-7xl">
+      <div className="relative z-10 mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
         {/* Main Rounded CTA Container (Ukuran Asli max-w-7xl, tanpa inline stroke) */}
         <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-r from-[#EBF3FB] via-[#E4EFF9] to-[#D5E6F7] shadow-[0_10px_40px_-15px_rgba(40,90,165,0.07)]">
           {/* Subtle white gradient fade at top edge */}
@@ -41,7 +41,7 @@ export function CTABanner() {
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center min-h-[400px] lg:min-h-[440px]">
             {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
             <div className="lg:col-span-7 p-8 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-bold text-[#275EA8] tracking-tight leading-[1.15] mb-4 sm:mb-5">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-[#275EA8] tracking-tight leading-[1.2] sm:leading-[1.25] mb-4 sm:mb-5">
                 Transform Your Laboratory <br className="hidden sm:inline" />
                 with Diagnova
               </h2>
@@ -59,13 +59,13 @@ export function CTABanner() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email addres"
+                  placeholder="Enter your email address"
                   className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder-slate-400 outline-none pr-3"
                   required
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark text-white font-medium px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-all shadow-md shadow-diagnova-blue/20 hover:shadow-lg hover:shadow-diagnova-blue/30 cursor-pointer active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2E68B4] hover:bg-[#235899] text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-colors shadow-sm cursor-pointer active:scale-[0.98]"
                 >
                   <span>Request Demo</span>
                   <ArrowUpRight className="h-4 w-4" />

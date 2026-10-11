@@ -53,10 +53,10 @@ export function AboutSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-white pt-3 sm:pt-4 pb-20 sm:pb-24 lg:pb-32 overflow-hidden border-b border-slate-100"
+      className="relative w-full bg-white py-12 sm:py-16 lg:py-20 overflow-hidden"
     >
-      <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
+      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
           {/* Left Column: DNA 3D Visual */}
           <div className="flex justify-center lg:justify-start lg:col-span-5">
             <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[440px] aspect-[4/5] flex items-center justify-center">
@@ -74,14 +74,14 @@ export function AboutSection() {
           {/* Right Column: About Narrative with Gradual Continuous Scroll Reveal */}
           <div className="flex flex-col justify-center lg:col-span-7">
             {/* Pill Badge */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-5">
               <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
                 About
               </span>
             </div>
 
             {/* Continuous Smooth Scroll-Driven Text Reveal Headline */}
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold tracking-tight leading-[1.4] sm:leading-[1.45] mb-8 flex flex-wrap gap-x-[0.28em] gap-y-[0.1em]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold tracking-tight leading-[1.3] sm:leading-[1.35] mb-6 sm:mb-8 flex flex-wrap gap-x-[0.28em] gap-y-[0.1em]">
               {headlineWords.map((word, index) => {
                 const totalWords = headlineWords.length;
                 const step = 1 / totalWords;
@@ -114,7 +114,7 @@ export function AboutSection() {
             </h2>
 
             {/* Subtitle / Paragraph Description */}
-            <p className="text-sm sm:text-base text-slate-500 font-normal leading-[1.8] sm:leading-[1.85] max-w-2xl">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-500 font-normal leading-relaxed max-w-2xl">
               More Than A Traditional LIS, Diagnova Is An Intelligent Ecosystem
               Connecting People, Instruments, And Workflows. We Help Modern
               Laboratories Move Beyond Managing Data To Delivering Clear,
