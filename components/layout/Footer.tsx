@@ -22,14 +22,14 @@ export function Footer() {
             <div>
               <Link
                 href="/"
-                className="inline-block transition-opacity hover:opacity-90"
+                className="inline-block transition-opacity hover:opacity-90 -translate-x-1.5 sm:-translate-x-2 lg:-translate-x-2.5"
               >
                 <Image
                   src="/images/logo-diagnova.svg"
                   alt="Diagnova Logo"
-                  width={320}
-                  height={90}
-                  className="h-12 sm:h-14 md:h-15 lg:h-16 w-auto brightness-0 invert object-contain"
+                  width={215}
+                  height={60}
+                  className="h-9 sm:h-10 md:h-11 w-auto brightness-0 invert object-contain"
                   priority
                 />
               </Link>
