@@ -22,6 +22,7 @@ import {
   HeartPulse,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AnnouncementBar } from "./AnnouncementBar";
 
 interface NavItem {
   label: string;
@@ -358,15 +359,17 @@ export function Navbar() {
   }, [pathname]);
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 bg-white py-6",
-        isScrolled
-          ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.05)]"
-          : "shadow-none"
-      )}
-    >
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-10">
+    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex flex-col">
+      <AnnouncementBar />
+      <div
+        className={cn(
+          "w-full bg-white transition-all duration-300 py-4 sm:py-5 lg:py-5",
+          isScrolled
+            ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.06)]"
+            : "shadow-none"
+        )}
+      >
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
           <Link
@@ -472,6 +475,7 @@ export function Navbar() {
             )}
           </button>
         </div>
+      </div>
       </div>
 
       {/* Mobile Drawer Menu */}

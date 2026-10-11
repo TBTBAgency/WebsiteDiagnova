@@ -82,7 +82,10 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full h-[100dvh] min-h-[580px] pt-[92px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col"
+      className="relative w-full h-[100dvh] min-h-[580px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
+      style={{
+        paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
+      }}
       aria-label="Diagnova Hero Highlights"
     >
       <style>{`
