@@ -14,11 +14,11 @@ export function Footer() {
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
-      <div className="relative z-10 mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-10">
         {/* Main Footer Flex Layout (Aligned precisely with Navbar left and right bounds) */}
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
-          <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-96 xl:w-[420px]">
+          <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-88 xl:w-[380px]">
             <div>
               <Link
                 href="/"
@@ -29,15 +29,15 @@ export function Footer() {
                   alt="Diagnova Logo"
                   width={320}
                   height={90}
-                  className="h-13 sm:h-15 md:h-16 lg:h-[68px] w-auto brightness-0 invert object-contain"
+                  className="h-12 sm:h-14 md:h-15 lg:h-16 w-auto brightness-0 invert object-contain"
                   priority
                 />
               </Link>
             </div>
 
-            <div className="space-y-1.5 text-xs sm:text-sm text-white/90 font-normal leading-relaxed translate-x-[15px] sm:translate-x-[18px] lg:translate-x-[22px]">
+            <div className="space-y-1.5 text-xs sm:text-sm text-white/85 font-normal leading-relaxed">
               <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
-              <p className="flex items-center gap-1.5 text-white/80">
+              <p className="flex items-center gap-1.5 text-white/75">
                 <Link href="/terms" className="hover:text-white transition-colors">
                   Terms of Service
                 </Link>
@@ -50,13 +50,13 @@ export function Footer() {
           </div>
 
           {/* Col Right: 4 Platform Link Columns spanning full width to the right edge */}
-          <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 xl:gap-16 justify-between pt-2.5 sm:pt-3.5 lg:pt-5">
+          <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-14 xl:gap-20 justify-between pt-2.5 sm:pt-3.5 lg:pt-4">
             {[1, 2, 3, 4].map((colIdx) => (
               <div key={colIdx} className="space-y-4">
-                <h4 className="font-semibold text-white text-[17px] sm:text-[18.5px] tracking-normal">
+                <h4 className="font-semibold text-white text-base sm:text-[17px] tracking-normal">
                   Platform
                 </h4>
-                <ul className="space-y-3 text-[14.5px] sm:text-[15.5px] text-white/90 font-normal">
+                <ul className="space-y-2.5 text-sm sm:text-[15px] text-white/85 font-normal">
                   {footerLinks.map((link, idx) => (
                     <li key={idx}>
                       <Link
