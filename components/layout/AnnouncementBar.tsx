@@ -97,8 +97,8 @@ export function AnnouncementBar() {
       ref={barRef}
       aria-label="Interactive Goal Navigator"
       className={cn(
-        "relative w-full bg-[#0066FF] text-white transition-all duration-300 ease-in-out z-50 overflow-hidden",
-        "border-b border-blue-400/25 shadow-sm select-none"
+        "relative w-full bg-[#2764B8] text-white transition-all duration-300 ease-in-out z-50 overflow-hidden",
+        "border-b border-[#1E5299]/60 shadow-sm select-none"
       )}
     >
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5">
@@ -119,7 +119,7 @@ export function AnnouncementBar() {
                 onClick={goal.onClick}
                 className={cn(
                   "inline-flex items-center justify-center px-3 sm:px-3.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider",
-                  "bg-white/20 hover:bg-white text-white hover:text-[#0066FF] border border-white/25",
+                  "bg-white/20 hover:bg-white text-white hover:text-[#2764B8] border border-white/30",
                   "transition-all duration-200 ease-out cursor-pointer active:scale-95 shadow-sm hover:shadow"
                 )}
               >
