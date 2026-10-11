@@ -1,19 +1,26 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface GoalItem {
   id: string;
   label: string;
+  targetId: string;
   href?: string;
-  onClick?: () => void;
 }
 
-export function AnnouncementBar() {
+interface AnnouncementBarProps {
+  language?: "ID" | "EN";
+}
+
+export function AnnouncementBar({ language = "EN" }: AnnouncementBarProps) {
   const [isVisible, setIsVisible] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     // Check if user previously closed it in this session
@@ -55,40 +62,79 @@ export function AnnouncementBar() {
     document.documentElement.style.setProperty("--announcement-bar-height", "0px");
   };
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+  const handleGoalClick = (targetId: string, href?: string) => {
+    if (pathname === "/") {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+    if (href) {
+      router.push(href);
+    } else {
+      router.push(`/#${targetId}`);
     }
   };
 
-  const goals: GoalItem[] = [
-    {
-      id: "demo",
-      label: "Request a Demo",
-      onClick: () => scrollToSection("cta-banner"),
-    },
-    {
-      id: "solutions",
-      label: "Review Software Solutions",
-      onClick: () => scrollToSection("workflow"),
-    },
-    {
-      id: "testimonials",
-      label: "Watch Testimonials",
-      onClick: () => scrollToSection("trusted-by"),
-    },
-    {
-      id: "whitepapers",
-      label: "White Papers",
-      onClick: () => scrollToSection("infrastructure"),
-    },
-    {
-      id: "learn-more",
-      label: "Learn More",
-      onClick: () => scrollToSection("about"),
-    },
-  ];
+  const goals: GoalItem[] =
+    language === "ID"
+      ? [
+          {
+            id: "demo",
+            label: "Request Demo",
+            targetId: "cta-banner",
+            href: "/request-demo",
+          },
+          {
+            id: "workflow",
+            label: "Lihat Workflow Lab",
+            targetId: "workflow",
+          },
+          {
+            id: "analyzers",
+            label: "Koneksi 500+ Alat",
+            targetId: "infrastructure",
+          },
+          {
+            id: "satusehat",
+            label: "Integrasi SATUSEHAT",
+            targetId: "infrastructure",
+          },
+          {
+            id: "comparison",
+            label: "Kenapa Diagnova",
+            targetId: "comparison",
+          },
+        ]
+      : [
+          {
+            id: "demo",
+            label: "Request a Demo",
+            targetId: "cta-banner",
+            href: "/request-demo",
+          },
+          {
+            id: "workflow",
+            label: "Explore Lab Workflow",
+            targetId: "workflow",
+          },
+          {
+            id: "analyzers",
+            label: "500+ Analyzers",
+            targetId: "infrastructure",
+          },
+          {
+            id: "satusehat",
+            label: "SATUSEHAT Bridging",
+            targetId: "infrastructure",
+          },
+          {
+            id: "comparison",
+            label: "Why Choose Diagnova",
+            targetId: "comparison",
+          },
+        ];
 
   if (!isVisible) return null;
 
@@ -106,17 +152,19 @@ export function AnnouncementBar() {
           {/* Prompt Headline */}
           <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto shrink-0">
             <p className="text-xs sm:text-[13px] font-normal text-white/95 text-center lg:text-left tracking-normal leading-tight">
-              Select a goal and we&apos;ll help you to get started. I want to...
+              {language === "ID"
+                ? "Pilih kebutuhan laboratorium Anda untuk memulai. Saya ingin..."
+                : "Select your laboratory goal to get started. I want to..."}
             </p>
           </div>
 
-          {/* Interactive Goal Pills (Compact, Sleek, Not Overly Tall) */}
+          {/* Interactive Goal Pills (Tailored to Diagnova's Core Solutions) */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
             {goals.map((goal) => (
               <button
                 key={goal.id}
                 type="button"
-                onClick={goal.onClick}
+                onClick={() => handleGoalClick(goal.targetId, goal.href)}
                 className={cn(
                   "inline-flex items-center justify-center px-3 sm:px-3.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider",
                   "bg-white/20 hover:bg-white text-white hover:text-[#2764B8] border border-white/30",
@@ -128,7 +176,7 @@ export function AnnouncementBar() {
             ))}
           </div>
 
-          {/* Close / Dismiss Button (Right circular pill with X icon matching reference image) */}
+          {/* Close / Dismiss Button (Circular pill with X icon matching reference image) */}
           <button
             type="button"
             onClick={handleDismiss}

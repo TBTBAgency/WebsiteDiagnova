@@ -111,6 +111,7 @@ export function ComparisonSection() {
   return (
     <section
       ref={sectionRef}
+      id="comparison"
       className="relative w-full overflow-hidden bg-white pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 xl:pb-28 flex flex-col justify-center"
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">

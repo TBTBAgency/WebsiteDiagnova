@@ -19,7 +19,10 @@ export function CTABanner() {
   };
 
   return (
-    <section className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 overflow-hidden">
+    <section
+      id="cta-banner"
+      className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 overflow-hidden"
+    >
       {/* Gradient fade background: #F9F9F9 at the top seamlessly blending to #3880DB at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"

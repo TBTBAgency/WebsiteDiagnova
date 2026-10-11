@@ -53,6 +53,7 @@ export function AboutSection() {
   return (
     <section
       ref={containerRef}
+      id="about"
       className="relative w-full bg-white py-12 sm:py-16 lg:py-20 overflow-hidden"
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
