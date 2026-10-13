@@ -47,7 +47,11 @@ export const metadata: Metadata = {
     siteName: "Diagnova",
   },
   icons: {
-    icon: "/icon.svg",
+    icon: [
+      { url: "/images/logo-tab.webp?v=7", type: "image/webp" },
+    ],
+    shortcut: "/images/logo-tab.webp?v=7",
+    apple: "/images/logo-tab.webp?v=7",
   },
 };
 
