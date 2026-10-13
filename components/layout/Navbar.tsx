@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -344,7 +344,17 @@ export function Navbar() {
   const [language, setLanguage] = useState<"ID" | "EN">("EN");
   const [isDismissed, setIsDismissed] = useState(false);
   const [barHeight, setBarHeight] = useState(42);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  const updateProgress = (y: number) => {
+    if (!progressBarRef.current) return;
+    const totalHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
+    const progress =
+      totalHeight > 0 ? Math.min(1, Math.max(0, y / totalHeight)) : 0;
+    progressBarRef.current.style.transform = `scaleX(${progress})`;
+  };
 
   useEffect(() => {
     let ticking = false;
@@ -354,6 +364,7 @@ export function Navbar() {
           const y = window.scrollY;
           setScrollY(y);
           setIsScrolled(y > 15);
+          updateProgress(y);
           ticking = false;
         });
         ticking = true;
@@ -364,10 +375,11 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // Close mobile menu on route change & recalculate scroll progress
   useEffect(() => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    updateProgress(window.scrollY);
   }, [pathname]);
 
   const effectiveBarHeight = isDismissed ? 0 : barHeight;
@@ -410,7 +422,7 @@ export function Navbar() {
             : "shadow-none"
         )}
       >
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-10">
+        <div className="relative z-20 mx-auto flex max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
           <Link
@@ -451,7 +463,7 @@ export function Navbar() {
 
               {/* Mega Dropdown Menu */}
               {item.children && activeDropdown === item.label && (
-                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[420px]">
+                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[420px] z-50">
                   <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-2.5 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-1 duration-150">
                     <div className="grid grid-cols-1 gap-1">
                       {item.children.map((child) => (
@@ -557,6 +569,17 @@ export function Navbar() {
           </div>
         </div>
       )}
+
+      {/* ── Scroll Progress Bar at the bottom edge of Navbar ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3.5px] sm:h-[4px] w-full bg-white overflow-hidden pointer-events-none z-10">
+        <div
+          ref={progressBarRef}
+          className="h-full w-full origin-left bg-[#2764B8] will-change-transform"
+          style={{
+            transform: "scaleX(0)",
+          }}
+        />
+      </div>
     </header>
     </>
   );
