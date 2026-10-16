@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { SectionBadge } from "@/components/ui/SectionBadge";
 
 const headlineWords = [
   "At",
@@ -76,9 +77,7 @@ export function AboutSection() {
           <div className="flex flex-col justify-center lg:col-span-7">
             {/* Pill Badge */}
             <div className="mb-4 sm:mb-5">
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
-                About
-              </span>
+              <SectionBadge variant="light">About</SectionBadge>
             </div>
 
             {/* Continuous Smooth Scroll-Driven Text Reveal Headline */}

@@ -45,7 +45,7 @@ export function Footer() {
         { label: "Rekam Medis (RME)", href: "/integration/rme" },
         { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
         { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-        { label: "Request Live Demo", href: "/request-demo" },
+        { label: "Portal Admin LIS", href: "/admin/login" },
       ],
     },
   ];
@@ -53,7 +53,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-10">
-        {/* Main Footer Flex Layout (Aligned precisely with Navbar left and right bounds) */}
+        {/* Main Footer Flex Layout */}
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
           <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-88 xl:w-[380px]">
@@ -80,14 +80,14 @@ export function Footer() {
                   Terms of Service
                 </Link>
                 <span className="text-white/40">|</span>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href="/platform/reporting" className="hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </p>
             </div>
           </div>
 
-          {/* Col Right: 4 Nav Link Columns berjarak lega dan seimbang rapi */}
+          {/* Col Right: 4 Nav Link Columns */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-11 xl:gap-14 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
             {footerSections.map((section) => (
               <div key={section.title} className="space-y-3.5">
@@ -112,7 +112,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Giant Cropped Logo Watermark at Bottom with Smooth Top-to-Bottom Fade Gradient */}
+      {/* Giant Cropped Logo Watermark at Bottom */}
       <div className="relative w-full overflow-hidden select-none pointer-events-none -mt-4 sm:-mt-8 lg:-mt-12 flex justify-center">
         <div className="relative w-full h-36 sm:h-56 md:h-68 lg:h-84 xl:h-[365px] 2xl:h-[405px] flex items-start justify-center overflow-hidden">
           <div
@@ -133,7 +133,6 @@ export function Footer() {
             />
           </div>
 
-          {/* Ultra-soft gradient fade overlay in front of giant logo */}
           <div
             className="absolute bottom-0 left-0 right-0 h-[58%] pointer-events-none z-10"
             style={{
