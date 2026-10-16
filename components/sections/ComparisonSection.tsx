@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { SectionBadge } from "@/components/ui/SectionBadge";
 
 interface ComparisonPoint {
   number: string;
@@ -112,87 +111,90 @@ export function ComparisonSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-white pt-1 sm:pt-2 lg:pt-3 pb-10 sm:pb-12 lg:pb-14 border-b border-slate-100 flex flex-col justify-center"
+      id="comparison"
+      className="relative w-full overflow-hidden bg-white pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 xl:pb-28 flex flex-col justify-center"
     >
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 w-full">
+      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* Section Header */}
         <div
-          className={`mb-6 sm:mb-8 transition-all duration-700 ease-out ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
+          className={`mb-8 sm:mb-10 lg:mb-12 transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
         >
-          <div className="mb-2.5">
-            <SectionBadge variant="light">Comparison</SectionBadge>
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl lg:text-[36px] font-bold leading-[1.2] tracking-tight text-[#0E234B]">
-            Why Choose{" "}
-            <span className="bg-gradient-to-r from-[#345DAB] to-[#56ADE2] bg-clip-text text-transparent">
-              Diagnova
+          <div className="mb-4 sm:mb-5">
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
+              Comparison
             </span>
-            ?
+          </div>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#345DAB]">
+            Why Choose Diagnova?
           </h2>
-          <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-slate-500">
+          <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
             Perbandingan komprehensif antara keterbatasan Laboratory Information System (LIS) konvensional dengan keunggulan ekosistem cerdas Diagnova.
           </p>
         </div>
 
         {/* 2-Column Comparison Layout with Center VS Emblem */}
         <div className="relative">
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6 items-stretch">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 items-stretch">
             {/* Left Card: 6 Kekurangan LIS di Indonesia (Neutral / Conventional) */}
             <div
-              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-[#F5F7FA] border border-slate-200/90 p-5 sm:p-6 lg:p-7 shadow-sm transition-all duration-700 ease-out ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-              }`}
+              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                }`}
               style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
             >
-              <div>
-                {/* Badge */}
-                <div className="mb-4 sm:mb-5">
-                  <SectionBadge variant="blue">
-                    6 Kekurangan LIS di Indonesia
-                  </SectionBadge>
-                </div>
+              <div
+                className="relative flex flex-col justify-between h-full rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-[#F5F7FA] border border-slate-200/90 p-6 sm:p-7 lg:p-8 overflow-hidden"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                }}
+              >
+                <div>
+                  {/* Badge */}
+                  <div className="mb-4 sm:mb-5">
+                    <span className="inline-flex items-center rounded-full bg-[#EBF3FB] border border-[#D5E5F7] px-4 py-1.5 text-xs sm:text-sm font-medium text-[#2A5EAA]">
+                      6 Kekurangan LIS di Indonesia
+                    </span>
+                  </div>
 
-                {/* Staggered Text Reveal List */}
-                <div className="flex flex-col">
-                  {conventionalDrawbacks.map((item, index) => (
-                    <div
-                      key={item.number}
-                      className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${
-                        index !== conventionalDrawbacks.length - 1
-                          ? "border-b border-slate-200/90 pb-3 sm:pb-3.5 mb-3 sm:mb-3.5"
-                          : "pb-0 mb-0"
-                      } ${
-                        isVisible
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 translate-y-3"
-                      }`}
-                      style={{
-                        transitionDelay: isVisible
-                          ? `${200 + index * 120}ms`
-                          : "0ms",
-                      }}
-                    >
-                      <span className="text-slate-400 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
-                        {item.number}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-slate-900 text-sm sm:text-[15px] leading-snug tracking-tight mb-0.5">
-                          {item.title}
-                        </h3>
-                        <p className="text-[11px] sm:text-xs text-slate-500 leading-snug sm:leading-relaxed">
-                          {item.description}
-                        </p>
+                  {/* Staggered Text Reveal List */}
+                  <div className="flex flex-col">
+                    {conventionalDrawbacks.map((item, index) => (
+                      <div
+                        key={item.number}
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== conventionalDrawbacks.length - 1
+                            ? "border-b border-slate-200/90 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
+                            : "pb-0 mb-0"
+                          } ${isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-3"
+                          }`}
+                        style={{
+                          transitionDelay: isVisible
+                            ? `${200 + index * 120}ms`
+                            : "0ms",
+                        }}
+                      >
+                        <span className="text-slate-400 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
+                          {item.number}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-slate-900 text-sm sm:text-base leading-snug tracking-tight mb-1">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Center VS Badge (Mobile) */}
-            <div className="flex lg:hidden items-center justify-center -my-2.5 z-10 relative">
+            <div className="flex lg:hidden items-center justify-center -my-3 z-10 relative">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-md border-2 border-slate-100">
                 <span className="font-display text-[11px] font-black tracking-wider text-[#1A4B8C]">
                   VS
@@ -202,56 +204,61 @@ export function ComparisonSection() {
 
             {/* Right Card: 6 Keunggulan Diagnova (Vibrant Diagnova Blue) */}
             <div
-              className={`relative flex flex-col justify-between rounded-[24px] sm:rounded-[30px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-5 sm:p-6 lg:p-7 text-white shadow-xl shadow-[#2E68B4]/20 overflow-hidden transition-all duration-700 ease-out ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-              }`}
+              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_20px_32px_rgba(46,104,180,0.22)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                }`}
               style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
             >
-              {/* Subtle ambient light reflections */}
-              <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#56ADE2]/25 blur-[60px]" />
-              <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#1C478B]/40 blur-[60px]" />
+              <div
+                className="relative flex flex-col justify-between h-full rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px] bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] p-6 sm:p-7 lg:p-8 text-white overflow-hidden"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                }}
+              >
+                {/* Subtle ambient light reflections */}
+                <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#56ADE2]/25 blur-[60px]" />
+                <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#1C478B]/40 blur-[60px]" />
 
-              <div className="relative z-10">
-                {/* Badge */}
-                <div className="mb-4 sm:mb-5">
-                  <SectionBadge variant="dark">
-                    6 Keunggulan Diagnova
-                  </SectionBadge>
-                </div>
+                <div className="relative z-10">
+                  {/* Badge */}
+                  <div className="mb-4 sm:mb-5">
+                    <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm">
+                      6 Keunggulan Diagnova
+                    </span>
+                  </div>
 
-                {/* Staggered Text Reveal List */}
-                <div className="flex flex-col">
-                  {diagnovaAdvantages.map((item, index) => (
-                    <div
-                      key={item.number}
-                      className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${
-                        index !== diagnovaAdvantages.length - 1
-                          ? "border-b border-white/15 pb-3 sm:pb-3.5 mb-3 sm:mb-3.5"
-                          : "pb-0 mb-0"
-                      } ${
-                        isVisible
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 translate-y-3"
-                      }`}
-                      style={{
-                        transitionDelay: isVisible
-                          ? `${200 + index * 120}ms`
-                          : "0ms",
-                      }}
-                    >
-                      <span className="text-white/60 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
-                        {item.number}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-white text-sm sm:text-[15px] leading-snug tracking-tight mb-0.5">
-                          {item.title}
-                        </h3>
-                        <p className="text-[11px] sm:text-xs text-white/90 leading-snug sm:leading-relaxed">
-                          {item.description}
-                        </p>
+                  {/* Staggered Text Reveal List */}
+                  <div className="flex flex-col">
+                    {diagnovaAdvantages.map((item, index) => (
+                      <div
+                        key={item.number}
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== diagnovaAdvantages.length - 1
+                            ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
+                            : "pb-0 mb-0"
+                          } ${isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-3"
+                          }`}
+                        style={{
+                          transitionDelay: isVisible
+                            ? `${200 + index * 120}ms`
+                            : "0ms",
+                        }}
+                      >
+                        <span className="text-white/60 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
+                          {item.number}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -259,9 +266,8 @@ export function ComparisonSection() {
 
           {/* Center VS Badge (Desktop) */}
           <div
-            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center pointer-events-none transition-all duration-700 ease-out ${
-              isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
-            }`}
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center pointer-events-none transition-all duration-700 ease-out ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
+              }`}
             style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}
           >
             <div className="flex h-12 w-12 xl:h-14 xl:w-14 items-center justify-center rounded-full bg-white shadow-[0_10px_30px_rgba(14,35,75,0.18)] border-[3px] border-white p-1">

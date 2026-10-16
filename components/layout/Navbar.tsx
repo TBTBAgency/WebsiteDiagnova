@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -21,6 +21,7 @@ import {
   HeartPulse,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AnnouncementBar } from "./AnnouncementBar";
 
 interface NavItem {
   label: string;
@@ -336,36 +337,92 @@ function LanguageSwitcher({
 }
 
 export function Navbar() {
+  const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"ID" | "EN">("EN");
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [barHeight, setBarHeight] = useState(42);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
+  const updateProgress = (y: number) => {
+    if (!progressBarRef.current) return;
+    const totalHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
+    const progress =
+      totalHeight > 0 ? Math.min(1, Math.max(0, y / totalHeight)) : 0;
+    progressBarRef.current.style.transform = `scaleX(${progress})`;
+  };
+
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const y = window.scrollY;
+          setScrollY(y);
+          setIsScrolled(y > 15);
+          updateProgress(y);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // Close mobile menu on route change & recalculate scroll progress
   useEffect(() => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    updateProgress(window.scrollY);
   }, [pathname]);
 
+  const effectiveBarHeight = isDismissed ? 0 : barHeight;
+  const navTop = Math.max(0, effectiveBarHeight - scrollY);
+
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 bg-white py-6",
-        isScrolled
-          ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.05)]"
-          : "shadow-none"
-      )}
-    >
-      <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 sm:px-8 lg:px-12">
+    <>
+      {/* ── Fixed Announcement Bar: Stays at top:0 (z-30). Navbar slides over it when scrolling ── */}
+      <div
+        className={cn(
+          "fixed top-0 left-0 right-0 z-30 transition-opacity duration-300",
+          isDismissed ? "opacity-0 pointer-events-none" : "opacity-100"
+        )}
+      >
+        <AnnouncementBar
+          language={language}
+          onHeightChange={(h) => setBarHeight(h)}
+          onDismiss={() => {
+            setIsDismissed(true);
+            document.documentElement.style.setProperty(
+              "--announcement-bar-height",
+              "0px"
+            );
+          }}
+        />
+      </div>
+
+      {/* ── Main Navbar: z-40 with solid bg-white. Slides up and overlaps AnnouncementBar ── */}
+      <header
+        style={{
+          top: `${navTop}px`,
+          transition: isDismissed
+            ? "top 0.3s ease-out, box-shadow 0.3s"
+            : "box-shadow 0.3s",
+        }}
+        className={cn(
+          "fixed left-0 right-0 z-40 bg-white transition-shadow duration-300 py-4 sm:py-5 lg:py-5",
+          isScrolled
+            ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.06)]"
+            : "shadow-none"
+        )}
+      >
+        <div className="relative z-20 mx-auto flex max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
           <Link
@@ -375,10 +432,10 @@ export function Navbar() {
             <Image
               src="/images/logo-diagnova.svg"
               alt="Diagnova"
-              width={215}
-              height={60}
+              width={240}
+              height={66}
               priority
-              className="h-9 sm:h-10 md:h-11 w-auto object-contain"
+              className="h-10 sm:h-11 md:h-12 lg:h-[46px] xl:h-12 w-auto object-contain"
             />
           </Link>
         </div>
@@ -395,7 +452,7 @@ export function Navbar() {
               <Link
                 href={item.href}
                 className={cn(
-                  "py-2 text-[15px] font-normal tracking-normal transition-colors duration-150",
+                  "py-2 text-[15.5px] xl:text-base font-normal tracking-normal transition-colors duration-150",
                   pathname.startsWith(item.href)
                     ? "text-diagnova-blue font-medium"
                     : "text-slate-800 hover:text-diagnova-blue"
@@ -406,7 +463,7 @@ export function Navbar() {
 
               {/* Mega Dropdown Menu */}
               {item.children && activeDropdown === item.label && (
-                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[420px]">
+                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[420px] z-50">
                   <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-2.5 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-1 duration-150">
                     <div className="grid grid-cols-1 gap-1">
                       {item.children.map((child) => (
@@ -437,17 +494,14 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right Section: Language Switcher & Request Demo Button */}
+        {/* Right Section: Request Demo Button */}
         <div className="hidden items-center justify-end gap-5 lg:flex flex-1">
-          {/* Animated Smooth Language Switcher */}
-          <LanguageSwitcher language={language} setLanguage={setLanguage} />
-
           {/* Primary CTA: Request Demo */}
           <Link
             href="/request-demo"
-            className="inline-flex items-center justify-center rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-5 py-2 text-sm font-medium text-white shadow-md shadow-diagnova-blue/20 hover:shadow-lg hover:shadow-diagnova-blue/30 transition-all duration-200 active:scale-[0.98]"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-6 py-2.5 xl:px-7 xl:py-3 text-[15px] xl:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
           >
-            Request Demo
+            <span>Request Demo</span>
           </Link>
         </div>
 
@@ -455,9 +509,9 @@ export function Navbar() {
         <div className="flex items-center gap-2 lg:hidden">
           <Link
             href="/request-demo"
-            className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue px-3.5 py-1.5 text-xs font-medium text-white shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm"
           >
-            Demo
+            <span>Demo</span>
           </Link>
           <button
             type="button"
@@ -503,19 +557,30 @@ export function Navbar() {
               </div>
             ))}
 
-            <div className="flex items-center justify-between pt-2">
-              <LanguageSwitcher language={language} setLanguage={setLanguage} />
-
+            <div className="flex items-center justify-end pt-2">
               <Link
                 href="/request-demo"
-                className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-4 py-2 text-xs font-medium text-white shadow-md shadow-diagnova-blue/20"
+                className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-[#2764B8] hover:bg-[#1E5299] py-3 text-center text-sm font-semibold text-white shadow-sm"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Request Demo
+                <span>Request Demo</span>
               </Link>
             </div>
           </div>
         </div>
       )}
+
+      {/* ── Scroll Progress Bar at the bottom edge of Navbar ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3.5px] sm:h-[4px] w-full bg-white overflow-hidden pointer-events-none z-10">
+        <div
+          ref={progressBarRef}
+          className="h-full w-full origin-left bg-[#2764B8] will-change-transform"
+          style={{
+            transform: "scaleX(0)",
+          }}
+        />
+      </div>
     </header>
+    </>
   );
 }

@@ -1,12 +1,34 @@
-import React from "react";
+"use client";
+
+import React, { useRef } from "react";
 import Image from "next/image";
 
 // Repeat trust logos to create an infinite, seamless scrolling marquee loop
 const logos = Array.from({ length: 8 });
 
 export function TrustedByBar() {
+  const marqueeRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseEnter = () => {
+    if (marqueeRef.current && typeof marqueeRef.current.getAnimations === "function") {
+      const anims = marqueeRef.current.getAnimations();
+      anims.forEach((anim) => {
+        anim.playbackRate = 0.25; // Bergerak pelan (25% kecepatan) saat kena kursor
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (marqueeRef.current && typeof marqueeRef.current.getAnimations === "function") {
+      const anims = marqueeRef.current.getAnimations();
+      anims.forEach((anim) => {
+        anim.playbackRate = 1; // Kembali ke kecepatan normal saat kursor keluar
+      });
+    }
+  };
+
   return (
-    <section className="relative w-full bg-white py-8 sm:py-10 lg:py-12 overflow-hidden">
+    <section className="relative w-full bg-white py-10 sm:py-12 lg:py-14 overflow-hidden">
       <style>{`
         @keyframes marqueeTrust {
           0% {
@@ -21,20 +43,21 @@ export function TrustedByBar() {
           width: max-content;
           animation: marqueeTrust 28s linear infinite;
         }
-        .animate-marquee-trust:hover {
-          animation-play-state: paused;
-        }
       `}</style>
 
       {/* Centered Heading Label */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6 sm:mb-7">
-        <p className="text-xs sm:text-[13px] font-bold tracking-wider uppercase text-slate-500">
+      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 text-center mb-6 sm:mb-8">
+        <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
           DIPERCAYA OLEH
         </p>
       </div>
 
       {/* Marquee Container with Left & Right Soft Fade Masks (Contained Max Width) */}
-      <div className="relative mx-auto max-w-5xl sm:max-w-6xl px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div
+        className="relative mx-auto max-w-5xl sm:max-w-6xl px-4 sm:px-6 lg:px-8 overflow-hidden"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Left Fade Gradient Mask */}
         <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 sm:w-28 md:w-36 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
 
@@ -42,7 +65,10 @@ export function TrustedByBar() {
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 sm:w-28 md:w-36 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
 
         {/* Scrolling Track with duplicated items for infinite seamless scroll */}
-        <div className="animate-marquee-trust flex items-center gap-10 sm:gap-14 md:gap-18">
+        <div
+          ref={marqueeRef}
+          className="animate-marquee-trust flex items-center gap-10 sm:gap-14 md:gap-18"
+        >
           {[...logos, ...logos].map((_, index) => (
             <div
               key={index}

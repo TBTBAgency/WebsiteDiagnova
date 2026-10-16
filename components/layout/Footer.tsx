@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export function Footer() {
-  const footerColumns = [
+  const footerSections = [
     {
       title: "Platform",
       links: [
@@ -11,69 +11,72 @@ export function Footer() {
         { label: "Workflow", href: "/platform/workflow" },
         { label: "100% Automation", href: "/platform/automation" },
         { label: "Reporting & Audit", href: "/platform/reporting" },
-        { label: "Analytics & Intelligence", href: "/platform/analytics" },
+        { label: "Lab Analytics", href: "/platform/analytics" },
+        { label: "Nova AI Copilot", href: "/nova-ai" },
       ],
     },
     {
       title: "Solutions",
       links: [
+        { label: "Overview", href: "/solutions" },
         { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
         { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
-        { label: "Anatomical Pathology", href: "/solutions/pathology" },
-        { label: "Microbiology & PPRA", href: "/solutions/microbiology" },
-        { label: "Blood Bank & Transfusion", href: "/solutions/blood-bank" },
+        { label: "Health Screening Center", href: "/solutions/health-screening" },
+        { label: "Multi-branch Laboratory", href: "/solutions/multi-branch" },
+        { label: "How Nova AI Works", href: "/nova-ai/how-it-works" },
       ],
     },
     {
       title: "Modules",
       links: [
+        { label: "Overview", href: "/modules" },
         { label: "Routine & Hematology", href: "/modules/routine-hematology" },
-        { label: "Blood Bank", href: "/modules/blood-bank" },
+        { label: "Clinical Chemistry", href: "/modules/clinical-chemistry" },
+        { label: "Blood Bank Management", href: "/modules/blood-bank" },
         { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
-        { label: "Pathology", href: "/modules/pathology" },
-        { label: "Microbiology", href: "/modules/microbiology" },
+        { label: "Anatomical Pathology", href: "/modules/pathology" },
       ],
     },
     {
-      title: "Company",
+      title: "Integration",
       links: [
-        { label: "About Diagnova", href: "/platform" },
-        { label: "Nova AI", href: "/nova-ai" },
-        { label: "Integrations", href: "/integration" },
-        { label: "AI + Doctor Ethics", href: "/nova-ai/ai-doctor" },
-        { label: "Request Demo", href: "/request-demo" },
-        { label: "Portal Admin", href: "/admin/login" },
+        { label: "Overview", href: "/integration" },
+        { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
+        { label: "Rekam Medis (RME)", href: "/integration/rme" },
+        { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
+        { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
+        { label: "Portal Admin LIS", href: "/admin/login" },
       ],
     },
   ];
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
-      <div className="relative z-10 mx-auto max-w-screen-2xl px-6 sm:px-8 lg:px-12">
-        {/* Main Footer Flex Layout (Aligned precisely with Navbar left and right bounds) */}
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-10">
+        {/* Main Footer Flex Layout */}
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
-          <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-96 xl:w-[420px]">
-            <div>
+          <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-88 xl:w-[380px]">
+            <div className="flex items-center">
               <Link
                 href="/"
-                className="inline-block transition-opacity hover:opacity-90"
+                className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-0.5 sm:-translate-x-1 lg:-translate-x-1.5"
               >
                 <Image
                   src="/images/logo-diagnova.svg"
-                  alt="Diagnova Logo"
-                  width={320}
-                  height={90}
-                  className="h-13 sm:h-15 md:h-16 lg:h-[68px] w-auto brightness-0 invert object-contain"
+                  alt="Diagnova"
+                  width={270}
+                  height={75}
+                  className="h-11 sm:h-12 md:h-13 lg:h-[52px] xl:h-[54px] w-auto brightness-0 invert object-contain"
                   priority
                 />
               </Link>
             </div>
 
-            <div className="space-y-1.5 text-xs sm:text-sm text-white/90 font-normal leading-relaxed translate-x-[15px] sm:translate-x-[18px] lg:translate-x-[22px]">
+            <div className="space-y-1 text-[11px] sm:text-xs text-white/80 font-normal leading-relaxed translate-x-1.5 sm:translate-x-2 lg:translate-x-2.5">
               <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
-              <p className="flex items-center gap-1.5 text-white/80">
-                <Link href="/platform/reporting" className="hover:text-white transition-colors">
+              <p className="flex items-center gap-1.5 text-white/70">
+                <Link href="/terms" className="hover:text-white transition-colors">
                   Terms of Service
                 </Link>
                 <span className="text-white/40">|</span>
@@ -84,19 +87,19 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col Right: 4 Navigation Columns spanning full width to the right edge */}
-          <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 xl:gap-16 justify-between pt-2.5 sm:pt-3.5 lg:pt-5">
-            {footerColumns.map((col, colIdx) => (
-              <div key={colIdx} className="space-y-4">
-                <h4 className="font-semibold text-white text-[17px] sm:text-[18.5px] tracking-normal">
-                  {col.title}
+          {/* Col Right: 4 Nav Link Columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-11 xl:gap-14 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
+            {footerSections.map((section) => (
+              <div key={section.title} className="space-y-3.5">
+                <h4 className="font-semibold text-white text-[15px] sm:text-base tracking-normal">
+                  {section.title}
                 </h4>
-                <ul className="space-y-3 text-[14.5px] sm:text-[15.5px] text-white/90 font-normal">
-                  {col.links.map((link, idx) => (
+                <ul className="space-y-2.5 text-[13.5px] sm:text-sm text-white/80 font-normal">
+                  {section.links.map((link, idx) => (
                     <li key={idx}>
                       <Link
                         href={link.href}
-                        className="hover:text-white transition-colors inline-block text-white/85 hover:text-white"
+                        className="hover:text-white transition-colors inline-block hover:translate-x-0.5 duration-150"
                       >
                         {link.label}
                       </Link>
@@ -109,7 +112,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Giant Cropped Logo Watermark at Bottom with Smooth Top-to-Bottom Fade Gradient */}
+      {/* Giant Cropped Logo Watermark at Bottom */}
       <div className="relative w-full overflow-hidden select-none pointer-events-none -mt-4 sm:-mt-8 lg:-mt-12 flex justify-center">
         <div className="relative w-full h-36 sm:h-56 md:h-68 lg:h-84 xl:h-[365px] 2xl:h-[405px] flex items-start justify-center overflow-hidden">
           <div
@@ -130,7 +133,6 @@ export function Footer() {
             />
           </div>
 
-          {/* Ultra-soft gradient fade overlay in front of giant logo */}
           <div
             className="absolute bottom-0 left-0 right-0 h-[58%] pointer-events-none z-10"
             style={{
