@@ -12,8 +12,8 @@
   --diagnova-black: #000000;
   --diagnova-gradient: linear-gradient(135deg, #345DAB 0%, #56ADE2 100%);
   
-  /* Fallback display font stack (Mokoto placeholder fallback to Sora / geometric sans) */
-  --font-display: var(--font-sora), "Space Grotesk", sans-serif;
+  /* Display font stack (Mokoto with Sora & Space Grotesk fallback) */
+  --font-display: "Mokoto", var(--font-sora), "Space Grotesk", sans-serif;
 }
 
 @layer base {
@@ -38,9 +38,25 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Smooth Scrolling */
-html {
-  scroll-behavior: smooth;
+/* Lenis Smooth Scrolling Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 /* 3D DNA Floating & Ambient Keyframe Animations (Polished Subtle Organic Motion) */

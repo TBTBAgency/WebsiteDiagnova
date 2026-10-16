@@ -1,45 +1,123 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 
+const headlineWords = [
+  "At",
+  "Diagnova,",
+  "We",
+  "Transform",
+  "Diagnostic",
+  "Data",
+  "Into",
+  "Clinical",
+  "Intelligence,",
+  "Empowering",
+  "Laboratories",
+  "To",
+  "Make",
+  "Precise",
+  "Medical",
+  "Decisions.",
+];
+
 export function AboutSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Substantially extended scroll track for a slower, calmer reveal experience
+      const start = windowHeight * 0.95;
+      const end = -windowHeight * 0.05; // Finishes smoothly as section crosses upper viewport
+
+      const current = rect.top;
+      const rawProgress = (start - current) / (start - end);
+      const clampedProgress = Math.min(Math.max(rawProgress, 0), 1);
+
+      setScrollProgress(clampedProgress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <section className="relative bg-white py-20 lg:py-28 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-          {/* Left Column: DNA Helix Visual from Figma */}
-          <div className="flex justify-center lg:col-span-5">
-            <div className="relative w-full max-w-[360px] aspect-[4/5] sm:aspect-[3/4] flex items-center justify-center">
+    <section
+      ref={containerRef}
+      className="relative w-full bg-white pt-3 sm:pt-4 pb-6 sm:pb-8 lg:pb-10 overflow-hidden"
+    >
+      <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
+          {/* Left Column: DNA 3D Visual */}
+          <div className="flex justify-center lg:justify-start lg:col-span-5">
+            <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[440px] aspect-[4/5] flex items-center justify-center">
               <Image
-                src="/images/dna-about.jpg"
-                alt="Diagnova DNA Helix Molecular Intelligence"
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 100vw, 400px"
+                src="/images/dna-about.webp"
+                alt="Diagnova DNA Intelligence Structure"
+                width={500}
+                height={600}
+                priority
+                className="w-full h-auto object-contain drop-shadow-sm select-none"
               />
             </div>
           </div>
 
-          {/* Right Column: Narrative Content */}
-          <div className="lg:col-span-7 space-y-5 text-left">
-            <div>
+          {/* Right Column: About Narrative with Gradual Continuous Scroll Reveal */}
+          <div className="flex flex-col justify-center lg:col-span-7">
+            {/* Pill Badge */}
+            <div className="mb-4 sm:mb-5">
               <SectionBadge variant="light">About</SectionBadge>
             </div>
 
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#112E65] tracking-tight leading-[1.2]">
-              At Diagnova, We Transform Diagnostic
-              <br className="hidden sm:inline" /> Data Into Clinical Intelligence,
+            {/* Continuous Smooth Scroll-Driven Text Reveal Headline */}
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold tracking-tight leading-[1.4] sm:leading-[1.45] mb-8 flex flex-wrap gap-x-[0.28em] gap-y-[0.1em]">
+              {headlineWords.map((word, index) => {
+                const totalWords = headlineWords.length;
+                const step = 1 / totalWords;
+                const wordStart = index * step * 0.9;
+                const windowSize = step * 2.8; // Extended soft overlapping window for a much slower, gradual fade
+
+                const raw = (scrollProgress - wordStart) / windowSize;
+                const p = Math.min(Math.max(raw, 0), 1);
+
+                // Smooth RGB interpolation from Slate-300 (203, 213, 225) to Diagnova Blue (52, 93, 171)
+                const r = Math.round(203 + (52 - 203) * p);
+                const g = Math.round(213 + (93 - 213) * p);
+                const b = Math.round(225 + (171 - 225) * p);
+                const opacity = (0.35 + 0.65 * p).toFixed(2);
+
+                return (
+                  <span
+                    key={index}
+                    style={{
+                      color: `rgb(${r}, ${g}, ${b})`,
+                      opacity: Number(opacity),
+                      transition: "color 0.2s ease-out, opacity 0.2s ease-out",
+                    }}
+                    className="inline-block"
+                  >
+                    {word}
+                  </span>
+                );
+              })}
             </h2>
 
-            <p className="font-display text-xl sm:text-2xl font-bold text-[#345DAB] leading-snug">
-              Empowering Laboratories To Make
-              <br className="hidden sm:inline" /> Precise Medical Decisions.
-            </p>
-
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl pt-2">
-              Kami hadir untuk menghubungkan analis laboratorium, dokter spesialis patologi klinis,
-              dan instrumen analyzer dalam satu ekosistem terpadu. Diagnova mengubah data mentah laboratorium
-              menjadi kecepatan diagnostik, presisi klinis, dan wawasan medis yang siap ditindaklanjuti.
+            {/* Subtitle / Paragraph Description */}
+            <p className="text-sm sm:text-base text-slate-500 font-normal leading-[1.8] sm:leading-[1.85] max-w-2xl">
+              More Than A Traditional LIS, Diagnova Is An Intelligent Ecosystem
+              Connecting People, Instruments, And Workflows. We Help Modern
+              Laboratories Move Beyond Managing Data To Delivering Clear,
+              Actionable Insights.
             </p>
           </div>
         </div>

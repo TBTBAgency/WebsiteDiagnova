@@ -4,8 +4,6 @@ import { Hero } from "@/components/sections/Hero";
 import { TrustedByBar } from "@/components/sections/TrustedByBar";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
-import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
-import { InfrastructureSection } from "@/components/sections/InfrastructureSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 
 export const metadata: Metadata = {
@@ -26,16 +24,10 @@ export default function HomePage() {
       {/* 3. About Diagnova Section */}
       <AboutSection />
 
-      {/* 4. Comparison Section (Conventional LIS vs Diagnova) */}
+      {/* 4. Comparison Section */}
       <ComparisonSection />
 
-      {/* 5. How It Works Section ("Perjalanan Setetes Darah") */}
-      <HowItWorksSection />
-
-      {/* 6. Infrastructure & Tech Section */}
-      <InfrastructureSection />
-
-      {/* 7. Bottom CTA Banner */}
+      {/* 5. Bottom CTA Banner */}
       <CTABanner />
     </>
   );

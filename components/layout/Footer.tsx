@@ -1,170 +1,143 @@
 import React from "react";
 import Link from "next/link";
-import { BrandLogo } from "@/components/ui/BrandLogo";
+import Image from "next/image";
 
 export function Footer() {
+  const footerColumns = [
+    {
+      title: "Platform",
+      links: [
+        { label: "Overview", href: "/platform" },
+        { label: "Workflow", href: "/platform/workflow" },
+        { label: "100% Automation", href: "/platform/automation" },
+        { label: "Reporting & Audit", href: "/platform/reporting" },
+        { label: "Analytics & Intelligence", href: "/platform/analytics" },
+      ],
+    },
+    {
+      title: "Solutions",
+      links: [
+        { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
+        { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
+        { label: "Anatomical Pathology", href: "/solutions/pathology" },
+        { label: "Microbiology & PPRA", href: "/solutions/microbiology" },
+        { label: "Blood Bank & Transfusion", href: "/solutions/blood-bank" },
+      ],
+    },
+    {
+      title: "Modules",
+      links: [
+        { label: "Routine & Hematology", href: "/modules/routine-hematology" },
+        { label: "Blood Bank", href: "/modules/blood-bank" },
+        { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
+        { label: "Pathology", href: "/modules/pathology" },
+        { label: "Microbiology", href: "/modules/microbiology" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { label: "About Diagnova", href: "/platform" },
+        { label: "Nova AI", href: "/nova-ai" },
+        { label: "Integrations", href: "/integration" },
+        { label: "AI + Doctor Ethics", href: "/nova-ai/ai-doctor" },
+        { label: "Request Demo", href: "/request-demo" },
+        { label: "Portal Admin", href: "/admin/login" },
+      ],
+    },
+  ];
+
   return (
-    <footer className="relative bg-gradient-to-b from-[#2B60AC] to-[#1E4989] text-white pt-14 pb-10 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Top Section: Logo & 4 Navigation Columns */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-white/20">
-          {/* Brand Col */}
-          <div className="col-span-2 md:col-span-1 space-y-3">
-            <BrandLogo variant="light" />
-            <p className="text-xs text-slate-200/80 leading-relaxed max-w-xs">
-              AI-Powered Laboratory Intelligence Platform.
-            </p>
-          </div>
+    <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
+      <div className="relative z-10 mx-auto max-w-screen-2xl px-6 sm:px-8 lg:px-12">
+        {/* Main Footer Flex Layout (Aligned precisely with Navbar left and right bounds) */}
+        <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
+          {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
+          <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-96 xl:w-[420px]">
+            <div>
+              <Link
+                href="/"
+                className="inline-block transition-opacity hover:opacity-90"
+              >
+                <Image
+                  src="/images/logo-diagnova.svg"
+                  alt="Diagnova Logo"
+                  width={320}
+                  height={90}
+                  className="h-13 sm:h-15 md:h-16 lg:h-[68px] w-auto brightness-0 invert object-contain"
+                  priority
+                />
+              </Link>
+            </div>
 
-          {/* Nav Col 1: Platform */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">
-              Platform
-            </h4>
-            <ul className="space-y-2 text-xs text-slate-200">
-              <li>
-                <Link href="/platform" className="hover:text-white transition-colors">
-                  Overview
-                </Link>
-              </li>
-              <li>
-                <Link href="/platform/workflow" className="hover:text-white transition-colors">
-                  Workflow
-                </Link>
-              </li>
-              <li>
-                <Link href="/platform/automation" className="hover:text-white transition-colors">
-                  100% Automation
-                </Link>
-              </li>
-              <li>
-                <Link href="/nova-ai" className="hover:text-white transition-colors">
-                  Nova AI
-                </Link>
-              </li>
-              <li>
-                <Link href="/integration" className="hover:text-white transition-colors">
-                  Integrations
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Nav Col 2: Solutions */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">
-              Solutions
-            </h4>
-            <ul className="space-y-2 text-xs text-slate-200">
-              <li>
-                <Link href="/solutions/hospital-laboratory" className="hover:text-white transition-colors">
-                  Hospital Lab
-                </Link>
-              </li>
-              <li>
-                <Link href="/solutions/clinical-laboratory" className="hover:text-white transition-colors">
-                  Clinical Lab
-                </Link>
-              </li>
-              <li>
-                <Link href="/solutions/pathology" className="hover:text-white transition-colors">
-                  Pathology
-                </Link>
-              </li>
-              <li>
-                <Link href="/solutions/microbiology" className="hover:text-white transition-colors">
-                  Microbiology
-                </Link>
-              </li>
-              <li>
-                <Link href="/solutions/blood-bank" className="hover:text-white transition-colors">
-                  Blood Bank
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Nav Col 3: Modules */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">
-              Modules
-            </h4>
-            <ul className="space-y-2 text-xs text-slate-200">
-              <li>
-                <Link href="/modules/routine-hematology" className="hover:text-white transition-colors">
-                  Routine &amp; Hematology
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/blood-bank" className="hover:text-white transition-colors">
-                  Blood Bank
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/inventory-reagent" className="hover:text-white transition-colors">
-                  Inventory &amp; Reagent
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/pathology" className="hover:text-white transition-colors">
-                  Anatomical Pathology
-                </Link>
-              </li>
-              <li>
-                <Link href="/modules/microbiology" className="hover:text-white transition-colors">
-                  Microbiology
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Nav Col 4: Company */}
-          <div className="space-y-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-white">
-              Company
-            </h4>
-            <ul className="space-y-2 text-xs text-slate-200">
-              <li>
-                <Link href="/platform" className="hover:text-white transition-colors">
-                  About Diagnova
-                </Link>
-              </li>
-              <li>
-                <Link href="/integration" className="hover:text-white transition-colors">
-                  Connectivity
-                </Link>
-              </li>
-              <li>
-                <Link href="/request-demo" className="hover:text-white transition-colors">
-                  Request Demo
-                </Link>
-              </li>
-              <li>
+            <div className="space-y-1.5 text-xs sm:text-sm text-white/90 font-normal leading-relaxed translate-x-[15px] sm:translate-x-[18px] lg:translate-x-[22px]">
+              <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
+              <p className="flex items-center gap-1.5 text-white/80">
                 <Link href="/platform/reporting" className="hover:text-white transition-colors">
-                  Compliance &amp; Audit
+                  Terms of Service
                 </Link>
-              </li>
-              <li>
-                <Link href="/nova-ai/ai-doctor" className="hover:text-white transition-colors">
-                  AI + Doctor Ethics
+                <span className="text-white/40">|</span>
+                <Link href="/platform/reporting" className="hover:text-white transition-colors">
+                  Privacy Policy
                 </Link>
-              </li>
-            </ul>
+              </p>
+            </div>
+          </div>
+
+          {/* Col Right: 4 Navigation Columns spanning full width to the right edge */}
+          <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 xl:gap-16 justify-between pt-2.5 sm:pt-3.5 lg:pt-5">
+            {footerColumns.map((col, colIdx) => (
+              <div key={colIdx} className="space-y-4">
+                <h4 className="font-semibold text-white text-[17px] sm:text-[18.5px] tracking-normal">
+                  {col.title}
+                </h4>
+                <ul className="space-y-3 text-[14.5px] sm:text-[15.5px] text-white/90 font-normal">
+                  {col.links.map((link, idx) => (
+                    <li key={idx}>
+                      <Link
+                        href={link.href}
+                        className="hover:text-white transition-colors inline-block text-white/85 hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar: Copyright & Legal */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs text-slate-200/80">
-          <p>&copy; {new Date().getFullYear()} Diagnova. All rights reserved.</p>
-
-          <div className="flex items-center gap-6">
-            <Link href="/platform/reporting" className="hover:text-white transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/platform/reporting" className="hover:text-white transition-colors">
-              Privacy Policy
-            </Link>
+      {/* Giant Cropped Logo Watermark at Bottom with Smooth Top-to-Bottom Fade Gradient */}
+      <div className="relative w-full overflow-hidden select-none pointer-events-none -mt-4 sm:-mt-8 lg:-mt-12 flex justify-center">
+        <div className="relative w-full h-36 sm:h-56 md:h-68 lg:h-84 xl:h-[365px] 2xl:h-[405px] flex items-start justify-center overflow-hidden">
+          <div
+            className="relative w-full min-w-[1100px] lg:min-w-[1380px] xl:min-w-[1600px] 2xl:min-w-[1850px] aspect-[1430/400] -translate-y-6 sm:-translate-y-5 lg:-translate-y-3 xl:-translate-y-2 scale-[1.06] sm:scale-[1.10] lg:scale-[1.15] xl:scale-[1.20] origin-top"
+            style={{
+              maskImage:
+                "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.06) 90%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.06) 90%, transparent 100%)",
+            }}
+          >
+            <Image
+              src="/images/logo-diagnova.svg"
+              alt="Diagnova Brand Watermark"
+              fill
+              className="object-contain object-top brightness-0 invert opacity-90"
+              priority
+            />
           </div>
+
+          {/* Ultra-soft gradient fade overlay in front of giant logo */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-[58%] pointer-events-none z-10"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(86, 173, 226, 0.92) 0%, rgba(86, 173, 226, 0.68) 25%, rgba(86, 173, 226, 0.38) 52%, rgba(86, 173, 226, 0.12) 78%, transparent 100%)",
+            }}
+          />
         </div>
       </div>
     </footer>

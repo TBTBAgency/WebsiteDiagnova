@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  ChevronDown,
   Menu,
   X,
   Activity,
@@ -21,8 +21,6 @@ import {
   HeartPulse,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { BrandLogo } from "@/components/ui/BrandLogo";
 
 interface NavItem {
   label: string;
@@ -218,16 +216,135 @@ const navItems: NavItem[] = [
   },
 ];
 
+// Circular Indonesia Flag SVG Component
+function IndonesiaFlag({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn("shrink-0 rounded-full", className)}
+      aria-hidden="true"
+    >
+      <defs>
+        <clipPath id="circle-flag-id-clip">
+          <circle cx="12" cy="12" r="11" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#circle-flag-id-clip)">
+        <rect width="24" height="12" fill="#E11D48" />
+        <rect y="12" width="24" height="12" fill="#FFFFFF" />
+      </g>
+      <circle
+        cx="12"
+        cy="12"
+        r="11"
+        fill="none"
+        stroke="#E2E8F0"
+        strokeWidth="1.2"
+      />
+    </svg>
+  );
+}
+
+// Circular UK Flag SVG Component
+function UKFlag({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn("shrink-0 rounded-full", className)}
+      aria-hidden="true"
+    >
+      <defs>
+        <clipPath id="circle-flag-gb-clip">
+          <circle cx="12" cy="12" r="11" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#circle-flag-gb-clip)">
+        {/* Navy Blue background */}
+        <rect width="24" height="24" fill="#012169" />
+        {/* White diagonals */}
+        <path d="M0 0 L24 24 M24 0 L0 24" stroke="#FFFFFF" strokeWidth="4.5" />
+        {/* Red diagonals */}
+        <path d="M0 0 L24 24 M24 0 L0 24" stroke="#C8102E" strokeWidth="2.2" />
+        {/* White cross */}
+        <path d="M12 0 v24 M0 12 h24" stroke="#FFFFFF" strokeWidth="6.5" />
+        {/* Red cross */}
+        <path d="M12 0 v24 M0 12 h24" stroke="#C8102E" strokeWidth="4" />
+      </g>
+      <circle
+        cx="12"
+        cy="12"
+        r="11"
+        fill="none"
+        stroke="#CBD5E1"
+        strokeWidth="1.2"
+      />
+    </svg>
+  );
+}
+
+// Animated Language Switcher Component with smooth sliding outline pill
+function LanguageSwitcher({
+  language,
+  setLanguage,
+}: {
+  language: "ID" | "EN";
+  setLanguage: (_lang: "ID" | "EN") => void;
+}) {
+  return (
+    <div className="relative inline-flex items-center rounded-full p-0.5 select-none">
+      {/* Smooth Sliding Pill Indicator with Border Outline */}
+      <div
+        className={cn(
+          "absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-full border border-slate-300 bg-white shadow-sm transition-transform duration-300 ease-in-out pointer-events-none",
+          language === "ID" ? "left-0.5 translate-x-0" : "left-0.5 translate-x-full"
+        )}
+      />
+
+      {/* ID Option */}
+      <button
+        type="button"
+        onClick={() => setLanguage("ID")}
+        className={cn(
+          "relative z-10 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors duration-300 cursor-pointer min-w-[60px]",
+          language === "ID"
+            ? "font-semibold text-slate-900"
+            : "font-normal text-slate-600 hover:text-slate-900"
+        )}
+        title="Bahasa Indonesia"
+      >
+        <span>ID</span>
+        <IndonesiaFlag className="h-4 w-4" />
+      </button>
+
+      {/* EN Option */}
+      <button
+        type="button"
+        onClick={() => setLanguage("EN")}
+        className={cn(
+          "relative z-10 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors duration-300 cursor-pointer min-w-[60px]",
+          language === "EN"
+            ? "font-semibold text-slate-900"
+            : "font-normal text-slate-600 hover:text-slate-900"
+        )}
+        title="English"
+      >
+        <span>EN</span>
+        <UKFlag className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<"ID" | "EN">("ID");
+  const [language, setLanguage] = useState<"ID" | "EN">("EN");
   const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -242,154 +359,110 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md transition-all duration-200 border-b",
+        "fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 bg-white py-6",
         isScrolled
-          ? "border-slate-200/80 shadow-sm py-3"
-          : "border-slate-100 py-3.5"
+          ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.05)]"
+          : "shadow-none"
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo Lockup */}
-        <BrandLogo variant="dark" />
+      <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 sm:px-8 lg:px-12">
+        {/* Left: Brand Logo */}
+        <div className="flex items-center flex-1 justify-start">
+          <Link
+            href="/"
+            className="flex items-center transition-opacity hover:opacity-90 shrink-0"
+          >
+            <Image
+              src="/images/logo-diagnova.svg"
+              alt="Diagnova"
+              width={215}
+              height={60}
+              priority
+              className="h-9 sm:h-10 md:h-11 w-auto object-contain"
+            />
+          </Link>
+        </div>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
-            return (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => setActiveDropdown(item.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
+        {/* Center: Desktop Navigation Links */}
+        <nav className="hidden items-center justify-center gap-9 xl:gap-12 lg:flex shrink-0">
+          {navItems.map((item) => (
+            <div
+              key={item.label}
+              className="relative"
+              onMouseEnter={() => setActiveDropdown(item.label)}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <Link
+                href={item.href}
+                className={cn(
+                  "py-2 text-[15px] font-normal tracking-normal transition-colors duration-150",
+                  pathname.startsWith(item.href)
+                    ? "text-diagnova-blue font-medium"
+                    : "text-slate-800 hover:text-diagnova-blue"
+                )}
               >
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors duration-150",
-                    isActive
-                      ? "text-diagnova-blue font-semibold bg-diagnova-ice/60"
-                      : "text-slate-600 hover:text-diagnova-navy hover:bg-slate-100/70"
-                  )}
-                >
-                  <span>{item.label}</span>
-                  {item.children && (
-                    <ChevronDown
-                      className={cn(
-                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-400",
-                        activeDropdown === item.label && "rotate-180 text-diagnova-blue"
-                      )}
-                    />
-                  )}
-                </Link>
+                {item.label}
+              </Link>
 
-                {/* Mega Dropdown Menu */}
-                {item.children && activeDropdown === item.label && (
-                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 w-[420px]">
-                    <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white p-2.5 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
-                      <div className="grid grid-cols-1 gap-1">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className="group/item flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-diagnova-ice/50"
-                          >
-                            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 group-hover/item:bg-diagnova-light/60">
-                              {child.icon}
+              {/* Mega Dropdown Menu */}
+              {item.children && activeDropdown === item.label && (
+                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[420px]">
+                  <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-2.5 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="grid grid-cols-1 gap-1">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="group/item flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-slate-50"
+                        >
+                          <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 group-hover/item:bg-diagnova-blue/10">
+                            {child.icon}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 group-hover/item:text-diagnova-blue">
+                              <span>{child.title}</span>
+                              <ArrowRight className="h-3 w-3 opacity-0 transition-all -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 text-diagnova-blue" />
                             </div>
-                            <div>
-                              <div className="flex items-center gap-1.5 text-xs font-semibold text-diagnova-navy group-hover/item:text-diagnova-blue">
-                                <span>{child.title}</span>
-                                <ArrowRight className="h-3 w-3 opacity-0 transition-all -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 text-diagnova-blue" />
-                              </div>
-                              <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
-                                {child.description}
-                              </p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
+                            <p className="text-[11px] text-slate-500 leading-snug truncate">
+                              {child.description}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
+                </div>
+              )}
+            </div>
+          ))}
         </nav>
 
         {/* Right Section: Language Switcher & Request Demo Button */}
-        <div className="hidden items-center gap-3 lg:flex">
-          {/* Language Selector UI matching Figma */}
-          <div className="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50 px-2.5 py-1 text-xs text-slate-600">
-            <button
-              type="button"
-              onClick={() => setLanguage("ID")}
-              className={cn(
-                "flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold transition-colors",
-                language === "ID"
-                  ? "bg-white text-diagnova-navy shadow-xs"
-                  : "text-slate-400 hover:text-slate-600"
-              )}
-              title="Bahasa Indonesia"
-            >
-              {/* Flag ID SVG */}
-              <svg className="h-3 w-4 rounded-xs overflow-hidden" viewBox="0 0 640 480">
-                <g fillRule="evenodd" strokeWidth="1pt">
-                  <path fill="#e70011" d="M0 0h640v240H0z"/>
-                  <path fill="#fff" d="M0 240h640v240H0z"/>
-                </g>
-              </svg>
-              <span>ID</span>
-            </button>
-            <span className="text-slate-300">|</span>
-            <button
-              type="button"
-              onClick={() => setLanguage("EN")}
-              className={cn(
-                "flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold transition-colors",
-                language === "EN"
-                  ? "bg-white text-diagnova-navy shadow-xs"
-                  : "text-slate-400 hover:text-slate-600"
-              )}
-              title="English"
-            >
-              {/* Flag EN/UK SVG */}
-              <svg className="h-3 w-4 rounded-xs overflow-hidden" viewBox="0 0 640 480">
-                <path fill="#012169" d="M0 0h640v480H0z"/>
-                <path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-179L0 64V0h75z"/>
-                <path fill="#C8102E" d="m424 288 216 159v33h-44L380 321l44-33zM640 0v10L446 156l-43-32L601 0h39zM0 480v-10l194-145 43 32L39 480H0zM0 0l217 161-44 33L0 33V0z"/>
-                <path fill="#FFF" d="M240 0v480h160V0H240zM0 160v160h640V160H0z"/>
-                <path fill="#C8102E" d="M267 0v480h106V0H267zM0 187v106h640V187H0z"/>
-              </svg>
-              <span>EN</span>
-            </button>
-          </div>
+        <div className="hidden items-center justify-end gap-5 lg:flex flex-1">
+          {/* Animated Smooth Language Switcher */}
+          <LanguageSwitcher language={language} setLanguage={setLanguage} />
 
-          {/* Primary CTA matching Figma blue button */}
-          <Button
+          {/* Primary CTA: Request Demo */}
+          <Link
             href="/request-demo"
-            variant="primary"
-            size="sm"
-            className="font-semibold px-4 py-2 rounded-full shadow-xs"
+            className="inline-flex items-center justify-center rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-5 py-2 text-sm font-medium text-white shadow-md shadow-diagnova-blue/20 hover:shadow-lg hover:shadow-diagnova-blue/30 transition-all duration-200 active:scale-[0.98]"
           >
             Request Demo
-          </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 lg:hidden">
-          <Button
+          <Link
             href="/request-demo"
-            variant="primary"
-            size="sm"
-            className="text-xs px-3 py-1.5 rounded-full"
+            className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue px-3.5 py-1.5 text-xs font-medium text-white shadow-sm"
           >
             Demo
-          </Button>
+          </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
             aria-label="Buka Navigasi"
           >
             {mobileMenuOpen ? (
@@ -403,18 +476,18 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-5 shadow-xl animate-in fade-in duration-150">
-          <div className="space-y-3">
+        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-5 shadow-lg">
+          <div className="space-y-4">
             {navItems.map((item) => (
-              <div key={item.label} className="border-b border-slate-100 pb-2.5">
+              <div key={item.label} className="border-b border-slate-100 pb-3">
                 <Link
                   href={item.href}
-                  className="block text-sm font-bold text-diagnova-navy mb-1.5 hover:text-diagnova-blue"
+                  className="block text-sm font-semibold text-slate-900 mb-2 hover:text-diagnova-blue"
                 >
                   {item.label}
                 </Link>
                 {item.children && (
-                  <div className="grid grid-cols-1 gap-1 pl-2">
+                  <div className="grid grid-cols-1 gap-1.5 pl-2.5">
                     {item.children.map((child) => (
                       <Link
                         key={child.href}
@@ -431,20 +504,14 @@ export function Navbar() {
             ))}
 
             <div className="flex items-center justify-between pt-2">
-              <div className="flex items-center gap-2 text-xs text-slate-600">
-                <span>Bahasa:</span>
-                <button
-                  type="button"
-                  onClick={() => setLanguage(language === "ID" ? "EN" : "ID")}
-                  className="font-bold text-diagnova-blue underline"
-                >
-                  {language === "ID" ? "Indonesia (ID)" : "English (EN)"}
-                </button>
-              </div>
+              <LanguageSwitcher language={language} setLanguage={setLanguage} />
 
-              <Button href="/request-demo" variant="primary" size="sm" className="rounded-full">
+              <Link
+                href="/request-demo"
+                className="rounded-full bg-gradient-to-t from-diagnova-blue to-nova-blue hover:from-diagnova-dark hover:to-nova-dark px-4 py-2 text-xs font-medium text-white shadow-md shadow-diagnova-blue/20"
+              >
                 Request Demo
-              </Button>
+              </Link>
             </div>
           </div>
         </div>

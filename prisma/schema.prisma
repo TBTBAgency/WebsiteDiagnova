@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String     @db.VarChar(100)
+  email        String     @unique @db.VarChar(255)
+  passwordHash String     @map("password_hash") @db.VarChar(255)
+  role         UserRole   @default(SALES_ADMIN)
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  auditLogs    AuditLog[]
+  leadNotes    LeadNote[]
+
+  @@map("users")
+}
+
+model Lead {
+  id              String          @id @default(cuid())
+  name            String          @db.VarChar(100)
+  institution     String          @db.VarChar(150)
+  jobTitle        String          @db.VarChar(100)
+  email           String          @db.VarChar(255)
+  phone           String          @db.VarChar(30)
+  institutionType InstitutionType @default(HOSPITAL) @map("institution_type")
+  notes           String?
+  status          LeadStatus      @default(NEW)
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  notesHistory    LeadNote[]
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  leadId    String   @map("lead_id")
+  authorId  String?  @map("author_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  author    User?    @relation(fields: [authorId], references: [id])
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([authorId])
+  @@map("lead_notes")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  action    String   @db.VarChar(100)
+  entity    String   @db.VarChar(100)
+  recordId  String?  @map("record_id") @db.VarChar(100)
+  oldValue  Json?    @map("old_value")
+  newValue  Json?    @map("new_value")
+  ipAddress String?  @map("ip_address") @db.VarChar(50)
+  userAgent String?  @map("user_agent") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity, recordId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Patient {
+  id         String     @id @default(cuid())
+  mrn        String     @unique @db.VarChar(50)
+  nationalId String?    @unique @map("national_id") @db.VarChar(30)
+  name       String     @db.VarChar(120)
+  birthDate  DateTime   @map("birth_date")
+  sex        gender
+  phone      String?    @db.VarChar(30)
+  address    String?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  orders     LabOrder[]
+
+  @@index([mrn])
+  @@index([name])
+  @@map("patients")
+}
+
+model Physician {
+  id             String     @id @default(cuid())
+  externalCode   String     @unique @map("external_code") @db.VarChar(50)
+  name           String     @db.VarChar(120)
+  specialization String     @db.VarChar(100)
+  department     String     @db.VarChar(100)
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  orders         LabOrder[]
+
+  @@map("physicians")
+}
+
+model TestCatalog {
+  id           String         @id @default(cuid())
+  code         String         @unique @db.VarChar(50)
+  name         String         @db.VarChar(150)
+  category     String         @db.VarChar(100)
+  specimenType SpecimenType   @default(WHOLE_BLOOD) @map("specimen_type")
+  tubeColor    TubeColor      @default(LAVENDER_EDTA) @map("tube_color")
+  unit         String?        @db.VarChar(30)
+  tatMinutes   Int            @default(60) @map("tat_minutes")
+  isActive     Boolean        @default(true) @map("is_active")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  orderItems   LabOrderItem[]
+
+  @@index([category])
+  @@map("test_catalogs")
+}
+
+model LabOrder {
+  id             String         @id @default(cuid())
+  orderNumber    String         @unique @map("order_number") @db.VarChar(50)
+  patientId      String         @map("patient_id")
+  physicianId    String?        @map("physician_id")
+  sourceLocation String         @map("source_location") @db.VarChar(100)
+  priority       OrderPriority  @default(ROUTINE)
+  clinicalNotes  String?        @map("clinical_notes")
+  status         OrderStatus    @default(ORDERED)
+  orderedAt      DateTime       @default(now()) @map("ordered_at")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  items          LabOrderItem[]
+  patient        Patient        @relation(fields: [patientId], references: [id])
+  physician      Physician?     @relation(fields: [physicianId], references: [id])
+  specimens      Specimen[]
+
+  @@index([orderNumber])
+  @@index([patientId])
+  @@index([status])
+  @@index([priority])
+  @@index([orderedAt])
+  @@map("lab_orders")
+}
+
+model LabOrderItem {
+  id            String      @id @default(cuid())
+  orderId       String      @map("order_id")
+  testCatalogId String      @map("test_catalog_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  order         LabOrder    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  testCatalog   TestCatalog @relation(fields: [testCatalogId], references: [id])
+
+  @@index([orderId])
+  @@index([testCatalogId])
+  @@map("lab_order_items")
+}
+
+model Specimen {
+  id              String         @id @default(cuid())
+  barcodeNumber   String         @unique @map("barcode_number") @db.VarChar(50)
+  orderId         String         @map("order_id")
+  specimenType    SpecimenType   @map("specimen_type")
+  tubeColor       TubeColor      @map("tube_color")
+  volume          String?        @default("3.0 mL") @db.VarChar(30)
+  collectedAt     DateTime       @default(now()) @map("collected_at")
+  receivedAt      DateTime?      @map("received_at")
+  status          SpecimenStatus @default(COLLECTED)
+  rejectionReason String?        @map("rejection_reason")
+  rejectedBy      String?        @map("rejected_by") @db.VarChar(100)
+  rejectedAt      DateTime?      @map("rejected_at")
+  receivedBy      String?        @map("received_by") @db.VarChar(100)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  order           LabOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([barcodeNumber])
+  @@index([orderId])
+  @@index([status])
+  @@map("specimens")
+}
+
+enum LeadStatus {
+  NEW       @map("new")
+  CONTACTED @map("contacted")
+  SCHEDULED @map("scheduled")
+  COMPLETED @map("completed")
+
+  @@map("lead_status")
+}
+
+enum InstitutionType {
+  HOSPITAL            @map("hospital")
+  CLINICAL_LAB        @map("clinical-lab")
+  PATHOLOGY_CENTER    @map("pathology-center")
+  MICROBIOLOGY_CENTER @map("microbiology-center")
+  BLOOD_BANK          @map("blood-bank")
+  OTHER               @map("other")
+
+  @@map("institution_type")
+}
+
+enum UserRole {
+  SUPER_ADMIN @map("super_admin")
+  SALES_ADMIN @map("sales_admin")
+  LAB_STAFF   @map("lab_staff")
+  PATHOLOGIST @map("pathologist")
+
+  @@map("user_role")
+}
+
+enum UserStatus {
+  ACTIVE   @map("active")
+  INACTIVE @map("inactive")
+
+  @@map("user_status")
+}
+
+enum OrderPriority {
+  ROUTINE @map("routine")
+  CITO    @map("cito")
+  URGENT  @map("urgent")
+
+  @@map("order_priority")
+}
+
+enum OrderStatus {
+  ORDERED             @map("ordered")
+  SPECIMEN_RECEIVED   @map("specimen_received")
+  PROCESSING          @map("processing")
+  PARTIALLY_VALIDATED @map("partially_validated")
+  COMPLETED           @map("completed")
+  CANCELLED           @map("cancelled")
+
+  @@map("order_status")
+}
+
+enum SpecimenStatus {
+  COLLECTED       @map("collected")
+  RECEIVED_IN_LAB @map("received_in_lab")
+  PROCESSING      @map("processing")
+  ARCHIVED        @map("archived")
+  REJECTED        @map("rejected")
+
+  @@map("specimen_status")
+}
+
+enum SpecimenType {
+  WHOLE_BLOOD @map("whole_blood")
+  SERUM       @map("serum")
+  PLASMA      @map("plasma")
+  URINE       @map("urine")
+  CSF         @map("csf")
+  STOOL       @map("stool")
+  SWAB        @map("swab")
+  OTHER       @map("other")
+
+  @@map("specimen_type")
+}
+
+enum TubeColor {
+  LAVENDER_EDTA      @map("lavender_edta")
+  RED_PLAIN          @map("red_plain")
+  YELLOW_SST         @map("yellow_sst")
+  LIGHT_BLUE_CITRATE @map("light_blue_citrate")
+  GRAY_FLUORIDE      @map("gray_fluoride")
+  GREEN_HEPARIN      @map("green_heparin")
+  URINE_CONTAINER    @map("urine_container")
+  other
+
+  @@map("tube_color")
+}
+
+enum gender {
+  male
+  female
+}

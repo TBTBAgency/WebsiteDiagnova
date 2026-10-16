@@ -13,18 +13,17 @@ export function SectionBadge({
   className,
 }: SectionBadgeProps) {
   const variantStyles = {
-    light:
-      "bg-[#EAF3FA] text-[#1D3F82] border-blue-100",
-    dark: "bg-white/15 text-white border-white/25 backdrop-blur-md",
-    blue: "bg-[#345DAB]/10 text-[#345DAB] border-[#345DAB]/20",
-    white: "bg-white text-[#1D3F82] border-slate-200 shadow-xs",
-    gray: "bg-slate-100 text-slate-700 border-slate-200",
+    light: "bg-slate-100 text-slate-700 border border-slate-200/60 shadow-sm",
+    dark: "bg-white/20 text-white border border-white/30 backdrop-blur-md shadow-sm",
+    blue: "bg-[#EBF3FB] text-[#2A5EAA] border border-[#D5E5F7]",
+    white: "bg-white text-diagnova-navy border border-slate-100 shadow-sm",
+    gray: "bg-slate-100 text-slate-700 border border-slate-200",
   };
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-[11px] font-semibold tracking-wide uppercase transition-all duration-200 select-none",
+        "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium transition-all duration-200 select-none",
         variantStyles[variant],
         className
       )}

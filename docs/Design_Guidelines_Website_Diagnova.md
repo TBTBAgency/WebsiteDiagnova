@@ -172,15 +172,15 @@ Gunakan gradient ini untuk:
 
 | Peran | Font | Karakter |
 |---|---|---|
-| **Display / Heading** | **Mokoto** | Bold, geometris, sedikit futuristik — dipakai untuk headline besar (H1/H2) |
+| **Display / Heading** | **Mokoto** | Bold, geometris, modern/futuristik — dipakai untuk headline besar (H1/H2) |
 | **Body Text** | **Inter** | Clean, humanis, sangat mudah dibaca di berbagai ukuran layar — dipakai untuk paragraf, label, UI text |
 
-> ⚠️ **Catatan implementasi web:** Font "Mokoto" kemungkinan bukan font Google Fonts standar/webfont gratis. Perlu dikonfirmasi lisensi & ketersediaan file font (WOFF/WOFF2) dari tim brand. Jika tidak tersedia untuk web, siapkan fallback font display yang serupa (bold, geometric sans-serif) seperti **"Space Grotesk"**, **"Sora"**, atau **"Manrope Bold"**. Inter tersedia gratis di Google Fonts dan aman digunakan langsung.
+> ℹ️ **Catatan implementasi web:** Font Display utama menggunakan **"Mokoto"** dengan web fallback **"Sora"** & **"Space Grotesk"** (Google Fonts). Body text menggunakan **"Inter"** (Google Fonts).
 
 ```css
 :root {
-  --font-display: 'Mokoto', 'Sora', 'Space Grotesk', sans-serif; /* fallback jika Mokoto tidak tersedia untuk web */
-  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-display: 'Mokoto', var(--font-sora), 'Space Grotesk', sans-serif;
+  --font-body: var(--font-inter), 'Inter', -apple-system, sans-serif;
 }
 ```
 
@@ -309,7 +309,7 @@ Selaras dengan Brand Personality (*Intelligent by Nature, Human by Design*):
 ## 8. Checklist Konsistensi Brand untuk Developer
 
 - [ ] Gunakan hanya 2 warna primary (`#345DAB`, `#56ADE2`) + palet sekunder yang ditentukan — hindari menambah warna baru di luar sistem ini
-- [ ] Semua heading besar menggunakan font Display (Mokoto/fallback), body text menggunakan Inter
+- [ ] Semua heading besar menggunakan font Display (Mokoto), body text menggunakan Inter
 - [ ] Setiap section (kecuali hero/footer) memiliki eyebrow badge label sebelum heading
 - [ ] Foto profesional lab selalu diberi overlay gradient biru sesuai brand
 - [ ] Icon menggunakan gaya rounded/minimal/geometric — konsisten satu set icon library di seluruh situs
