@@ -172,15 +172,15 @@ Gunakan gradient ini untuk:
 
 | Peran | Font | Karakter |
 |---|---|---|
-| **Display / Heading** | **Mokoto** | Bold, geometris, modern/futuristik — dipakai untuk headline besar (H1/H2) |
+| **Display / Heading** | **Sora** | Bold, geometris, modern, presisi klinis — dipakai untuk headline besar (H1/H2/H3) |
 | **Body Text** | **Inter** | Clean, humanis, sangat mudah dibaca di berbagai ukuran layar — dipakai untuk paragraf, label, UI text |
 
-> ℹ️ **Catatan implementasi web:** Font Display utama menggunakan **"Mokoto"** dengan web fallback **"Sora"** & **"Space Grotesk"** (Google Fonts). Body text menggunakan **"Inter"** (Google Fonts).
+> ℹ️ **Catatan implementasi web:** Font Display utama menggunakan **"Sora"** dan Body text menggunakan **"Inter"** (keduanya via `next/font/google`).
 
 ```css
 :root {
-  --font-display: 'Mokoto', var(--font-sora), 'Space Grotesk', sans-serif;
-  --font-body: var(--font-inter), 'Inter', -apple-system, sans-serif;
+  --font-display: var(--font-sora), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
 }
 ```
 

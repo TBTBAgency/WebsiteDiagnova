@@ -170,18 +170,18 @@ export function InfrastructureSection() {
     >
       {/* ─── STICKY VIEWPORT: Pinned in viewport while user scrolls ─── */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full py-8 lg:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full pt-16 sm:pt-20 lg:py-12 pb-4 sm:pb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 lg:gap-14 items-center">
             {/* ═══ LEFT COLUMN: Badge & Headline ═══ */}
             <div className="lg:col-span-5 flex flex-col justify-center">
-              <div className="mb-4 sm:mb-5">
-                <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
+              <div className="mb-2.5 sm:mb-4 lg:mb-5">
+                <span className="inline-flex items-center rounded-full bg-slate-100 px-3.5 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-slate-700">
                   Infrastructure
                 </span>
               </div>
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[34px] xl:text-[38px] font-bold leading-[1.22] sm:leading-[1.25] tracking-tight text-[#2A5298]">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-[34px] xl:text-[38px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#2A5298]">
                 Intelligent Infrastructure for
-                <br />
+                <br className="hidden sm:inline" />{" "}
                 Seamless Operations
               </h2>
             </div>
@@ -246,7 +246,7 @@ export function InfrastructureSection() {
               {/* 3 Stacked Cards */}
               <div
                 ref={cardsContainerRef}
-                className="flex-1 flex flex-col gap-4 sm:gap-5 lg:gap-6"
+                className="flex-1 flex flex-col gap-3 sm:gap-4 lg:gap-6"
               >
                 {infrastructureCards.map((card, idx) => {
                   const isActive = activeIndex === idx;
@@ -265,10 +265,10 @@ export function InfrastructureSection() {
                       }`}
                     >
                       <div
-                        className="relative overflow-hidden rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px]"
+                        className="relative overflow-hidden rounded-tl-[24px] sm:rounded-tl-[36px] rounded-br-[24px] sm:rounded-br-[36px]"
                         style={{
                           clipPath:
-                            "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                            "polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 32px 100%, 0 calc(100% - 32px))",
                         }}
                       >
                         {/* Layer 1: Inactive Base Card Background */}
@@ -286,9 +286,9 @@ export function InfrastructureSection() {
                         </div>
 
                         {/* Layer 3: Unified Single Text Content Layer (Seamlessly transitions color without ghosting) */}
-                        <div className="relative z-10 p-6 sm:p-7 lg:p-8">
+                        <div className="relative z-10 p-4 sm:p-6 lg:p-8">
                           <h3
-                            className={`font-display text-lg sm:text-xl lg:text-[22px] font-bold tracking-tight mb-3.5 sm:mb-4 lg:mb-5 transition-colors duration-500 ease-in-out ${
+                            className={`font-display text-base sm:text-xl lg:text-[22px] font-bold tracking-tight mb-1.5 sm:mb-3 lg:mb-5 transition-colors duration-500 ease-in-out ${
                               isActive ? "text-white" : "text-slate-900"
                             }`}
                           >

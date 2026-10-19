@@ -387,10 +387,13 @@ export function Navbar() {
 
   return (
     <>
-      {/* ── Fixed Announcement Bar: Stays at top:0 (z-30). Navbar slides over it when scrolling ── */}
+      {/* ── Fixed Announcement Bar: Scrolls smoothly out of view (z-30) ── */}
       <div
+        style={{
+          transform: `translateY(-${Math.min(scrollY, effectiveBarHeight)}px)`,
+        }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-30 transition-opacity duration-300",
+          "fixed top-0 left-0 right-0 z-30 transition-opacity duration-300 will-change-transform",
           isDismissed ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
       >
@@ -407,7 +410,7 @@ export function Navbar() {
         />
       </div>
 
-      {/* ── Main Navbar: z-40 with solid bg-white. Slides up and overlaps AnnouncementBar ── */}
+      {/* ── Main Navbar: z-40 with solid bg-white. Slides up and stays locked at top:0 ── */}
       <header
         style={{
           top: `${navTop}px`,
@@ -416,13 +419,13 @@ export function Navbar() {
             : "box-shadow 0.3s",
         }}
         className={cn(
-          "fixed left-0 right-0 z-40 bg-white transition-shadow duration-300 py-4 sm:py-5 lg:py-5",
+          "fixed left-0 right-0 z-40 bg-white transition-shadow duration-300 py-3.5 sm:py-4 lg:py-5",
           isScrolled
             ? "shadow-[0_2px_14px_-2px_rgba(0,0,0,0.06)]"
             : "shadow-none"
         )}
       >
-        <div className="relative z-20 mx-auto flex max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-10">
+        <div className="relative z-20 mx-auto flex max-w-[1560px] items-center justify-between px-6 sm:px-8 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
           <Link

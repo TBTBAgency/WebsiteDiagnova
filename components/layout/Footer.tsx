@@ -52,7 +52,7 @@ export function Footer() {
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
-      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-10">
+      <div className="relative z-10 mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
         {/* Main Footer Flex Layout (Aligned precisely with Navbar left and right bounds) */}
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
