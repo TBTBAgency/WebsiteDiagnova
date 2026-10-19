@@ -11,8 +11,8 @@ export function CTABanner() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      router.push(`/request-demo?email=${encodeURIComponent(email)}`);
+    if (email.trim()) {
+      router.push(`/request-demo?email=${encodeURIComponent(email.trim())}`);
     } else {
       router.push("/request-demo");
     }

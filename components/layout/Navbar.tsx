@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
         title: "Platform Overview",
         description: "Buku catatan super pintar yang menghubungkan instrumen lab dengan dokter",
         href: "/platform",
-        icon: <Layers className="h-4 w-4 text-nova-blue" />,
+        icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
       },
       {
         title: "Workflow",
@@ -55,7 +55,7 @@ const navItems: NavItem[] = [
         title: "100% Automation",
         description: "Direct analyzer interfacing & auto-verification memangkas TAT 70%",
         href: "/platform/automation",
-        icon: <Cpu className="h-4 w-4 text-nova-blue" />,
+        icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
       },
       {
         title: "Reporting & Audit Trail",
@@ -289,7 +289,7 @@ function LanguageSwitcher({
   setLanguage,
 }: {
   language: "ID" | "EN";
-  setLanguage: (lang: "ID" | "EN") => void;
+  setLanguage: (_lang: "ID" | "EN") => void;
 }) {
   return (
     <div className="relative inline-flex items-center rounded-full p-0.5 select-none">
@@ -587,4 +587,3 @@ export function Navbar() {
     </>
   );
 }
-

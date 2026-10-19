@@ -25,11 +25,15 @@ export async function POST(request: NextRequest) {
 
     const leadData = validationResult.data;
 
-    // Save lead record (mock / in-memory or database)
+    // Save lead record permanently to PostgreSQL
     const savedRecord = await saveLead(leadData);
 
-    // Trigger notification email to sales team (mock / email provider)
-    await sendNotificationEmail(savedRecord);
+    // Trigger notification email to sales team (non-blocking failure)
+    try {
+      await sendNotificationEmail(savedRecord);
+    } catch (emailError) {
+      console.error("Failed to send notification email, lead still saved:", emailError);
+    }
 
     return NextResponse.json<ApiResponse>(
       {
