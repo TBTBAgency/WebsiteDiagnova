@@ -1,94 +1,18 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-
-interface ComparisonPoint {
-  number: string;
-  title: string;
-  description: string;
-}
-
-const conventionalDrawbacks: ComparisonPoint[] = [
-  {
-    number: "01",
-    title: "Integrasi Terbatas",
-    description:
-      "Terisolasi dari HMIS/RME, memicu duplikasi input data pasien.",
-  },
-  {
-    number: "02",
-    title: "Ketergantungan Input Manual",
-    description:
-      "Proses registrasi & entry ketik manual; risiko human error & TAT lambat.",
-  },
-  {
-    number: "03",
-    title: "Infrastruktur & Koneksi Rentan",
-    description:
-      "Koneksi analyzer sering terputus, downtime tinggi & terikat tim IT lokal.",
-  },
-  {
-    number: "04",
-    title: "Dukungan IT & SDM Lemah",
-    description:
-      "Support teknis lambat, kompetensi bervariasi & resistensi pengguna.",
-  },
-  {
-    number: "05",
-    title: "Audit Trail & Pelaporan Minim",
-    description:
-      "Riwayat medis tidak lengkap dan pelacakan revisi hasil tidak ketat.",
-  },
-  {
-    number: "06",
-    title: "Biaya High-CapEx & Lock-in",
-    description:
-      "Instalasi awal mahal, kontrak kaku & tidak mendukung alat lama.",
-  },
-];
-
-const diagnovaAdvantages: ComparisonPoint[] = [
-  {
-    number: "01",
-    title: "Seamless Native Integration",
-    description:
-      "Bridging otomatis dengan SIMRS, RME & siap terhubung SATUSEHAT.",
-  },
-  {
-    number: "02",
-    title: "100% Otomatisasi & Barcode",
-    description:
-      "Direct analyzer interfacing & auto-verification memangkas TAT 70%.",
-  },
-  {
-    number: "03",
-    title: "Smart Gateway Resilient",
-    description:
-      "Protokol HL7/ASTM dengan Offline-Buffer Mode jamin uptime 99.9%.",
-  },
-  {
-    number: "04",
-    title: "SLA Dedicated 24/7 & UX Intuitif",
-    description:
-      "Pendampingan teknis responsif & interface mudah dipelajari analis.",
-  },
-  {
-    number: "05",
-    title: "Full Digital Audit Trail",
-    description:
-      "Rekam jejak digital transparan untuk setiap perubahan hasil sampel.",
-  },
-  {
-    number: "06",
-    title: "Skema Fleksibel & Universal",
-    description:
-      "Model SaaS terjangkau & kompatibel dengan 500+ instrumen medis.",
-  },
-];
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import {
+  comparisonContentID,
+  comparisonContentEN,
+} from "@/content/comparison";
 
 export function ComparisonSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const { language } = useLanguage();
+
+  const content = language === "ID" ? comparisonContentID : comparisonContentEN;
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -117,29 +41,31 @@ export function ComparisonSection() {
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* Section Header */}
         <div
-          className={`mb-8 sm:mb-10 lg:mb-12 transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
+          className={`mb-8 sm:mb-10 lg:mb-12 transition-all duration-700 ease-out ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
         >
           <div className="mb-4 sm:mb-5">
             <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
-              Comparison
+              {content.sectionBadge}
             </span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#345DAB]">
-            Why Choose Diagnova?
+            {content.sectionTitle}
           </h2>
           <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
-            Perbandingan komprehensif antara keterbatasan Laboratory Information System (LIS) konvensional dengan keunggulan ekosistem cerdas Diagnova.
+            {content.sectionSubtitle}
           </p>
         </div>
 
         {/* 2-Column Comparison Layout with Center VS Emblem */}
         <div className="relative">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 items-stretch">
-            {/* Left Card: 6 Kekurangan LIS di Indonesia (Neutral / Conventional) */}
+            {/* Left Card: Conventional Drawbacks (Neutral) */}
             <div
-              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-                }`}
+              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              }`}
               style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
             >
               <div
@@ -153,22 +79,24 @@ export function ComparisonSection() {
                   {/* Badge */}
                   <div className="mb-4 sm:mb-5">
                     <span className="inline-flex items-center rounded-full bg-[#EBF3FB] border border-[#D5E5F7] px-4 py-1.5 text-xs sm:text-sm font-medium text-[#2A5EAA]">
-                      6 Kekurangan LIS di Indonesia
+                      {content.conventionalBadge}
                     </span>
                   </div>
 
                   {/* Staggered Text Reveal List */}
                   <div className="flex flex-col">
-                    {conventionalDrawbacks.map((item, index) => (
+                    {content.items.map((item, index) => (
                       <div
                         key={item.number}
-                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== conventionalDrawbacks.length - 1
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${
+                          index !== content.items.length - 1
                             ? "border-b border-slate-200/90 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
                             : "pb-0 mb-0"
-                          } ${isVisible
+                        } ${
+                          isVisible
                             ? "opacity-100 translate-y-0"
                             : "opacity-0 translate-y-3"
-                          }`}
+                        }`}
                         style={{
                           transitionDelay: isVisible
                             ? `${200 + index * 120}ms`
@@ -179,11 +107,11 @@ export function ComparisonSection() {
                           {item.number}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-900 text-sm sm:text-base leading-snug tracking-tight mb-1">
-                            {item.title}
+                          <h3 className="font-semibold text-slate-700 text-sm sm:text-base leading-snug tracking-tight mb-1">
+                            {item.conventional.title}
                           </h3>
                           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                            {item.description}
+                            {item.conventional.description}
                           </p>
                         </div>
                       </div>
@@ -202,10 +130,11 @@ export function ComparisonSection() {
               </div>
             </div>
 
-            {/* Right Card: 6 Keunggulan Diagnova (Vibrant Diagnova Blue) */}
+            {/* Right Card: Diagnova Advantages (Vibrant Diagnova Blue) */}
             <div
-              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_20px_32px_rgba(46,104,180,0.22)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-                }`}
+              className={`relative flex flex-col justify-between transition-all duration-700 ease-out drop-shadow-[0_20px_32px_rgba(46,104,180,0.22)] ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              }`}
               style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}
             >
               <div
@@ -223,22 +152,24 @@ export function ComparisonSection() {
                   {/* Badge */}
                   <div className="mb-4 sm:mb-5">
                     <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm">
-                      6 Keunggulan Diagnova
+                      {content.diagnovaBadge}
                     </span>
                   </div>
 
                   {/* Staggered Text Reveal List */}
                   <div className="flex flex-col">
-                    {diagnovaAdvantages.map((item, index) => (
+                    {content.items.map((item, index) => (
                       <div
                         key={item.number}
-                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${index !== diagnovaAdvantages.length - 1
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${
+                          index !== content.items.length - 1
                             ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
                             : "pb-0 mb-0"
-                          } ${isVisible
+                        } ${
+                          isVisible
                             ? "opacity-100 translate-y-0"
                             : "opacity-0 translate-y-3"
-                          }`}
+                        }`}
                         style={{
                           transitionDelay: isVisible
                             ? `${200 + index * 120}ms`
@@ -250,10 +181,10 @@ export function ComparisonSection() {
                         </span>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
-                            {item.title}
+                            {item.diagnova.title}
                           </h3>
                           <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                            {item.description}
+                            {item.diagnova.description}
                           </p>
                         </div>
                       </div>
@@ -266,8 +197,9 @@ export function ComparisonSection() {
 
           {/* Center VS Badge (Desktop) */}
           <div
-            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center pointer-events-none transition-all duration-700 ease-out ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
-              }`}
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center pointer-events-none transition-all duration-700 ease-out ${
+              isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
+            }`}
             style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}
           >
             <div className="flex h-12 w-12 xl:h-14 xl:w-14 items-center justify-center rounded-full bg-white shadow-[0_10px_30px_rgba(14,35,75,0.18)] border-[3px] border-white p-1">
