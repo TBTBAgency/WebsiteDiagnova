@@ -364,19 +364,19 @@ export function InfrastructureSection() {
                                   : "bg-[#275EA8]/10 text-[#275EA8]"
                               }`}
                             >
-                              {getCardIcon(card.iconName, "h-4.5 w-4.5 sm:h-5 sm:w-5")}
+                              {getCardIcon(card.iconName, "h-4 w-4 sm:h-4.5 sm:w-4.5")}
                             </div>
                             <h3
-                              className={`font-display text-base sm:text-xl lg:text-[22px] font-bold tracking-tight transition-colors duration-500 ease-in-out ${
-                                isActive ? "text-white" : "text-slate-900"
+                              className={`font-semibold text-sm sm:text-base lg:text-[17px] leading-snug tracking-tight transition-colors duration-500 ease-in-out ${
+                                isActive ? "text-white" : "text-slate-700"
                               }`}
                             >
                               {card.title}
                             </h3>
                           </div>
                           <p
-                            className={`text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-xl transition-colors duration-500 ease-in-out ${
-                              isActive ? "text-white/95" : "text-slate-500"
+                            className={`text-xs sm:text-sm leading-relaxed max-w-xl transition-colors duration-500 ease-in-out ${
+                              isActive ? "text-white/85" : "text-slate-500"
                             }`}
                           >
                             {card.description}
