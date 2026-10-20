@@ -3,8 +3,28 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
-const headlineWords = [
+const headlineWordsID = [
+  "Di",
+  "Diagnova,",
+  "Kami",
+  "Mengubah",
+  "Data",
+  "Diagnostik",
+  "Menjadi",
+  "Intelijen",
+  "Klinis,",
+  "Memperkuat",
+  "Laboratorium",
+  "Menghasilkan",
+  "Keputusan",
+  "Medis",
+  "yang",
+  "Presisi.",
+];
+
+const headlineWordsEN = [
   "At",
   "Diagnova,",
   "We",
@@ -24,6 +44,8 @@ const headlineWords = [
 ];
 
 export function AboutSection() {
+  const { language } = useLanguage();
+  const headlineWords = language === "ID" ? headlineWordsID : headlineWordsEN;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -77,7 +99,9 @@ export function AboutSection() {
           <div className="flex flex-col justify-center lg:col-span-7 order-1 lg:order-2">
             {/* Pill Badge */}
             <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="light">About</SectionBadge>
+              <SectionBadge variant="light">
+                {language === "ID" ? "Tentang Diagnova" : "About Diagnova"}
+              </SectionBadge>
             </div>
 
             {/* Continuous Smooth Scroll-Driven Text Reveal Headline */}
@@ -115,10 +139,9 @@ export function AboutSection() {
 
             {/* Subtitle / Paragraph Description */}
             <p className="text-sm sm:text-base lg:text-lg text-slate-500 font-normal leading-relaxed max-w-2xl">
-              More Than A Traditional LIS, Diagnova Is An Intelligent Ecosystem
-              Connecting People, Instruments, And Workflows. We Help Modern
-              Laboratories Move Beyond Managing Data To Delivering Clear,
-              Actionable Insights.
+              {language === "ID"
+                ? "Lebih dari sekadar LIS konvensional, Diagnova adalah ekosistem cerdas yang menghubungkan tenaga medis, instrumen laboratorium, dan alur kerja klinis. Kami membantu laboratorium modern melangkah dari sekadar mengelola data menuju penyajian wawasan klinis yang akurat dan dapat ditindaklanjuti."
+                : "More than a traditional LIS, Diagnova is an intelligent ecosystem connecting clinicians, instruments, and laboratory workflows. We empower modern laboratories to move beyond managing data to delivering clear, actionable clinical insights."}
             </p>
           </div>
         </div>
