@@ -181,16 +181,9 @@ export function ComparisonSection() {
                           {item.number}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
-                            <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight">
-                              {item.diagnova.title}
-                            </h3>
-                            {item.impactMetric && (
-                              <span className="shrink-0 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-white shadow-xs">
-                                {item.impactMetric}
-                              </span>
-                            )}
-                          </div>
+                          <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
+                            {item.diagnova.title}
+                          </h3>
                           <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
                             {item.diagnova.description}
                           </p>
