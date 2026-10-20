@@ -6,6 +6,7 @@ import { AboutSection } from "@/components/sections/AboutSection";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
 import { InfrastructureSection } from "@/components/sections/InfrastructureSection";
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 
 export const metadata: Metadata = {
@@ -35,7 +36,10 @@ export default function HomePage() {
       {/* 6. Infrastructure Section */}
       <InfrastructureSection />
 
-      {/* 7. Bottom CTA Banner */}
+      {/* 7. Customer Testimonials Section */}
+      <TestimonialsSection />
+
+      {/* 8. Bottom CTA Banner */}
       <CTABanner />
     </>
   );

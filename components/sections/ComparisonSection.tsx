@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { SectionBadge } from "@/components/ui/SectionBadge";
 import {
   comparisonContentID,
   comparisonContentEN,
@@ -41,14 +42,14 @@ export function ComparisonSection() {
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* Section Header */}
         <div
-          className={`mb-8 sm:mb-10 lg:mb-12 transition-all duration-700 ease-out ${
+          className={`mb-10 sm:mb-12 lg:mb-16 transition-all duration-700 ease-out ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
           <div className="mb-4 sm:mb-5">
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
+            <SectionBadge variant="blue">
               {content.sectionBadge}
-            </span>
+            </SectionBadge>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#345DAB]">
             {content.sectionTitle}
@@ -180,9 +181,16 @@ export function ComparisonSection() {
                           {item.number}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
-                            {item.diagnova.title}
-                          </h3>
+                          <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+                            <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight">
+                              {item.diagnova.title}
+                            </h3>
+                            {item.impactMetric && (
+                              <span className="shrink-0 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-white shadow-xs">
+                                {item.impactMetric}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
                             {item.diagnova.description}
                           </p>

@@ -36,6 +36,14 @@
   .font-display.tracking-tight {
     letter-spacing: -0.012em !important;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Custom Gradient Utilities */

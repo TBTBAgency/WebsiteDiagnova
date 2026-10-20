@@ -22,27 +22,27 @@ export interface ComparisonSectionContent {
 }
 
 export const comparisonContentID: ComparisonSectionContent = {
-  sectionBadge: "Perbandingan",
+  sectionBadge: "Perbandingan LIS",
   sectionTitle: "Mengapa Memilih Diagnova?",
   sectionSubtitle:
-    "Perbandingan komprehensif antara keterbatasan Sistem Informasi Laboratorium (LIS) konvensional dengan keunggulan ekosistem cerdas Diagnova.",
+    "Bandingkan hambatan LIS konvensional dengan lonjakan efisiensi dan akurasi klinis bersama ekosistem cerdas Diagnova.",
   conventionalBadge: "6 Keterbatasan LIS Konvensional",
-  diagnovaBadge: "6 Keunggulan Diagnova LIS",
+  diagnovaBadge: "6 Keunggulan Ekosistem Diagnova",
   items: [
     {
       id: 1,
       number: "01",
       conventional: {
-        title: "Integrasi Terbatas & Terisolasi",
+        title: "Silo & Terisolasi dari SIMRS",
         description:
-          "Terisolasi dari SIMRS dan RME, memicu duplikasi entri data pasien dan meningkatkan risiko kesalahan identifikasi spesimen.",
+          "Entri ganda berulang memicu salah identifikasi spesimen dan membuang waktu klinis.",
       },
       diagnova: {
-        title: "Integrasi Asli Dua Arah",
+        title: "Bridging Instan Dua Arah",
         description:
-          "Pertukaran data otomatis dua arah dengan SIMRS, RME, dan terhubung langsung secara resmi ke SATUSEHAT Kemenkes RI.",
+          "Sinkronisasi otomatis dengan SIMRS, RME, dan terhubung resmi ke SATUSEHAT Kemenkes tanpa ketik ulang.",
       },
-      impactMetric: "Nol Duplikasi Data",
+      impactMetric: "0% Duplikasi",
     },
     {
       id: 2,
@@ -50,12 +50,12 @@ export const comparisonContentID: ComparisonSectionContent = {
       conventional: {
         title: "Ketergantungan Input Manual",
         description:
-          "Proses registrasi dan pengetikan angka hasil laboratorium secara manual memperlambat Turnaround Time (TAT) dan rawan salah ketik.",
+          "Pengetikan angka hasil secara manual lambat dan memperbesar risiko salah transkripsi.",
       },
       diagnova: {
-        title: "Otomatisasi Penuh & Kode Batang",
+        title: "Otomasi Interfacing Analyzer",
         description:
-          "Koneksi langsung dua arah ke instrumen laboratorium dan validasi otomatis memangkas waktu tunggu hasil (TAT) hingga 70%.",
+          "Koneksi instrumen langsung dan verifikasi otomatis memangkas Turnaround Time (TAT) hingga 70%.",
       },
       impactMetric: "TAT Turun 70%",
     },
@@ -63,70 +63,70 @@ export const comparisonContentID: ComparisonSectionContent = {
       id: 3,
       number: "03",
       conventional: {
-        title: "Infrastruktur & Jaringan Rentan",
+        title: "Koneksi Alat Sering Terputus",
         description:
-          "Koneksi alat analisis ke server sering terputus, menyebabkan gangguan operasional dan risiko hilangnya data hasil pemeriksaan.",
+          "Komunikasi alat serial rentan drop, memicu antrean sampel dan risiko data hilang.",
       },
       diagnova: {
-        title: "Gerbang Pintar Berketahanan Tinggi",
+        title: "Smart Gateway Berketahanan 99.9%",
         description:
-          "Mendukung protokol HL7 dan ASTM dengan mode penyimpanan cadangan luring (offline buffer), menjamin keandalan data dan ketersediaan 99.9%.",
+          "Protokol HL7/ASTM dengan buffer luring (offline buffer), data tetap aman saat jaringan rumah sakit terganggu.",
       },
-      impactMetric: "Ketersediaan 99.9%",
+      impactMetric: "Uptime 99.9%",
     },
     {
       id: 4,
       number: "04",
       conventional: {
-        title: "Dukungan Teknis Lambat & Rumit",
+        title: "Deteksi Nilai Kritis Pasif",
         description:
-          "Respons bantuan teknis lambat saat terjadi kendala alat, serta antarmuka usang yang membingungkan bagi staf laboratorium baru.",
+          "Hasil abnormal lambat disadari dokter karena ketiadaan notifikasi otomatis seketika.",
       },
       diagnova: {
-        title: "Layanan Siaga 24/7 & UI Modern",
+        title: "Alert Real-Time & Asisten Nova AI",
         description:
-          "Pendampingan teknis responsif setiap saat dengan antarmuka modern yang mudah dipelajari dan dikuasai oleh analis laboratorium.",
+          "Peringatan dini nilai kritis dan delta check instan, membantu dokter merespons kegawatdaruratan lebih cepat.",
       },
-      impactMetric: "Dukungan Khusus 24/7",
+      impactMetric: "Alert < 1 Detik",
     },
     {
       id: 5,
       number: "05",
       conventional: {
-        title: "Jejak Audit & Pelaporan Minim",
+        title: "Jejak Audit Lemah & Rawan Celah",
         description:
-          "Riwayat perubahan hasil medis tidak tercatat secara terperinci, menyulitkan proses akreditasi dan verifikasi kepatuhan klinis.",
+          "Riwayat koreksi tidak terlacak rapi, menyulitkan akreditasi KARS dan ISO 15189.",
       },
       diagnova: {
-        title: "Jejak Audit Digital Menyeluruh",
+        title: "Rekam Jejak Digital Terenkripsi",
         description:
-          "Rekam jejak digital transparan untuk setiap riwayat sampel, persetujuan dokter penanggung jawab, dan status instrumen.",
+          "Pencatatan riwayat setiap sampel dan validasi dokter 100% transparan, siap audit kepatuhan klinis kapan saja.",
       },
-      impactMetric: "100% Terlacak Transparan",
+      impactMetric: "100% Siap Audit",
     },
     {
       id: 6,
       number: "06",
       conventional: {
-        title: "Biaya Investasi Awal Tinggi & Kaku",
+        title: "Investasi Server Mahal & Terkunci",
         description:
-          "Instalasi server awal yang sangat mahal dengan kontrak kaku dan biaya lisensi per modul yang membebani anggaran operasional.",
+          "Biaya server awal tinggi, kontrak tahunan kaku, dan menolak integrasi alat lab lama.",
       },
       diagnova: {
-        title: "Skema Fleksibel & Kompatibilitas Luas",
+        title: "Model Cloud Fleksibel & 500+ Alat",
         description:
-          "Model berlangganan efisien tanpa keharusan investasi server fisik yang mahal, kompatibel dengan 500+ instrumen medis.",
+          "Bebas beban investasi server fisik, langsung kompatibel dengan lebih dari 500 instrumen medis rumah sakit.",
       },
-      impactMetric: "Mendukung 500+ Alat Lab",
+      impactMetric: "500+ Alat Didukung",
     },
   ],
 };
 
 export const comparisonContentEN: ComparisonSectionContent = {
-  sectionBadge: "Comparison",
+  sectionBadge: "LIS Comparison",
   sectionTitle: "Why Choose Diagnova?",
   sectionSubtitle:
-    "A comprehensive comparison between conventional Laboratory Information System limitations and Diagnova's intelligent laboratory ecosystem.",
+    "See how Diagnova replaces conventional LIS bottlenecks with unprecedented clinical turnaround speed and precision.",
   conventionalBadge: "6 Conventional LIS Drawbacks",
   diagnovaBadge: "6 Diagnova Key Advantages",
   items: [
@@ -134,16 +134,16 @@ export const comparisonContentEN: ComparisonSectionContent = {
       id: 1,
       number: "01",
       conventional: {
-        title: "Isolated & Limited Integration",
+        title: "Siloed & Disconnected from EMR",
         description:
-          "Siloed from Hospital Information Systems (HIS/EMR), causing repetitive patient data retyping and specimen mix-up risks.",
+          "Repetitive manual retyping causes patient mix-ups and wastes critical staff hours.",
       },
       diagnova: {
-        title: "Seamless Native Two-Way Integration",
+        title: "Instant Bidirectional Bridging",
         description:
-          "Automated bidirectional bridging with HIS, EMR, and fully integrated with the Ministry of Health SATUSEHAT ecosystem.",
+          "Zero-latency automated synchronization with HIS, EMR, and national health record systems.",
       },
-      impactMetric: "Zero Data Duplication",
+      impactMetric: "Zero Duplication",
     },
     {
       id: 2,
@@ -151,12 +151,12 @@ export const comparisonContentEN: ComparisonSectionContent = {
       conventional: {
         title: "Heavy Reliance on Manual Entry",
         description:
-          "Manual registration and manual result typing slow down Turnaround Time (TAT) and elevate the risk of human transcription errors.",
+          "Manual result transcription slows turnaround times and heightens diagnostic error risks.",
       },
       diagnova: {
-        title: "100% Automation & Barcode Intelligence",
+        title: "Full Analyzer Interfacing",
         description:
-          "Direct bidirectional analyzer interfacing and automated verification algorithms cut Turnaround Time (TAT) by up to 70%.",
+          "Direct bidirectional analyzer interfacing and automated verification algorithms slash TAT by up to 70%.",
       },
       impactMetric: "TAT -70%",
     },
@@ -164,14 +164,14 @@ export const comparisonContentEN: ComparisonSectionContent = {
       id: 3,
       number: "03",
       conventional: {
-        title: "Fragile Infrastructure & Frequent Drops",
+        title: "Frequent Analyzer Disconnections",
         description:
-          "Analyzer-to-server communication drops frequently, causing operational bottlenecks and potential loss of diagnostic records.",
+          "Fragile serial links drop unexpectedly, causing specimen backlogs and diagnostic data loss.",
       },
       diagnova: {
-        title: "Resilient Smart Edge Gateway",
+        title: "Resilient 99.9% Smart Gateway",
         description:
-          "Native HL7/ASTM protocol support with an Offline-Buffer Edge Mode, ensuring continuous data integrity and 99.9% uptime.",
+          "Native HL7/ASTM protocols with offline buffering safeguard specimen records during network disruptions.",
       },
       impactMetric: "99.9% Uptime",
     },
@@ -179,46 +179,46 @@ export const comparisonContentEN: ComparisonSectionContent = {
       id: 4,
       number: "04",
       conventional: {
-        title: "Slow Technical Support & Complex UX",
+        title: "Passive Critical Value Detection",
         description:
-          "Sluggish vendor resolution times during critical instrument downtime, and outdated interfaces that confuse lab technicians.",
+          "Abnormal values get buried in paper logs without urgent notifications for attending physicians.",
       },
       diagnova: {
-        title: "Dedicated 24/7 SLA & Intuitive Interface",
+        title: "Instant Alerts & Nova AI Insights",
         description:
-          "Round-the-clock specialized clinical support paired with an intuitive modern UX that laboratory technicians master in hours.",
+          "Real-time critical value push alerts and automated delta checks enable rapid clinical intervention.",
       },
-      impactMetric: "24/7 Dedicated Support",
+      impactMetric: "Sub-Second Alerting",
     },
     {
       id: 5,
       number: "05",
       conventional: {
-        title: "Minimal Audit Trail & Loose Tracking",
+        title: "Weak Audit Trails & Compliance Gaps",
         description:
-          "Incomplete medical revision histories and weak sample tracking that compromise laboratory accreditation and clinical governance.",
+          "Incomplete revision histories complicate hospital laboratory accreditation and governance.",
       },
       diagnova: {
-        title: "Comprehensive Digital Audit Trail",
+        title: "Immutable Digital Audit Logs",
         description:
-          "Tamper-proof, immutable digital audit trails tracking every specimen touchpoint, doctor validation, and calibration status.",
+          "End-to-end specimen traceability and doctor validation logs ready for rigorous ISO 15189 compliance.",
       },
-      impactMetric: "100% Traceable",
+      impactMetric: "100% Audit-Ready",
     },
     {
       id: 6,
       number: "06",
       conventional: {
-        title: "High Upfront CapEx & Rigid Lock-In",
+        title: "High Server CapEx & Vendor Lock-In",
         description:
-          "Exorbitant initial server licensing costs, inflexible multi-year contracts, and refusal to support legacy laboratory equipment.",
+          "Exorbitant on-premise hardware costs, rigid contracts, and refusal to interface older analyzers.",
       },
       diagnova: {
-        title: "Flexible SaaS Model & Universal Compatibility",
+        title: "Flexible Cloud Model & 500+ Analyzers",
         description:
-          "Predictable, cost-effective cloud model with no heavy server overhead, universally compatible with over 500+ clinical analyzers.",
+          "Zero server overhead with immediate plug-and-play support for over 500+ clinical lab instruments.",
       },
-      impactMetric: "500+ Instruments Ready",
+      impactMetric: "500+ Analyzers Ready",
     },
   ],
 };
