@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnnouncementBar } from "./AnnouncementBar";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface NavItem {
   label: string;
@@ -34,188 +35,376 @@ interface NavItem {
   }[];
 }
 
-const navItems: NavItem[] = [
-  {
-    label: "Platform",
-    href: "/platform",
-    children: [
+function getNavItems(lang: "ID" | "EN"): NavItem[] {
+  if (lang === "ID") {
+    return [
       {
-        title: "Platform Overview",
-        description: "Buku catatan super pintar yang menghubungkan instrumen lab dengan dokter",
+        label: "Platform",
         href: "/platform",
-        icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
+        children: [
+          {
+            title: "Gambaran Platform",
+            description: "Buku catatan super pintar yang menghubungkan instrumen lab dengan dokter",
+            href: "/platform",
+            icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Alur Kerja",
+            description: "Alur kerja 4 tahap dari penerimaan sampel hingga rilis hasil ke dokter",
+            href: "/platform/workflow",
+            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "100% Otomasi",
+            description: "Antarmuka analyzer langsung & verifikasi otomatis memangkas TAT 70%",
+            href: "/platform/automation",
+            icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Pelaporan & Jejak Audit",
+            description: "Rekam jejak digital transparan untuk setiap perubahan hasil sampel",
+            href: "/platform/reporting",
+            icon: <ShieldCheck className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Analitik & Inteligensi",
+            description: "Pemanfaatan insight data lab untuk mendukung efisiensi & Nova AI",
+            href: "/platform/analytics",
+            icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
+          },
+        ],
       },
       {
-        title: "Workflow",
-        description: "Alur kerja 4 tahap dari penerimaan sampel hingga rilis hasil ke dokter",
-        href: "/platform/workflow",
-        icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+        label: "Solusi",
+        href: "/solutions",
+        children: [
+          {
+            title: "Laboratorium Rumah Sakit",
+            description: "Solusi terpadu lab pusat, IGD, dan ICU dengan bridging SIMRS/RME",
+            href: "/solutions/hospital-laboratory",
+            icon: <Building2 className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Laboratorium Klinik",
+            description: "Kecepatan registrasi, MCU massal, dan portal hasil pasien online",
+            href: "/solutions/clinical-laboratory",
+            icon: <Stethoscope className="h-4 w-4 text-nova-blue" />,
+          },
+          {
+            title: "Patologi Anatomi",
+            description: "Pelacakan spesimen jaringan ketat & integrasi patologi digital",
+            href: "/solutions/pathology",
+            icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Mikrobiologi & PPRA",
+            description: "Kultur bakteri, uji kepekaan antibiotik, dan kalkulasi antibiogram",
+            href: "/solutions/microbiology",
+            icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
+          },
+          {
+            title: "Bank Darah & Transfusi",
+            description: "Kontrol rantai dingin, validasi crossmatch, dan zero wastage",
+            href: "/solutions/blood-bank",
+            icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
+          },
+          {
+            title: "Nova AI Inteligensi",
+            description: "Asisten AI cerdas: mendeteksi anomali & merangkum angka klinis",
+            href: "/solutions/nova-ai",
+            icon: <Sparkles className="h-4 w-4 text-amber-500" />,
+          },
+        ],
       },
       {
-        title: "100% Automation",
-        description: "Direct analyzer interfacing & auto-verification memangkas TAT 70%",
-        href: "/platform/automation",
-        icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
+        label: "Modul",
+        href: "/modules",
+        children: [
+          {
+            title: "Rutin & Hematologi",
+            description: "Pemeriksaan darah harian & kimia klinik bervolume tinggi",
+            href: "/modules/routine-hematology",
+            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Bank Darah",
+            description: "Ketersediaan, masa kedaluwarsa, crossmatching, dan distribusi darah",
+            href: "/modules/blood-bank",
+            icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
+          },
+          {
+            title: "Inventaris & Reagen",
+            description: "Pantau stok reagen real-time & cegah kehabisan saat shift berjalan",
+            href: "/modules/inventory-reagent",
+            icon: <Cpu className="h-4 w-4 text-nova-blue" />,
+          },
+          {
+            title: "Patologi",
+            description: "Pencatatan histopatologi & sitologi dengan pelacakan kaset/slide",
+            href: "/modules/pathology",
+            icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "Mikrobiologi",
+            description: "Identifikasi kuman, kultur bakteri, dan uji resistensi antibiotik",
+            href: "/modules/microbiology",
+            icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
+          },
+        ],
       },
       {
-        title: "Reporting & Audit Trail",
-        description: "Rekam jejak digital transparan untuk setiap perubahan hasil sampel",
-        href: "/platform/reporting",
-        icon: <ShieldCheck className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "Analytics & Intelligence",
-        description: "Pemanfaatan insight data lab untuk mendukung efisiensi & Nova AI",
-        href: "/platform/analytics",
-        icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
-      },
-    ],
-  },
-  {
-    label: "Solutions",
-    href: "/solutions",
-    children: [
-      {
-        title: "Hospital Laboratory",
-        description: "Solusi terpadu lab pusat, IGD, dan ICU dengan bridging SIMRS/RME",
-        href: "/solutions/hospital-laboratory",
-        icon: <Building2 className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "Clinical Laboratory",
-        description: "Kecepatan registrasi, MCU massal, dan portal hasil pasien online",
-        href: "/solutions/clinical-laboratory",
-        icon: <Stethoscope className="h-4 w-4 text-nova-blue" />,
-      },
-      {
-        title: "Anatomical Pathology",
-        description: "Tracking spesimen jaringan ketat & digital pathology integration",
-        href: "/solutions/pathology",
-        icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "Microbiology & PPRA",
-        description: "Kultur bakteri, uji kepekaan antibiotik, dan kalkulasi antibiogram",
-        href: "/solutions/microbiology",
-        icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
-      },
-      {
-        title: "Blood Bank & Transfusion",
-        description: "Kontrol rantai dingin, validasi crossmatch, dan zero wastage",
-        href: "/solutions/blood-bank",
-        icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
-      },
-      {
-        title: "Nova AI Intelligence",
-        description: "Asisten AI cerdas: mendeteksi anomali & merangkum angka klinis",
-        href: "/solutions/nova-ai",
-        icon: <Sparkles className="h-4 w-4 text-amber-500" />,
-      },
-    ],
-  },
-  {
-    label: "Modules",
-    href: "/modules",
-    children: [
-      {
-        title: "Routine & Hematology",
-        description: "Pemeriksaan darah harian & kimia klinik bervolume tinggi",
-        href: "/modules/routine-hematology",
-        icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "Blood Bank",
-        description: "Ketersediaan, masa kedaluwarsa, crossmatching, dan distribusi darah",
-        href: "/modules/blood-bank",
-        icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
-      },
-      {
-        title: "Inventory & Reagent",
-        description: "Pantau stok reagen real-time & cegah stock-out saat shift berjalan",
-        href: "/modules/inventory-reagent",
-        icon: <Cpu className="h-4 w-4 text-nova-blue" />,
-      },
-      {
-        title: "Pathology",
-        description: "Pencatatan histopatologi & sitologi dengan pelacakan kaset/slide",
-        href: "/modules/pathology",
-        icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "Microbiology",
-        description: "Identifikasi kuman, kultur bakteri, dan uji resistensi antibiotik",
-        href: "/modules/microbiology",
-        icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
-      },
-    ],
-  },
-  {
-    label: "Nova AI",
-    href: "/nova-ai",
-    children: [
-      {
-        title: "Nova AI Overview",
-        description: "Mengubah angka medis rumit menjadi kalimat ringkas & actionable",
+        label: "Nova AI",
         href: "/nova-ai",
-        icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
+        children: [
+          {
+            title: "Gambaran Nova AI",
+            description: "Mengubah angka medis rumit menjadi kalimat ringkas & dapat ditindaklanjuti",
+            href: "/nova-ai",
+            icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
+          },
+          {
+            title: "Cara Kerja (4 Tahap)",
+            description: "Membaca Pola → Menerjemahkan Angka → Notifikasi Cepat → Validasi Dokter",
+            href: "/nova-ai/how-it-works",
+            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "AI + Dokter (Etika & Kolaborasi)",
+            description: "AI membantu. Dokter memutuskan. Penegasan peran manusia dalam keputusan klinis",
+            href: "/nova-ai/ai-doctor",
+            icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
+          },
+        ],
       },
       {
-        title: "How It Works (4 Tahap)",
-        description: "Membaca Pola → Menerjemahkan Angka → Notifikasi Cepat → Validasi Dokter",
-        href: "/nova-ai/how-it-works",
-        icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "AI + Doctor (Etika & Kolaborasi)",
-        description: "AI assists. Doctors decide. Penegasan peran manusia dalam keputusan klinis",
-        href: "/nova-ai/ai-doctor",
-        icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
-      },
-    ],
-  },
-  {
-    label: "Integration",
-    href: "/integration",
-    children: [
-      {
-        title: "Integration Overview",
-        description: "Konektivitas siap pakai dengan sistem & instrumen laboratorium Anda",
+        label: "Integrasi",
         href: "/integration",
-        icon: <Network className="h-4 w-4 text-diagnova-blue" />,
+        children: [
+          {
+            title: "Gambaran Integrasi",
+            description: "Konektivitas siap pakai dengan sistem & instrumen laboratorium Anda",
+            href: "/integration",
+            icon: <Network className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "SIMRS / HIS",
+            description: "Bridging native dua arah untuk penerimaan order & rilis hasil",
+            href: "/integration/simrs-his",
+            icon: <Building2 className="h-4 w-4 text-nova-blue" />,
+          },
+          {
+            title: "RME (Rekam Medis Elektronik)",
+            description: "Kepatuhan Permenkes 24/2022 dengan riwayat lab longitudinal",
+            href: "/integration/rme",
+            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+          },
+          {
+            title: "500+ Analyzer",
+            description: "Antarmuka langsung dengan instrumen Roche, Abbott, Sysmex, Mindray, dll",
+            href: "/integration/analyzer",
+            icon: <Cpu className="h-4 w-4 text-nova-blue" />,
+          },
+          {
+            title: "SATUSEHAT Kemenkes",
+            description: "Interoperabilitas HL7 FHIR standar data kesehatan nasional",
+            href: "/integration/satusehat",
+            icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
+          },
+          {
+            title: "Smart Resilient Gateway",
+            description: "Koneksi tangguh HL7/ASTM dengan Offline Edge Buffer & Uptime 99,9%",
+            href: "/integration/connectivity",
+            icon: <Network className="h-4 w-4 text-diagnova-blue" />,
+          },
+        ],
       },
-      {
-        title: "SIMRS / HIS",
-        description: "Bridging native dua arah untuk penerimaan order & rilis hasil",
-        href: "/integration/simrs-his",
-        icon: <Building2 className="h-4 w-4 text-nova-blue" />,
-      },
-      {
-        title: "RME (Rekam Medis Elektronik)",
-        description: "Kepatuhan Permenkes 24/2022 dengan riwayat lab longitudinal",
-        href: "/integration/rme",
-        icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-      },
-      {
-        title: "500+ Analyzers",
-        description: "Direct interfacing dengan instrumen Roche, Abbott, Sysmex, Mindray, dll",
-        href: "/integration/analyzer",
-        icon: <Cpu className="h-4 w-4 text-nova-blue" />,
-      },
-      {
-        title: "SATUSEHAT Kemenkes",
-        description: "Interoperabilitas HL7 FHIR standar data kesehatan nasional",
-        href: "/integration/satusehat",
-        icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
-      },
-      {
-        title: "Smart Resilient Gateway",
-        description: "Koneksi tangguh HL7/ASTM dengan Offline Edge Buffer & Uptime 99.9%",
-        href: "/integration/connectivity",
-        icon: <Network className="h-4 w-4 text-diagnova-blue" />,
-      },
-    ],
-  },
-];
+    ];
+  }
+
+  // English
+  return [
+    {
+      label: "Platform",
+      href: "/platform",
+      children: [
+        {
+          title: "Platform Overview",
+          description: "A smart notebook connecting lab instruments with physicians seamlessly",
+          href: "/platform",
+          icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Workflow",
+          description: "4-stage workflow from sample receipt to result release to physicians",
+          href: "/platform/workflow",
+          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "100% Automation",
+          description: "Direct analyzer interfacing & auto-verification cutting TAT by 70%",
+          href: "/platform/automation",
+          icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Reporting & Audit Trail",
+          description: "Transparent digital trail for every sample result change",
+          href: "/platform/reporting",
+          icon: <ShieldCheck className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Analytics & Intelligence",
+          description: "Leverage lab data insights to drive efficiency & power Nova AI",
+          href: "/platform/analytics",
+          icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
+        },
+      ],
+    },
+    {
+      label: "Solutions",
+      href: "/solutions",
+      children: [
+        {
+          title: "Hospital Laboratory",
+          description: "Unified solution for central lab, ER, and ICU with HIS/EMR bridging",
+          href: "/solutions/hospital-laboratory",
+          icon: <Building2 className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Clinical Laboratory",
+          description: "Fast registration, mass check-ups, and online patient result portal",
+          href: "/solutions/clinical-laboratory",
+          icon: <Stethoscope className="h-4 w-4 text-nova-blue" />,
+        },
+        {
+          title: "Anatomical Pathology",
+          description: "Strict tissue specimen tracking & digital pathology integration",
+          href: "/solutions/pathology",
+          icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Microbiology & PPRA",
+          description: "Bacterial culture, antibiotic sensitivity testing, and antibiogram calculation",
+          href: "/solutions/microbiology",
+          icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
+        },
+        {
+          title: "Blood Bank & Transfusion",
+          description: "Cold chain control, crossmatch validation, and zero wastage",
+          href: "/solutions/blood-bank",
+          icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
+        },
+        {
+          title: "Nova AI Intelligence",
+          description: "Smart AI assistant: detects anomalies & summarizes clinical figures",
+          href: "/solutions/nova-ai",
+          icon: <Sparkles className="h-4 w-4 text-amber-500" />,
+        },
+      ],
+    },
+    {
+      label: "Modules",
+      href: "/modules",
+      children: [
+        {
+          title: "Routine & Hematology",
+          description: "Daily blood tests & high-volume clinical chemistry processing",
+          href: "/modules/routine-hematology",
+          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Blood Bank",
+          description: "Availability, expiry tracking, crossmatching, and blood distribution",
+          href: "/modules/blood-bank",
+          icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
+        },
+        {
+          title: "Inventory & Reagent",
+          description: "Real-time reagent stock monitoring & prevent stock-outs during shifts",
+          href: "/modules/inventory-reagent",
+          icon: <Cpu className="h-4 w-4 text-nova-blue" />,
+        },
+        {
+          title: "Pathology",
+          description: "Histopathology & cytology recording with cassette/slide tracking",
+          href: "/modules/pathology",
+          icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "Microbiology",
+          description: "Germ identification, bacterial culture, and antibiotic resistance testing",
+          href: "/modules/microbiology",
+          icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
+        },
+      ],
+    },
+    {
+      label: "Nova AI",
+      href: "/nova-ai",
+      children: [
+        {
+          title: "Nova AI Overview",
+          description: "Turning complex medical numbers into concise & actionable summaries",
+          href: "/nova-ai",
+          icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
+        },
+        {
+          title: "How It Works (4 Steps)",
+          description: "Read Patterns → Translate Numbers → Fast Alerts → Doctor Validation",
+          href: "/nova-ai/how-it-works",
+          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "AI + Doctor (Ethics & Collaboration)",
+          description: "AI assists. Doctors decide. Affirming the human role in clinical decisions",
+          href: "/nova-ai/ai-doctor",
+          icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
+        },
+      ],
+    },
+    {
+      label: "Integration",
+      href: "/integration",
+      children: [
+        {
+          title: "Integration Overview",
+          description: "Ready-to-use connectivity with your lab systems & instruments",
+          href: "/integration",
+          icon: <Network className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "HIS / EMR",
+          description: "Native two-way bridging for order reception & result release",
+          href: "/integration/simrs-his",
+          icon: <Building2 className="h-4 w-4 text-nova-blue" />,
+        },
+        {
+          title: "Electronic Medical Records",
+          description: "Compliance with national health data standards & longitudinal lab history",
+          href: "/integration/rme",
+          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
+        },
+        {
+          title: "500+ Analyzers",
+          description: "Direct interfacing with Roche, Abbott, Sysmex, Mindray instruments & more",
+          href: "/integration/analyzer",
+          icon: <Cpu className="h-4 w-4 text-nova-blue" />,
+        },
+        {
+          title: "SATUSEHAT (National Health)",
+          description: "HL7 FHIR interoperability with national health data standards",
+          href: "/integration/satusehat",
+          icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
+        },
+        {
+          title: "Smart Resilient Gateway",
+          description: "Robust HL7/ASTM connection with Offline Edge Buffer & 99.9% Uptime",
+          href: "/integration/connectivity",
+          icon: <Network className="h-4 w-4 text-diagnova-blue" />,
+        },
+      ],
+    },
+  ];
+}
 
 // Circular Indonesia Flag SVG Component
 function IndonesiaFlag({ className = "w-5 h-5" }: { className?: string }) {
@@ -341,11 +530,12 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<"ID" | "EN">("EN");
+  const { language, setLanguage } = useLanguage();
   const [isDismissed, setIsDismissed] = useState(false);
   const [barHeight, setBarHeight] = useState(42);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const navItems = getNavItems(language);
 
   const updateProgress = (y: number) => {
     if (!progressBarRef.current) return;
@@ -497,14 +687,17 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right Section: Request Demo Button */}
-        <div className="hidden items-center justify-end gap-5 lg:flex flex-1">
+        {/* Right Section: Language Switcher & Request Demo Button */}
+        <div className="hidden items-center justify-end gap-4 lg:flex flex-1">
+          {/* Animated Smooth Language Switcher */}
+          <LanguageSwitcher language={language} setLanguage={setLanguage} />
+
           {/* Primary CTA: Request Demo */}
           <Link
             href="/request-demo"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-6 py-2.5 xl:px-7 xl:py-3 text-[15px] xl:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
           >
-            <span>Request Demo</span>
+            <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
           </Link>
         </div>
 
@@ -520,7 +713,7 @@ export function Navbar() {
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
-            aria-label="Buka Navigasi"
+            aria-label={language === "ID" ? "Buka Navigasi" : "Open Navigation"}
           >
             {mobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -560,13 +753,14 @@ export function Navbar() {
               </div>
             ))}
 
-            <div className="flex items-center justify-end pt-2">
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
+              <LanguageSwitcher language={language} setLanguage={setLanguage} />
               <Link
                 href="/request-demo"
-                className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-[#2764B8] hover:bg-[#1E5299] py-3 text-center text-sm font-semibold text-white shadow-sm"
+                className="inline-flex items-center justify-center gap-2 flex-1 rounded-full bg-[#2764B8] hover:bg-[#1E5299] py-2.5 text-center text-xs sm:text-sm font-semibold text-white shadow-sm"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span>Request Demo</span>
+                <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
               </Link>
             </div>
           </div>
