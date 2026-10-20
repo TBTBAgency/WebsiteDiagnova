@@ -174,7 +174,7 @@ export function TestimonialsSection() {
           <div
             key={item.id}
             className={cn(
-              "w-[85vw] sm:w-[580px] lg:w-[620px] xl:w-[680px] shrink-0 snap-start rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-6 sm:p-8 lg:p-10 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col justify-between overflow-hidden",
+              "w-[88vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/80 p-4 sm:p-5 lg:p-6 shadow-xs hover:shadow-sm transition-all duration-300 group flex flex-col justify-between overflow-hidden",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-6"
@@ -185,14 +185,14 @@ export function TestimonialsSection() {
                 : "0ms",
             }}
           >
-            <div className="flex flex-col md:flex-row items-stretch justify-between gap-6 lg:gap-8 h-full">
+            <div className="flex flex-col md:flex-row items-stretch justify-between gap-5 sm:gap-6 lg:gap-7 h-full">
               {/* Left side: Quote + Author */}
-              <div className="flex-1 flex flex-col justify-between min-w-0">
+              <div className="flex-1 flex flex-col justify-between min-w-0 py-1 pl-1 sm:pl-2">
                 <div>
                   {/* Editorial Double Quote icon */}
-                  <div className="mb-4 sm:mb-5">
+                  <div className="mb-3.5 sm:mb-4">
                     <svg
-                      className="w-8 h-8 sm:w-9 sm:h-9 text-[#345DAB] fill-current opacity-95"
+                      className="w-7 h-7 sm:w-8 sm:h-8 text-[#345DAB] fill-current opacity-95"
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                     >
@@ -201,13 +201,13 @@ export function TestimonialsSection() {
                   </div>
 
                   {/* Testimonial Quote */}
-                  <p className="text-slate-700 text-sm sm:text-[15px] lg:text-base xl:text-[17px] font-normal leading-relaxed mb-6 sm:mb-8">
+                  <p className="text-slate-700 text-sm sm:text-[15px] lg:text-base leading-relaxed mb-5 sm:mb-6">
                     {item.quote}
                   </p>
                 </div>
 
                 {/* Author Credentials */}
-                <div className="pt-4 sm:pt-5">
+                <div className="pt-3 sm:pt-4">
                   <h3 className="font-display font-semibold text-diagnova-navy text-sm sm:text-base leading-snug">
                     {item.name}
                   </h3>
@@ -217,14 +217,14 @@ export function TestimonialsSection() {
                 </div>
               </div>
 
-              {/* Right side: Elegant Photographic Silhouette */}
-              <div className="relative w-full md:w-[220px] lg:w-[250px] xl:w-[280px] min-h-[220px] md:min-h-[260px] aspect-[4/5] rounded-2xl sm:rounded-[26px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
+              {/* Right side: Enlarged Photographic Silhouette (Thin padding to card edge, no hover scale) */}
+              <div className="relative w-full md:w-[260px] lg:w-[290px] xl:w-[320px] min-h-[250px] md:min-h-[290px] aspect-[4/5] rounded-xl sm:rounded-2xl lg:rounded-[22px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
                 <Image
                   src={item.imageSrc}
                   alt={`${item.name} - silhouette`}
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 250px, 280px"
-                  className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 290px, 320px"
+                  className="object-cover object-center"
                   priority={idx < 2}
                 />
                 {/* Subtle soft gradient overlay */}
