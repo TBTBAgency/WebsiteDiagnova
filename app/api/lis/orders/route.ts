@@ -4,6 +4,8 @@ import {
   createOrderController,
 } from "@/lib/controllers/lis.controller";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   return getOrdersController(request);
 }
