@@ -47,3 +47,31 @@ export const demoRequestSchema = z.object({
 });
 
 export type DemoRequestSchemaType = z.infer<typeof demoRequestSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().email("Format alamat email tidak valid"),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+});
+
+export type LoginSchemaType = z.infer<typeof loginSchema>;
+
+export const leadStatusEnum = z.enum(["new", "contacted", "scheduled", "completed"], {
+  errorMap: () => ({ message: "Status lead tidak valid" }),
+});
+
+export const updateLeadStatusSchema = z.object({
+  status: leadStatusEnum,
+  note: z.string().max(1000, "Catatan maksimal 1000 karakter").optional(),
+});
+
+export type UpdateLeadStatusSchemaType = z.infer<typeof updateLeadStatusSchema>;
+
+export const addLeadNoteSchema = z.object({
+  content: z
+    .string()
+    .min(2, "Catatan minimal 2 karakter")
+    .max(2000, "Catatan maksimal 2000 karakter"),
+});
+
+export type AddLeadNoteSchemaType = z.infer<typeof addLeadNoteSchema>;
+

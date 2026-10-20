@@ -12,8 +12,8 @@
   --diagnova-black: #000000;
   --diagnova-gradient: linear-gradient(135deg, #345DAB 0%, #56ADE2 100%);
   
-  /* Display font stack (Mokoto with Sora & Space Grotesk fallback) */
-  --font-display: "Mokoto", var(--font-sora), "Space Grotesk", sans-serif;
+  /* Display font stack (Sora from Next.js Google Fonts) */
+  --font-display: var(--font-sora), sans-serif;
 }
 
 @layer base {
@@ -23,7 +23,18 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight text-diagnova-navy;
+    @apply font-display text-diagnova-navy;
+    letter-spacing: -0.01em;
+  }
+
+  .font-display {
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .font-display.tracking-tight {
+    letter-spacing: -0.012em !important;
   }
 }
 
@@ -38,7 +49,71 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Smooth Scrolling */
-html {
-  scroll-behavior: smooth;
+/* Lenis Smooth Scrolling Styles */
+html.lenis, html.lenis body {
+  height: auto;
 }
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* 3D DNA Floating & Ambient Keyframe Animations (Polished Subtle Organic Motion) */
+@keyframes dnaHelixFloat {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate3d(6px, -4px, 0) rotate(0.6deg) scale(1.008);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) rotate(-0.4deg) scale(1.012);
+  }
+  75% {
+    transform: translate3d(-5px, -2px, 0) rotate(-0.6deg) scale(1.006);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes dnaGlowPulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.015);
+  }
+}
+
+.animate-dna-float {
+  animation: dnaHelixFloat 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-dna-glow {
+  animation: dnaGlowPulse 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-dna-float,
+  .animate-dna-glow {
+    animation: none !important;
+  }
+}
+
