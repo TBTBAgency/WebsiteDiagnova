@@ -23,7 +23,18 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight text-diagnova-navy;
+    @apply font-display text-diagnova-navy;
+    letter-spacing: -0.01em;
+  }
+
+  .font-display {
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .font-display.tracking-tight {
+    letter-spacing: -0.012em !important;
   }
 }
 

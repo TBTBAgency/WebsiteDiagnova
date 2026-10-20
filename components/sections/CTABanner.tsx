@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function CTABanner() {
+  const { language } = useLanguage();
   const [email, setEmail] = useState("");
   const router = useRouter();
 
@@ -45,12 +47,23 @@ export function CTABanner() {
             {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
             <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
               <h2 className="font-display text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-[#275EA8] tracking-tight leading-[1.2] sm:leading-[1.25] mb-3 sm:mb-5">
-                Transform Your Laboratory <br className="hidden sm:inline" />
-                with Diagnova
+                {language === "ID" ? (
+                  <>
+                    Transformasi Laboratorium Anda <br className="hidden sm:inline" />
+                    Bersama Diagnova
+                  </>
+                ) : (
+                  <>
+                    Transform Your Laboratory <br className="hidden sm:inline" />
+                    with Diagnova
+                  </>
+                )}
               </h2>
 
               <p className="text-slate-500 text-xs sm:text-base lg:text-lg leading-relaxed max-w-lg mb-6 sm:mb-10">
-                Bring high reliability, speed, and precision to your healthcare institution today.
+                {language === "ID"
+                  ? "Hadirkan keandalan tinggi, kecepatan analisis, dan presisi klinis bagi institusi kesehatan Anda hari ini."
+                  : "Bring high reliability, speed, and precision to your healthcare institution today."}
               </p>
 
               {/* White Pill Input Container (Adaptive: stacked card on tiny screens, sleek pill on sm+) */}
@@ -62,7 +75,11 @@ export function CTABanner() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
+                  placeholder={
+                    language === "ID"
+                      ? "Masukkan alamat email Anda"
+                      : "Enter your email address"
+                  }
                   className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder-slate-400 outline-none pr-3 py-1.5 sm:py-0"
                   required
                 />
@@ -70,7 +87,7 @@ export function CTABanner() {
                   type="submit"
                   className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2E68B4] hover:bg-[#235899] text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-colors shadow-sm cursor-pointer active:scale-[0.98]"
                 >
-                  <span>Request Demo</span>
+                  <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
                   <ArrowUpRight className="h-4 w-4" />
                 </button>
               </form>
