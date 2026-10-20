@@ -14,7 +14,7 @@ interface GoalItem {
 
 interface AnnouncementBarProps {
   language?: "ID" | "EN";
-  onHeightChange?: (height: number) => void;
+  onHeightChange?: (_height: number) => void;
   onDismiss?: () => void;
 }
 

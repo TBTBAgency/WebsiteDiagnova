@@ -13,8 +13,6 @@ import {
   ExternalLink,
   Menu,
   X,
-  Layers,
-  ChevronRight,
   UserCheck,
 } from "lucide-react";
 import { AuthSessionPayload } from "@/types";

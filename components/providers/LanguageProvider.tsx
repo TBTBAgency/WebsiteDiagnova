@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
@@ -6,7 +6,7 @@ export type Language = "ID" | "EN";
 
 interface LanguageContextType {
   language: Language;
-  setLanguage: (lang: Language) => void;
+  setLanguage: (_lang: Language) => void;
   toggleLanguage: () => void;
 }
 

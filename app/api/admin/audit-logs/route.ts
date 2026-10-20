@@ -3,6 +3,8 @@ import { getAuditLogs } from "@/lib/models/audit.model";
 import { getCurrentSession } from "@/lib/auth-session";
 import { ApiResponse } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const session = await getCurrentSession();

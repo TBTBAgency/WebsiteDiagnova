@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ShieldAlert, RefreshCw, Clock, User, FileText, CheckCircle2 } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { AuditLogRecord } from "@/types";
 
 export default function AdminAuditLogsPage() {

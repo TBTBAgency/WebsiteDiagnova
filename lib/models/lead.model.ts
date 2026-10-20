@@ -235,7 +235,7 @@ export async function updateLeadStatus(
   const prismaNewStatus = leadStatusToPrisma[newStatus];
 
   // Gunakan Prisma transaction jika ada penambahan catatan sekaligus
-  const updatedRecord = await db.$transaction(async (tx) => {
+  await db.$transaction(async (tx) => {
     const updated = await tx.lead.update({
       where: { id: leadId },
       data: { status: prismaNewStatus },

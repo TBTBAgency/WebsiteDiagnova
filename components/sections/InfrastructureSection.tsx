@@ -79,7 +79,6 @@ export function InfrastructureSection() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [lineFillFraction, setLineFillFraction] = useState<number>(0.1);
 
   // Vertical positions of dots and total height of the 3-card container
@@ -153,8 +152,6 @@ export function InfrastructureSection() {
           const currentScroll = -rect.top;
           const rawProgress = currentScroll / totalScrollable;
           const progress = Math.max(0, Math.min(1, rawProgress));
-
-          setScrollProgress(progress);
 
           // Dot fraction coordinates along the full-height track
           const cH = containerHeight || 450;

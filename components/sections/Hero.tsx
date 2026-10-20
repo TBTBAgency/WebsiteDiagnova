@@ -104,7 +104,7 @@ export function Hero() {
   const nextSlide = useCallback(() => {
     setPrevSlide(currentSlide);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, [currentSlide]);
+  }, [currentSlide, slides.length]);
 
   const goToSlide = (index: number) => {
     if (index === currentSlide) return;

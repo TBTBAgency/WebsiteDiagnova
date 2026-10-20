@@ -7,9 +7,7 @@ import {
   Filter,
   Cpu,
   CheckCheck,
-  ShieldCheck,
   ArrowRight,
-  Clock,
   Sparkles,
 } from "lucide-react";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
