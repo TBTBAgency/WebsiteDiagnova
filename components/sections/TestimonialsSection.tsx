@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
@@ -216,37 +217,18 @@ export function TestimonialsSection() {
                 </div>
               </div>
 
-              {/* Right side: Clean Silhouette Placeholder */}
-              <div className="relative w-full md:w-[220px] lg:w-[250px] xl:w-[280px] min-h-[220px] md:min-h-[260px] aspect-[4/5] rounded-2xl sm:rounded-[26px] overflow-hidden bg-gradient-to-br from-[#275EA8] via-[#3574C4] to-[#5AA3E8] flex items-end justify-center shrink-0 shadow-inner">
-                {/* Subtle ambient lighting */}
-                <div className="pointer-events-none absolute -top-10 -right-10 h-36 w-36 rounded-full bg-white/20 blur-2xl" />
-                <div className="pointer-events-none absolute -bottom-10 -left-10 h-36 w-36 rounded-full bg-[#0E234B]/35 blur-2xl" />
-
-                {/* Silhouette Vector */}
-                <div className="relative w-full h-full flex items-end justify-center">
-                  <svg
-                    viewBox="0 0 200 240"
-                    fill="none"
-                    className="w-[85%] h-[85%] object-bottom drop-shadow-md"
-                    preserveAspectRatio="xMidYMax meet"
-                    aria-hidden="true"
-                  >
-                    <circle cx="100" cy="85" r="46" fill="white" fillOpacity="0.12" />
-                    <circle cx="100" cy="80" r="32" fill="white" fillOpacity="0.9" />
-                    <path
-                      d="M32 240 C32 188 62 152 100 152 C138 152 168 188 168 240 Z"
-                      fill="white"
-                      fillOpacity="0.9"
-                    />
-                    <path
-                      d="M86 152 L100 182 L114 152"
-                      stroke="#275EA8"
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+              {/* Right side: Elegant Photographic Silhouette */}
+              <div className="relative w-full md:w-[220px] lg:w-[250px] xl:w-[280px] min-h-[220px] md:min-h-[260px] aspect-[4/5] rounded-2xl sm:rounded-[26px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
+                <Image
+                  src={item.imageSrc}
+                  alt={`${item.name} - silhouette`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 250px, 280px"
+                  className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-500"
+                  priority={idx < 2}
+                />
+                {/* Subtle soft gradient overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0E234B]/20 via-transparent to-white/10" />
               </div>
             </div>
           </div>
