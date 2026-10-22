@@ -2,11 +2,13 @@
 
 import React, { useRef } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 // Repeat trust logos to create an infinite, seamless scrolling marquee loop
 const logos = Array.from({ length: 8 });
 
 export function TrustedByBar() {
+  const { language } = useLanguage();
   const marqueeRef = useRef<HTMLDivElement>(null);
 
   const handleMouseEnter = () => {
@@ -48,7 +50,7 @@ export function TrustedByBar() {
       {/* Centered Heading Label */}
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 text-center mb-6 sm:mb-8">
         <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
-          DIPERCAYA OLEH
+          {language === "ID" ? "DIPERCAYA OLEH" : "TRUSTED BY"}
         </p>
       </div>
 

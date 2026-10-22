@@ -6,12 +6,10 @@ import {
   Search,
   RefreshCw,
   Download,
-  Filter,
   Eye,
   Phone,
   Mail,
   Building2,
-  Calendar,
   Clock,
   CheckCircle2,
   AlertCircle,
@@ -20,10 +18,8 @@ import {
   MessageSquare,
   Send,
   X,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { DemoRequestRecord, InstitutionType, LeadStatus } from "@/types";

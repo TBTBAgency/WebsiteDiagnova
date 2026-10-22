@@ -1,59 +1,112 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
+const footerSectionsID = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Gambaran Platform", href: "/platform" },
+      { label: "Alur Kerja", href: "/platform/workflow" },
+      { label: "100% Otomasi", href: "/platform/automation" },
+      { label: "Pelaporan & Audit", href: "/platform/reporting" },
+      { label: "Analitik Lab", href: "/platform/analytics" },
+      { label: "Nova AI Copilot", href: "/nova-ai" },
+    ],
+  },
+  {
+    title: "Solusi",
+    links: [
+      { label: "Gambaran Solusi", href: "/solutions" },
+      { label: "Laboratorium Rumah Sakit", href: "/solutions/hospital-laboratory" },
+      { label: "Laboratorium Klinik", href: "/solutions/clinical-laboratory" },
+      { label: "Pusat Medical Check Up", href: "/solutions/health-screening" },
+      { label: "Laboratorium Multi-Cabang", href: "/solutions/multi-branch" },
+      { label: "Cara Kerja Nova AI", href: "/nova-ai/how-it-works" },
+    ],
+  },
+  {
+    title: "Modul",
+    links: [
+      { label: "Gambaran Modul", href: "/modules" },
+      { label: "Rutin & Hematologi", href: "/modules/routine-hematology" },
+      { label: "Kimia Klinik", href: "/modules/clinical-chemistry" },
+      { label: "Manajemen Bank Darah", href: "/modules/blood-bank" },
+      { label: "Inventaris & Reagen", href: "/modules/inventory-reagent" },
+      { label: "Patologi Anatomi", href: "/modules/pathology" },
+    ],
+  },
+  {
+    title: "Integrasi",
+    links: [
+      { label: "Gambaran Integrasi", href: "/integration" },
+      { label: "Bridging SIMRS / HIS", href: "/integration/simrs-his" },
+      { label: "Rekam Medis (RME)", href: "/integration/rme" },
+      { label: "500+ Analyzer Medis", href: "/integration/analyzer" },
+      { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
+      { label: "Portal Admin LIS", href: "/admin/login" },
+    ],
+  },
+];
+
+const footerSectionsEN = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Overview", href: "/platform" },
+      { label: "Workflow", href: "/platform/workflow" },
+      { label: "100% Automation", href: "/platform/automation" },
+      { label: "Reporting & Audit", href: "/platform/reporting" },
+      { label: "Lab Analytics", href: "/platform/analytics" },
+      { label: "Nova AI Copilot", href: "/nova-ai" },
+    ],
+  },
+  {
+    title: "Solutions",
+    links: [
+      { label: "Overview", href: "/solutions" },
+      { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
+      { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
+      { label: "Health Screening Center", href: "/solutions/health-screening" },
+      { label: "Multi-branch Laboratory", href: "/solutions/multi-branch" },
+      { label: "How Nova AI Works", href: "/nova-ai/how-it-works" },
+    ],
+  },
+  {
+    title: "Modules",
+    links: [
+      { label: "Overview", href: "/modules" },
+      { label: "Routine & Hematology", href: "/modules/routine-hematology" },
+      { label: "Clinical Chemistry", href: "/modules/clinical-chemistry" },
+      { label: "Blood Bank Management", href: "/modules/blood-bank" },
+      { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
+      { label: "Anatomical Pathology", href: "/modules/pathology" },
+    ],
+  },
+  {
+    title: "Integration",
+    links: [
+      { label: "Overview", href: "/integration" },
+      { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
+      { label: "Electronic Medical Record (EMR)", href: "/integration/rme" },
+      { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
+      { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
+      { label: "LIS Admin Portal", href: "/admin/login" },
+    ],
+  },
+];
 
 export function Footer() {
-  const footerSections = [
-    {
-      title: "Platform",
-      links: [
-        { label: "Overview", href: "/platform" },
-        { label: "Workflow", href: "/platform/workflow" },
-        { label: "100% Automation", href: "/platform/automation" },
-        { label: "Reporting & Audit", href: "/platform/reporting" },
-        { label: "Lab Analytics", href: "/platform/analytics" },
-        { label: "Nova AI Copilot", href: "/nova-ai" },
-      ],
-    },
-    {
-      title: "Solutions",
-      links: [
-        { label: "Overview", href: "/solutions" },
-        { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
-        { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
-        { label: "Health Screening Center", href: "/solutions/health-screening" },
-        { label: "Multi-branch Laboratory", href: "/solutions/multi-branch" },
-        { label: "How Nova AI Works", href: "/nova-ai/how-it-works" },
-      ],
-    },
-    {
-      title: "Modules",
-      links: [
-        { label: "Overview", href: "/modules" },
-        { label: "Routine & Hematology", href: "/modules/routine-hematology" },
-        { label: "Clinical Chemistry", href: "/modules/clinical-chemistry" },
-        { label: "Blood Bank Management", href: "/modules/blood-bank" },
-        { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
-        { label: "Anatomical Pathology", href: "/modules/pathology" },
-      ],
-    },
-    {
-      title: "Integration",
-      links: [
-        { label: "Overview", href: "/integration" },
-        { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
-        { label: "Rekam Medis (RME)", href: "/integration/rme" },
-        { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
-        { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-        { label: "Portal Admin LIS", href: "/admin/login" },
-      ],
-    },
-  ];
+  const { language } = useLanguage();
+  const footerSections = language === "ID" ? footerSectionsID : footerSectionsEN;
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
-      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-10">
-        {/* Main Footer Flex Layout */}
+      <div className="relative z-10 mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
+        {/* Main Footer Flex Layout (Aligned precisely with Navbar left and right bounds) */}
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-16 pb-4 sm:pb-6 items-stretch">
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
           <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-88 xl:w-[380px]">
@@ -77,11 +130,11 @@ export function Footer() {
               <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
               <p className="flex items-center gap-1.5 text-white/70">
                 <Link href="/terms" className="hover:text-white transition-colors">
-                  Terms of Service
+                  {language === "ID" ? "Syarat & Ketentuan" : "Terms of Service"}
                 </Link>
                 <span className="text-white/40">|</span>
                 <Link href="/platform/reporting" className="hover:text-white transition-colors">
-                  Privacy Policy
+                  {language === "ID" ? "Kebijakan Privasi" : "Privacy Policy"}
                 </Link>
               </p>
             </div>

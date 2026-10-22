@@ -1,41 +1,84 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Zap, Network, Sparkles } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface InfrastructureCard {
   id: string;
   title: string;
   description: string;
+  iconName: "automation" | "integration" | "ai";
 }
 
-const infrastructureCards: InfrastructureCard[] = [
+const infrastructureCardsID: InfrastructureCard[] = [
+  {
+    id: "automation",
+    title: "Otomatisasi 100%",
+    description:
+      "Identifikasi kode batang yang ketat dan koneksi alat dua arah memangkas Turnaround Time (TAT) hingga 70% dengan mengeliminasi entri data manual.",
+    iconName: "automation",
+  },
+  {
+    id: "integration",
+    title: "Integrasi Tanpa Hambatan",
+    description:
+      "Terhubung secara asli dengan SIMRS, RME, dan siap SATUSEHAT. Kompatibel secara universal dengan lebih dari 500 instrumen medis.",
+    iconName: "integration",
+  },
+  {
+    id: "nova-ai",
+    title: "Asisten Nova AI",
+    description:
+      "Nova AI mendeteksi pola, memberikan peringatan dini, dan menyederhanakan angka diagnostik kompleks. Keputusan medis tetap 100% di tangan dokter.",
+    iconName: "ai",
+  },
+];
+
+const infrastructureCardsEN: InfrastructureCard[] = [
   {
     id: "automation",
     title: "100% Automation",
     description:
-      "Strict Barcode Identification And Direct Analyzer Interfacing Cut Turnaround Time (TAT) By Up To 70% By Eliminating Manual Data Entry.",
+      "Strict barcode identification and direct analyzer interfacing cut Turnaround Time (TAT) by up to 70% by eliminating manual data entry.",
+    iconName: "automation",
   },
   {
     id: "integration",
     title: "Seamless Integration",
     description:
-      "Natively Bridges With HIS, EMR, And Is SATUSEHATready. Universally Compatible With Over 500 Medical Instruments.",
+      "Natively bridges with HIS, EMR, and is SATUSEHAT ready. Universally compatible with over 500 medical instruments.",
+    iconName: "integration",
   },
   {
     id: "nova-ai",
     title: "Nova AI Assistant",
     description:
-      "Nova AI Detects Patterns, Provides Early Warnings, And Simplifies Complex Numbers. Treatment Decisions Remain 100% With The Doctor.",
+      "Nova AI detects patterns, provides early warnings, and simplifies complex numbers. Treatment decisions remain 100% with the doctor.",
+    iconName: "ai",
   },
 ];
 
+function getCardIcon(iconName: InfrastructureCard["iconName"], className = "h-5 w-5") {
+  switch (iconName) {
+    case "automation":
+      return <Zap className={className} />;
+    case "integration":
+      return <Network className={className} />;
+    case "ai":
+      return <Sparkles className={className} />;
+  }
+}
+
 export function InfrastructureSection() {
+  const { language } = useLanguage();
+  const infrastructureCards =
+    language === "ID" ? infrastructureCardsID : infrastructureCardsEN;
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [lineFillFraction, setLineFillFraction] = useState<number>(0.1);
 
   // Vertical positions of dots and total height of the 3-card container
@@ -51,8 +94,12 @@ export function InfrastructureSection() {
 
     const newTops = cardRefs.current.map((cardEl) => {
       if (!cardEl) return 36;
+      const titleRow = cardEl.querySelector(".card-title-row");
+      if (titleRow) {
+        const tRect = titleRow.getBoundingClientRect();
+        return Math.round(tRect.top - containerRect.top + tRect.height / 2);
+      }
       const cardRect = cardEl.getBoundingClientRect();
-      // Target vertical center of card's title (approx 34px from card top)
       return Math.round(cardRect.top - containerRect.top + 34);
     });
 
@@ -106,18 +153,27 @@ export function InfrastructureSection() {
           const rawProgress = currentScroll / totalScrollable;
           const progress = Math.max(0, Math.min(1, rawProgress));
 
-          setScrollProgress(progress);
-
           // Dot fraction coordinates along the full-height track
           const cH = containerHeight || 450;
           const dot0Frac = (dotTops[0] || 36) / cH;
           const dot1Frac = (dotTops[1] || 196) / cH;
           const dot2Frac = (dotTops[2] || 356) / cH;
 
-          // Linear, continuous line fill tracking from dot 0 to dot 2 (and slight terminal extension)
-          const endFrac = Math.min(1, dot2Frac + 0.05);
-          const fill = dot0Frac + progress * (endFrac - dot0Frac);
-          const clampedFill = Math.max(0, Math.min(1, fill));
+          // Progressively fill the line track from dot 0 to dot 1, dot 2, and down to 100% (full track height)
+          let fill: number;
+          if (progress <= 0.33) {
+            const seg = progress / 0.33;
+            fill = dot0Frac + seg * (dot1Frac - dot0Frac);
+          } else if (progress <= 0.67) {
+            const seg = (progress - 0.33) / 0.34;
+            fill = dot1Frac + seg * (dot2Frac - dot1Frac);
+          } else {
+            // Smoothly complete all the way down to 1.0 (100% full track)
+            const seg = Math.min(1, (progress - 0.67) / 0.23);
+            fill = dot2Frac + seg * (1.0 - dot2Frac);
+          }
+
+          const clampedFill = Math.max(dot0Frac, Math.min(1.0, fill));
           setLineFillFraction(clampedFill);
 
           // Evenly partitioned active step switching across the 3 scroll segments
@@ -149,8 +205,8 @@ export function InfrastructureSection() {
     const sectionHeight = containerRef.current.offsetHeight;
     const totalScrollable = sectionHeight - window.innerHeight;
 
-    // Center of each step range: [0, 0.33) -> 0.16, [0.33, 0.67) -> 0.50, [0.67, 1.0] -> 0.84
-    const targetProgress = index === 0 ? 0.16 : index === 1 ? 0.5 : 0.84;
+    // Step positions: 0.16 -> Step 1, 0.50 -> Step 2, 0.92 -> Step 3 (full line)
+    const targetProgress = index === 0 ? 0.16 : index === 1 ? 0.5 : 0.92;
     const targetY = containerTop + targetProgress * totalScrollable;
 
     window.scrollTo({
@@ -170,19 +226,29 @@ export function InfrastructureSection() {
     >
       {/* ─── STICKY VIEWPORT: Pinned in viewport while user scrolls ─── */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full py-8 lg:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full pt-16 sm:pt-20 lg:py-12 pb-4 sm:pb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 lg:gap-14 items-center">
             {/* ═══ LEFT COLUMN: Badge & Headline ═══ */}
             <div className="lg:col-span-5 flex flex-col justify-center">
-              <div className="mb-4 sm:mb-5">
-                <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-slate-700">
-                  Infrastructure
+              <div className="mb-2.5 sm:mb-4 lg:mb-5">
+                <span className="inline-flex items-center rounded-full bg-slate-100 px-3.5 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-slate-700">
+                  {language === "ID" ? "Infrastruktur" : "Infrastructure"}
                 </span>
               </div>
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[34px] xl:text-[38px] font-bold leading-[1.22] sm:leading-[1.25] tracking-tight text-[#2A5298]">
-                Intelligent Infrastructure for
-                <br />
-                Seamless Operations
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-[34px] xl:text-[38px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#2A5298]">
+                {language === "ID" ? (
+                  <>
+                    Infrastruktur Cerdas untuk
+                    <br className="hidden sm:inline" />{" "}
+                    Operasional Tanpa Hambatan
+                  </>
+                ) : (
+                  <>
+                    Intelligent Infrastructure for
+                    <br className="hidden sm:inline" />{" "}
+                    Seamless Operations
+                  </>
+                )}
               </h2>
             </div>
 
@@ -246,7 +312,7 @@ export function InfrastructureSection() {
               {/* 3 Stacked Cards */}
               <div
                 ref={cardsContainerRef}
-                className="flex-1 flex flex-col gap-4 sm:gap-5 lg:gap-6"
+                className="flex-1 flex flex-col gap-3 sm:gap-4 lg:gap-6"
               >
                 {infrastructureCards.map((card, idx) => {
                   const isActive = activeIndex === idx;
@@ -265,10 +331,10 @@ export function InfrastructureSection() {
                       }`}
                     >
                       <div
-                        className="relative overflow-hidden rounded-tl-[28px] sm:rounded-tl-[36px] rounded-br-[28px] sm:rounded-br-[36px]"
+                        className="relative overflow-hidden rounded-tl-[24px] sm:rounded-tl-[36px] rounded-br-[24px] sm:rounded-br-[36px]"
                         style={{
                           clipPath:
-                            "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                            "polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 32px 100%, 0 calc(100% - 32px))",
                         }}
                       >
                         {/* Layer 1: Inactive Base Card Background */}
@@ -285,18 +351,29 @@ export function InfrastructureSection() {
                           <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#1C478B]/40 blur-[50px]" />
                         </div>
 
-                        {/* Layer 3: Unified Single Text Content Layer (Seamlessly transitions color without ghosting) */}
-                        <div className="relative z-10 p-6 sm:p-7 lg:p-8">
-                          <h3
-                            className={`font-display text-lg sm:text-xl lg:text-[22px] font-bold tracking-tight mb-3.5 sm:mb-4 lg:mb-5 transition-colors duration-500 ease-in-out ${
-                              isActive ? "text-white" : "text-slate-900"
-                            }`}
-                          >
-                            {card.title}
-                          </h3>
+                        {/* Layer 3: Unified Single Text Content Layer with Icon */}
+                        <div className="relative z-10 p-4 sm:p-6 lg:p-8">
+                          <div className="card-title-row flex items-center gap-3 sm:gap-3.5 mb-2 sm:mb-3 lg:mb-4">
+                            <div
+                              className={`flex items-center justify-center rounded-xl p-2 sm:p-2.5 transition-all duration-500 ease-in-out shrink-0 ${
+                                isActive
+                                  ? "bg-white/20 text-white shadow-inner"
+                                  : "bg-[#275EA8]/10 text-[#275EA8]"
+                              }`}
+                            >
+                              {getCardIcon(card.iconName, "h-4 w-4 sm:h-4.5 sm:w-4.5")}
+                            </div>
+                            <h3
+                              className={`font-semibold text-sm sm:text-base lg:text-[17px] leading-snug tracking-tight transition-colors duration-500 ease-in-out ${
+                                isActive ? "text-white" : "text-slate-700"
+                              }`}
+                            >
+                              {card.title}
+                            </h3>
+                          </div>
                           <p
-                            className={`text-xs sm:text-sm lg:text-[15px] leading-relaxed max-w-xl transition-colors duration-500 ease-in-out ${
-                              isActive ? "text-white/95" : "text-slate-500"
+                            className={`text-xs sm:text-sm leading-relaxed max-w-xl transition-colors duration-500 ease-in-out ${
+                              isActive ? "text-white/85" : "text-slate-500"
                             }`}
                           >
                             {card.description}

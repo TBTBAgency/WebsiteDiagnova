@@ -6,7 +6,6 @@ import {
   Search,
   Plus,
   RefreshCw,
-  Filter,
   AlertTriangle,
   CheckCircle2,
   XCircle,
@@ -14,16 +13,12 @@ import {
   User,
   Stethoscope,
   Barcode,
-  Layers,
-  ArrowRight,
   X,
-  Printer,
   Copy,
   Check,
   Building2,
   Calendar,
   Sparkles,
-  FileText,
   AlertCircle,
   ChevronRight,
   ShieldAlert,
@@ -695,7 +690,7 @@ export default function LabOrdersPage() {
             <ClipboardList className="h-10 w-10 text-slate-300 mx-auto mb-3" />
             <h3 className="text-sm font-semibold text-slate-800">Belum Ada Order Laboratorium</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              Tidak ditemukan data order lab sesuai filter. Silakan klik tombol "Registrasi Order Lab" untuk membuat order baru.
+              Tidak ditemukan data order lab sesuai filter. Silakan klik tombol &quot;Registrasi Order Lab&quot; untuk membuat order baru.
             </p>
             <button
               onClick={openCreateModal}

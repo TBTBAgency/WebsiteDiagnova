@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { PatientRecord, PatientSex } from "@/types";
-import { gender as PrismaGender, Prisma } from "@prisma/client";
+import { gender as PrismaGender } from "@prisma/client";
 
 export const prismaGenderToSex: Record<PrismaGender, PatientSex> = {
   [PrismaGender.male]: "male",

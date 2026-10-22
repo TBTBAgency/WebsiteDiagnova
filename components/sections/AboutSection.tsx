@@ -3,8 +3,28 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
-const headlineWords = [
+const headlineWordsID = [
+  "Di",
+  "Diagnova,",
+  "Kami",
+  "Mengubah",
+  "Data",
+  "Diagnostik",
+  "Menjadi",
+  "Intelijen",
+  "Klinis,",
+  "Memperkuat",
+  "Laboratorium",
+  "Menghasilkan",
+  "Keputusan",
+  "Medis",
+  "yang",
+  "Presisi.",
+];
+
+const headlineWordsEN = [
   "At",
   "Diagnova,",
   "We",
@@ -24,6 +44,8 @@ const headlineWords = [
 ];
 
 export function AboutSection() {
+  const { language } = useLanguage();
+  const headlineWords = language === "ID" ? headlineWordsID : headlineWordsEN;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -58,10 +80,10 @@ export function AboutSection() {
       className="relative w-full bg-white py-12 sm:py-16 lg:py-20 overflow-hidden"
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
-          {/* Left Column: DNA 3D Visual */}
-          <div className="flex justify-center lg:justify-start lg:col-span-5">
-            <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[440px] aspect-[4/5] flex items-center justify-center">
+        <div className="grid grid-cols-1 items-center gap-8 sm:gap-10 lg:grid-cols-12 lg:gap-16">
+          {/* Left Column: DNA 3D Visual (Order 2 on mobile, Order 1 on desktop) */}
+          <div className="flex justify-center lg:justify-start lg:col-span-5 order-2 lg:order-1">
+            <div className="relative w-full max-w-[240px] sm:max-w-[320px] lg:max-w-[440px] aspect-[4/5] flex items-center justify-center">
               <Image
                 src="/images/dna-about.webp"
                 alt="Diagnova DNA Intelligence Structure"
@@ -73,11 +95,13 @@ export function AboutSection() {
             </div>
           </div>
 
-          {/* Right Column: About Narrative with Gradual Continuous Scroll Reveal */}
-          <div className="flex flex-col justify-center lg:col-span-7">
+          {/* Right Column: About Narrative (Order 1 on mobile, Order 2 on desktop) */}
+          <div className="flex flex-col justify-center lg:col-span-7 order-1 lg:order-2">
             {/* Pill Badge */}
             <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="light">About</SectionBadge>
+              <SectionBadge variant="light">
+                {language === "ID" ? "Tentang Diagnova" : "About Diagnova"}
+              </SectionBadge>
             </div>
 
             {/* Continuous Smooth Scroll-Driven Text Reveal Headline */}
@@ -115,10 +139,9 @@ export function AboutSection() {
 
             {/* Subtitle / Paragraph Description */}
             <p className="text-sm sm:text-base lg:text-lg text-slate-500 font-normal leading-relaxed max-w-2xl">
-              More Than A Traditional LIS, Diagnova Is An Intelligent Ecosystem
-              Connecting People, Instruments, And Workflows. We Help Modern
-              Laboratories Move Beyond Managing Data To Delivering Clear,
-              Actionable Insights.
+              {language === "ID"
+                ? "Lebih dari sekadar LIS konvensional, Diagnova adalah ekosistem cerdas yang menghubungkan tenaga medis, instrumen laboratorium, dan alur kerja klinis. Kami membantu laboratorium modern melangkah dari sekadar mengelola data menuju penyajian wawasan klinis yang akurat dan dapat ditindaklanjuti."
+                : "More than a traditional LIS, Diagnova is an intelligent ecosystem connecting clinicians, instruments, and laboratory workflows. We empower modern laboratories to move beyond managing data to delivering clear, actionable clinical insights."}
             </p>
           </div>
         </div>

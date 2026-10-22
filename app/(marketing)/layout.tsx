@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 export default function MarketingLayout({
   children,
@@ -8,10 +9,13 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SmoothScrollProvider>
-      <Navbar />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </SmoothScrollProvider>
+    <LanguageProvider>
+      <SmoothScrollProvider>
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </SmoothScrollProvider>
+    </LanguageProvider>
   );
 }
+

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTestCatalog, ensureDefaultCatalog } from "@/lib/models/catalog.model";
 import { searchPatients, createPatient, listPatients } from "@/lib/models/patient.model";
 import { createLabOrder, getLabOrders, getLabOrderById } from "@/lib/models/order.model";
-import { receiveSpecimen, rejectSpecimen, getSpecimenByBarcode } from "@/lib/models/specimen.model";
+import { receiveSpecimen, rejectSpecimen } from "@/lib/models/specimen.model";
 import { listPhysicians } from "@/lib/models/physician.model";
 import { getCurrentSession } from "@/lib/auth-session";
 import { ApiResponse, OrderPriority } from "@/types";

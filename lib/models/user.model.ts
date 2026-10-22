@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { UserRecord, UserRole, UserStatus } from "@/types";
+import { UserRole, UserStatus } from "@/types";
 import { UserRole as PrismaUserRole, UserStatus as PrismaUserStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 

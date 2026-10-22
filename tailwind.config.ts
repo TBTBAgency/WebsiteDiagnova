@@ -30,7 +30,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
-        display: ["Mokoto", "var(--font-sora)", "Space Grotesk", "sans-serif"],
+        display: ["var(--font-sora)", "sans-serif"],
       },
     },
   },

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface SlideData {
   id: number;
@@ -13,7 +14,46 @@ interface SlideData {
   objectPosition?: string;
 }
 
-const slides: SlideData[] = [
+const slidesID: SlideData[] = [
+  {
+    id: 1,
+    image: "/images/hero-bg-1.webp",
+    alt: "Diagnova Laboratory Intelligence Specialist",
+    title: (
+      <>
+        Dari Hasil Uji Mentah Menjadi <br className="hidden sm:inline" />
+        Keputusan Klinis
+      </>
+    ),
+    objectPosition: "object-bottom",
+  },
+  {
+    id: 2,
+    image: "/images/hero-bg-2.webp",
+    alt: "Diagnova Seamless Interoperability & Automation",
+    title: (
+      <>
+        Laboratorium Terkoneksi, <br className="hidden sm:inline" />
+        Tanpa Hambatan Data
+      </>
+    ),
+    objectPosition: "object-center",
+  },
+  {
+    id: 3,
+    image: "/images/hero-bg-3.webp",
+    alt: "Nova AI Clinical Decision Support",
+    title: (
+      <>
+        Diagnostik AI Presisi, <br className="hidden sm:inline" />
+        Memperkuat Tenaga Medis
+      </>
+    ),
+    objectPosition: "object-center",
+  },
+];
+
+const slidesEN: SlideData[] = [
   {
     id: 1,
     image: "/images/hero-bg-1.webp",
@@ -55,6 +95,8 @@ const slides: SlideData[] = [
 const AUTOPLAY_INTERVAL = 5000; // 5 seconds per slide
 
 export function Hero() {
+  const { language } = useLanguage();
+  const slides = language === "ID" ? slidesID : slidesEN;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [prevSlide, setPrevSlide] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -62,7 +104,7 @@ export function Hero() {
   const nextSlide = useCallback(() => {
     setPrevSlide(currentSlide);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, [currentSlide]);
+  }, [currentSlide, slides.length]);
 
   const goToSlide = (index: number) => {
     if (index === currentSlide) return;
@@ -145,7 +187,9 @@ export function Hero() {
           {/* Static Badge */}
           <div>
             <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6">
-              AI-Powered Laboratory Intelligence Platform
+              {language === "ID"
+                ? "Platform Intelijen Laboratorium Berbasis AI"
+                : "AI-Powered Laboratory Intelligence Platform"}
             </div>
           </div>
 
@@ -171,7 +215,9 @@ export function Hero() {
 
           {/* Static Subtitle - Constant Position */}
           <p className="text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-xl mb-6 sm:mb-8 text-left">
-            Sistem Informasi Laboratorium Generasi Baru Yang Menghubungkan Mesin Medis Secara Otonom Dengan Para Klinisi. Mengubah Data Diagnostik Yang Kompleks Menjadi Keputusan Medis Yang Cepat, Akurat, Dan Transparan.
+            {language === "ID"
+              ? "Sistem Informasi Laboratorium generasi baru yang menghubungkan instrumen medis secara otomatis dengan para klinisi. Mengubah data diagnostik kompleks menjadi keputusan medis yang cepat, akurat, dan transparan."
+              : "A next-generation Laboratory Information System autonomously connecting medical instruments with clinicians. Transforming complex diagnostic data into fast, accurate, and actionable medical decisions."}
           </p>
 
           {/* Static CTA Buttons - Always Schedule Demo & Explore Modules */}
@@ -180,14 +226,14 @@ export function Hero() {
               href="/request-demo"
               className="inline-flex items-center justify-center rounded-full bg-white text-slate-900 font-semibold px-8 py-3.5 text-sm sm:text-base hover:bg-slate-50 transition-all duration-200 shadow-xl active:scale-[0.98]"
             >
-              Schedule Demo
+              {language === "ID" ? "Jadwalkan Demo" : "Schedule Demo"}
             </Link>
 
             <Link
               href="/modules"
               className="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-3.5 text-sm sm:text-base backdrop-blur-md transition-all duration-200 active:scale-[0.98]"
             >
-              Explore Modules
+              {language === "ID" ? "Jelajahi Modul" : "Explore Modules"}
             </Link>
           </div>
 

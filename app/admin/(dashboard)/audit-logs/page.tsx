@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ShieldCheck, RefreshCw, Clock, User, FileText, CheckCircle2, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { RefreshCw } from "lucide-react";
 import { AuditLogRecord } from "@/types";
 import { cn } from "@/lib/utils";
 
