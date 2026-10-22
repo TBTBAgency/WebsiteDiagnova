@@ -27,10 +27,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Jika membuka halaman login tapi sudah login, redirect langsung ke /admin/leads
+  // Jika membuka halaman login tapi sudah login, redirect langsung ke /admin/dashboard
   if (pathname === "/admin/login") {
     if (isValidSession) {
-      return NextResponse.redirect(new URL("/admin/leads", request.url));
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.next();
   }
@@ -42,9 +42,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Jika membuka /admin root, redirect ke /admin/leads
+  // Jika membuka /admin root, redirect ke /admin/dashboard
   if (pathname === "/admin") {
-    return NextResponse.redirect(new URL("/admin/leads", request.url));
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
   return NextResponse.next();
