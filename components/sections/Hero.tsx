@@ -126,7 +126,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full h-[100dvh] min-h-[580px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
+      className="relative w-full h-[100dvh] min-h-[600px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
       style={{
         paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
       }}
@@ -188,9 +188,9 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A4B8C]/95 via-[#225FA8]/75 to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
 
         {/* Left Hero Content: Centered 2XL Grid Wrapper aligned with Navbar & Sections */}
-        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-6 sm:px-8 lg:px-10 my-auto flex items-center">
-          <div className="max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
-          {/* Static Badge with subtle entrance transition (Dot putih bersih tanpa hijau) */}
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 my-auto flex items-center">
+          <div className="w-full max-w-[95%] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
+          {/* Static Badge with subtle entrance transition */}
           <div
             className={cn(
               "transition-all duration-700 ease-out",
@@ -222,7 +222,7 @@ export function Hero() {
                       : "opacity-0 translate-x-12 pointer-events-none duration-0"
                   )}
                 >
-                  <h1 className="text-4xl sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.1] font-display">
+                  <h1 className="text-[32px] sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.1] font-display">
                     {slide.title}
                   </h1>
                 </div>
@@ -233,7 +233,7 @@ export function Hero() {
           {/* Subtitle - Smooth Fade In */}
           <p
             className={cn(
-              "text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-xl mb-6 sm:mb-8 text-left transition-all duration-700 delay-150 ease-out",
+              "text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-full sm:max-w-xl mb-5 sm:mb-8 text-left transition-all duration-700 delay-150 ease-out",
               isReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
             )}
           >

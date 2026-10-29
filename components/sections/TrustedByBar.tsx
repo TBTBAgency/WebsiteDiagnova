@@ -49,7 +49,7 @@ export function TrustedByBar() {
       `}</style>
 
       {/* Centered Heading Label */}
-      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 text-center mb-6 sm:mb-8">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 text-center mb-6 sm:mb-8">
         <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
           {language === "ID" ? "DIPERCAYA OLEH" : "TRUSTED BY"}
         </p>

@@ -12,6 +12,9 @@
 .env
 .env*.local
 !.env.example
+.env.docker
+.env.docker.*
+!.env.docker.example
 
 # logs
 npm-debug.log*

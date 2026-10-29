@@ -96,7 +96,7 @@ export function AboutSection() {
       id="about"
       className="relative w-full bg-white py-12 sm:py-16 lg:py-20 overflow-hidden"
     >
-      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 items-center gap-8 sm:gap-10 lg:grid-cols-12 lg:gap-16">
           {/* Left Column: DNA 3D Visual with Organic Floating Motion & Subtle Glow (Order 2 on mobile, Order 1 on desktop) */}
           <div className="flex justify-center lg:justify-start lg:col-span-5 order-2 lg:order-1">

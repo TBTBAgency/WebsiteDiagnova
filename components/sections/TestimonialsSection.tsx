@@ -134,7 +134,7 @@ export function TestimonialsSection() {
       className="relative w-full bg-[#F9F9F9] pt-14 sm:pt-18 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 select-none overflow-x-hidden content-auto"
       aria-label="Customer Testimonials"
     >
-      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
         {/* ═══ SECTION HEADER ═══ */}
         <div
           className={cn(
@@ -163,7 +163,7 @@ export function TestimonialsSection() {
       {/* ═══ SCROLLABLE CARD TRACK ═══ */}
       <div
         ref={scrollContainerRef}
-        className="flex gap-6 lg:gap-8 items-stretch py-6 -my-6 pl-6 sm:pl-8 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-6 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
+        className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-4 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -174,7 +174,7 @@ export function TestimonialsSection() {
           <div
             key={item.id}
             className={cn(
-              "w-[88vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/80 p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
+              "w-[85vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/80 p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-6"
@@ -238,7 +238,7 @@ export function TestimonialsSection() {
       </div>
 
       {/* ═══ NAVIGATION BUTTONS ═══ */}
-      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
         <div className="flex items-center justify-end gap-2.5 pt-6 sm:pt-8">
           <button
             type="button"

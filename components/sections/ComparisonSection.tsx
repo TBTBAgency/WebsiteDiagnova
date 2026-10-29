@@ -39,7 +39,7 @@ export function ComparisonSection() {
       id="comparison"
       className="relative w-full overflow-hidden bg-white pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 xl:pb-28 flex flex-col justify-center content-auto"
     >
-      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
         {/* Section Header */}
         <div
           className={`mb-10 sm:mb-12 lg:mb-16 transition-all duration-700 ease-out ${

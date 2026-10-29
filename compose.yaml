@@ -1,0 +1,51 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: diagnova_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - path: .env.docker
+        required: true
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - WATCHPACK_POLLING=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["sh", "-c", "npx prisma generate && npm run dev -- -H 0.0.0.0"]
+
+  # Service database terisolasi (opsional - diaktifkan dengan flag `--profile with-db`)
+  # Menggunakan port host alternatif 5434 untuk mencegah konflik dengan PostgreSQL lokal (5432 & 5433)
+  db:
+    profiles:
+      - with-db
+    image: postgres:15-alpine
+    container_name: diagnova_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      POSTGRES_DB: ${POSTGRES_DB:-diagnova}
+    ports:
+      - "${DOCKER_DB_PORT:-5434}:5432"
+    volumes:
+      - diagnova_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-diagnova}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  diagnova_db_data:
+    name: diagnova_db_data
