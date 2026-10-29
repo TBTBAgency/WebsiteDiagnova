@@ -37,7 +37,7 @@ export function CTABanner() {
       {/* Background biru footer di bagian bawah dibuat tipis pas di area lengkungan sudut bawah saja */}
       <div className="absolute inset-x-0 bottom-0 h-8 sm:h-10 lg:h-12 bg-[#2568BA] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
+      <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
         {/* Main Rounded CTA Container (Ukuran Asli max-w-7xl, tanpa inline stroke) */}
         <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-r from-[#EBF3FB] via-[#E4EFF9] to-[#D5E6F7] shadow-[0_10px_40px_-15px_rgba(40,90,165,0.07)]">
           {/* Subtle white gradient fade at top edge */}
@@ -45,7 +45,7 @@ export function CTABanner() {
 
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center min-h-[400px] lg:min-h-[440px]">
             {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
-            <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
+            <div className="lg:col-span-7 p-5 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
               <h2 className="font-display text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-[#275EA8] tracking-tight leading-[1.2] sm:leading-[1.25] mb-3 sm:mb-5">
                 {language === "ID" ? (
                   <>
