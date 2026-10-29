@@ -226,7 +226,7 @@ export function InfrastructureSection() {
     >
       {/* ─── STICKY VIEWPORT: Pinned in viewport while user scrolls ─── */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full pt-16 sm:pt-20 lg:py-12 pb-4 sm:pb-6">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full pt-14 sm:pt-20 lg:py-12 pb-4 sm:pb-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 lg:gap-14 items-center">
             {/* ═══ LEFT COLUMN: Badge & Headline ═══ */}
             <div className="lg:col-span-5 flex flex-col justify-center">
