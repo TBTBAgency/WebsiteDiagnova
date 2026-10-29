@@ -615,7 +615,7 @@ export function Navbar() {
             : "shadow-none"
         )}
       >
-        <div className="relative z-20 mx-auto flex max-w-[1560px] items-center justify-between px-6 sm:px-8 lg:px-10">
+        <div className="relative z-20 mx-auto flex max-w-[1560px] items-center justify-between px-4 sm:px-6 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
           <Link
@@ -623,7 +623,7 @@ export function Navbar() {
             className="flex items-center transition-opacity hover:opacity-90 shrink-0"
           >
             <Image
-              src="/images/logo-diagnova.svg"
+              src="/images/logo-nav.png"
               alt="Diagnova"
               width={240}
               height={66}
