@@ -24,6 +24,8 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { OrderPriority, OrderStatus, SpecimenStatus, TubeColor, SpecimenType } from "@/types";
+import { MetricCard } from "@/components/admin/MetricCard";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 
 interface PatientOption {
   id: string;
@@ -555,50 +557,51 @@ export default function LabOrdersPage() {
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 mb-1">
-            <span className="text-xs font-medium">Total Order</span>
-            <ClipboardList className="h-4 w-4 text-blue-600" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 font-display">{metrics.total}</div>
-          <span className="text-[10px] text-slate-400">Tercatat di sistem</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs">
-          <div className="flex items-center justify-between text-amber-700 mb-1">
-            <span className="text-xs font-medium">Menunggu Sampel</span>
-            <Clock className="h-4 w-4 text-amber-500" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 font-display">{metrics.waiting}</div>
-          <span className="text-[10px] text-amber-600/80">Tahap Phlebotomy</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs">
-          <div className="flex items-center justify-between text-blue-700 mb-1">
-            <span className="text-xs font-medium">Diterima di Lab</span>
-            <CheckCircle2 className="h-4 w-4 text-blue-600" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 font-display">{metrics.received}</div>
-          <span className="text-[10px] text-blue-600/80">Siap analitik / mesin</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs">
-          <div className="flex items-center justify-between text-rose-700 mb-1">
-            <span className="text-xs font-medium">Sampel Ditolak</span>
-            <XCircle className="h-4 w-4 text-rose-600" />
-          </div>
-          <div className="text-2xl font-bold text-rose-600 font-display">{metrics.rejected}</div>
-          <span className="text-[10px] text-rose-500">Perlu re-sampling</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs col-span-2 lg:col-span-1">
-          <div className="flex items-center justify-between text-rose-700 mb-1">
-            <span className="text-xs font-medium">Prioritas CITO</span>
-            <AlertTriangle className="h-4 w-4 text-rose-600" />
-          </div>
-          <div className="text-2xl font-bold text-rose-600 font-display">{metrics.cito}</div>
-          <span className="text-[10px] text-rose-500">Pasien Gawat Darurat</span>
-        </div>
+        <MetricCard
+          title="Total Order"
+          value={metrics.total}
+          subtitle="Tercatat di sistem"
+          icon={ClipboardList}
+          iconBg="bg-blue-50"
+          iconColor="text-[#087BEE]"
+        />
+        <MetricCard
+          title="Menunggu Sampel"
+          value={metrics.waiting}
+          subtitle="Tahap Phlebotomy"
+          icon={Clock}
+          iconBg="bg-amber-50"
+          iconColor="text-[#E5A23B]"
+          badge={{ text: "Pending", variant: "warning" }}
+        />
+        <MetricCard
+          title="Diterima di Lab"
+          value={metrics.received}
+          subtitle="Siap analitik / mesin"
+          icon={CheckCircle2}
+          iconBg="bg-emerald-50"
+          iconColor="text-[#16A374]"
+          badge={{ text: "Di Lab", variant: "success" }}
+        />
+        <MetricCard
+          title="Sampel Ditolak"
+          value={metrics.rejected}
+          subtitle="Perlu re-sampling"
+          icon={XCircle}
+          iconBg="bg-rose-50"
+          iconColor="text-[#DC5A5A]"
+          badge={{ text: "Ditolak", variant: "danger" }}
+        />
+        <MetricCard
+          title="Prioritas CITO"
+          value={metrics.cito}
+          subtitle="Pasien Gawat Darurat"
+          icon={AlertTriangle}
+          iconBg="bg-rose-50"
+          iconColor="text-[#DC5A5A]"
+          badge={{ text: "CITO", variant: "danger" }}
+          className="col-span-2 lg:col-span-1"
+        />
       </div>
 
       {/* Filter & Search Bar */}

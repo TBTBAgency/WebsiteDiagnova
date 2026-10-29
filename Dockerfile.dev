@@ -1,0 +1,34 @@
+# Development Dockerfile for Diagnova (Next.js 14 + Prisma + React 18)
+FROM node:20-bookworm-slim
+
+# Install system dependencies required by Prisma engine
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy dependency manifests
+COPY package.json package-lock.json ./
+
+# Copy Prisma schema for generation
+COPY prisma ./prisma/
+
+# Install exact npm dependencies and generate initial Prisma Client for Linux
+RUN npm ci && npx prisma generate
+
+# Copy project source code
+COPY . .
+
+# Set environment variables for development & hot reload
+ENV NODE_ENV=development
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV WATCHPACK_POLLING=true
+
+EXPOSE 3000
+
+# Ensure Prisma client is synchronized and run Next.js dev server on 0.0.0.0
+CMD ["sh", "-c", "npx prisma generate && npm run dev -- -H 0.0.0.0"]

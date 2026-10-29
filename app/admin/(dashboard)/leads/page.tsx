@@ -23,6 +23,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { DemoRequestRecord, InstitutionType, LeadStatus } from "@/types";
+import { MetricCard } from "@/components/admin/MetricCard";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 
 interface LeadMetrics {
   total: number;
@@ -266,50 +268,51 @@ export default function AdminLeadsPage() {
 
       {/* KPI Cards Row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-medium">Total Masuk</span>
-            <Users className="h-4 w-4 text-slate-400" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 font-display">{metrics.total}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Seluruh lead tercatat</div>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center justify-between text-blue-700 mb-2">
-            <span className="text-xs font-medium">Leads Baru</span>
-            <AlertCircle className="h-4 w-4 text-blue-600" />
-          </div>
-          <div className="text-2xl font-bold text-blue-600 font-display">{metrics.new}</div>
-          <div className="text-[11px] text-blue-600/80 mt-1">Perlu dihubungi</div>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center justify-between text-amber-700 mb-2">
-            <span className="text-xs font-medium">Dihubungi</span>
-            <PhoneCall className="h-4 w-4 text-amber-500" />
-          </div>
-          <div className="text-2xl font-bold text-amber-600 font-display">{metrics.contacted}</div>
-          <div className="text-[11px] text-amber-600/80 mt-1">Sedang komunikasi</div>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center justify-between text-purple-700 mb-2">
-            <span className="text-xs font-medium">Jadwal Demo</span>
-            <CalendarCheck className="h-4 w-4 text-purple-500" />
-          </div>
-          <div className="text-2xl font-bold text-purple-600 font-display">{metrics.scheduled}</div>
-          <div className="text-[11px] text-purple-600/80 mt-1">Siap presentasi</div>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between text-emerald-700 mb-2">
-            <span className="text-xs font-medium">Selesai</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-          </div>
-          <div className="text-2xl font-bold text-emerald-600 font-display">{metrics.completed}</div>
-          <div className="text-[11px] text-emerald-600/80 mt-1">Telah didemokan</div>
-        </div>
+        <MetricCard
+          title="Total Masuk"
+          value={metrics.total}
+          subtitle="Seluruh lead tercatat"
+          icon={Users}
+          iconBg="bg-slate-100"
+          iconColor="text-slate-700"
+        />
+        <MetricCard
+          title="Leads Baru"
+          value={metrics.new}
+          subtitle="Perlu segera dihubungi"
+          icon={AlertCircle}
+          iconBg="bg-blue-50"
+          iconColor="text-[#087BEE]"
+          badge={{ text: "Baru", variant: "default" }}
+        />
+        <MetricCard
+          title="Dihubungi"
+          value={metrics.contacted}
+          subtitle="Sedang komunikasi"
+          icon={PhoneCall}
+          iconBg="bg-amber-50"
+          iconColor="text-[#E5A23B]"
+          badge={{ text: "Follow-up", variant: "warning" }}
+        />
+        <MetricCard
+          title="Jadwal Demo"
+          value={metrics.scheduled}
+          subtitle="Siap presentasi LIS"
+          icon={CalendarCheck}
+          iconBg="bg-purple-50"
+          iconColor="text-purple-600"
+          badge={{ text: "Presentasi", variant: "purple" }}
+        />
+        <MetricCard
+          title="Selesai"
+          value={metrics.completed}
+          subtitle="Telah didemokan"
+          icon={CheckCircle2}
+          iconBg="bg-emerald-50"
+          iconColor="text-[#16A374]"
+          badge={{ text: "Selesai", variant: "success" }}
+          className="col-span-2 sm:col-span-1"
+        />
       </div>
 
       {/* Filter & Search Bar */}
@@ -455,12 +458,7 @@ export default function AdminLeadsPage() {
                       </td>
 
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${badge.bg} ${badge.text} ${badge.border}`}
-                        >
-                          <span className={`h-1.5 w-1.5 rounded-full ${badge.dot}`} />
-                          <span>{badge.label}</span>
-                        </span>
+                        <StatusBadge type={lead.status} />
                       </td>
 
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
