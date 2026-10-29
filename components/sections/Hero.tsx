@@ -124,7 +124,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full h-[100dvh] min-h-[580px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
+      className="relative w-full h-[100dvh] min-h-[600px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
       style={{
         paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
       }}
@@ -182,8 +182,8 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A4B8C]/95 via-[#225FA8]/75 to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
 
         {/* Left Hero Content: Centered 2XL Grid Wrapper aligned with Navbar & Sections */}
-        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-6 sm:px-8 lg:px-10 my-auto flex items-center">
-          <div className="max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 my-auto flex items-center">
+          <div className="w-full max-w-[95%] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
           {/* Static Badge */}
           <div>
             <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6">
@@ -201,7 +201,7 @@ export function Hero() {
                 <h1
                   key={slide.id}
                   className={cn(
-                    "col-start-1 row-start-1 text-4xl sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.1] font-display transition-all duration-700 ease-out",
+                    "col-start-1 row-start-1 text-[32px] sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.1] font-display transition-all duration-700 ease-out",
                     isActive
                       ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
                       : "opacity-0 translate-y-3 scale-[0.99] pointer-events-none"
@@ -214,7 +214,7 @@ export function Hero() {
           </div>
 
           {/* Static Subtitle - Constant Position */}
-          <p className="text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-xl mb-6 sm:mb-8 text-left">
+          <p className="text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-full sm:max-w-xl mb-5 sm:mb-8 text-left">
             {language === "ID"
               ? "Sistem Informasi Laboratorium generasi baru yang menghubungkan instrumen medis secara otomatis dengan para klinisi. Mengubah data diagnostik kompleks menjadi keputusan medis yang cepat, akurat, dan transparan."
               : "A next-generation Laboratory Information System autonomously connecting medical instruments with clinicians. Transforming complex diagnostic data into fast, accurate, and actionable medical decisions."}
