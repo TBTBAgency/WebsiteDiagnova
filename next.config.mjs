@@ -1,6 +1,60 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/platform/workflow",
+        destination: "/platform#workflow",
+        permanent: false,
+      },
+      {
+        source: "/platform/automation",
+        destination: "/platform#automation",
+        permanent: false,
+      },
+      {
+        source: "/platform/reporting",
+        destination: "/platform#reporting",
+        permanent: false,
+      },
+      {
+        source: "/platform/analytics",
+        destination: "/platform#analytics",
+        permanent: false,
+      },
+      {
+        source: "/solutions/hospital-laboratory",
+        destination: "/solutions#hospital-laboratory",
+        permanent: false,
+      },
+      {
+        source: "/solutions/clinical-laboratory",
+        destination: "/solutions#clinical-laboratory",
+        permanent: false,
+      },
+      {
+        source: "/solutions/pathology",
+        destination: "/solutions#pathology",
+        permanent: false,
+      },
+      {
+        source: "/solutions/microbiology",
+        destination: "/solutions#microbiology",
+        permanent: false,
+      },
+      {
+        source: "/solutions/blood-bank",
+        destination: "/solutions#blood-bank",
+        permanent: false,
+      },
+      {
+        source: "/solutions/nova-ai",
+        destination: "/solutions#nova-ai",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
