@@ -48,27 +48,44 @@ export function AboutSection() {
   const headlineWords = language === "ID" ? headlineWordsID : headlineWordsEN;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const lastProgressRef = useRef(0);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (!containerRef.current) return;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!containerRef.current) {
+            ticking = false;
+            return;
+          }
 
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+          const rect = containerRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
 
-      // Substantially extended scroll track for a slower, calmer reveal experience
-      const start = windowHeight * 0.95;
-      const end = -windowHeight * 0.05; // Finishes smoothly as section crosses upper viewport
+          // Substantially extended scroll track for a slower, calmer reveal experience
+          const start = windowHeight * 0.95;
+          const end = -windowHeight * 0.05;
 
-      const current = rect.top;
-      const rawProgress = (start - current) / (start - end);
-      const clampedProgress = Math.min(Math.max(rawProgress, 0), 1);
+          const current = rect.top;
+          const rawProgress = (start - current) / (start - end);
+          const clampedProgress = Math.min(Math.max(rawProgress, 0), 1);
 
-      setScrollProgress(clampedProgress);
+          // Only trigger React state re-render if progress delta is noticeable
+          if (Math.abs(clampedProgress - lastProgressRef.current) > 0.015 || clampedProgress === 0 || clampedProgress === 1) {
+            lastProgressRef.current = clampedProgress;
+            setScrollProgress(clampedProgress);
+          }
+
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -81,31 +98,35 @@ export function AboutSection() {
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 items-center gap-8 sm:gap-10 lg:grid-cols-12 lg:gap-16">
-          {/* Left Column: DNA 3D Visual (Order 2 on mobile, Order 1 on desktop) */}
+          {/* Left Column: DNA 3D Visual with Organic Floating Motion & Subtle Glow (Order 2 on mobile, Order 1 on desktop) */}
           <div className="flex justify-center lg:justify-start lg:col-span-5 order-2 lg:order-1">
             <div className="relative w-full max-w-[240px] sm:max-w-[320px] lg:max-w-[440px] aspect-[4/5] flex items-center justify-center">
-              <Image
-                src="/images/dna-about.webp"
-                alt="Diagnova DNA Intelligence Structure"
-                width={500}
-                height={600}
-                priority
-                className="w-full h-auto object-contain drop-shadow-sm select-none"
-              />
+              {/* Ambient Radial Medical Glow */}
+              <div className="absolute inset-0 rounded-full bg-nova-blue/15 blur-3xl animate-dna-glow pointer-events-none" />
+
+              <div className="relative w-full h-full flex items-center justify-center animate-dna-float gpu-layer">
+                <Image
+                  src="/images/dna-about.webp"
+                  alt="Diagnova DNA Intelligence Structure"
+                  width={500}
+                  height={600}
+                  className="w-full h-auto object-contain drop-shadow-md select-none"
+                />
+              </div>
             </div>
           </div>
 
           {/* Right Column: About Narrative (Order 1 on mobile, Order 2 on desktop) */}
           <div className="flex flex-col justify-center lg:col-span-7 order-1 lg:order-2">
             {/* Pill Badge */}
-            <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="light">
+            <div className="mb-3.5 sm:mb-4">
+              <SectionBadge variant="blue">
                 {language === "ID" ? "Tentang Diagnova" : "About Diagnova"}
               </SectionBadge>
             </div>
 
             {/* Continuous Smooth Scroll-Driven Text Reveal Headline */}
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold tracking-tight leading-[1.3] sm:leading-[1.35] mb-6 sm:mb-8 flex flex-wrap gap-x-[0.28em] gap-y-[0.1em]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold tracking-tight leading-[1.18] sm:leading-[1.22] mb-6 sm:mb-8 flex flex-wrap gap-x-[0.28em] gap-y-[0.1em]">
               {headlineWords.map((word, index) => {
                 const totalWords = headlineWords.length;
                 const step = 1 / totalWords;

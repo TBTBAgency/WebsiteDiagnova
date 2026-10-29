@@ -25,10 +25,12 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-display text-diagnova-navy;
     letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 
   .font-display {
     letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 }
 
@@ -103,8 +105,51 @@ html.lenis, html.lenis body {
     transform: scale(1);
   }
   50% {
-    opacity: 0.5;
-    transform: scale(1.015);
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulseGlowRing {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(86, 173, 226, 0.4), 0 10px 25px -5px rgba(52, 93, 171, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(86, 173, 226, 0), 0 15px 35px -5px rgba(52, 93, 171, 0.35);
+  }
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes dropdownFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dropdown {
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(150%) skewX(-20deg);
   }
 }
 
@@ -118,10 +163,34 @@ html.lenis, html.lenis body {
   will-change: transform, opacity;
 }
 
+.animate-pulse-glow {
+  animation: pulseGlowRing 3s ease-in-out infinite;
+}
+
+.animate-float-subtle {
+  animation: gentleFloat 5s ease-in-out infinite;
+}
+
+/* GPU Acceleration & Performance Optimizations */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Performance booster for off-screen sections: Skips paint until near viewport */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 750px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-dna-float,
-  .animate-dna-glow {
+  .animate-dna-glow,
+  .animate-pulse-glow,
+  .animate-float-subtle {
     animation: none !important;
   }
 }
+
 

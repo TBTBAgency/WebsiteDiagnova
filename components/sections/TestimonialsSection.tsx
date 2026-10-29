@@ -131,28 +131,28 @@ export function TestimonialsSection() {
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative w-full bg-[#F9F9F9] pt-14 sm:pt-18 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 select-none overflow-hidden"
+      className="relative w-full bg-[#F9F9F9] pt-14 sm:pt-18 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 select-none overflow-x-hidden content-auto"
       aria-label="Customer Testimonials"
     >
       <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 w-full">
         {/* ═══ SECTION HEADER ═══ */}
         <div
           className={cn(
-            "flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out",
+            "flex flex-col lg:flex-row lg:items-end justify-between gap-5 sm:gap-6 mb-10 sm:mb-12 lg:mb-14 transition-all duration-700 ease-out",
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           )}
         >
           <div className="max-w-2xl">
-            <div className="mb-4 sm:mb-5">
+            <div className="mb-3.5 sm:mb-4">
               <SectionBadge variant="blue">
                 {content.sectionBadge}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {content.sectionTitle}
             </h2>
           </div>
-          <div className="lg:max-w-md xl:max-w-lg lg:pb-1">
+          <div className="lg:max-w-md xl:max-w-lg">
             <p className="text-sm sm:text-base lg:text-[17px] leading-relaxed text-slate-500">
               {content.sectionSubtitle}
             </p>
@@ -163,7 +163,7 @@ export function TestimonialsSection() {
       {/* ═══ SCROLLABLE CARD TRACK ═══ */}
       <div
         ref={scrollContainerRef}
-        className="flex gap-6 lg:gap-8 items-stretch py-4 -my-4 pl-5 sm:pl-7 lg:pl-[max(2rem,calc((100vw-1560px)/2+1.25rem))] pr-6 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
+        className="flex gap-6 lg:gap-8 items-stretch py-6 -my-6 pl-6 sm:pl-8 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-6 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -174,7 +174,7 @@ export function TestimonialsSection() {
           <div
             key={item.id}
             className={cn(
-              "w-[88vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/80 p-4 sm:p-5 lg:p-6 shadow-xs hover:shadow-sm transition-all duration-300 group flex flex-col justify-between overflow-hidden",
+              "w-[88vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/80 p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-6"
@@ -225,7 +225,7 @@ export function TestimonialsSection() {
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 290px, 320px"
                   className="object-cover object-center"
-                  priority={idx < 2}
+                  loading="lazy"
                 />
                 {/* Subtle soft gradient overlay */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0E234B]/20 via-transparent to-white/10" />

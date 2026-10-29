@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Zap, Network, Sparkles } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { SectionBadge } from "@/components/ui/SectionBadge";
 
 interface InfrastructureCard {
   id: string;
@@ -230,23 +231,23 @@ export function InfrastructureSection() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 lg:gap-14 items-center">
             {/* ═══ LEFT COLUMN: Badge & Headline ═══ */}
             <div className="lg:col-span-5 flex flex-col justify-center">
-              <div className="mb-2.5 sm:mb-4 lg:mb-5">
-                <span className="inline-flex items-center rounded-full bg-slate-100 px-3.5 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-slate-700">
+              <div className="mb-3.5 sm:mb-4">
+                <SectionBadge variant="blue">
                   {language === "ID" ? "Infrastruktur" : "Infrastructure"}
-                </span>
+                </SectionBadge>
               </div>
-              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-[34px] xl:text-[38px] font-bold leading-[1.2] sm:leading-[1.25] tracking-tight text-[#2A5298]">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[36px] xl:text-[40px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#2A5298]">
                 {language === "ID" ? (
                   <>
-                    Infrastruktur Cerdas untuk
-                    <br className="hidden sm:inline" />{" "}
-                    Operasional Tanpa Hambatan
+                    Infrastruktur Cerdas
+                    <br />{" "}
+                    untuk Operasional Tanpa Hambatan
                   </>
                 ) : (
                   <>
-                    Intelligent Infrastructure for
-                    <br className="hidden sm:inline" />{" "}
-                    Seamless Operations
+                    Intelligent Infrastructure
+                    <br />{" "}
+                    for Seamless Operations
                   </>
                 )}
               </h2>
@@ -289,7 +290,7 @@ export function InfrastructureSection() {
                       <span
                         className={`absolute inset-0 rounded-full transition-all duration-500 ease-in-out pointer-events-none ${
                           isActive
-                            ? "ring-4 ring-[#93C5FD]/60 shadow-[0_0_14px_rgba(42,102,204,0.5)] scale-125"
+                            ? "ring-4 ring-[#93C5FD]/70 shadow-[0_0_16px_rgba(42,102,204,0.6)] scale-125 animate-pulse"
                             : "ring-0 shadow-none scale-100"
                         }`}
                       />
@@ -324,10 +325,10 @@ export function InfrastructureSection() {
                         cardRefs.current[idx] = el;
                       }}
                       onClick={() => scrollToStep(idx)}
-                      className={`relative cursor-pointer transition-all duration-500 ease-in-out select-text ${
+                      className={`relative cursor-pointer transition-all duration-500 ease-in-out select-text gpu-layer ${
                         isActive
-                          ? "drop-shadow-[0_16px_28px_rgba(46,104,180,0.22)]"
-                          : "drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
+                          ? "drop-shadow-[0_18px_32px_rgba(46,104,180,0.26)] -translate-y-1"
+                          : "drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:-translate-y-0.5 hover:drop-shadow-[0_8px_16px_rgba(0,0,0,0.06)]"
                       }`}
                     >
                       <div

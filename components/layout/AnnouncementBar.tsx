@@ -142,7 +142,7 @@ export function AnnouncementBar({
       aria-label="Interactive Goal Navigator"
       className="relative w-full bg-[#2764B8] text-white select-none overflow-hidden border-b border-[#1E5299]/60 shadow-sm"
     >
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-2 lg:gap-4 relative pr-8 lg:pr-10">
           {/* Prompt Headline */}
           <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto shrink-0">

@@ -34,16 +34,17 @@ export function TrustedByBar() {
       <style>{`
         @keyframes marqueeTrust {
           0% {
-            transform: translateX(0%);
+            transform: translate3d(0%, 0, 0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translate3d(-50%, 0, 0);
           }
         }
         .animate-marquee-trust {
           display: flex;
           width: max-content;
           animation: marqueeTrust 28s linear infinite;
+          will-change: transform;
         }
       `}</style>
 
@@ -54,9 +55,9 @@ export function TrustedByBar() {
         </p>
       </div>
 
-      {/* Marquee Container with Left & Right Soft Fade Masks (Contained Max Width) */}
+      {/* Marquee Container with Left & Right Soft Fade Masks (Wider Container Aligned with Layout) */}
       <div
-        className="relative mx-auto max-w-5xl sm:max-w-6xl px-4 sm:px-6 lg:px-8 overflow-hidden"
+        className="relative mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 overflow-hidden"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -74,14 +75,14 @@ export function TrustedByBar() {
           {[...logos, ...logos].map((_, index) => (
             <div
               key={index}
-              className="flex items-center justify-center shrink-0 grayscale opacity-85 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+              className="flex items-center justify-center shrink-0 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
             >
               <Image
                 src="/images/trust-logo.svg"
                 alt="Partner Trust Logo"
-                width={220}
-                height={64}
-                className="h-11 sm:h-12 md:h-14 w-auto object-contain"
+                width={280}
+                height={82}
+                className="h-14 sm:h-16 md:h-20 lg:h-[76px] xl:h-[82px] w-auto object-contain"
               />
             </div>
           ))}

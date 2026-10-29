@@ -191,40 +191,51 @@ export function WorkflowSection() {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [showAllStagesMobile, setShowAllStagesMobile] = useState<boolean>(false);
 
-  // Scroll detection for header and initial reveals
+  // Scroll detection for header and initial reveals with rAF throttling
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const sectionRect = sectionRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      if (sectionRect.top <= windowHeight * 0.88) {
-        setIsHeaderVisible(true);
-      }
-
-      if (canvasRef.current) {
-        const cRect = canvasRef.current.getBoundingClientRect();
-        const s1 = cRect.top <= windowHeight * 0.8;
-        const s2 = cRect.top <= windowHeight * 0.68;
-        const s3 = cRect.top <= windowHeight * 0.54;
-        const s4 = cRect.top <= windowHeight * 0.4;
-
-        setActiveSteps((prev) => {
-          const next0 = prev[0] || s1;
-          const next1 = prev[1] || s2;
-          const next2 = prev[2] || s3;
-          const next3 = prev[3] || s4;
-
-          if (
-            prev[0] === next0 &&
-            prev[1] === next1 &&
-            prev[2] === next2 &&
-            prev[3] === next3
-          ) {
-            return prev;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!sectionRef.current) {
+            ticking = false;
+            return;
           }
-          return [next0, next1, next2, next3];
+          const sectionRect = sectionRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+
+          if (sectionRect.top <= windowHeight * 0.88) {
+            setIsHeaderVisible(true);
+          }
+
+          if (canvasRef.current) {
+            const cRect = canvasRef.current.getBoundingClientRect();
+            const s1 = cRect.top <= windowHeight * 0.8;
+            const s2 = cRect.top <= windowHeight * 0.68;
+            const s3 = cRect.top <= windowHeight * 0.54;
+            const s4 = cRect.top <= windowHeight * 0.4;
+
+            setActiveSteps((prev) => {
+              const next0 = prev[0] || s1;
+              const next1 = prev[1] || s2;
+              const next2 = prev[2] || s3;
+              const next3 = prev[3] || s4;
+
+              if (
+                prev[0] === next0 &&
+                prev[1] === next1 &&
+                prev[2] === next2 &&
+                prev[3] === next3
+              ) {
+                return prev;
+              }
+              return [next0, next1, next2, next3];
+            });
+          }
+          ticking = false;
         });
+        ticking = true;
       }
     };
 
@@ -251,7 +262,7 @@ export function WorkflowSection() {
     <section
       ref={sectionRef}
       id="workflow"
-      className="relative w-full overflow-hidden text-white select-none pt-14 sm:pt-20 lg:pt-24 xl:pt-28 pb-14 sm:pb-20 lg:pb-24 xl:pb-28"
+      className="relative w-full overflow-hidden text-white select-none pt-14 sm:pt-20 lg:pt-24 xl:pt-28 pb-14 sm:pb-20 lg:pb-24 xl:pb-28 content-auto"
       aria-label="Diagnova Workflow Section"
     >
       <style>{`
@@ -352,12 +363,12 @@ export function WorkflowSection() {
         >
           {/* Left: Badge + Headline */}
           <div className="max-w-xl lg:max-w-2xl">
-            <div className="mb-4 sm:mb-5">
+            <div className="mb-3.5 sm:mb-4">
               <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm">
                 {language === "ID" ? "Alur Kerja" : "How It Works"}
               </span>
             </div>
-            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-white tracking-tight leading-[1.2]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-white tracking-tight leading-[1.18] sm:leading-[1.22]">
               {language === "ID" ? (
                 <>
                   Bagaimana Diagnova Memandu{" "}
@@ -417,8 +428,8 @@ export function WorkflowSection() {
                 src="/images/dna-workflow.webp"
                 alt="Diagnova 3D DNA Workflow"
                 fill
-                priority
-                className="object-contain object-bottom pointer-events-none select-none"
+                loading="lazy"
+                className="object-contain object-bottom pointer-events-none select-none gpu-layer"
                 sizes="100vw"
               />
             </div>
@@ -450,9 +461,9 @@ export function WorkflowSection() {
                 {/* Frosted Liquid Glass Card (Explicit 138px height keeps line and DNA dot precisely anchored) */}
                 <div
                   className={cn(
-                    "relative h-[138px] rounded-2xl p-4.5 sm:p-5 backdrop-blur-xl border transition-all duration-300 ease-out cursor-pointer select-none flex flex-col justify-between overflow-hidden",
+                    "relative h-[138px] rounded-2xl p-4.5 sm:p-5 backdrop-blur-xl border transition-all duration-300 ease-out cursor-pointer select-none flex flex-col justify-between overflow-hidden gpu-layer",
                     hovered
-                      ? "bg-white/[0.20] border-white/35 shadow-[0_4px_16px_rgba(0,0,0,0.06)] -translate-y-0.5"
+                      ? "bg-white/[0.24] border-white/50 shadow-[0_8px_25px_rgba(255,255,255,0.2)] -translate-y-1"
                       : dimmed
                       ? "bg-white/[0.09] border-white/15 opacity-75"
                       : "bg-white/[0.14] border-white/20 shadow-[0_2px_8px_rgba(0,0,0,0.03)]"

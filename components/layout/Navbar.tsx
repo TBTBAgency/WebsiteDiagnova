@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
+  ChevronDown,
+  ChevronRight,
   Activity,
   Layers,
   Sparkles,
@@ -526,14 +528,16 @@ function LanguageSwitcher({
 }
 
 export function Navbar() {
-  const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpenSection, setMobileOpenSection] = useState<string | null>(null);
   const { language, setLanguage } = useLanguage();
   const [isDismissed, setIsDismissed] = useState(false);
   const [barHeight, setBarHeight] = useState(42);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const announcementRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const navItems = getNavItems(language);
 
@@ -546,41 +550,57 @@ export function Navbar() {
     progressBarRef.current.style.transform = `scaleX(${progress})`;
   };
 
+  const updateNavPosition = (y: number) => {
+    const effectiveHeight = isDismissed ? 0 : barHeight;
+    const barOffset = Math.min(y, effectiveHeight);
+    const topOffset = Math.max(0, effectiveHeight - y);
+
+    if (announcementRef.current) {
+      announcementRef.current.style.transform = `translateY(-${barOffset}px)`;
+    }
+    if (headerRef.current) {
+      headerRef.current.style.top = `${topOffset}px`;
+    }
+  };
+
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const y = window.scrollY;
-          setScrollY(y);
-          setIsScrolled(y > 15);
+          updateNavPosition(y);
           updateProgress(y);
+          const shouldBeScrolled = y > 15;
+          setIsScrolled((prev) => (prev !== shouldBeScrolled ? shouldBeScrolled : prev));
           ticking = false;
         });
         ticking = true;
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    updateNavPosition(window.scrollY);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isDismissed, barHeight]);
 
   // Close mobile menu on route change & recalculate scroll progress
   useEffect(() => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    setMobileOpenSection(null);
     updateProgress(window.scrollY);
+    updateNavPosition(window.scrollY);
   }, [pathname]);
 
   const effectiveBarHeight = isDismissed ? 0 : barHeight;
-  const navTop = Math.max(0, effectiveBarHeight - scrollY);
 
   return (
     <>
       {/* ── Fixed Announcement Bar: Scrolls smoothly out of view (z-30) ── */}
       <div
+        ref={announcementRef}
         style={{
-          transform: `translateY(-${Math.min(scrollY, effectiveBarHeight)}px)`,
+          transform: "translateY(0px)",
         }}
         className={cn(
           "fixed top-0 left-0 right-0 z-30 transition-opacity duration-300 will-change-transform",
@@ -602,8 +622,9 @@ export function Navbar() {
 
       {/* ── Main Navbar: z-40 with solid bg-white. Slides up and stays locked at top:0 ── */}
       <header
+        ref={headerRef}
         style={{
-          top: `${navTop}px`,
+          top: `${effectiveBarHeight}px`,
           transition: isDismissed
             ? "top 0.3s ease-out, box-shadow 0.3s"
             : "box-shadow 0.3s",
@@ -620,7 +641,7 @@ export function Navbar() {
         <div className="flex items-center flex-1 justify-start">
           <Link
             href="/"
-            className="flex items-center transition-opacity hover:opacity-90 shrink-0"
+            className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-2.5 sm:-translate-x-3.5"
           >
             <Image
               src="/images/logo-diagnova.svg"
@@ -634,7 +655,7 @@ export function Navbar() {
         </div>
 
         {/* Center: Desktop Navigation Links */}
-        <nav className="hidden items-center justify-center gap-9 xl:gap-12 lg:flex shrink-0">
+        <nav className="hidden items-center justify-center gap-7 xl:gap-10 lg:flex shrink-0">
           {navItems.map((item) => (
             <div
               key={item.label}
@@ -645,38 +666,43 @@ export function Navbar() {
               <Link
                 href={item.href}
                 className={cn(
-                  "py-2 text-[15.5px] xl:text-base font-normal tracking-normal transition-colors duration-150",
+                  "group/nav inline-flex items-center gap-1.5 py-2 px-1 text-[15px] xl:text-[15.5px] font-medium tracking-normal transition-colors duration-150",
                   pathname.startsWith(item.href)
-                    ? "text-diagnova-blue font-medium"
-                    : "text-slate-800 hover:text-diagnova-blue"
+                    ? "text-diagnova-blue font-semibold"
+                    : "text-slate-700 hover:text-diagnova-blue"
                 )}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {item.children && (
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 text-slate-400 transition-transform duration-200 group-hover/nav:text-diagnova-blue",
+                      activeDropdown === item.label && "rotate-180 text-diagnova-blue"
+                    )}
+                  />
+                )}
               </Link>
 
-              {/* Mega Dropdown Menu */}
+              {/* Ultra-Minimalist Dropdown Menu - Premium 1 Column */}
               {item.children && activeDropdown === item.label && (
-                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[420px] z-50">
-                  <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white p-2.5 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-1 duration-150">
-                    <div className="grid grid-cols-1 gap-1">
+                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2.5 z-50">
+                  <div className="relative w-[320px] overflow-hidden rounded-2xl border border-slate-100 bg-white/95 backdrop-blur-xl p-2 shadow-[0_20px_45px_-12px_rgba(15,23,42,0.12),0_0_1px_1px_rgba(15,23,42,0.04)] animate-dropdown">
+                    <div className="flex flex-col gap-0.5">
                       {item.children.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
-                          className="group/item flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-slate-50"
+                          className="group/item relative flex flex-col justify-center rounded-xl px-3.5 py-2.5 transition-all duration-150 hover:bg-slate-50/90 active:bg-slate-100/80"
                         >
-                          <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 group-hover/item:bg-diagnova-blue/10">
-                            {child.icon}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 group-hover/item:text-diagnova-blue">
-                              <span>{child.title}</span>
-                              <ArrowRight className="h-3 w-3 opacity-0 transition-all -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 text-diagnova-blue" />
-                            </div>
-                            <p className="text-[11px] text-slate-500 leading-snug truncate">
-                              {child.description}
-                            </p>
-                          </div>
+                          {/* Micro indicator line on hover */}
+                          <span className="absolute left-1.5 top-2.5 bottom-2.5 w-[2.5px] rounded-full bg-[#2764B8] opacity-0 transition-all duration-150 group-hover/item:opacity-100" />
+
+                          <span className="text-[13.5px] font-medium tracking-tight text-slate-800 transition-colors group-hover/item:text-[#2764B8] group-hover/item:translate-x-0.5 duration-150">
+                            {child.title}
+                          </span>
+                          <span className="mt-0.5 text-[11px] text-slate-400 transition-colors group-hover/item:text-slate-500 group-hover/item:translate-x-0.5 duration-150 line-clamp-1">
+                            {child.description}
+                          </span>
                         </Link>
                       ))}
                     </div>
@@ -726,32 +752,76 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-5 shadow-lg">
-          <div className="space-y-4">
-            {navItems.map((item) => (
-              <div key={item.label} className="border-b border-slate-100 pb-3">
-                <Link
-                  href={item.href}
-                  className="block text-sm font-semibold text-slate-900 mb-2 hover:text-diagnova-blue"
+        <div className="lg:hidden max-h-[calc(100vh-80px)] overflow-y-auto border-t border-slate-200/80 bg-white/95 backdrop-blur-xl px-4 py-4 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="space-y-2">
+            {navItems.map((item) => {
+              const isOpen = mobileOpenSection === item.label;
+              return (
+                <div
+                  key={item.label}
+                  className="rounded-xl border border-slate-100 bg-slate-50/50 overflow-hidden"
                 >
-                  {item.label}
-                </Link>
-                {item.children && (
-                  <div className="grid grid-cols-1 gap-1.5 pl-2.5">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        className="flex items-center gap-2 text-xs text-slate-600 hover:text-diagnova-blue py-1"
+                  {item.children ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setMobileOpenSection(isOpen ? null : item.label)
+                        }
+                        className="flex w-full items-center justify-between p-3.5 text-left text-sm font-semibold text-slate-800 transition-colors hover:text-diagnova-blue"
                       >
-                        <span className="h-1.5 w-1.5 rounded-full bg-diagnova-blue" />
-                        <span>{child.title}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                        <span>{item.label}</span>
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 text-slate-400 transition-transform duration-200",
+                            isOpen && "rotate-180 text-diagnova-blue"
+                          )}
+                        />
+                      </button>
+                      {isOpen && (
+                        <div className="border-t border-slate-100 bg-white p-1.5 space-y-0.5">
+                          {item.children.map((child) => (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block rounded-lg px-3 py-2 transition-colors hover:bg-slate-50"
+                            >
+                              <p className="text-xs font-medium text-slate-800">
+                                {child.title}
+                              </p>
+                              <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                                {child.description}
+                              </p>
+                            </Link>
+                          ))}
+                          <div className="pt-1 px-3 pb-1">
+                            <Link
+                              href={item.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-diagnova-blue"
+                            >
+                              <span>
+                                {language === "ID" ? "Buka Halaman" : "Open Page"} {item.label}
+                              </span>
+                              <ArrowRight className="h-3 w-3" />
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block p-3.5 text-sm font-semibold text-slate-800 hover:text-diagnova-blue"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
 
             <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
               <LanguageSwitcher language={language} setLanguage={setLanguage} />
