@@ -167,13 +167,13 @@ function getNavItems(lang: "ID" | "EN"): NavItem[] {
           {
             title: "Cara Kerja (4 Tahap)",
             description: "Membaca Pola → Menerjemahkan Angka → Notifikasi Cepat → Validasi Dokter",
-            href: "/nova-ai/how-it-works",
+            href: "/nova-ai#how-it-works",
             icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
           },
           {
             title: "AI + Dokter (Etika & Kolaborasi)",
             description: "AI membantu. Dokter memutuskan. Penegasan peran manusia dalam keputusan klinis",
-            href: "/nova-ai/ai-doctor",
+            href: "/nova-ai#ai-doctor",
             icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
           },
         ],
@@ -352,13 +352,13 @@ function getNavItems(lang: "ID" | "EN"): NavItem[] {
         {
           title: "How It Works (4 Steps)",
           description: "Read Patterns → Translate Numbers → Fast Alerts → Doctor Validation",
-          href: "/nova-ai/how-it-works",
+          href: "/nova-ai#how-it-works",
           icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
         },
         {
           title: "AI + Doctor (Ethics & Collaboration)",
           description: "AI assists. Doctors decide. Affirming the human role in clinical decisions",
-          href: "/nova-ai/ai-doctor",
+          href: "/nova-ai#ai-doctor",
           icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
         },
       ],

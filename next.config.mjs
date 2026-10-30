@@ -78,6 +78,16 @@ const nextConfig = {
         destination: "/modules#microbiology",
         permanent: false,
       },
+      {
+        source: "/nova-ai/how-it-works",
+        destination: "/nova-ai#how-it-works",
+        permanent: false,
+      },
+      {
+        source: "/nova-ai/ai-doctor",
+        destination: "/nova-ai#ai-doctor",
+        permanent: false,
+      },
     ];
   },
 };
