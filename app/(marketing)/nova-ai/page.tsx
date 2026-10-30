@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sparkles,
   ArrowRight,
@@ -23,6 +24,8 @@ import {
   HelpCircle,
   Stethoscope,
   TrendingUp,
+  AlertTriangle,
+  ArrowUpRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -42,7 +45,7 @@ export default function NovaAIPage() {
       subtitle: language === "ID" ? "Analisis Longitudinal Delta-Check" : "Longitudinal Delta-Check Analysis",
       description:
         language === "ID"
-          ? "Nova AI membaca data biomarker terkini dan membandingkannya dengan riwayat pemeriksaan pasien lampau secara longitudinal, bukan sekadar melihat batas rentang normal populasi."
+          ? "Nova AI membaca data biomarker saat ini dan membandingkannya dengan riwayat tes pasien sebelumnya secara longitudinal, bukan sekadar melihat batas rentang populasi umum."
           : "Nova AI inspects current biomarker readings against historical patient tests longitudinally, rather than evaluating reference boundaries in isolation.",
       icon: Eye,
       tag: language === "ID" ? "Input Data Analyzer" : "Analyzer Data Ingestion",
@@ -86,6 +89,64 @@ export default function NovaAIPage() {
   ];
 
   const currentSampleData = novaAISampleTranslations[selectedSample];
+
+  // Clinical simulation parameters detail
+  const simulationDetails = [
+    {
+      id: "hb",
+      name: "Hemoglobin (Hb)",
+      unit: "g/dL",
+      val: "8.4",
+      prevVal: "10.5",
+      delta: "-2.1",
+      deltaPercent: "-20%",
+      status: "Rendah (Anemia)",
+      isCritical: false,
+      isWarning: true,
+      timeframe: "3 hari lalu",
+    },
+    {
+      id: "gdp",
+      name: "Glukosa Darah Puasa",
+      unit: "mg/dL",
+      val: "186",
+      prevVal: "178",
+      delta: "+8",
+      deltaPercent: "+4.5%",
+      status: "Tinggi (Hiperglikemia)",
+      isCritical: false,
+      isWarning: true,
+      timeframe: "2 minggu lalu",
+    },
+    {
+      id: "leuko",
+      name: "Leukosit (WBC)",
+      unit: "/µL",
+      val: "14.800",
+      prevVal: "8.200",
+      delta: "+6.600",
+      deltaPercent: "+80.4%",
+      status: "Tinggi (Leukositosis)",
+      isCritical: true,
+      isWarning: false,
+      timeframe: "Kemarin",
+    },
+    {
+      id: "plt",
+      name: "Trombosit (Platelet)",
+      unit: "/µL",
+      val: "245.000",
+      prevVal: "240.000",
+      delta: "+5.000",
+      deltaPercent: "+2.1%",
+      status: "Normal & Aman",
+      isCritical: false,
+      isWarning: false,
+      timeframe: "1 bulan lalu",
+    },
+  ];
+
+  const curSim = simulationDetails[selectedSample];
 
   return (
     <div className="w-full bg-white text-slate-800">
@@ -317,27 +378,47 @@ export default function NovaAIPage() {
                 </div>
               </div>
 
-              {/* Right Column: Clean Software Preview */}
+              {/* Right Column: Clean Visual Simulation Card */}
               <div className="lg:col-span-5 rounded-[24px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
                     <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
                     <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="ml-2 text-xs font-semibold text-slate-700">Nova AI Engine</span>
+                    <span className="ml-2 text-xs font-semibold text-slate-700">Nova AI Delta Engine</span>
                   </div>
                   <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/60">
                     LIVE VERIFIED
                   </span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                  <p className="text-xs font-bold text-slate-800">
-                    Delta-Check Logic Engine
-                  </p>
-                  <p className="text-[11px] text-slate-500 font-light">
-                    {language === "ID" ? "Komparasi Longitudinal 3 Kunjungan Terakhir" : "Longitudinal Comparison Across Last 3 Visits"}
-                  </p>
+                {/* Patient Delta Trend Visualizer */}
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700">Komparasi Riwayat Pasien</span>
+                    <span className="text-[11px] text-slate-400 font-light">RM: #44912</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200/70 text-xs">
+                      <div>
+                        <span className="text-slate-400 text-[10px] block">Sebelumnya ({curSim.timeframe})</span>
+                        <span className="font-mono font-bold text-slate-700">{curSim.prevVal} {curSim.unit}</span>
+                      </div>
+                      <span className="text-slate-300 text-sm">➔</span>
+                      <div className="text-right">
+                        <span className="text-slate-400 text-[10px] block">Hasil Terkini</span>
+                        <span className="font-mono font-bold text-[#345DAB]">{curSim.val} {curSim.unit}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50/80 border border-blue-100 text-xs">
+                      <span className="text-slate-600 font-medium">Pergeseran Delta:</span>
+                      <span className={cn("font-bold font-mono", curSim.isCritical ? "text-rose-600" : curSim.isWarning ? "text-amber-700" : "text-emerald-600")}>
+                        {curSim.delta} ({curSim.deltaPercent})
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Scannable Metrics */}
@@ -347,7 +428,7 @@ export default function NovaAIPage() {
                       &lt; 3 Detik
                     </span>
                     <span className="text-xs font-medium text-slate-600 block mt-1 leading-snug">
-                      {language === "ID" ? "Waktu Analisis" : "Inference Time"}
+                      {language === "ID" ? "Waktu Inferensi" : "Inference Time"}
                     </span>
                   </div>
                   <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
@@ -392,7 +473,7 @@ export default function NovaAIPage() {
                 {language === "ID" ? "Alur 4 Tahap" : "4-Stage Workflow"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
                 <>Alur Kerja Terstruktur yang Menjamin Keselamatan Pasien</>
               ) : (
@@ -452,14 +533,15 @@ export default function NovaAIPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: AI + DOKTER: ETIKA & KOLABORASI (#ai-doctor)
+          (Dengan visual ilustrasi DNA & Medical Intelligence)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="ai-doctor"
-        className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
+        className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-            {/* Left Column: Philosophical & Ethical Stance */}
+            {/* Left Column: Philosophical & Ethical Stance with Visual Glow */}
             <div className="lg:col-span-6 space-y-6">
               <div className="mb-1">
                 <SectionBadge variant="blue">
@@ -467,7 +549,7 @@ export default function NovaAIPage() {
                 </SectionBadge>
               </div>
 
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
                 {language === "ID" ? (
                   <>
                     Mengapa Pendekatan Human-in-the-Loop Sangat Krusial?
@@ -496,6 +578,19 @@ export default function NovaAIPage() {
                     : "Nova AI strictly conforms to national EMR mandates (Permenkes 24/2022) and international accreditation ethics (KARS & JCI)."}
                 </p>
               </div>
+
+              {/* Quick Summary Pill Strip */}
+              <div className="pt-2 flex flex-wrap gap-2 text-xs font-semibold text-slate-700">
+                <span className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80">
+                  ✓ Tanpa Resep Mandiri
+                </span>
+                <span className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80">
+                  ✓ Transparan &amp; Tervalidasi
+                </span>
+                <span className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80">
+                  ✓ Tanggung Jawab Hukum pada Dokter
+                </span>
+              </div>
             </div>
 
             {/* Right Column: Comparative Division of Roles (AI vs Dokter) */}
@@ -503,7 +598,7 @@ export default function NovaAIPage() {
               {/* Role 1: Nova AI */}
               <div className="rounded-[28px] bg-[#F8FBFE] border border-blue-100/90 p-7 sm:p-8 space-y-4 shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-white border border-blue-100 text-[#2764B8] flex items-center justify-center shadow-xs">
+                  <div className="h-11 w-11 rounded-2xl bg-white border border-blue-100 text-[#2764B8] flex items-center justify-center shadow-xs">
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
@@ -533,7 +628,7 @@ export default function NovaAIPage() {
               {/* Role 2: Dokter */}
               <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 space-y-4 shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+                  <div className="h-11 w-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs border border-emerald-100">
                     <Stethoscope className="h-5 w-5" />
                   </div>
                   <div>
