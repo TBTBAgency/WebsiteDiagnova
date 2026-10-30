@@ -191,3 +191,4 @@ File screenshot resolusi tinggi tersimpan di folder lokal:
 * `01-hero.png` — Hero section dan navbar
 * `02-scroll-900px.png` s/d `09-scroll-7200px.png` — Seluruh segmen seksi
 * `FULL-PAGE.png` — Tangkapan utuh 12.011 px halaman depan
+

@@ -30,6 +30,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { novaAISampleTranslations, novaAIDisclaimer } from "@/content/nova-ai";
 
@@ -151,100 +152,61 @@ export default function NovaAIPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: Sesuai Standar Platform, Solutions & Modules
+          HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            {/* Section Badge */}
-            <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Asisten Laboratorium Cerdas" : "Intelligent Laboratory Copilot"}
-              </SectionBadge>
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>
-                  AI Membantu Analisis.{" "}
-                  <br className="hidden sm:inline" />
-                  Dokter Menentukan Keputusan.
-                </>
-              ) : (
-                <>
-                  AI Assists Clinical Analysis.{" "}
-                  <br className="hidden sm:inline" />
-                  Doctors Make the Decisions.
-                </>
-              )}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
-              {language === "ID"
-                ? "Nova AI mengubah deretan angka hasil uji laboratorium yang kompleks menjadi narasi klinis ringkas, mendeteksi anomali pola delta-check, dan mempercepat respons dokter tanpa menggantikan peran manusia."
-                : "Nova AI transforms complex laboratory telemetry into concise, actionable clinical narratives, flags longitudinal delta-check anomalies, and accelerates physician response without ever replacing human oversight."}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Link
-                href="/request-demo"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
-              >
-                <span>{language === "ID" ? "Jadwalkan Demo Nova AI" : "Schedule Nova AI Demo"}</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#demo-translation"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 transition-colors shadow-xs"
-              >
-                <span>{language === "ID" ? "Lihat Contoh Analisis" : "View Clinical Demo"}</span>
-              </a>
-            </div>
-
-            {/* 4 Key Metric Cards (Persis Style Platform, Solutions & Modules) */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
-              {[
-                {
-                  value: "100%",
-                  label: language === "ID" ? "Kendali di Dokter" : "Physician Control",
-                  sub: language === "ID" ? "Human-in-the-loop mutlak" : "Absolute clinical sovereignty",
-                },
-                {
-                  value: "< 3 Detik",
-                  label: language === "ID" ? "Deteksi Anomali" : "Anomaly Detection",
-                  sub: language === "ID" ? "Pengecekan lonjakan delta" : "Instant delta check flag",
-                },
-                {
-                  value: "0 Black-Box",
-                  label: language === "ID" ? "AI Transparan & Etis" : "Transparent AI",
-                  sub: language === "ID" ? "Alasan logis dapat dilacak" : "Traceable clinical logic",
-                },
-                {
-                  value: "ISO & KARS",
-                  label: language === "ID" ? "Kepatuhan Medis" : "Medical Compliance",
-                  sub: language === "ID" ? "Standar etika Permenkes" : "Ministry of Health aligned",
-                },
-              ].map((kpi, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
-                >
-                  <p className="font-display text-2xl sm:text-3xl font-bold text-[#345DAB] tracking-tight">
-                    {kpi.value}
-                  </p>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
-                    {kpi.label}
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge={language === "ID" ? "Asisten Laboratorium Cerdas" : "Intelligent Laboratory Copilot"}
+        title={
+          language === "ID" ? (
+            <>
+              AI Membantu Analisis.{" "}
+              <br className="hidden sm:inline" />
+              Dokter Menentukan Keputusan.
+            </>
+          ) : (
+            <>
+              AI Assists Clinical Analysis.{" "}
+              <br className="hidden sm:inline" />
+              Doctors Make the Decisions.
+            </>
+          )
+        }
+        subtitle={
+          language === "ID"
+            ? "Nova AI mengubah deretan angka hasil uji laboratorium yang kompleks menjadi narasi klinis ringkas, mendeteksi anomali pola delta-check, dan mempercepat respons dokter tanpa menggantikan peran manusia."
+            : "Nova AI transforms complex laboratory telemetry into concise, actionable clinical narratives, flags longitudinal delta-check anomalies, and accelerates physician response without ever replacing human oversight."
+        }
+        primaryCta={{
+          text: language === "ID" ? "Jadwalkan Demo Nova AI" : "Schedule Nova AI Demo",
+          href: "/request-demo",
+        }}
+        secondaryCta={{
+          text: language === "ID" ? "Lihat Contoh Analisis" : "View Clinical Demo",
+          href: "#demo-translation",
+        }}
+        metrics={[
+          {
+            value: "100%",
+            label: language === "ID" ? "Kendali di Dokter" : "Physician Control",
+            sub: language === "ID" ? "Human-in-the-loop mutlak" : "Absolute clinical sovereignty",
+          },
+          {
+            value: "< 3 Detik",
+            label: language === "ID" ? "Deteksi Anomali" : "Anomaly Detection",
+            sub: language === "ID" ? "Pengecekan lonjakan delta" : "Instant delta check flag",
+          },
+          {
+            value: "0 Black-Box",
+            label: language === "ID" ? "AI Transparan & Etis" : "Transparent AI",
+            sub: language === "ID" ? "Alasan logis dapat dilacak" : "Traceable clinical logic",
+          },
+          {
+            value: "ISO & KARS",
+            label: language === "ID" ? "Kepatuhan Medis" : "Medical Compliance",
+            sub: language === "ID" ? "Standar etika Permenkes" : "Ministry of Health aligned",
+          },
+        ]}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           NOTICE / ETHICAL BANNER: Kepatuhan Etika Medis Resmi

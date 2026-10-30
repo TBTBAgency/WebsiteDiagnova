@@ -25,6 +25,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { PageHero } from "@/components/sections/PageHero";
 import { Button } from "@/components/ui/Button";
 import { demoRequestSchema } from "@/lib/validations";
 import { InstitutionType } from "@/types";
@@ -460,90 +461,66 @@ export default function RequestDemoPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: 4 Metric Cards (Matching Platform, Solutions, Modules, Nova AI, Integration)
+          HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            {/* Section Badge */}
-            <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Konsultasi & Live Demo" : "Consultation & Live Demo"}
-              </SectionBadge>
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>
-                  Lihat Langsung Bagaimana Diagnova{" "}
-                  <br className="hidden sm:inline" />
-                  Mengotomasi Laboratorium Anda
-                </>
-              ) : (
-                <>
-                  Experience How Diagnova{" "}
-                  <br className="hidden sm:inline" />
-                  Automates Your Laboratory Workflows
-                </>
-              )}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
-              {language === "ID"
-                ? "Jadwalkan sesi demonstrasi 1-on-1 bersama Clinical Application Specialist kami. Eksplorasi alur kerja end-to-end, uji kecerdasan Nova AI, dan dapatkan simulasi integrasi analyzer sesuai fasilitas kesehatan Anda."
-                : "Schedule a dedicated 1-on-1 walkthrough with our Clinical Application Specialists. Explore end-to-end specimen workflows, test Nova AI intelligence, and receive customized analyzer integration feasibility for your facility."}
-            </p>
-
-            {/* Exactly 4 Metric Cards */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
-              {[
-                {
-                  value: "< 24 Jam",
-                  label: language === "ID" ? "Respon Cepat" : "Fast SLA Response",
-                  sub: language === "ID" ? "Jadwal dikonfirmasi dalam 1 hari" : "Confirmed within 1 business day",
-                },
-                {
-                  value: "1-on-1",
-                  label: language === "ID" ? "Sesi Personal" : "Dedicated Walkthrough",
-                  sub: language === "ID" ? "Bersama spesialis klinis lab" : "With clinical application specialists",
-                },
-                {
-                  value: "100% Free",
-                  label: language === "ID" ? "Tanpa Komitmen" : "Zero Obligation",
-                  sub: language === "ID" ? "Konsultasi & simulasi gratis" : "Complimentary consultation",
-                },
-                {
-                  value: "Kustom",
-                  label: language === "ID" ? "Skenario Faskes" : "Tailored Scenarios",
-                  sub: language === "ID" ? "Sesuai SIMRS & mesin analyzer" : "Matched to your HIS & analyzers",
-                },
-              ].map((kpi, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
-                >
-                  <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#345DAB]">
-                    {kpi.value}
-                  </p>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
-                    {kpi.label}
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5 leading-tight">
-                    {kpi.sub}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge={language === "ID" ? "Konsultasi & Live Demo" : "Consultation & Live Demo"}
+        title={
+          language === "ID" ? (
+            <>
+              Lihat Langsung Bagaimana Diagnova{" "}
+              <br className="hidden sm:inline" />
+              Mengotomasi Laboratorium Anda
+            </>
+          ) : (
+            <>
+              Experience How Diagnova{" "}
+              <br className="hidden sm:inline" />
+              Automates Your Laboratory Workflows
+            </>
+          )
+        }
+        subtitle={
+          language === "ID"
+            ? "Jadwalkan sesi demonstrasi 1-on-1 bersama Clinical Application Specialist kami. Eksplorasi alur kerja end-to-end, uji kecerdasan Nova AI, dan dapatkan simulasi integrasi analyzer sesuai fasilitas kesehatan Anda."
+            : "Schedule a dedicated 1-on-1 walkthrough with our Clinical Application Specialists. Explore end-to-end specimen workflows, test Nova AI intelligence, and receive customized analyzer integration feasibility for your facility."
+        }
+        primaryCta={{
+          text: language === "ID" ? "Mulai Isi Formulir Demo" : "Fill Demo Request Form",
+          href: "#demo-form",
+        }}
+        secondaryCta={{
+          text: language === "ID" ? "Pelajari Alur Sesi" : "Explore Session Steps",
+          href: "#demo-journey",
+        }}
+        metrics={[
+          {
+            value: "< 24 Jam",
+            label: language === "ID" ? "Respon Cepat" : "Fast SLA Response",
+            sub: language === "ID" ? "Jadwal dikonfirmasi dalam 1 hari" : "Confirmed within 1 business day",
+          },
+          {
+            value: "1-on-1",
+            label: language === "ID" ? "Sesi Personal" : "Dedicated Walkthrough",
+            sub: language === "ID" ? "Bersama spesialis klinis lab" : "With clinical application specialists",
+          },
+          {
+            value: "100% Free",
+            label: language === "ID" ? "Tanpa Komitmen" : "Zero Obligation",
+            sub: language === "ID" ? "Konsultasi & simulasi gratis" : "Complimentary consultation",
+          },
+          {
+            value: "Kustom",
+            label: language === "ID" ? "Skenario Faskes" : "Tailored Scenarios",
+            sub: language === "ID" ? "Sesuai SIMRS & mesin analyzer" : "Matched to your HIS & analyzers",
+          },
+        ]}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           MAIN CONTENT: FORM & SIDEBAR TRUST SIGNALS
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full py-16 sm:py-24 bg-white border-b border-slate-100">
+      <section id="demo-form" className="w-full py-16 sm:py-24 bg-white border-b border-slate-100 scroll-mt-28">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left Column: Interactive Form */}
@@ -699,7 +676,7 @@ export default function RequestDemoPage() {
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: 3-STEP DEMO JOURNEY
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full py-16 sm:py-24 bg-[#F8FBFE] border-b border-slate-100">
+      <section id="demo-journey" className="w-full py-16 sm:py-24 bg-[#F8FBFE] border-b border-slate-100 scroll-mt-28">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
           <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
             <span className="text-xs font-bold uppercase tracking-wider text-[#2764B8]">

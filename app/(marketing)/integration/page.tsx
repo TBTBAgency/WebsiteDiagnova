@@ -28,6 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
 
 export default function IntegrationPage() {
@@ -370,102 +371,61 @@ export default function IntegrationPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: 4 Metric Cards (Matching Platform, Solutions, Modules)
+          HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            {/* Section Badge */}
-            <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Interoperabilitas Laboratorium" : "Laboratory Interoperability Suite"}
-              </SectionBadge>
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>
-                  Terhubung Mulus dengan{" "}
-                  <br className="hidden sm:inline" />
-                  Ekosistem RS & 500+ Mesin Lab
-                </>
-              ) : (
-                <>
-                  Seamless Connectivity with{" "}
-                  <br className="hidden sm:inline" />
-                  Hospital IT & 500+ Medical Analyzers
-                </>
-              )}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
-              {language === "ID"
-                ? "Konektivitas siap pakai yang aman dan patuh regulasi: bridging dua arah SIMRS/HIS, RME Permenkes 24/2022, SATUSEHAT Kemenkes (HL7 FHIR), antarmuka 500+ analyzer otomatis, serta gateway tangguh ber-buffer offline."
-                : "Turnkey, regulatory-compliant interoperability: bidirectional HIS bridging, EMR Permenkes 24/2022, MoH SATUSEHAT HL7 FHIR, direct 500+ analyzer interfacing, and resilient offline edge buffering."}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Link
-                href="/request-demo"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
-              >
-                <span>{language === "ID" ? "Jadwalkan Konsultasi Integrasi" : "Schedule Integration Consultation"}</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#integration-explorer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 transition-colors shadow-xs"
-              >
-                <span>{language === "ID" ? "Eksplorasi 5 Pilar Integrasi" : "Explore 5 Integration Pillars"}</span>
-              </a>
-            </div>
-
-            {/* Exactly 4 Metric Cards */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
-              {[
-                {
-                  value: "500+ Mesin",
-                  label: language === "ID" ? "Analyzer Teruji" : "Supported Analyzers",
-                  sub: language === "ID" ? "Roche, Sysmex, Abbott, Mindray" : "Roche, Sysmex, Abbott, Mindray",
-                },
-                {
-                  value: "HL7 & FHIR",
-                  label: language === "ID" ? "Standar Kemenkes RI" : "National Health Standard",
-                  sub: language === "ID" ? "SATUSEHAT & Permenkes 24/2022" : "SATUSEHAT & Permenkes 24/2022",
-                },
-                {
-                  value: "0 Double Entry",
-                  label: language === "ID" ? "Bridging SIMRS Dua Arah" : "Bidirectional HIS Bridging",
-                  sub: language === "ID" ? "Order & billing otomatis realtime" : "Real-time automatic order & billing",
-                },
-                {
-                  value: "72 Jam",
-                  label: language === "ID" ? "Buffer Offline Edge" : "Offline Resilient Edge",
-                  sub: language === "ID" ? "Zero data loss saat jaringan putus" : "Zero data loss during downtime",
-                },
-              ].map((kpi, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
-                >
-                  <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#345DAB]">
-                    {kpi.value}
-                  </p>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
-                    {kpi.label}
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5 leading-tight">
-                    {kpi.sub}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge={language === "ID" ? "Interoperabilitas Laboratorium" : "Laboratory Interoperability Suite"}
+        title={
+          language === "ID" ? (
+            <>
+              Terhubung Mulus dengan{" "}
+              <br className="hidden sm:inline" />
+              Ekosistem RS & 500+ Mesin Lab
+            </>
+          ) : (
+            <>
+              Seamless Connectivity with{" "}
+              <br className="hidden sm:inline" />
+              Hospital IT & 500+ Medical Analyzers
+            </>
+          )
+        }
+        subtitle={
+          language === "ID"
+            ? "Konektivitas siap pakai yang aman dan patuh regulasi: bridging dua arah SIMRS/HIS, RME Permenkes 24/2022, SATUSEHAT Kemenkes, 500+ analyzer otomatis, dan gateway buffer offline."
+            : "Turnkey, regulatory-compliant interoperability: bidirectional HIS bridging, EMR Permenkes 24/2022, MoH SATUSEHAT HL7 FHIR, direct 500+ analyzer interfacing, and offline edge buffer."
+        }
+        primaryCta={{
+          text: language === "ID" ? "Jadwalkan Konsultasi Integrasi" : "Schedule Integration Consultation",
+          href: "/request-demo",
+        }}
+        secondaryCta={{
+          text: language === "ID" ? "Eksplorasi 5 Pilar Integrasi" : "Explore 5 Integration Pillars",
+          href: "#integration-explorer",
+        }}
+        metrics={[
+          {
+            value: "500+ Mesin",
+            label: language === "ID" ? "Analyzer Teruji" : "Supported Analyzers",
+            sub: language === "ID" ? "Roche, Sysmex, Abbott, Mindray" : "Roche, Sysmex, Abbott, Mindray",
+          },
+          {
+            value: "HL7 & FHIR",
+            label: language === "ID" ? "Standar Kemenkes RI" : "National Health Standard",
+            sub: language === "ID" ? "SATUSEHAT & Permenkes 24/2022" : "SATUSEHAT & Permenkes 24/2022",
+          },
+          {
+            value: "0 Double Entry",
+            label: language === "ID" ? "Bridging SIMRS Dua Arah" : "Bidirectional HIS Bridging",
+            sub: language === "ID" ? "Order & billing otomatis realtime" : "Real-time automatic order & billing",
+          },
+          {
+            value: "72 Jam",
+            label: language === "ID" ? "Buffer Offline Edge" : "Offline Resilient Edge",
+            sub: language === "ID" ? "Zero data loss saat jaringan putus" : "Zero data loss during downtime",
+          },
+        ]}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: INTERACTIVE INTEGRATION EXPLORER

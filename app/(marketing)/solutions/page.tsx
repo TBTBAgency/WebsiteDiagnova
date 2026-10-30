@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
 
 export default function SolutionsPage() {
@@ -330,100 +331,61 @@ export default function SolutionsPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: Sesuai Versi Pertama (Lengkap dengan 4 Metric Cards)
+          HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            {/* Section Badge */}
-            <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Solusi Diagnova" : "Diagnova Solutions"}
-              </SectionBadge>
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>
-                  Solusi Terkonfigurasi untuk{" "}
-                  <br className="hidden sm:inline" />
-                  Setiap Skala Fasilitas Kesehatan
-                </>
-              ) : (
-                <>
-                  Configured Architectures for{" "}
-                  <br className="hidden sm:inline" />
-                  Every Healthcare Institution Tier
-                </>
-              )}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
-              {language === "ID"
-                ? "Dari rumah sakit sentral dengan IGD bertekanan tinggi hingga jejaring lab klinik mandiri. Diagnova menghadirkan solusi yang dirancang sesuai regulasi dan alur kerja spesifik Anda."
-                : "From high-acuity hospital networks to high-throughput clinical check-up laboratories. Diagnova delivers tailored architectures engineered for your specific clinical workflows."}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Link
-                href="/request-demo"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
-              >
-                <span>{language === "ID" ? "Jadwalkan Konsultasi Solusi" : "Schedule Solutions Consultation"}</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#solutions-explorer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 transition-colors shadow-xs"
-              >
-                <span>{language === "ID" ? "Eksplorasi 6 Solusi Inti" : "Explore 6 Core Solutions"}</span>
-              </a>
-            </div>
-
-            {/* 4 Key Metric Cards (Persis Style Versi Pertama) */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
-              {[
-                {
-                  value: "-60%",
-                  label: language === "ID" ? "Pangkas Waktu Antre" : "Cut Queue Time",
-                  sub: language === "ID" ? "Registrasi cepat MCU & RS" : "Fast MCU & Hospital check-in",
-                },
-                {
-                  value: "100%",
-                  label: language === "ID" ? "Bridging SIMRS & RME" : "HIS & EMR Bridging",
-                  sub: language === "ID" ? "Dua arah & real-time" : "Bidirectional & real-time",
-                },
-                {
-                  value: "ISO 15189",
-                  label: language === "ID" ? "Kesiapan Akreditasi" : "Accreditation Ready",
-                  sub: language === "ID" ? "KARS, JCI & Kemenkes" : "KARS & JCI compliant",
-                },
-                {
-                  value: "6 Sektor",
-                  label: language === "ID" ? "Solusi Terdedikasi" : "Specialized Verticals",
-                  sub: language === "ID" ? "RS, MCU, PA, BDRS, AI" : "Hospital, Outpatient, Labs",
-                },
-              ].map((kpi, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
-                >
-                  <p className="font-display text-2xl sm:text-3xl font-bold text-[#345DAB] tracking-tight">
-                    {kpi.value}
-                  </p>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
-                    {kpi.label}
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge={language === "ID" ? "Solusi Diagnova" : "Diagnova Solutions"}
+        title={
+          language === "ID" ? (
+            <>
+              Solusi Terkonfigurasi untuk{" "}
+              <br className="hidden sm:inline" />
+              Setiap Skala Fasilitas Kesehatan
+            </>
+          ) : (
+            <>
+              Configured Architectures for{" "}
+              <br className="hidden sm:inline" />
+              Every Healthcare Institution Tier
+            </>
+          )
+        }
+        subtitle={
+          language === "ID"
+            ? "Dari rumah sakit sentral dengan IGD bertekanan tinggi hingga jejaring lab klinik mandiri. Diagnova menghadirkan solusi yang dirancang sesuai regulasi dan alur kerja spesifik Anda."
+            : "From high-acuity hospital networks to high-throughput clinical check-up laboratories. Diagnova delivers tailored architectures engineered for your specific clinical workflows."
+        }
+        primaryCta={{
+          text: language === "ID" ? "Jadwalkan Konsultasi Solusi" : "Schedule Solutions Consultation",
+          href: "/request-demo",
+        }}
+        secondaryCta={{
+          text: language === "ID" ? "Eksplorasi 6 Solusi Inti" : "Explore 6 Core Solutions",
+          href: "#solutions-explorer",
+        }}
+        metrics={[
+          {
+            value: "-60%",
+            label: language === "ID" ? "Pangkas Waktu Antre" : "Cut Queue Time",
+            sub: language === "ID" ? "Registrasi cepat MCU & RS" : "Fast MCU & Hospital check-in",
+          },
+          {
+            value: "100%",
+            label: language === "ID" ? "Bridging SIMRS & RME" : "HIS & EMR Bridging",
+            sub: language === "ID" ? "Dua arah & real-time" : "Bidirectional & real-time",
+          },
+          {
+            value: "ISO 15189",
+            label: language === "ID" ? "Kesiapan Akreditasi" : "Accreditation Ready",
+            sub: language === "ID" ? "KARS, JCI & Kemenkes" : "KARS & JCI compliant",
+          },
+          {
+            value: "6 Sektor",
+            label: language === "ID" ? "Solusi Terdedikasi" : "Specialized Verticals",
+            sub: language === "ID" ? "RS, MCU, PA, BDRS, AI" : "Hospital, Outpatient, Labs",
+          },
+        ]}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           INTERACTIVE SOLUTION EXPLORER (VERSUS 2 DENGAN ICON KONSISTEN)

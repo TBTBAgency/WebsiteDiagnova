@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
+import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
 
 export default function ModulesPage() {
@@ -278,100 +279,61 @@ export default function ModulesPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: Sesuai Design Style Platform & Solutions (4 Cards)
+          HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            {/* Section Badge */}
-            <div className="mb-4 sm:mb-5">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Modul Terintegrasi Diagnova" : "Diagnova Modular Suite"}
-              </SectionBadge>
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>
-                  Modul Spesialisasi yang{" "}
-                  <br className="hidden sm:inline" />
-                  Saling Terhubung Tanpa Hambatan
-                </>
-              ) : (
-                <>
-                  Connected Modules for{" "}
-                  <br className="hidden sm:inline" />
-                  Specialized Laboratory Care
-                </>
-              )}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
-              {language === "ID"
-                ? "Aktifkan modul sesuai kebutuhan faskes Anda atau jalankan sebagai satu kesatuan. Seluruh data pasien, sampel, dan hasil mengalir dalam satu sistem yang aman dan siap akreditasi."
-                : "Deploy individual modules or run the complete unified suite. All patient data, specimens, and analyzer results converge in a secure, accreditation-ready environment."}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Link
-                href="/request-demo"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
-              >
-                <span>{language === "ID" ? "Jadwalkan Demo Modul" : "Schedule Module Demo"}</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#modules-explorer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 transition-colors shadow-xs"
-              >
-                <span>{language === "ID" ? "Eksplorasi 5 Modul" : "Explore 5 Modules"}</span>
-              </a>
-            </div>
-
-            {/* 4 Key Metric Cards (Persis Style Platform & Solutions) */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
-              {[
-                {
-                  value: "5 Modul",
-                  label: language === "ID" ? "Spesialisasi Lengkap" : "Dedicated Modules",
-                  sub: language === "ID" ? "Rutin, BDRS, Stok, PA, Mikro" : "Hematology, Blood, Reagents, PA",
-                },
-                {
-                  value: "100%",
-                  label: language === "ID" ? "Interfacing Analyzer" : "Analyzer Interfacing",
-                  sub: language === "ID" ? "ASTM & HL7 bidireksional" : "Direct bidirectional protocol",
-                },
-                {
-                  value: "0 Error",
-                  label: language === "ID" ? "Salah Identifikasi" : "Zero Sample Mix-ups",
-                  sub: language === "ID" ? "Barcode 2D & delta-check" : "2D micro-barcode tracking",
-                },
-                {
-                  value: "Plug & Play",
-                  label: language === "ID" ? "Aktivasi Modular" : "Modular Activation",
-                  sub: language === "ID" ? "Bebas tambah modul bertahap" : "Deploy on-demand per dept",
-                },
-              ].map((kpi, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
-                >
-                  <p className="font-display text-2xl sm:text-3xl font-bold text-[#345DAB] tracking-tight">
-                    {kpi.value}
-                  </p>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
-                    {kpi.label}
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge={language === "ID" ? "Modul Terintegrasi Diagnova" : "Diagnova Modular Suite"}
+        title={
+          language === "ID" ? (
+            <>
+              Modul Spesialisasi yang{" "}
+              <br className="hidden sm:inline" />
+              Saling Terhubung Tanpa Hambatan
+            </>
+          ) : (
+            <>
+              Connected Modules for{" "}
+              <br className="hidden sm:inline" />
+              Specialized Laboratory Care
+            </>
+          )
+        }
+        subtitle={
+          language === "ID"
+            ? "Aktifkan modul sesuai kebutuhan faskes Anda atau jalankan sebagai satu kesatuan. Seluruh data pasien, sampel, dan hasil mengalir dalam satu sistem yang aman dan siap akreditasi."
+            : "Deploy individual modules or run the complete unified suite. All patient data, specimens, and analyzer results converge in a secure, accreditation-ready environment."
+        }
+        primaryCta={{
+          text: language === "ID" ? "Jadwalkan Demo Modul" : "Schedule Module Demo",
+          href: "/request-demo",
+        }}
+        secondaryCta={{
+          text: language === "ID" ? "Eksplorasi 5 Modul" : "Explore 5 Modules",
+          href: "#modules-explorer",
+        }}
+        metrics={[
+          {
+            value: "5 Modul",
+            label: language === "ID" ? "Spesialisasi Lengkap" : "Dedicated Modules",
+            sub: language === "ID" ? "Rutin, BDRS, Stok, PA, Mikro" : "Hematology, Blood, Reagents, PA",
+          },
+          {
+            value: "100%",
+            label: language === "ID" ? "Interfacing Analyzer" : "Analyzer Interfacing",
+            sub: language === "ID" ? "ASTM & HL7 bidireksional" : "Direct bidirectional protocol",
+          },
+          {
+            value: "0 Error",
+            label: language === "ID" ? "Salah Identifikasi" : "Zero Sample Mix-ups",
+            sub: language === "ID" ? "Barcode 2D & delta-check" : "2D micro-barcode tracking",
+          },
+          {
+            value: "Plug & Play",
+            label: language === "ID" ? "Aktivasi Modular" : "Modular Activation",
+            sub: language === "ID" ? "Bebas tambah modul bertahap" : "Deploy on-demand per dept",
+          },
+        ]}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           INTERACTIVE MODULE EXPLORER (FOCUS ON UX & SCANNABILITY)
