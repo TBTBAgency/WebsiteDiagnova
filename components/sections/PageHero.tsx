@@ -43,12 +43,20 @@ export function PageHero({
   return (
     <section
       className={cn(
-        "relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100",
+        "relative w-full bg-white px-3 sm:px-5 lg:px-6 pb-4 sm:pb-6 transition-[padding-top] duration-300 ease-in-out",
         className
       )}
+      style={{
+        paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
+      }}
     >
-      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+      {/* ─── Framed Hero Card with Rounded Corners (Persis Style Home Hero Container) ─── */}
+      <div className="relative w-full max-w-[1560px] mx-auto rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white border border-slate-200/90 shadow-xs py-14 sm:py-18 lg:py-20 px-4 sm:px-6 lg:px-10">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-blue-100/35 blur-[100px] pointer-events-none z-0" />
+        <div className="absolute -bottom-24 left-1/4 w-80 h-80 rounded-full bg-blue-50/50 blur-[90px] pointer-events-none z-0" />
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
           {/* Section Badge */}
           <div className="mb-4 sm:mb-5">
             <SectionBadge variant={badgeVariant}>{badge}</SectionBadge>
