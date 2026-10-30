@@ -20,9 +20,6 @@ import {
   Check,
   AlertCircle,
   FileCheck2,
-  Workflow,
-  Activity,
-  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -36,20 +33,20 @@ export default function PlatformPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: Tenang, Lega, Fokus pada Proposisi Nilai
+          HERO SECTION: Sesuai Design Style Home Page (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-14 sm:pb-18 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-3xl mx-auto text-center flex flex-col items-center">
+      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
             {/* Section Badge */}
-            <div className="mb-4">
+            <div className="mb-4 sm:mb-5">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Platform Diagnova" : "Diagnova Platform"}
               </SectionBadge>
             </div>
 
             {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[52px] font-bold leading-[1.15] tracking-tight text-[#345DAB]">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
                 <>
                   Platform Terpadu Pengelolaan{" "}
@@ -66,10 +63,10 @@ export default function PlatformPage() {
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl">
               {language === "ID"
                 ? "Menghubungkan instrumen analyzer, analis medis, dokter patologi, dan SIMRS/RME ke dalam satu alur kerja digital yang presisi, bebas salah sampel, dan terpantau secara real-time."
-                : "Connecting medical analyzers, laboratory analysts, pathologists, and hospital HIS/EMR into a unified digital pipeline that is precise, error-free, and monitored in real time."}
+                : "Connecting medical analyzers, laboratory analysts, pathologists, and hospital HIS/EMR into a unified digital pipeline that is precise, error-free, and monitored in real-time."}
             </p>
 
             {/* CTA Buttons */}
@@ -89,24 +86,43 @@ export default function PlatformPage() {
               </a>
             </div>
 
-            {/* Quality Reassurance Pills */}
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm text-slate-600 font-medium">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "Pangkas TAT hingga 70%" : "Cut TAT up to 70%"}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "Otomasi Interfacing 100%" : "100% Direct Interfacing"}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "Zero Salah Sampel" : "Zero Specimen Mix-ups"}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "Kepatuhan KARS & ISO 15189" : "KARS & ISO 15189 Compliant"}
-              </span>
+            {/* 4 Key Pillars Metric Cards */}
+            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
+              {[
+                {
+                  value: "-70%",
+                  label: language === "ID" ? "Pangkas TAT" : "Cut Turnaround Time",
+                  sub: language === "ID" ? "Dari order ke klinisi" : "Order to clinician",
+                },
+                {
+                  value: "100%",
+                  label: language === "ID" ? "Otomasi Interfacing" : "Direct Interfacing",
+                  sub: language === "ID" ? "Eliminasi entri manual" : "Zero manual entry",
+                },
+                {
+                  value: "0 Error",
+                  label: language === "ID" ? "Salah Sampel" : "Sample Mix-ups",
+                  sub: language === "ID" ? "Verifikasi barcode 2D" : "2D barcode check",
+                },
+                {
+                  value: "ISO 15189",
+                  label: language === "ID" ? "Kepatuhan Audit" : "Audit Compliance",
+                  sub: language === "ID" ? "KARS & JCI compliant" : "KARS & JCI compliant",
+                },
+              ].map((kpi, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
+                >
+                  <p className="font-display text-2xl sm:text-3xl font-bold text-[#345DAB] tracking-tight">
+                    {kpi.value}
+                  </p>
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
+                    {kpi.label}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -114,13 +130,15 @@ export default function PlatformPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: #workflow - Alur Kerja 4 Tahap
+          (Menggunakan komponen asli Home Page yang rapi & interaktif)
           ══════════════════════════════════════════════════════════════ */}
       <div id="workflow" className="scroll-mt-28">
         <WorkflowSection />
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 2: #automation - Otomatisasi & Interfacing Analyzer
+          SECTION 2: #automation - 100% Otomatisasi & Interfacing
+          (Alternating background: #F9F9F9, Card rounded-3xl)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="automation"
@@ -128,141 +146,109 @@ export default function PlatformPage() {
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-3xl mb-12 sm:mb-16">
+          <div className="mb-10 sm:mb-14">
             <div className="mb-4">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Otomatisasi 100%" : "100% Automation"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Interfacing Langsung Dua Arah Tanpa Ketik Ulang</>
+                <>
+                  Interfacing Dua Arah dengan 500+ Instrumen Medis
+                </>
               ) : (
-                <>Native Two-Way Analyzer Interfacing with Zero Typing</>
+                <>
+                  Direct Bidirectional Interfacing with 500+ Medical Analyzers
+                </>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
               {language === "ID"
                 ? "Mengeliminasi entri data manual sepenuhnya. Diagnova berkomunikasi langsung dua arah dengan instrumen laboratorium melalui protokol HL7 dan ASTM standar internasional."
-                : "Eliminates manual typing errors completely. Diagnova establishes native bidirectional communication with laboratory instruments via HL7 and ASTM protocols."}
+                : "Completely eliminate manual data entry. Diagnova establishes native two-way communication with any laboratory instrument brand via industry-standard HL7 and ASTM protocols."}
             </p>
           </div>
 
-          {/* 3 Clear, Informative Pillar Cards with Visual Anchors */}
+          {/* 3 Large Characteristic Cards (Matching Comparison/Infrastructure Cards) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {/* Card 1 */}
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+              <div>
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
                   <Clock className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mt-2">
-                    {language === "ID"
-                      ? "Hasil uji hematologi, kimia darah, dan urin langsung mengalir ke layar klinisi begitu mesin selesai beroperasi, tanpa antrean ketik manual."
-                      : "Results stream directly to clinicians upon analyzer completion with zero manual backlog during peak hours."}
-                  </p>
-                </div>
-
-                {/* Mini Flow Indicator */}
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-600 font-medium">
-                  <span>Order SIMRS</span>
-                  <span className="text-[#2764B8]">➔</span>
-                  <span>Mesin Uji</span>
-                  <span className="text-[#2764B8]">➔</span>
-                  <span className="text-emerald-600 font-bold">Hasil Rilis</span>
-                </div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                  {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {language === "ID"
+                    ? "Hasil uji hematologi, kimia darah, dan urin langsung terkirim begitu mesin selesai beroperasi tanpa antrean ketik manual oleh analis."
+                    : "Hematology, biochemistry, and urinalysis results stream directly to physician screens upon analyzer completion with zero manual typing."}
+                </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 text-xs text-slate-600 space-y-1.5">
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
                 <div className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Bebas antrean ketik analis saat shift padat" : "Zero typing backlog during peak shifts"}</span>
+                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
+                  <span>{language === "ID" ? "Bebas antrean ketik analis" : "No typing backlog during peak shifts"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Notifikasi nilai kritis otomatis ke DPJP" : "Automated critical panic value alerts"}</span>
+                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
+                  <span>{language === "ID" ? "Notifikasi nilai kritis otomatis" : "Real-time critical value alerts"}</span>
                 </div>
               </div>
             </div>
 
-            {/* Card 2 */}
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+              <div>
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
                   <Zap className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mt-2">
-                    {language === "ID"
-                      ? "Spesimen dengan nilai normal dan lolos uji delta-check diverifikasi otomatis oleh sistem, sehingga dokter patolog dapat fokus pada kasus abnormal & darurat."
-                      : "Normal results passing delta checks verify automatically, freeing pathologists to dedicate attention to abnormal and emergency cases."}
-                  </p>
-                </div>
-
-                {/* Mini Rule Indicator */}
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-600 font-medium">
-                  <span>Hasil Normal</span>
-                  <span className="text-emerald-600 font-bold">Auto-Release</span>
-                  <span className="text-slate-300">•</span>
-                  <span>Abnormal</span>
-                  <span className="text-amber-600 font-bold">Triage Dokter</span>
-                </div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                  {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {language === "ID"
+                    ? "Rule engine fleksibel sesuai SOP RS. Spesimen dengan nilai normal dan lolos uji delta-check diverifikasi otomatis sehingga dokter fokus pada kasus darurat."
+                    : "Flexible rule engine matching your hospital SOPs. Samples within normal limits and passing delta checks verify automatically, freeing doctors for complex cases."}
+                </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 text-xs text-slate-600 space-y-1.5">
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
                 <div className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Konfigurasi aturan fleksibel sesuai SOP RS" : "Configurable to your hospital clinical SOPs"}</span>
+                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
+                  <span>{language === "ID" ? "Konfigurasi delta-check RS" : "Hospital-specific delta checks"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Pengecekan lonjakan biomarker (delta check)" : "Longitudinal delta check validation"}</span>
+                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
+                  <span>{language === "ID" ? "Pemisahan kasus abnormal instan" : "Instant abnormal sample triage"}</span>
                 </div>
               </div>
             </div>
 
-            {/* Card 3 */}
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+              <div>
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
                   <Server className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {language === "ID" ? "Resilient Edge Gateway" : "Resilient Edge Gateway"}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mt-2">
-                    {language === "ID"
-                      ? "Jika koneksi internet rumah sakit terganggu, edge gateway menyimpan data analyzer di buffer lokal dan menyinkronkan secara otomatis begitu jaringan pulih."
-                      : "If hospital internet fluctuates, edge gateways buffer data locally and resynchronize automatically once connection restores with zero packet loss."}
-                  </p>
-                </div>
-
-                {/* Mini Resilience Indicator */}
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-600 font-medium">
-                  <span>Buffer Lokal</span>
-                  <span className="text-[#345DAB] font-bold">Hingga 72 Jam</span>
-                  <span className="text-slate-300">•</span>
-                  <span>Uptime</span>
-                  <span className="text-emerald-600 font-bold">99.9%</span>
-                </div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                  {language === "ID" ? "Resilient Edge Buffer" : "Resilient Edge Buffer"}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {language === "ID"
+                    ? "Koneksi jaringan terganggu? Diagnova Gateway menyimpan data analyzer di buffer edge lokal dan menyinkronkan seluruh paket data begitu jaringan pulih."
+                    : "Network instability? Diagnova's edge gateway locally buffers analyzer transmissions and resyncs all data packets upon reconnection with zero data loss."}
+                </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 text-xs text-slate-600 space-y-1.5">
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
                 <div className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Operasional lab tetap berjalan saat offline" : "Continuous testing during network downtime"}</span>
+                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
+                  <span>{language === "ID" ? "Toleransi offline hingga 72 jam" : "Offline resilience up to 72 hours"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Jaminan data tidak hilang (zero data loss)" : "Guaranteed zero data loss on reconnect"}</span>
+                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
+                  <span>{language === "ID" ? "Uptime operasional lab 99,9%" : "99.9% laboratory operational uptime"}</span>
                 </div>
               </div>
             </div>
@@ -271,7 +257,8 @@ export default function PlatformPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 3: #reporting - Kepatuhan & Jejak Audit Digital
+          SECTION 3: #reporting - Digital Audit Trail & Medical Reporting
+          (Clean Healthcare White Background, Real Medical Specimen Card)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="reporting"
@@ -280,13 +267,13 @@ export default function PlatformPage() {
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             {/* Left Column: Context & Accreditation Details */}
-            <div className="lg:col-span-6 flex flex-col justify-center space-y-5">
-              <div className="mb-1">
+            <div className="lg:col-span-6 flex flex-col justify-center">
+              <div className="mb-4">
                 <SectionBadge variant="blue">
                   {language === "ID" ? "Kepatuhan & Akreditasi" : "Compliance & Accreditation"}
                 </SectionBadge>
               </div>
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
                 {language === "ID" ? (
                   <>
                     Jejak Audit Digital Permanen,
@@ -301,115 +288,119 @@ export default function PlatformPage() {
                   </>
                 )}
               </h2>
-              <p className="text-sm sm:text-base text-slate-500 font-light leading-relaxed">
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
                 {language === "ID"
-                  ? "Transparansi penuh untuk setiap tindakan laboratorium. Setiap perubahan hasil, pengujian ulang, dan persetujuan dokter tercatat permanen dengan cap waktu (timestamp) resmi yang tidak dapat diubah."
-                  : "Absolute transparency for every clinical action. Result modifications, re-tests, and pathologist approvals are logged with tamper-proof timestamps."}
+                  ? "Transparansi penuh untuk setiap tindakan laboratorium. Setiap perubahan hasil, kalibrasi alat, dan approval dokter tercatat permanen dengan cap waktu (timestamp) hingga milidetik."
+                  : "Absolute transparency for every clinical action. Every result change, instrument calibration, and physician sign-off is permanently recorded with millisecond-level timestamps."}
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="rounded-[24px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-[20px] bg-[#F5F7FA] border border-slate-200/80 p-5 space-y-2">
                   <div className="flex items-center gap-2 text-[#345DAB] font-bold text-sm">
                     <Lock className="h-4 w-4" />
                     <span>{language === "ID" ? "Log Anti-Manipulasi" : "Tamper-Proof Logs"}</span>
                   </div>
-                  <p className="text-xs text-slate-500 font-light leading-relaxed">
+                  <p className="text-xs text-slate-500 leading-relaxed">
                     {language === "ID"
-                      ? "Catatan historis tersimpan permanen untuk kepatuhan surveior KARS, JCI, dan ISO."
-                      : "Historical records are immutable, satisfying KARS, JCI, and ISO survey requirements."}
+                      ? "Catatan historis tidak dapat diedit atau dihapus, memenuhi persyaratan akreditasi KARS & JCI."
+                      : "Historical entries cannot be altered or purged, satisfying KARS & JCI accreditation criteria."}
                   </p>
                 </div>
 
-                <div className="rounded-[24px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
+                <div className="rounded-[20px] bg-[#F5F7FA] border border-slate-200/80 p-5 space-y-2">
                   <div className="flex items-center gap-2 text-[#345DAB] font-bold text-sm">
                     <FileCheck2 className="h-4 w-4" />
                     <span>{language === "ID" ? "E-Sign Dokter Bersertifikat" : "Certified E-Signatures"}</span>
                   </div>
-                  <p className="text-xs text-slate-500 font-light leading-relaxed">
+                  <p className="text-xs text-slate-500 leading-relaxed">
                     {language === "ID"
-                      ? "Tanda tangan elektronik dokter Sp.PK dengan QR verifikasi keaslian lembar hasil."
-                      : "Certified pathologist e-signatures with instant QR-code report verification."}
+                      ? "Tanda tangan digital dokter Sp.PK dengan QR verifikasi keaslian langsung pada lembar hasil."
+                      : "Certified pathologist e-signatures with instant QR-code verification on patient reports."}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Clean Specimen Timeline Card */}
+            {/* Right Column: Realistic Clinical Specimen Timeline Card (Bukan Terminal Hitam) */}
             <div className="lg:col-span-6">
-              <div className="rounded-[28px] sm:rounded-[36px] bg-[#F5F8FC] border border-slate-200/90 p-7 sm:p-9 shadow-xs space-y-5">
-                <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200 p-6 sm:p-7 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+                {/* Specimen Header */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
                   <div>
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                      {language === "ID" ? "Simulasi Jejak Spesimen" : "Specimen Audit Trail"}
+                      {language === "ID" ? "Rekam Jejak Spesimen" : "Specimen Audit Log"}
                     </span>
                     <h4 className="font-display text-base font-bold text-slate-900 mt-0.5">
-                      #DX-98214 — Darah Lengkap &amp; Kimia Darah
+                      #DX-98214 — Darah Lengkap &amp; Kimia Klinik
                     </h4>
                   </div>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700">
                     <CheckCircle2 className="h-3.5 w-3.5" />
-                    <span>{language === "ID" ? "Rilis Terverifikasi" : "Verified Release"}</span>
+                    <span>{language === "ID" ? "Terverifikasi" : "Verified"}</span>
                   </span>
                 </div>
 
-                {/* 4 Clean Steps */}
-                <div className="space-y-3.5 text-xs">
-                  <div className="p-3.5 rounded-2xl bg-white border border-slate-100 flex items-start gap-3 shadow-2xs">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-slate-400 text-[11px]">
-                        <span>08:14 WIB</span>
-                        <span className="font-semibold text-[#2764B8]">dr. Sp.PK</span>
-                      </div>
-                      <p className="font-semibold text-slate-800 mt-0.5">
-                        {language === "ID" ? "Validasi E-Sign & Rilis ke SIMRS / SATUSEHAT" : "E-Sign Validation & Auto-Release to HIS / SATUSEHAT"}
-                      </p>
+                {/* Clean Medical Timeline Steps */}
+                <div className="space-y-4">
+                  <div className="relative pl-6 border-l-2 border-[#2764B8]">
+                    <span className="absolute -left-[7px] top-1 h-3 w-3 rounded-full bg-[#2764B8] ring-4 ring-blue-50" />
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                      <span>08:14:22 WIB</span>
+                      <span className="font-medium text-[#2764B8]">Dr. dr. Handoko, Sp.PK</span>
                     </div>
+                    <p className="text-xs font-semibold text-slate-800">
+                      {language === "ID"
+                        ? "Validasi E-Sign & Rilis Otomatis ke RME SIMRS"
+                        : "E-Signature Validated & Auto-Released to HIS EMR"}
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Hash Kriptografis: c4ca4238a0b923820dcc509a6f75849b
+                    </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border border-slate-100 flex items-start gap-3 shadow-2xs">
-                    <span className="h-2 w-2 rounded-full bg-[#2764B8] mt-1.5 shrink-0" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-slate-400 text-[11px]">
-                        <span>08:11 WIB</span>
-                        <span>Sysmex XN-1000 (ASTM)</span>
-                      </div>
-                      <p className="font-semibold text-slate-800 mt-0.5">
-                        {language === "ID" ? "Hasil Analyzer Diterima & Lolos Delta-Check" : "Analyzer Data Ingested & Delta-Check Passed"}
-                      </p>
+                  <div className="relative pl-6 border-l-2 border-slate-200">
+                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-300" />
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                      <span>08:11:05 WIB</span>
+                      <span>Sysmex XN-1000 Interface</span>
                     </div>
+                    <p className="text-xs font-medium text-slate-700">
+                      {language === "ID"
+                        ? "Nilai Analyzer Diterima: Hb 14.2 g/dL, Leuko 7.400 /uL (Pass QC)"
+                        : "Analyzer Values Ingested: Hb 14.2 g/dL, WBC 7,400 /uL (Pass QC)"}
+                    </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border border-slate-100 flex items-start gap-3 shadow-2xs">
-                    <span className="h-2 w-2 rounded-full bg-slate-300 mt-1.5 shrink-0" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-slate-400 text-[11px]">
-                        <span>08:02 WIB</span>
-                        <span>Analis Medis</span>
-                      </div>
-                      <p className="font-semibold text-slate-800 mt-0.5">
-                        {language === "ID" ? "Pindai Barcode Tabung & Masuk Mesin Sentrifugasi" : "Barcode Scanned & Assigned to Centrifuge"}
-                      </p>
+                  <div className="relative pl-6 border-l-2 border-slate-200">
+                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-300" />
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                      <span>08:02:18 WIB</span>
+                      <span>Siti N., A.Md.AK (Analis Lab)</span>
                     </div>
+                    <p className="text-xs font-medium text-slate-700">
+                      {language === "ID"
+                        ? "Barcode Dipindai & Masuk Antrean Sentrifugasi Rack #B-04"
+                        : "Barcode Scanned & Assigned to Centrifuge Rack #B-04"}
+                    </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border border-slate-100 flex items-start gap-3 shadow-2xs">
-                    <span className="h-2 w-2 rounded-full bg-slate-300 mt-1.5 shrink-0" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-slate-400 text-[11px]">
-                        <span>07:55 WIB</span>
-                        <span>SIMRS Bridging</span>
-                      </div>
-                      <p className="font-semibold text-slate-800 mt-0.5">
-                        {language === "ID" ? "Order Pemeriksaan Masuk dari IGD" : "Order Received from Emergency Department"}
-                      </p>
+                  <div className="relative pl-6">
+                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-300" />
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                      <span>07:55:00 WIB</span>
+                      <span>Bridging SIMRS IGD</span>
                     </div>
+                    <p className="text-xs font-medium text-slate-700">
+                      {language === "ID"
+                        ? "Order Masuk dari dr. Jaga IGD (Pasien: Bpk. Suryadi / RM-44912)"
+                        : "Inbound Order from ER (Patient: Mr. Suryadi / MRN-44912)"}
+                    </p>
                   </div>
                 </div>
 
-                <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between">
-                  <span>Permenkes 24/2022 &amp; HL7 FHIR</span>
-                  <span className="font-semibold text-slate-700">SATUSEHAT Verified</span>
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Standar: Permenkes 24/2022 &amp; HL7 FHIR</span>
+                  <span className="font-medium text-slate-700">SATUSEHAT Ready</span>
                 </div>
               </div>
             </div>
@@ -418,7 +409,8 @@ export default function PlatformPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 4: #analytics - Analitik Operasional & Nova AI
+          SECTION 4: #analytics - Nova AI & Analitik Operasional
+          (Alternating background: #F9F9F9)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="analytics"
@@ -426,108 +418,91 @@ export default function PlatformPage() {
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-3xl mb-12 sm:mb-16">
+          <div className="mb-10 sm:mb-14">
             <div className="mb-4">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Nova AI & Analitik" : "Nova AI & Analytics"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Wawasan Operasional &amp; Asisten Klinis Cerdas</>
+                <>
+                  Wawasan Operasional &amp; Asisten Klinis Nova AI
+                </>
               ) : (
-                <>Operational Intelligence &amp; Nova AI Assistant</>
+                <>
+                  Operational Insights &amp; Nova AI Clinical Intelligence
+                </>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
               {language === "ID"
-                ? "Mengubah ribuan titik data laboratorium menjadi wawasan yang dapat ditindaklanjuti. Memantau utilisasi instrumen, efisiensi reagen, dan membantu dokter mengenali lonjakan nilai kritis lebih awal."
-                : "Turns complex laboratory telemetry into actionable intelligence. Monitor analyzer utilization, reagent burn rates, and assist physicians in identifying critical anomalies earlier."}
+                ? "Mengubah jutaan titik data pemeriksaan laboratorium menjadi wawasan strategis. Memantau utilisasi instrumen, efisiensi reagen, dan membantu dokter mendeteksi lonjakan biomarker kritis."
+                : "Transforming millions of laboratory data points into actionable intelligence. Monitor analyzer utilization, reagent efficiency, and empower clinicians with rapid anomaly detection."}
             </p>
           </div>
 
           {/* 3 Intelligence Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+              <div>
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
                   <TrendingUp className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {language === "ID" ? "Pemantauan TAT Real-Time" : "Real-Time TAT Monitoring"}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mt-2">
-                    {language === "ID"
-                      ? "Kenali tahap alur kerja yang mengalami penundaan (bottleneck) secara visual sebelum memengaruhi kecepatan pelayanan pasien IGD atau rawat inap."
-                      : "Visually pinpoint workflow bottlenecks across ER and inpatient orders before they impact clinical care turnaround."}
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs font-medium">
-                  <span className="text-slate-600">Pasien Darurat IGD</span>
-                  <span className="text-emerald-600 font-bold">&lt; 25 Menit (Optimal)</span>
-                </div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                  {language === "ID" ? "TAT Real-Time & Bottleneck Heatmap" : "TAT Real-Time & Bottleneck Heatmap"}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {language === "ID"
+                    ? "Pantau durasi sampel per departemen (IGD, Rawat Inap, Rawat Jalan). Kenali secara visual tahap yang menyebabkan penundaan sebelum mengganggu alur pelayanan pasien."
+                    : "Monitor specimen turnaround across ER, Inpatient, and Clinics. Pinpoint bottlenecks before they impact patient care."}
+                </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
-                <span>{language === "ID" ? "Dashboard Live Per Shift" : "Live Shift Dashboard"}</span>
+              <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
+                <span>{language === "ID" ? "Monitoring Live Per Shift" : "Live Shift Monitoring"}</span>
                 <ChevronRight className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+              <div>
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
                   <BarChart3 className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {language === "ID" ? "Beban Instrumen & Utilisasi" : "Analyzer Load & Efficiency"}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mt-2">
-                    {language === "ID"
-                      ? "Distribusi beban kerja otomatis antar-analyzer untuk mencegah penumpukan sampel di satu instrumen dan meminimalkan reagen terbuang."
-                      : "Automatic workload balancing across analyzers to prevent instrument queue spikes and eliminate expired reagent wastage."}
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs font-medium">
-                  <span className="text-slate-600">Efisiensi Reagen</span>
-                  <span className="text-[#345DAB] font-bold">Zero Reagent Wastage</span>
-                </div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                  {language === "ID" ? "Beban Instrumen & Utilisasi Reagen" : "Analyzer Load & Reagent Tracking"}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {language === "ID"
+                    ? "Kalkulasi otomatis jumlah tes per reagen, masa kadaluarsa, dan distribusi beban kerja antar mesin agar throughput laboratorium beroperasi maksimal tanpa reagen terbuang."
+                    : "Automatic tracking of tests per reagent cartridge, expiry dates, and load distribution across machines to maximize throughput with zero wastage."}
+                </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
-                <span>{language === "ID" ? "Optimasi Utilisasi Mesin" : "Analyzer Optimization"}</span>
+              <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
+                <span>{language === "ID" ? "Zero Reagent Wastage" : "Zero Reagent Wastage"}</span>
                 <ChevronRight className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+              <div>
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
                   <Sparkles className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {language === "ID" ? "Nova AI Clinical Copilot" : "Nova AI Clinical Copilot"}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mt-2">
-                    {language === "ID"
-                      ? "Mendeteksi lonjakan nilai abnormal terhadap riwayat lampau pasien dan merangkum narasi medis. Keputusan akhir tetap 100% pada dokter."
-                      : "Detects longitudinal biomarker shifts against past patient records while leaving 100% of clinical decisions with physicians."}
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs font-medium">
-                  <span className="text-slate-600">Prinsip AI</span>
-                  <span className="text-amber-600 font-bold">AI Membantu, Dokter Memutuskan</span>
-                </div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                  {language === "ID" ? "Nova AI Clinical Delta Check" : "Nova AI Clinical Delta Check"}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {language === "ID"
+                    ? "Nova AI mendeteksi lonjakan nilai abnormal terhadap riwayat lampau pasien, menyajikan peringatan dini, dan merangkum narasi medis. Keputusan akhir tetap 100% pada dokter."
+                    : "Nova AI detects abnormal biomarker spikes against past patient history, offering early alerts while leaving 100% of clinical decisions with physicians."}
+                </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
-                <span>{language === "ID" ? "Pelajari Nova AI" : "Explore Nova AI"}</span>
+              <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
+                <span>{language === "ID" ? "AI Membantu, Dokter Memutuskan" : "AI Assists, Doctors Decide"}</span>
                 <ChevronRight className="h-4 w-4" />
               </div>
             </div>
@@ -536,7 +511,7 @@ export default function PlatformPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          BOTTOM CTA SECTION
+          BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
       <CTABanner />
     </div>

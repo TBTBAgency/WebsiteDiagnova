@@ -27,7 +27,6 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function SolutionsPage() {
   const { language } = useLanguage();
   const [selectedSolution, setSelectedSolution] = useState<number>(0);
-  const [selectedFacilityTier, setSelectedFacilityTier] = useState<number>(0);
 
   // Sync tab with URL hash if present
   useEffect(() => {
@@ -72,7 +71,7 @@ export default function SolutionsPage() {
         },
         {
           title: language === "ID" ? "Pemantauan TAT Real-Time per Shift" : "Live TAT Monitoring per Shift",
-          desc: language === "ID" ? "Lacak kepatuhan waktu tunggu hasil darah cito IGD di bawah 30 menit." : "Monitor stat test turnaround compliance to keep ER TAT under 30 minutes.",
+          desc: language === "ID" ? "Lacak kepatuhan waktu tunggu hasil darah cito IGD di bawah 25 menit." : "Monitor stat test turnaround compliance to keep ER TAT under 25 minutes.",
         },
       ],
       metrics: [
@@ -331,20 +330,20 @@ export default function SolutionsPage() {
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: Tenang, Lega, Fokus pada Nilai Faskes
+          HERO SECTION: Sesuai Versi Pertama (Lengkap dengan 4 Metric Cards)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-14 sm:pb-18 border-b border-slate-100">
+      <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
-          <div className="max-w-3xl mx-auto text-center flex flex-col items-center">
+          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
             {/* Section Badge */}
-            <div className="mb-4">
+            <div className="mb-4 sm:mb-5">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Solusi Diagnova" : "Diagnova Solutions"}
               </SectionBadge>
             </div>
 
             {/* Headline */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[52px] font-bold leading-[1.15] tracking-tight text-[#345DAB]">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
                 <>
                   Solusi Terkonfigurasi untuk{" "}
@@ -361,7 +360,7 @@ export default function SolutionsPage() {
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light">
               {language === "ID"
                 ? "Dari rumah sakit sentral dengan IGD bertekanan tinggi hingga jejaring lab klinik mandiri. Diagnova menghadirkan solusi yang dirancang sesuai regulasi dan alur kerja spesifik Anda."
                 : "From high-acuity hospital networks to high-throughput clinical check-up laboratories. Diagnova delivers tailored architectures engineered for your specific clinical workflows."}
@@ -384,27 +383,50 @@ export default function SolutionsPage() {
               </a>
             </div>
 
-            {/* Quality Reassurance Pills */}
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm text-slate-600 font-medium">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "Bridging Dua Arah SIMRS & RME" : "Bidirectional HIS & EMR Bridging"}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "KARS & JCI Accreditation Ready" : "KARS & JCI Accreditation Ready"}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs">
-                <CheckCircle2 className="h-4 w-4 text-[#2764B8]" />
-                {language === "ID" ? "6 Solusi Terdedikasi Spesialis" : "6 Dedicated Specialty Solutions"}
-              </span>
+            {/* 4 Key Metric Cards (Persis Style Versi Pertama) */}
+            <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
+              {[
+                {
+                  value: "-60%",
+                  label: language === "ID" ? "Pangkas Waktu Antre" : "Cut Queue Time",
+                  sub: language === "ID" ? "Registrasi cepat MCU & RS" : "Fast MCU & Hospital check-in",
+                },
+                {
+                  value: "100%",
+                  label: language === "ID" ? "Bridging SIMRS & RME" : "HIS & EMR Bridging",
+                  sub: language === "ID" ? "Dua arah & real-time" : "Bidirectional & real-time",
+                },
+                {
+                  value: "ISO 15189",
+                  label: language === "ID" ? "Kesiapan Akreditasi" : "Accreditation Ready",
+                  sub: language === "ID" ? "KARS, JCI & Kemenkes" : "KARS & JCI compliant",
+                },
+                {
+                  value: "6 Sektor",
+                  label: language === "ID" ? "Solusi Terdedikasi" : "Specialized Verticals",
+                  sub: language === "ID" ? "RS, MCU, PA, BDRS, AI" : "Hospital, Outpatient, Labs",
+                },
+              ].map((kpi, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
+                >
+                  <p className="font-display text-2xl sm:text-3xl font-bold text-[#345DAB] tracking-tight">
+                    {kpi.value}
+                  </p>
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
+                    {kpi.label}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          INTERACTIVE SOLUTION EXPLORER (FOCUS ON UX & SCANNABILITY)
+          INTERACTIVE SOLUTION EXPLORER (VERSUS 2 DENGAN ICON KONSISTEN)
           ══════════════════════════════════════════════════════════════ */}
       <section id="solutions-explorer" className="w-full bg-white py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
@@ -450,10 +472,16 @@ export default function SolutionsPage() {
               {/* Left Column: Clear Scannable Facts */}
               <div className="lg:col-span-7 space-y-6">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200/90 text-xs font-semibold text-[#2764B8] mb-3">
-                    <CurrentSolIcon className="h-3.5 w-3.5" />
-                    <span>{currentSol.targetAudience}</span>
+                  {/* Icon Box Konsisten Diagnova */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
+                      <CurrentSolIcon className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs font-semibold text-[#2764B8] bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-full">
+                      {currentSol.targetAudience}
+                    </span>
                   </div>
+
                   <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
                     {currentSol.name}
                   </h3>
@@ -563,7 +591,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          COMPLETE SOLUTIONS DIRECTORY (CLEAN 6-CARD GRID FOR ANCHORS)
+          COMPLETE SOLUTIONS DIRECTORY (ICON KONSISTEN)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
@@ -574,7 +602,7 @@ export default function SolutionsPage() {
                 {language === "ID" ? "Direktori Solusi" : "Solutions Directory"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
                 <>Daftar Lengkap 6 Solusi Spesialis</>
               ) : (
@@ -588,7 +616,7 @@ export default function SolutionsPage() {
             </p>
           </div>
 
-          {/* Clean 6-Card Grid (3 Columns) */}
+          {/* Clean 6-Card Grid (3 Columns) with Consistent Icon Box */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {solutionsList.map((sol, idx) => {
               const Icon = sol.icon;
@@ -600,7 +628,8 @@ export default function SolutionsPage() {
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+                      {/* Icon Box Konsisten Diagnova */}
+                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
                         <Icon className="h-6 w-6" />
                       </div>
                       <span className="text-[11px] font-mono font-semibold text-slate-400">
@@ -636,7 +665,7 @@ export default function SolutionsPage() {
                       type="button"
                       onClick={() => {
                         setSelectedSolution(idx);
-                        window.scrollTo({ top: 350, behavior: "smooth" });
+                        window.scrollTo({ top: 380, behavior: "smooth" });
                       }}
                       className="text-xs font-semibold text-[#2764B8] hover:text-[#1E5299] transition-colors cursor-pointer"
                     >
@@ -669,7 +698,7 @@ export default function SolutionsPage() {
                 {language === "ID" ? "Kesesuaian Institusi" : "Institution Matrix"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
                 <>Pilih Paket Solusi Sesuai Skala Faskes Anda</>
               ) : (
