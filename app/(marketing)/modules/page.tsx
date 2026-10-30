@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -28,7 +28,6 @@ import { CTABanner } from "@/components/sections/CTABanner";
 
 export default function ModulesPage() {
   const { language } = useLanguage();
-  const [activeTab, setActiveTab] = useState<string>("all");
 
   const modules = [
     {
@@ -338,9 +337,6 @@ export default function ModulesPage() {
     },
   ];
 
-  const filteredModules =
-    activeTab === "all" ? modules : modules.filter((m) => m.id === activeTab);
-
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
@@ -444,43 +440,6 @@ export default function ModulesPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          QUICK JUMP / FILTER TABS
-          ══════════════════════════════════════════════════════════════ */}
-      <section className="sticky top-[72px] sm:top-[76px] lg:top-[84px] z-20 w-full bg-white/90 backdrop-blur-md border-b border-slate-200/70 py-3 shadow-2xs">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <button
-              type="button"
-              onClick={() => setActiveTab("all")}
-              className={cn(
-                "px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer",
-                activeTab === "all"
-                  ? "bg-[#2764B8] text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              )}
-            >
-              {language === "ID" ? "Semua Modul (5)" : "All Modules (5)"}
-            </button>
-            {modules.map((m) => (
-              <a
-                key={m.id}
-                href={`#${m.id}`}
-                onClick={() => setActiveTab(m.id)}
-                className={cn(
-                  "px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer",
-                  activeTab === m.id
-                    ? "bg-[#2764B8] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                )}
-              >
-                {m.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════
           DETAILED SHOWCASE OF 5 CORE MODULES
           ══════════════════════════════════════════════════════════════ */}
       <section id="modules-list" className="w-full bg-white py-16 sm:py-20 lg:py-24">
@@ -508,7 +467,7 @@ export default function ModulesPage() {
 
           {/* Module Cards List */}
           <div className="space-y-12 sm:space-y-16">
-            {filteredModules.map((mod, index) => {
+            {modules.map((mod, index) => {
               const IconComponent = mod.icon;
               return (
                 <div
