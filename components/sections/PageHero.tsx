@@ -43,42 +43,41 @@ export function PageHero({
   return (
     <section
       className={cn(
-        "relative w-full bg-white px-4 sm:px-5 lg:px-6 pb-3 sm:pb-4 flex flex-col justify-start transition-[padding-top] duration-300 ease-in-out",
-        // Consistent Height: Matches Home Hero viewport scale on desktop, perfectly consistent across all pages
-        "min-h-[640px] lg:h-[calc(100dvh-104px)] lg:min-h-[680px] lg:max-h-[840px]",
+        // Exact same outer dimensions as Home Hero: full viewport 100dvh, flex flex-col, same padding
+        "relative w-full h-[100dvh] min-h-[700px] lg:min-h-[760px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
         className
       )}
       style={{
         paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
       }}
     >
-      {/* ─── Framed Hero Card with Exact Same Dimensions as Home Hero ─── */}
-      <div className="relative w-full h-full rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white border border-slate-200/90 shadow-xs flex flex-col justify-center py-10 sm:py-12 lg:py-14">
-        {/* Subtle Ambient Glow */}
-        <div className="absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-blue-100/35 blur-[100px] pointer-events-none z-0" />
-        <div className="absolute -bottom-24 left-1/4 w-80 h-80 rounded-full bg-blue-50/50 blur-[90px] pointer-events-none z-0" />
+      {/* ─── Framed Hero Card with Exact Same Dimensions & Rounded Corners as Home Hero ─── */}
+      <div className="relative w-full h-full rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white border border-slate-200/90 shadow-xs flex items-center justify-center p-6 sm:p-8 lg:p-12">
+        {/* Subtle Ambient Soft Glow */}
+        <div className="absolute -top-32 right-1/4 w-[480px] h-[480px] rounded-full bg-blue-100/35 blur-[120px] pointer-events-none z-0" />
+        <div className="absolute -bottom-32 left-1/4 w-[420px] h-[420px] rounded-full bg-blue-50/50 blur-[100px] pointer-events-none z-0" />
 
-        {/* Inner Content Wrapper Aligned with Home Hero Grid (max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10) */}
-        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 text-center flex flex-col items-center">
+        {/* Centered Content Wrapper: Perfectly balanced vertically with ample breathing room on top & bottom */}
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 my-auto flex flex-col items-center justify-center text-center">
           <div className="max-w-4xl mx-auto flex flex-col items-center w-full">
             {/* Section Badge */}
-            <div className="mb-4 sm:mb-5">
+            <div className="mb-4 sm:mb-6">
               <SectionBadge variant={badgeVariant}>{badge}</SectionBadge>
             </div>
 
-            {/* Headline - Standardized font size, line-height & min-height across pages */}
+            {/* Headline - Standardized font size & line-height */}
             <h1 className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB] min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center">
               {title}
             </h1>
 
-            {/* Subtitle - Standardized max-width, typography & line spacing */}
-            <p className="mt-3.5 sm:mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
+            {/* Subtitle - Generous breathing room, standardized typography */}
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
               {subtitle}
             </p>
 
-            {/* CTA Buttons - Standardized height & button styling */}
+            {/* CTA Buttons */}
             {(primaryCta || secondaryCta) && (
-              <div className="mt-7 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <div className="mt-8 sm:mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                 {primaryCta && (
                   <Link
                     href={primaryCta.href}
