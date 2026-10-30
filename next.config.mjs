@@ -88,6 +88,31 @@ const nextConfig = {
         destination: "/nova-ai#ai-doctor",
         permanent: false,
       },
+      {
+        source: "/integration/simrs-his",
+        destination: "/integration#simrs-his",
+        permanent: false,
+      },
+      {
+        source: "/integration/rme",
+        destination: "/integration#rme",
+        permanent: false,
+      },
+      {
+        source: "/integration/analyzer",
+        destination: "/integration#analyzer",
+        permanent: false,
+      },
+      {
+        source: "/integration/satusehat",
+        destination: "/integration#satusehat",
+        permanent: false,
+      },
+      {
+        source: "/integration/connectivity",
+        destination: "/integration#connectivity",
+        permanent: false,
+      },
     ];
   },
 };
