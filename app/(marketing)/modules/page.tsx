@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Activity,
   HeartPulse,
@@ -20,6 +21,11 @@ import {
   Sparkles,
   ChevronRight,
   FileCheck2,
+  Network,
+  QrCode,
+  Thermometer,
+  Boxes,
+  FileSpreadsheet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -29,330 +35,22 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function ModulesPage() {
   const { language } = useLanguage();
 
-  const modules = [
-    {
-      id: "routine-hematology",
-      icon: Activity,
-      color: "#2764B8",
-      accentBg: "bg-blue-50 text-[#2764B8] border-blue-200/60",
-      targetDept:
-        language === "ID"
-          ? "Laboratorium Patologi Klinik & Kimia Darah"
-          : "Clinical Pathology & Core Hematology",
-      name: language === "ID" ? "Routine & Hematology" : "Routine & Hematology",
-      tagline:
-        language === "ID"
-          ? "Kecepatan Tinggi & Akurasi Tanpa Kompromi untuk Volume Harian"
-          : "High Throughput & Uncompromised Accuracy for Daily Routine Testing",
-      description:
-        language === "ID"
-          ? "Modul Routine & Hematology dirancang untuk memproses ribuan spesimen darah, urin, dan kimia klinik per hari. Terhubung langsung secara bidireksional dengan analyzer terkemuka, modul ini mengeliminasi entri data manual, memangkas Turnaround Time (TAT) hingga 70%, dan mengaktifkan validasi delta check otomatis."
-          : "Engineered to process thousands of blood, urine, and clinical chemistry specimens daily. With direct bidirectional analyzer interfacing, it eliminates manual typing, slashes Turnaround Time (TAT) by up to 70%, and enables automated longitudinal delta checking.",
-      features:
-        language === "ID"
-          ? [
-              "Interfacing Bidireksional Analyzer (HL7 / ASTM)",
-              "Auto-Verification Engine dengan Aturan Fleksibel",
-              "Validasi Delta Check & Notifikasi Nilai Kritis Real-Time",
-              "Pelacakan Barcode 2D pada Setiap Tabung Spesimen",
-              "Manajemen Worklist Otomatis per Mesin Analyzer",
-              "Quality Control Lengkap (Levey-Jennings & Westgard Rules)",
-            ]
-          : [
-              "Bidirectional Analyzer Interfacing (HL7 / ASTM)",
-              "Configurable Auto-Verification Rule Engine",
-              "Real-time Delta Check & Critical Value Broadcast",
-              "2D Barcode Tracking on Every Specimen Tube",
-              "Automated Analyzer Worklist Dispatch",
-              "Comprehensive Quality Control (Levey-Jennings & Westgard Rules)",
-            ],
-      benefits:
-        language === "ID"
-          ? [
-              { label: "Pangkas TAT Hasil Lab", val: "Hingga 70%" },
-              { label: "Eliminasi Human Error Ketik", val: "99.8%" },
-              { label: "Notifikasi Panic Values ke DPJP", val: "< 3 Menit" },
-              { label: "Kepatuhan Regulasi", val: "KARS & JCI Ready" },
-            ]
-          : [
-              { label: "TAT Reduction", val: "Up to 70%" },
-              { label: "Typing Error Elimination", val: "99.8%" },
-              { label: "Panic Value Alert to Doctor", val: "< 3 Mins" },
-              { label: "Compliance Standard", val: "KARS & JCI Ready" },
-            ],
-      uiPreview: {
-        title: language === "ID" ? "Panel Verifikasi Otomatis & Delta Check" : "Auto-Verification & Delta Check Panel",
-        sub: "Analyzer: Sysmex XN-1000 • Status: Connected (ASTM)",
-        items: [
-          { test: "Hemoglobin (Hb)", result: "14.2 g/dL", status: "Normal", delta: "+0.2" },
-          { test: "Leukosit (WBC)", result: "7.800 /uL", status: "Normal", delta: "-150" },
-          { test: "Trombosit (PLT)", result: "245.000 /uL", status: "Normal", delta: "+5.000" },
-          { test: "Glukosa Darah Sewaktu", result: "385 mg/dL", status: "PANIC ALERT", delta: "+190", isAlert: true },
-        ],
-      },
-    },
-    {
-      id: "blood-bank",
-      icon: HeartPulse,
-      color: "#E11D48",
-      accentBg: "bg-rose-50 text-rose-600 border-rose-200/60",
-      targetDept:
-        language === "ID"
-          ? "Unit Transfusi Darah (UTD) & Bank Darah Rumah Sakit (BDRS)"
-          : "Blood Transfusion Service & Hospital Blood Bank (BDRS)",
-      name: language === "ID" ? "Blood Bank Management" : "Blood Bank Management",
-      tagline:
-        language === "ID"
-          ? "Transfusi Aman dengan Kontrol Ketat Rantai Dingin & Crossmatch"
-          : "Safe Transfusion with Cold-Chain Telemetry & Electronic Crossmatching",
-      description:
-        language === "ID"
-          ? "Mengintegrasikan seluruh siklus rantai pasok darah dari penerimaan kantong donor, uji serasi silang (crossmatching), hingga distribusi ke pasien. Dilengkapi validasi barcode ganda untuk mencegah insiden inkompatibilitas ABO/Rh, pemantauan suhu cold-chain real-time, dan manajemen masa simpan FEFO."
-          : "Connects the entire blood supply chain from donor bag receipt, compatibility crossmatching, to ward bedside delivery. Features dual-barcode verification against ABO/Rh mismatch, real-time cold-chain temperature telemetry, and FEFO inventory rotation to prevent wastage.",
-      features:
-        language === "ID"
-          ? [
-              "Pelacakan Digital Kantong Darah Berbasis Barcode/ISBT 128",
-              "Verifikasi Ganda Uji Silang Serasi (Crossmatching)",
-              "Alarm Kedaluwarsa Otomatis (Early Warning Expiry)",
-              "Manajemen Stok Lengkap (PRC, TC, FFP, Cryoprecipitate)",
-              "Validasi Golongan Darah Pasien Terintegrasi SIMRS/RME",
-              "Digital Release Form & Jejak Suhu Rantai Dingin Terenkripsi",
-            ]
-          : [
-              "ISBT 128 & Barcode Digital Blood Bag Tracking",
-              "Dual-Verification Crossmatching Protocol",
-              "Automated Expiration Alert & FEFO Dispensing",
-              "Complete Inventory for PRC, Platelets, FFP, and Cryo",
-              "HIS/EMR Patient Blood Type Cross-Validation",
-              "Digital Release Authorization & Cold-Chain Telemetry",
-            ],
-      benefits:
-        language === "ID"
-          ? [
-              { label: "Kesalahan Transfusi Pasien", val: "Zero Tolerance" },
-              { label: "Penurunan Darah Kedaluwarsa", val: "Pangkas 45%" },
-              { label: "Waktu Siap Darah Cito IGD", val: "< 15 Menit" },
-              { label: "Audit Traceability Donor-Pasien", val: "100% Digital" },
-            ]
-          : [
-              { label: "Transfusion Mismatch", val: "Zero Tolerance" },
-              { label: "Expired Blood Wastage", val: "Cut by 45%" },
-              { label: "Stat Blood Prep Time", val: "< 15 Mins" },
-              { label: "Donor-to-Patient Traceability", val: "100% Digital" },
-            ],
-      uiPreview: {
-        title: language === "ID" ? "Monitor Kantong Darah & Crossmatch" : "Blood Bag Inventory & Crossmatch Monitor",
-        sub: "Unit: BDRS Sentral • Cold Storage: 4.1°C (Optimal)",
-        items: [
-          { test: "Kantong PRC #B2409-A", result: "Golongan A+ (350 mL)", status: "Crossmatched", delta: "Compatible" },
-          { test: "Kantong PRC #B2409-B", result: "Golongan O+ (350 mL)", status: "Ready Stock", delta: "Exp: 28 Hari" },
-          { test: "Kantong TC #T1021-X", result: "Golongan B+ (200 mL)", status: "Agitator Active", delta: "Exp: 3 Hari" },
-          { test: "Crossmatch Pasien #RM-4491", result: "Mayor (-) / Minor (-)", status: "SAFE TO RELEASE", delta: "Verified", isAlert: false },
-        ],
-      },
-    },
-    {
-      id: "inventory-reagent",
-      icon: PackageCheck,
-      color: "#0284C7",
-      accentBg: "bg-sky-50 text-sky-600 border-sky-200/60",
-      targetDept:
-        language === "ID"
-          ? "Logistik Laboratorium & Pengadaan Medis"
-          : "Laboratory Logistics & Reagent Procurement",
-      name: language === "ID" ? "Inventory & Reagent Intelligence" : "Inventory & Reagent Intelligence",
-      tagline:
-        language === "ID"
-          ? "Stok Reagen Selalu Terpantau, Zero Stock-Out di Tengah Shift"
-          : "Real-Time Reagent Telemetry, Zero Stock-Outs During Critical Shifts",
-      description:
-        language === "ID"
-          ? "Melacak pemakaian reagen, kalibrator, dan kontrol secara otomatis seiring dengan tes yang dijalankan oleh mesin analyzer. Menghitung estimasi sisa tes secara prediktif, mengirimkan alarm stok menipis sebelum habis, serta memantau tanggal buka (on-board stability) dan nomor lot secara akurat."
-          : "Tracks reagents, calibrators, and QC controls consumption dynamically as tests run on analyzers. Predicts remaining test counts, generates safety stock alerts before shortages occur, and manages lot numbers, open-vial stability, and expiration schedules.",
-      features:
-        language === "ID"
-          ? [
-              "Kalkulasi Pengurangan Reagen Otomatis per Pemeriksaan",
-              "Pelacakan Nomor Lot, Tanggal Buka & On-board Stability",
-              "Notifikasi Stok Minimum (Safety Stock Threshold Alerts)",
-              "Saran Pemesanan (Purchase Order Suggestion) Otomatis",
-              "Analitik Biaya per Pemeriksaan (Cost-per-Test Reporting)",
-              "Multi-Lokasi: Gudang Utama, Lab Satelit, & Kulkas Reagen",
-            ]
-          : [
-              "Automated Test-Driven Reagent Depletion Calculation",
-              "Lot Number, Open-Vial Date, and Stability Tracking",
-              "Proactive Minimum Safety Stock Threshold Alerts",
-              "Automated Smart Purchase Order Recommendations",
-              "Granular Cost-per-Test Financial Analytics",
-              "Multi-Location: Central Storage, Satellites, and Refrigerators",
-            ],
-      benefits:
-        language === "ID"
-          ? [
-              { label: "Insiden Reagen Habis di Shift", val: "0 Kejadian" },
-              { label: "Efisiensi Belanja Reagen", val: "Hemat 20%" },
-              { label: "Pemakaian Reagen Expired", val: "0% Tercegah" },
-              { label: "Kesiapan Audit BPOM/ISO", val: "Instan 1-Klik" },
-            ]
-          : [
-              { label: "Mid-Shift Stockout Incidents", val: "0 Incidents" },
-              { label: "Procurement Savings", val: "Save 20%" },
-              { label: "Expired Reagent Use", val: "0% Prevented" },
-              { label: "Audit Readiness (BPOM/ISO)", val: "Instant 1-Click" },
-            ],
-      uiPreview: {
-        title: language === "ID" ? "Telemetri Reagen & On-Board Stability" : "Reagent Telemetry & On-Board Stability",
-        sub: "Gudang: Central Cold Room • Auto-Depletion Sync: ON",
-        items: [
-          { test: "Cobas Diluent Pack 5L", result: "Sisa 82%", status: "Optimal", delta: "1.420 Tes" },
-          { test: "Hematology Lyse Pack", result: "Sisa 68%", status: "Optimal", delta: "850 Tes" },
-          { test: "Troponin I Reagent Cartridge", result: "Sisa 12%", status: "LOW STOCK ALERT", delta: "14 Tes", isAlert: true },
-          { test: "QC Level 1 Normal Control", result: "Exp: 45 Hari", status: "Lot Valid", delta: "Lot #QC-992" },
-        ],
-      },
-    },
-    {
-      id: "pathology",
-      icon: Microscope,
-      color: "#345DAB",
-      accentBg: "bg-blue-50 text-[#345DAB] border-blue-200/60",
-      targetDept:
-        language === "ID"
-          ? "Instalasi Patologi Anatomi & Sitologi"
-          : "Anatomical Pathology & Cytopathology",
-      name: language === "ID" ? "Anatomical Pathology" : "Anatomical Pathology",
-      tagline:
-        language === "ID"
-          ? "Pelacakan Spesimen Jaringan Ketat dari Makroskopi hingga Hasil Akhir"
-          : "Strict Tissue Tracking Across Grossing, Cassettes, and Final Diagnosis",
-      description:
-        language === "ID"
-          ? "Menyederhanakan alur kerja histopatologi, sitologi, FNAB, dan potong beku (frozen section). Melacak setiap kaset jaringan, blok parafin, dan slide kaca menggunakan 2D micro-barcode. Memungkinkan dokter spesialis patologi menyusun laporan terstruktur dengan template diagnosis terstandar (ICD-O / Bethesda) serta melampirkan foto mikroskopis beresolusi tinggi."
-          : "Streamlines histopathology, cytology, FNAB, and frozen sections. Micro-tracks every cassette, paraffin block, and glass slide with 2D barcodes. Empowers pathologists to generate standardized synoptic reports (ICD-O / Bethesda) and attach high-resolution microscopic imaging.",
-      features:
-        language === "ID"
-          ? [
-              "Pelacakan Barcode 2D pada Kaset Jaringan & Slide Kaca",
-              "Template Laporan Terstruktur (Histopatologi, Sitologi, FNAB)",
-              "Integrasi Kamera Mikroskop & Whole Slide Imaging (WSI)",
-              "Worklist Digital Dokter Spesialis Patologi Anatomi (Sp.PA)",
-              "Pengarsipan Digital Blok Parafin & Slide Jangka Panjang",
-              "Bridging Diagnosa Kanker ke RME Pasien & Registri Kanker",
-            ]
-          : [
-              "2D Micro-Barcode Tracking for Cassettes & Glass Slides",
-              "Structured Synoptic Templates (Biopsy, Cytology, FNAB)",
-              "Microscope Camera & Whole Slide Imaging (WSI) Interfacing",
-              "Pathologist Diagnostic Worklist & Staging Workflow",
-              "Long-Term Paraffin Block & Glass Slide Archive Registry",
-              "Cancer Registry & Hospital EMR Diagnostic Bridging",
-            ],
-      benefits:
-        language === "ID"
-          ? [
-              { label: "Risiko Tertukar Spesimen", val: "0% Tereliminasi" },
-              { label: "Standarisasi Format Laporan", val: "100% ICD-O / Bethesda" },
-              { label: "Pencarian Arsip Blok/Slide", val: "< 1 Menit" },
-              { label: "Kolaborasi Second Opinion", val: "Real-time Tele-PA" },
-            ]
-          : [
-              { label: "Specimen Mix-Up Risk", val: "0% Eliminated" },
-              { label: "Synoptic Report Standard", val: "100% ICD-O / Bethesda" },
-              { label: "Block & Slide Retrieval", val: "< 1 Min" },
-              { label: "Second-Opinion Consult", val: "Live Digital Tele-PA" },
-            ],
-      uiPreview: {
-        title: language === "ID" ? "Pelacakan Kaset Biopsi & Diagnosa Sp.PA" : "Biopsy Cassette Tracking & Pathology Review",
-        sub: "Spesimen: Jaringan Mamae Dextra • Barcode: #PA-8820-A1",
-        items: [
-          { test: "Tahap 1: Grossing Makroskopi", result: "2 Kaset Jaringan", status: "Selesai", delta: "Teknisi A" },
-          { test: "Tahap 2: Microtomy & Staining", result: "HE Stain 4um", status: "Selesai", delta: "Teknisi B" },
-          { test: "Tahap 3: Review Mikroskop Sp.PA", result: "Invasive Ductal Ca", status: "On-Review", delta: "dr. Sp.PA" },
-          { test: "Tahap 4: Pelaporan Terstruktur", result: "Format ICD-O Terisi", status: "READY TO SIGN", delta: "Digital Sign" },
-        ],
-      },
-    },
-    {
-      id: "microbiology",
-      icon: FlaskConical,
-      color: "#0D9488",
-      accentBg: "bg-teal-50 text-teal-700 border-teal-200/60",
-      targetDept:
-        language === "ID"
-          ? "Laboratorium Mikrobiologi Klinik & Tim PPRA"
-          : "Clinical Microbiology & Hospital PPRA Stewardship",
-      name: language === "ID" ? "Microbiology & Antibiotic Stewardship" : "Microbiology & Antibiotic Stewardship",
-      tagline:
-        language === "ID"
-          ? "Kultur Bakteri, Uji Resistensi, dan Terapi Antibiotik Rasional"
-          : "Bacterial Culture, Resistance Profiling, and Rational Antibiotic Stewardship",
-      description:
-        language === "ID"
-          ? "Mengelola alur inkubasi kultur bakteri, jamur, serta uji kepekaan antibiotik (Antimicrobial Susceptibility Testing / AST). Menyediakan grafik peta kuman (Antibiogram) berkala untuk mendukung Program Pengendalian Resistensi Antimikroba (PPRA) rumah sakit dan mempercepat rekomendasi antibiotik definitif."
-          : "Manages bacterial/fungal culture incubation and Antimicrobial Susceptibility Testing (AST). Generates automated periodic hospital Antibiograms to support Antimicrobial Stewardship (PPRA) programs and guide clinicians toward prompt definitive antimicrobial therapy.",
-      features:
-        language === "ID"
-          ? [
-              "Pelacakan Masa Inkubasi Kultur & Status Koloni Real-Time",
-              "Integrasi Otomatis Mesin Kultur (VITEK, Phoenix, BD BACTEC)",
-              "Pencatatan Zona Hambat & Interpretasi CLSI / EUCAST Otomatis",
-              "Pembangkitan Antibiogram Kumulatif Berkala Otomatis",
-              "Alert Bakteri Multiresisten (MRSA, ESBL, CRE, VRE) ke PPI",
-              "Rekomendasi Terapi Antibiotik Rasional Berdasarkan Sensitivitas",
-            ]
-          : [
-              "Culture Incubation Telemetry & Colony Growth Tracking",
-              "Direct Interfacing to VITEK, Phoenix, and BD BACTEC",
-              "Zone Diameter Measurement & Auto CLSI/EUCAST Interpretation",
-              "Cumulative Periodic Antibiogram Matrix Generator",
-              "MDRO Early Warning Alerts (MRSA, ESBL, CRE, VRE) to PPI",
-              "Evidence-Based Rational Antibiotic Recommendation Engine",
-            ],
-      benefits:
-        language === "ID"
-          ? [
-              { label: "Waktu Terapi Antibiotik Tepat", val: "2x Lebih Cepat" },
-              { label: "Pemenuhan Indikator PPRA", val: "100% Standar Kemenkes" },
-              { label: "Deteksi Outbreak Nosokomial", val: "Alert Otomatis" },
-              { label: "Penghematan Biaya Antibiotik", val: "Hingga 30%" },
-            ]
-          : [
-              { label: "Definitive Therapy Speed", val: "2x Faster" },
-              { label: "Stewardship Compliance", val: "100% Accredited" },
-              { label: "Nosocomial Outbreak Detection", val: "Instant Alert" },
-              { label: "Antibiotic Cost Reduction", val: "Up to 30%" },
-            ],
-      uiPreview: {
-        title: language === "ID" ? "Peta Sensitivitas Antibiotik (AST Panel)" : "Antimicrobial Susceptibility (AST Panel)",
-        sub: "Isolat: Klebsiella pneumoniae • Sumber: Sputum ICU • CLSI 2024",
-        items: [
-          { test: "Meropenem", result: "MIC <= 0.25 ug/mL", status: "SENSITIVE", delta: "First-Line" },
-          { test: "Amikacin", result: "MIC <= 2 ug/mL", status: "SENSITIVE", delta: "Effective" },
-          { test: "Ceftriaxone", result: "MIC >= 64 ug/mL", status: "RESISTANT (ESBL)", delta: "Alert", isAlert: true },
-          { test: "Ciprofloxacin", result: "MIC >= 4 ug/mL", status: "RESISTANT", delta: "Avoid", isAlert: true },
-        ],
-      },
-    },
-  ];
-
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: Sesuai Design System Platform & Solutions
+          HERO SECTION: Clean Medical SaaS dengan Visual Showcase
           ══════════════════════════════════════════════════════════════ */}
       <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-16 sm:pb-20 lg:pb-24 border-b border-slate-100">
         {/* Subtle Ambient Glow */}
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-blue-100/40 blur-[130px] pointer-events-none" />
-        <div className="absolute bottom-10 left-1/4 w-[400px] h-[400px] rounded-full bg-sky-100/30 blur-[110px] pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-blue-100/40 blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-10 left-1/4 w-[500px] h-[500px] rounded-full bg-sky-100/30 blur-[120px] pointer-events-none" />
 
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative z-10">
           <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
             {/* Section Badge */}
             <div className="mb-4 sm:mb-5">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Modul Terintegrasi Diagnova" : "Diagnova Integrated Modules"}
+                {language === "ID" ? "Ekosistem Modular Diagnova" : "Diagnova Modular Ecosystem"}
               </SectionBadge>
             </div>
 
@@ -360,15 +58,15 @@ export default function ModulesPage() {
             <h1 className="font-display text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
                 <>
-                  Arsitektur Modular Presisi untuk{" "}
+                  5 Modul Spesialisasi,{" "}
                   <br className="hidden sm:inline" />
-                  Operasional Laboratorium Modern
+                  Satu Ekosistem Laboratorium Cerdas
                 </>
               ) : (
                 <>
-                  Precision Modular Architecture for{" "}
+                  5 Specialized Modules,{" "}
                   <br className="hidden sm:inline" />
-                  Modern Laboratory Operations
+                  One Connected Laboratory Intelligence
                 </>
               )}
             </h1>
@@ -376,8 +74,8 @@ export default function ModulesPage() {
             {/* Subtitle */}
             <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl">
               {language === "ID"
-                ? "Aktifkan modul spesifik yang dibutuhkan fasilitas Anda atau operasikan sebagai satu ekosistem terpadu. Terintegrasi langsung dengan instrumen analyzer, SIMRS/RME, dan sistem kendali mutu laboratorium."
-                : "Deploy the exact specialized modules your facility needs or run them as a fully unified ecosystem. Directly interconnected with medical analyzers, hospital HIS/EMR, and laboratory quality control systems."}
+                ? "Dikonfigurasi untuk menangani volume harian hematologi, uji silang bank darah, telemetri reagen, patologi anatomi, hingga kultur mikrobiologi tanpa fragmentasi database."
+                : "Engineered to handle high-throughput hematology, cold-chain blood banking, reagent telemetry, anatomical pathology, and microbiology within a single unified clinical database."}
             </p>
 
             {/* CTA Buttons */}
@@ -390,48 +88,48 @@ export default function ModulesPage() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <a
-                href="#modules-list"
+                href="#modules-suite"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 transition-colors shadow-xs"
               >
                 <span>{language === "ID" ? "Eksplorasi 5 Modul" : "Explore 5 Modules"}</span>
               </a>
             </div>
 
-            {/* 4 Key Pillars Metric Cards */}
+            {/* 4 Feature Badges Strip */}
             <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
               {[
                 {
-                  value: "5 Modul",
-                  label: language === "ID" ? "Spesialisasi Lengkap" : "Complete Verticals",
-                  sub: language === "ID" ? "Rutin, BDRS, Stok, PA, Mikro" : "Routine, Blood, Reagent, PA, Micro",
+                  value: "ASTM & HL7",
+                  label: language === "ID" ? "Interfacing 200+ Analyzer" : "200+ Analyzer Interfacing",
+                  sub: language === "ID" ? "Direct bidireksional tanpa middleware" : "Direct bidirectional connection",
                 },
                 {
-                  value: "100%",
-                  label: language === "ID" ? "Interfacing Analyzer" : "Analyzer Interfacing",
-                  sub: language === "ID" ? "ASTM & HL7 bidireksional" : "Bidirectional ASTM & HL7",
+                  value: "ISBT 128",
+                  label: language === "ID" ? "Keamanan Bank Darah" : "Blood Bank Safety Standard",
+                  sub: language === "ID" ? "Validasi ganda crossmatching" : "Dual-check crossmatch protocol",
                 },
                 {
-                  value: "0 Error",
-                  label: language === "ID" ? "Salah Identifikasi" : "Specimen Mix-ups",
-                  sub: language === "ID" ? "Barcode 2D & delta-check" : "2D barcode & delta check",
+                  value: "2D Barcode",
+                  label: language === "ID" ? "Pelacakan Jaringan PA" : "Pathology Tissue Tracking",
+                  sub: language === "ID" ? "Level kaset biopsi & slide kaca" : "Cassette & slide level tracking",
                 },
                 {
-                  value: "Plug & Play",
-                  label: language === "ID" ? "Aktivasi Fleksibel" : "Modular Scale",
-                  sub: language === "ID" ? "Bebas tambah modul bertahap" : "Activate modules on-demand",
+                  value: "CLSI / EUCAST",
+                  label: language === "ID" ? "Antibiogram PPRA Rumah Sakit" : "Hospital PPRA Antibiogram",
+                  sub: language === "ID" ? "Peta resistensi kuman otomatis" : "Automated pathogen resistance map",
                 },
               ].map((kpi, idx) => (
                 <div
                   key={idx}
                   className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors"
                 >
-                  <p className="font-display text-2xl sm:text-3xl font-bold text-[#345DAB] tracking-tight">
+                  <p className="font-display text-xl sm:text-2xl font-bold text-[#345DAB] tracking-tight">
                     {kpi.value}
                   </p>
                   <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
                     {kpi.label}
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">{kpi.sub}</p>
                 </div>
               ))}
             </div>
@@ -440,193 +138,456 @@ export default function ModulesPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          DETAILED SHOWCASE OF 5 CORE MODULES
+          THE 5-MODULE SUITE: BENTO SHOWCASE BERKARAKTER
           ══════════════════════════════════════════════════════════════ */}
-      <section id="modules-list" className="w-full bg-white py-16 sm:py-20 lg:py-24">
+      <section id="modules-suite" className="w-full bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Header */}
           <div className="mb-12 sm:mb-16">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Spesialisasi Terdedikasi" : "Dedicated Specializations"}
+                {language === "ID" ? "Spesialisasi Klinis" : "Clinical Specializations"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Eksplorasi Detail Setiap Modul Laboratorium</>
+                <>Arsitektur Khusus Sesuai Karakteristik Setiap Bidang</>
               ) : (
-                <>Deep Dive into Every Laboratory Module</>
+                <>Purpose-Built Architectures for Every Department</>
               )}
             </h2>
             <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
               {language === "ID"
-                ? "Setiap modul dibangun dengan logika klinis spesifik untuk bidangnya, menghilangkan kebutuhan kustomisasi rumit dan mempercepat adopsi tim medis."
-                : "Each module is engineered with field-specific clinical logic, eliminating cumbersome manual custom work and ensuring rapid medical staff adoption."}
+                ? "Bukan form generik. Setiap modul dibangun dengan logika pemeriksaan klinis, aturan validasi, dan integrasi perangkat analyzer yang relevan."
+                : "Not generic templates. Every module is crafted around actual clinical workflows, validation rule engines, and native analyzer interfacing."}
             </p>
           </div>
 
-          {/* Module Cards List */}
-          <div className="space-y-12 sm:space-y-16">
-            {modules.map((mod, index) => {
-              const IconComponent = mod.icon;
-              return (
-                <div
-                  key={mod.id}
-                  id={mod.id}
-                  className="scroll-mt-32 rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-8 sm:p-10 lg:p-12 shadow-xs hover:border-blue-200/90 hover:shadow-sm transition-all duration-300"
-                >
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-                    {/* Left Column: Description, Dept, Features */}
-                    <div className="lg:col-span-7 space-y-6">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "h-14 w-14 rounded-2xl flex items-center justify-center bg-[#EBF3FB] shadow-xs text-[#2764B8]"
-                            )}
-                          >
-                            <IconComponent className="h-7 w-7" />
-                          </div>
-                          <div>
-                            <span className={cn("text-xs font-semibold px-3 py-1 rounded-full border inline-block", mod.accentBg)}>
-                              {mod.targetDept}
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-xs font-mono text-slate-400 font-semibold tracking-wider">
-                          MOD-0{index + 1}
-                        </span>
-                      </div>
+          {/* ══════ MODUL 1: ROUTINE & HEMATOLOGY (HEROIC FLAGSHIP CARD) ══════ */}
+          <div
+            id="routine-hematology"
+            className="scroll-mt-32 rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#F5F8FC] via-white to-[#F2F6FA] border border-slate-200/90 p-8 sm:p-10 lg:p-12 mb-10 shadow-xs hover:border-blue-200/90 transition-all duration-300"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              <div className="lg:col-span-7 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-14 w-14 rounded-2xl bg-white border border-slate-200/80 text-[#2764B8] flex items-center justify-center shadow-xs">
+                    <Activity className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#2764B8] bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-full">
+                      {language === "ID" ? "Patologi Klinik & Core Laboratory" : "Clinical Pathology & Core Lab"}
+                    </span>
+                  </div>
+                </div>
 
-                      <div>
-                        <h3 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
-                          {mod.name}
-                        </h3>
-                        <p className="text-sm sm:text-base font-semibold text-[#345DAB] mb-4">
-                          {mod.tagline}
-                        </p>
-                        <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
-                          {mod.description}
-                        </p>
-                      </div>
+                <div>
+                  <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2">
+                    Routine &amp; Hematology
+                  </h3>
+                  <p className="text-base sm:text-lg font-semibold text-[#345DAB] mb-3">
+                    {language === "ID"
+                      ? "Throughput Tinggi, Auto-Verification & Delta-Check Tanpa Ketik Ulang"
+                      : "High Throughput, Auto-Verification & Delta-Check with Zero Re-typing"}
+                  </p>
+                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-light">
+                    {language === "ID"
+                      ? "Menangani ribuan tabung sampel darah, urin, dan kimia klinik setiap hari. Order dari SIMRS otomatis berubah menjadi worklist instrumen, hasil ditarik secara bidireksional, dan aturan delta-check memverifikasi hasil normal secara otomatis dalam milidetik."
+                      : "Handles thousands of blood, urine, and clinical chemistry tubes daily. HIS orders convert automatically into analyzer worklists, results are pulled bidirectionally, and delta-check rules auto-verify normal runs within milliseconds."}
+                  </p>
+                </div>
 
-                      {/* Technical Features Grid */}
-                      <div className="space-y-3 pt-2">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-[#2764B8]">
-                          {language === "ID" ? "Fitur & Kapabilitas Teknis Utama:" : "Key Technical Capabilities:"}
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                          {mod.features.map((feat, fIdx) => (
-                            <div
-                              key={fIdx}
-                              className="flex items-start gap-2.5 rounded-xl bg-slate-50/80 border border-slate-100 p-3 text-xs sm:text-sm text-slate-700 font-medium"
-                            >
-                              <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
-                              <span>{feat}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Action Links */}
-                      <div className="pt-3 flex flex-wrap items-center gap-3 sm:gap-4">
-                        <Link
-                          href="/request-demo"
-                          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-6 py-3 text-sm font-semibold shadow-xs transition-all active:scale-[0.98]"
-                        >
-                          <span>{language === "ID" ? "Konsultasikan Modul Ini" : "Consult This Module"}</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </Link>
-                      </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  {[
+                    language === "ID" ? "Interfacing ASTM/HL7 Bidireksional" : "Bidirectional ASTM/HL7 Interfacing",
+                    language === "ID" ? "Auto-Verification Rule Engine" : "Configurable Auto-Verification",
+                    language === "ID" ? "Delta Check & Critical Panic Alert" : "Delta Check & Panic Alerting",
+                    language === "ID" ? "Quality Control Levey-Jennings" : "Levey-Jennings Quality Control",
+                  ].map((feat, i) => (
+                    <div key={i} className="flex items-start gap-2.5 bg-white/90 p-3 rounded-xl border border-slate-100 shadow-2xs">
+                      <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm font-medium text-slate-700">{feat}</span>
                     </div>
+                  ))}
+                </div>
 
-                    {/* Right Column: Live Medical UI Simulation & Clinical Impact */}
-                    <div className="lg:col-span-5 space-y-6">
-                      {/* Live Micro-UI Preview Card */}
-                      <div className="rounded-[24px] bg-[#F8FBFE] border border-blue-100 p-6 shadow-xs space-y-4">
-                        <div className="flex items-center justify-between border-b border-blue-100/80 pb-3">
-                          <div>
-                            <p className="text-xs font-bold text-slate-800">
-                              {mod.uiPreview.title}
-                            </p>
-                            <p className="text-[11px] text-slate-400 mt-0.5">
-                              {mod.uiPreview.sub}
-                            </p>
-                          </div>
-                          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        </div>
+                <div className="pt-2 flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/request-demo"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-6 py-3 text-sm font-semibold shadow-xs transition-all active:scale-[0.98]"
+                  >
+                    <span>{language === "ID" ? "Konsultasi Modul Rutin" : "Consult Hematology Module"}</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <span className="text-xs text-slate-400 font-medium">
+                    {language === "ID" ? "TAT Pangkas Hingga 70% • 0 Error Salah Ketik" : "Up to 70% TAT Cut • Zero Manual Error"}
+                  </span>
+                </div>
+              </div>
 
-                        {/* Simulation Table Rows */}
-                        <div className="space-y-2">
-                          {mod.uiPreview.items.map((row, rIdx) => (
-                            <div
-                              key={rIdx}
-                              className={cn(
-                                "flex items-center justify-between p-2.5 rounded-xl text-xs transition-colors",
-                                row.isAlert
-                                  ? "bg-rose-50 border border-rose-200/80 text-rose-900 font-semibold"
-                                  : "bg-white border border-slate-100 text-slate-700"
-                              )}
-                            >
-                              <div className="flex flex-col">
-                                <span className="font-medium text-slate-800">{row.test}</span>
-                                <span className="text-[10px] text-slate-400">{row.delta}</span>
-                              </div>
-                              <div className="text-right">
-                                <span className={cn("font-bold", row.isAlert ? "text-rose-600" : "text-slate-900")}>
-                                  {row.result}
-                                </span>
-                                <span
-                                  className={cn(
-                                    "block text-[10px] uppercase font-bold",
-                                    row.isAlert ? "text-rose-600" : "text-emerald-600"
-                                  )}
-                                >
-                                  {row.status}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+              {/* Right Column: Visual Telemetry Card */}
+              <div className="lg:col-span-5 rounded-[24px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">
+                      {language === "ID" ? "Alur Verifikasi Otomatis Analyzer" : "Live Analyzer Auto-Verification"}
+                    </p>
+                    <p className="text-[11px] text-slate-400">Sysmex XN-1000 • Cobas 6000 (ASTM Live)</p>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    ONLINE
+                  </span>
+                </div>
 
-                      {/* Clinical & Operational Benefits Card */}
-                      <div className="rounded-[24px] bg-[#F9F9F9] border border-slate-200/80 p-6 space-y-4">
-                        <div className="flex items-center gap-2">
-                          <ShieldCheck className="h-4 w-4 text-[#2764B8]" />
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                            {language === "ID" ? "Tolok Ukur Efisiensi Klinis:" : "Clinical Efficiency Benchmarks:"}
-                          </h4>
-                        </div>
+                <div className="space-y-2 font-mono text-xs">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                    <div>
+                      <span className="font-semibold text-slate-800 block">Hemoglobin (Hb)</span>
+                      <span className="text-[10px] text-slate-400">Prev: 14.0 • Delta: +0.2</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-slate-900">14.2 g/dL</span>
+                      <span className="block text-[10px] text-emerald-600 font-bold uppercase">AUTO-VERIFIED</span>
+                    </div>
+                  </div>
 
-                        <div className="grid grid-cols-2 gap-3">
-                          {mod.benefits.map((b, bIdx) => (
-                            <div
-                              key={bIdx}
-                              className="p-3 rounded-2xl bg-white border border-slate-100 shadow-2xs"
-                            >
-                              <span className="font-display text-base font-bold text-[#345DAB] block">
-                                {b.val}
-                              </span>
-                              <span className="text-[11px] font-medium text-slate-500 leading-tight block mt-0.5">
-                                {b.label}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                    <div>
+                      <span className="font-semibold text-slate-800 block">Trombosit (PLT)</span>
+                      <span className="text-[10px] text-slate-400">Prev: 240k • Delta: +5k</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-slate-900">245.000 /uL</span>
+                      <span className="block text-[10px] text-emerald-600 font-bold uppercase">AUTO-VERIFIED</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-900 flex items-center justify-between">
+                    <div>
+                      <span className="font-semibold text-rose-950 block">Glukosa Darah Sewaktu</span>
+                      <span className="text-[10px] text-rose-600 font-sans font-medium">Nilai Kritis Panic Value</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-rose-700">385 mg/dL</span>
+                      <span className="block text-[10px] text-rose-600 font-bold uppercase">ALERT WA KE DPJP</span>
                     </div>
                   </div>
                 </div>
-              );
-            })}
+
+                <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between">
+                  <span>Delta Check Threshold: Aktif</span>
+                  <span>QC Westgard: In-Control</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ══════ ROW 2: BLOOD BANK & INVENTORY (2 BALANCED CARDS) ══════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            {/* Card 2: Blood Bank Management */}
+            <div
+              id="blood-bank"
+              className="scroll-mt-32 rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="h-14 w-14 rounded-2xl bg-rose-50 border border-rose-100 text-[#E11D48] flex items-center justify-center shadow-xs">
+                    <HeartPulse className="h-7 w-7" />
+                  </div>
+                  <span className="text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-full">
+                    {language === "ID" ? "Bank Darah (BDRS) & UTD" : "Blood Bank & Transfusion"}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-slate-900 mb-2">
+                    Blood Bank Management
+                  </h3>
+                  <p className="text-sm font-semibold text-rose-600 mb-3">
+                    {language === "ID"
+                      ? "Zero-Tolerance Kesalahan Golongan Darah & Rantai Dingin Terpantau"
+                      : "Zero-Tolerance Transfusion Error & Real-Time Cold Storage Telemetry"}
+                  </p>
+                  <p className="text-sm text-slate-500 leading-relaxed font-light">
+                    {language === "ID"
+                      ? "Mengintegrasikan pencatatan kantong darah ISBT 128 dari donor hingga tetes terakhir ke pasien. Dilengkapi verifikasi ganda uji silang serasi (crossmatching), peringatan dini masa simpan FEFO, dan log suhu cold-chain 24/7."
+                      : "Connects ISBT 128 blood bag lifecycle from donation to recipient transfusion. Features dual-check electronic crossmatching, FEFO expiration alerts, and 24/7 cold-chain telemetry."}
+                  </p>
+                </div>
+
+                {/* Visual Cold-Chain & Crossmatch Box */}
+                <div className="p-4 rounded-2xl bg-rose-50/50 border border-rose-100 space-y-3 font-mono text-xs">
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="font-semibold font-sans">Cold Storage Room #1</span>
+                    <span className="text-rose-600 font-bold">4.1°C (Optimal)</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-rose-100">
+                      <span className="text-slate-800">Kantong PRC #B2409-A (Gol. A+)</span>
+                      <span className="text-emerald-600 font-bold">Crossmatch Compatible</span>
+                    </div>
+                    <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-rose-100">
+                      <span className="text-slate-800">Stok Darah Darurat (Gol. O+)</span>
+                      <span className="text-[#345DAB] font-bold">18 Kantong Tersedia</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-rose-500 shrink-0" />
+                    <span>{language === "ID" ? "Validasi ganda cegah inkompatibilitas ABO/Rh" : "Dual verification eliminates ABO/Rh mismatch"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-rose-500 shrink-0" />
+                    <span>{language === "ID" ? "Pangkas darah kedaluwarsa terbuang hingga 45%" : "Cuts expired blood wastage by up to 45%"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/request-demo"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 group transition-colors"
+                >
+                  <span>{language === "ID" ? "Konsultasi Modul BDRS" : "Consult Blood Bank"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                <span className="text-[11px] text-slate-400">ISBT 128 Ready</span>
+              </div>
+            </div>
+
+            {/* Card 3: Inventory & Reagent Intelligence */}
+            <div
+              id="inventory-reagent"
+              className="scroll-mt-32 rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="h-14 w-14 rounded-2xl bg-sky-50 border border-sky-100 text-[#0284C7] flex items-center justify-center shadow-xs">
+                    <PackageCheck className="h-7 w-7" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#0284C7] bg-sky-50 border border-sky-200/60 px-3 py-1 rounded-full">
+                    {language === "ID" ? "Logistik & Reagen Medis" : "Reagents & BMHP Logistics"}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-slate-900 mb-2">
+                    Inventory &amp; Reagent Intelligence
+                  </h3>
+                  <p className="text-sm font-semibold text-[#0284C7] mb-3">
+                    {language === "ID"
+                      ? "Telemetri Stok Otomatis, Zero Stock-Out di Tengah Shift Malam"
+                      : "Automated Consumption Telemetry, Zero Stock-Outs During Night Shifts"}
+                  </p>
+                  <p className="text-sm text-slate-500 leading-relaxed font-light">
+                    {language === "ID"
+                      ? "Mengurangi stok reagen secara otomatis setiap tes selesai dikerjakan oleh analyzer. Menghitung estimasi sisa pemeriksaan secara akurat, mendeteksi tanggal buka botol (on-board stability), dan menyarankan order pembelian sebelum habis."
+                      : "Automatically depletes reagent volumes as tests conclude on analyzers. Estimates remaining test counts, monitors open-vial stability, and suggests timely purchase orders."}
+                  </p>
+                </div>
+
+                {/* Visual Reagent Telemetry Box */}
+                <div className="p-4 rounded-2xl bg-sky-50/50 border border-sky-100 space-y-3 font-mono text-xs">
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="font-semibold font-sans">Cobas Diluent Pack 5L</span>
+                    <span className="text-slate-800 font-bold">Sisa 82% (1.420 Tes)</span>
+                  </div>
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div className="bg-[#0284C7] h-full rounded-full" style={{ width: "82%" }} />
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-sky-100">
+                    <span className="text-slate-800 font-sans">Troponin I Cartridge (Alert Min)</span>
+                    <span className="text-amber-600 font-bold">14 Tes Tersisa</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#0284C7] shrink-0" />
+                    <span>{language === "ID" ? "0 kejadian kehabisan reagen di tengah shift kritis" : "Zero mid-shift stockouts during peak operations"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#0284C7] shrink-0" />
+                    <span>{language === "ID" ? "Efisiensi pengadaan & hemat anggaran reagen 20%" : "Save up to 20% on annual reagent procurement"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/request-demo"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0284C7] hover:text-[#0369A1] group transition-colors"
+                >
+                  <span>{language === "ID" ? "Konsultasi Modul Stok" : "Consult Inventory"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                <span className="text-[11px] text-slate-400">Auto-Depletion Engine</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ══════ ROW 3: PATHOLOGY & MICROBIOLOGY (2 ADVANCED CARDS) ══════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Card 4: Anatomical Pathology */}
+            <div
+              id="pathology"
+              className="scroll-mt-32 rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="h-14 w-14 rounded-2xl bg-[#EBF3FB] border border-blue-100 text-[#345DAB] flex items-center justify-center shadow-xs">
+                    <Microscope className="h-7 w-7" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#345DAB] bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-full">
+                    {language === "ID" ? "Patologi Anatomi & Sitologi" : "Anatomical Pathology"}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-slate-900 mb-2">
+                    Anatomical Pathology
+                  </h3>
+                  <p className="text-sm font-semibold text-[#345DAB] mb-3">
+                    {language === "ID"
+                      ? "Pelacakan Barcode 2D pada Kaset Jaringan, Slide Kaca & Diagnosa ICD-O"
+                      : "2D Barcode Cassette Tracking, Glass Slide Archiving & Synoptic Reporting"}
+                  </p>
+                  <p className="text-sm text-slate-500 leading-relaxed font-light">
+                    {language === "ID"
+                      ? "Menghilangkan risiko tertukarnya jaringan biopsi pasien. Setiap kaset, blok parafin, dan slide kaca dicetak dengan 2D micro-barcode. Mempermudah dokter Sp.PA menyusun laporan terstandar WHO/Bethesda dan melampirkan foto mikroskopis."
+                      : "Eliminates biopsy specimen mix-ups. Every cassette, paraffin block, and glass slide bears a 2D micro-barcode. Empowers pathologists with standardized WHO/Bethesda synoptic reporting and high-res imaging attachments."}
+                  </p>
+                </div>
+
+                {/* Visual Specimen Tracking Steps */}
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2 text-xs">
+                  <span className="font-semibold text-slate-700 block">Biopsy Specimen Workflow #PA-8820:</span>
+                  <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-medium text-slate-600">
+                    <div className="p-2 rounded-xl bg-white border border-slate-200/80">
+                      <span className="block font-bold text-emerald-600">1. Grossing</span>
+                      <span>Kaset OK</span>
+                    </div>
+                    <div className="p-2 rounded-xl bg-white border border-slate-200/80">
+                      <span className="block font-bold text-emerald-600">2. Embedding</span>
+                      <span>Blok Parafin</span>
+                    </div>
+                    <div className="p-2 rounded-xl bg-white border border-slate-200/80">
+                      <span className="block font-bold text-emerald-600">3. Staining</span>
+                      <span>HE Slide</span>
+                    </div>
+                    <div className="p-2 rounded-xl bg-blue-50 border border-blue-200 text-[#345DAB]">
+                      <span className="block font-bold">4. Review</span>
+                      <span>Sp.PA Sign</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#345DAB] shrink-0" />
+                    <span>{language === "ID" ? "0% risiko spesimen tertukar dengan 2D micro-barcode" : "Zero specimen mix-up via 2D micro-barcode tracking"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#345DAB] shrink-0" />
+                    <span>{language === "ID" ? "Pencarian arsip blok parafin/slide kaca < 1 menit" : "Retrieve archival blocks and slides in under 1 minute"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/request-demo"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#345DAB] hover:text-[#1E5299] group transition-colors"
+                >
+                  <span>{language === "ID" ? "Konsultasi Modul Patologi" : "Consult Pathology"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                <span className="text-[11px] text-slate-400">ICD-O-3 / Bethesda</span>
+              </div>
+            </div>
+
+            {/* Card 5: Microbiology & PPRA */}
+            <div
+              id="microbiology"
+              className="scroll-mt-32 rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-8 sm:p-10 shadow-xs hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="h-14 w-14 rounded-2xl bg-teal-50 border border-teal-100 text-[#0D9488] flex items-center justify-center shadow-xs">
+                    <FlaskConical className="h-7 w-7" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#0D9488] bg-teal-50 border border-teal-200/60 px-3 py-1 rounded-full">
+                    {language === "ID" ? "Mikrobiologi & Komite PPRA" : "Microbiology & Stewardship"}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-slate-900 mb-2">
+                    Microbiology &amp; PPRA
+                  </h3>
+                  <p className="text-sm font-semibold text-[#0D9488] mb-3">
+                    {language === "ID"
+                      ? "Peta Kuman Antibiogram Otomatis & Kewaspadaan Dini MDRO / ESBL"
+                      : "Automated Hospital Antibiogram & Early Warning for MDRO / ESBL Pathogens"}
+                  </p>
+                  <p className="text-sm text-slate-500 leading-relaxed font-light">
+                    {language === "ID"
+                      ? "Mengelola masa inkubasi kultur bakteri dan pembacaan uji kepekaan antibiotik (AST). Menghasilkan grafik Antibiogram berkala secara otomatis untuk mendukung program PPRA rumah sakit dan mencegah resistensi antimikroba."
+                      : "Tracks culture incubation and Antimicrobial Susceptibility Testing (AST). Generates automated hospital Antibiograms to support antimicrobial stewardship committees (PPRA) and guide precision antibiotic prescribing."}
+                  </p>
+                </div>
+
+                {/* Visual Antibiogram AST Box */}
+                <div className="p-4 rounded-2xl bg-teal-50/50 border border-teal-100 space-y-2.5 font-mono text-xs">
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="font-semibold font-sans">Isolat: Klebsiella pneumoniae (Sputum)</span>
+                    <span className="text-teal-700 font-bold">CLSI 2024</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="p-2 rounded-xl bg-white border border-teal-100 flex justify-between">
+                      <span className="text-slate-800">Meropenem</span>
+                      <span className="text-emerald-600 font-bold">SENSITIVE</span>
+                    </div>
+                    <div className="p-2 rounded-xl bg-rose-50 border border-rose-200/80 flex justify-between text-rose-900">
+                      <span>Ceftriaxone</span>
+                      <span className="text-rose-600 font-bold">RESISTANT</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#0D9488] shrink-0" />
+                    <span>{language === "ID" ? "Pembangkitan Antibiogram kumulatif berkala 1-klik" : "1-click cumulative hospital antibiogram generator"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#0D9488] shrink-0" />
+                    <span>{language === "ID" ? "Pemenuhan indikator wajib PPRA KARS & Kemenkes" : "Complies 100% with national stewardship mandates"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/request-demo"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0D9488] hover:text-[#0F766E] group transition-colors"
+                >
+                  <span>{language === "ID" ? "Konsultasi Modul Mikrobiologi" : "Consult Microbiology"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                <span className="text-[11px] text-slate-400">CLSI / EUCAST Standard</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 2: UNIFIED ARCHITECTURE (NO DATA SILOS)
-          (Alternating #F9F9F9 Background, Identik dengan Platform Page)
+          SECTION 2: GLOBAL STANDARDS & INTEROPERABILITY
+          (Alternating #F9F9F9 Background)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
@@ -634,64 +595,78 @@ export default function ModulesPage() {
           <div className="max-w-3xl mb-12 sm:mb-16">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Interkoneksi Sistem" : "System Interconnection"}
+                {language === "ID" ? "Standarisasi & Kepatuhan" : "Compliance & Standards"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Arsitektur Terpadu Tanpa Hambatan Data Silo</>
+                <>Interoperabilitas Berstandar Medis Internasional</>
               ) : (
-                <>Unified Data Pipeline Without Siloed Fragility</>
+                <>International Healthcare Data Standards</>
               )}
             </h2>
             <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
               {language === "ID"
-                ? "Meskipun modul beroperasi sesuai spesialisasi masing-masing, seluruh data bermuara pada satu basis data terpusat Diagnova. Hasil lab rutin, uji silang darah, dan laporan patologi dapat diakses oleh dokter klinisi dalam satu rekam medis terpadu."
-                : "While each module addresses distinct specialized workflows, all data converges in a single centralized Diagnova data layer. Routine tests, blood crossmatches, and pathology reports are instantly accessible within one unified patient record."}
+                ? "Seluruh modul Diagnova berkomunikasi melalui protokol resmi yang diakui secara global dan terverifikasi untuk kepatuhan SATUSEHAT Kemenkes."
+                : "Every Diagnova module communicates via internationally recognized protocols verified for seamless hospital integration and regulatory compliance."}
             </p>
           </div>
 
-          {/* 3 Pillars Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-8 shadow-xs hover:border-blue-200 transition-all">
-              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6">
-                <Database className="h-6 w-6" />
+          {/* 4 Standards Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200 transition-all">
+              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-5">
+                <Network className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-xl font-bold text-slate-900 mb-2">
-                {language === "ID" ? "Single Patient Registry" : "Single Patient Registry"}
+              <h3 className="font-display text-lg font-bold text-slate-900 mb-1">
+                HL7 &amp; FHIR SATUSEHAT
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-light">
                 {language === "ID"
-                  ? "Satu nomor rekam medis (No. RM) terhubung ke seluruh departemen laboratorium. Tidak ada duplikasi registrasi pasien antara rawat jalan, rawat inap, IGD, maupun MCU."
-                  : "A single medical record number (MRN) links across every laboratory division. Zero duplicate patient entries across outpatient, inpatient, ER, and corporate check-ups."}
+                  ? "Pertukaran order dan hasil laboratorium secara aman dengan SIMRS serta ekosistem SATUSEHAT Kemenkes RI."
+                  : "Secure laboratory order and result exchange with hospital EMR and national healthcare health exchange platforms."}
               </p>
             </div>
 
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-8 shadow-xs hover:border-blue-200 transition-all">
-              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6">
+            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200 transition-all">
+              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-5">
                 <Cpu className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-xl font-bold text-slate-900 mb-2">
-                {language === "ID" ? "Smart Analyzer Gateway" : "Smart Analyzer Gateway"}
+              <h3 className="font-display text-lg font-bold text-slate-900 mb-1">
+                ASTM E1381 &amp; E1394
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-light">
                 {language === "ID"
-                  ? "Satu gateway komunikasi untuk puluhan merek instrumen analyzer. Dilengkapi buffer penyimpanan offline lokal jika jaringan internet rumah sakit terganggu sementara."
-                  : "One communication gateway managing dozens of medical analyzer brands. Equipped with local edge buffering to ensure zero data loss during network hiccups."}
+                  ? "Koneksi langsung bidireksional ke analyzer Roche, Sysmex, Abbott, Mindray, dan Beckman tanpa biaya middleware terpisah."
+                  : "Direct bidirectional interfacing to Roche, Sysmex, Abbott, Mindray, and Beckman analyzers without costly middleware."}
               </p>
             </div>
 
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-8 shadow-xs hover:border-blue-200 transition-all">
-              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6">
-                <FileCheck2 className="h-6 w-6" />
+            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200 transition-all">
+              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-5">
+                <QrCode className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-xl font-bold text-slate-900 mb-2">
-                {language === "ID" ? "Audit Trail & KARS Ready" : "Audit Trail & Accreditation"}
+              <h3 className="font-display text-lg font-bold text-slate-900 mb-1">
+                ISBT 128 Global Standard
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-light">
                 {language === "ID"
-                  ? "Seluruh aktivitas verifikasi, revisi hasil, dan pengeluaran darah tercatat dalam log audit digital permanen yang tidak dapat dimanipulasi, siap audit ISO 15189."
-                  : "Every test validation, result amendment, and blood bag issuance is preserved in an immutable digital audit trail, 100% compliant with ISO 15189 and JCI standards."}
+                  ? "Nomenklatur dan pelabelan barcode internasional untuk kantong darah, produk transfusi, dan jaringan tubuh."
+                  : "Global information standard for labeling medical products of human origin (blood, cells, and tissue)."}
+              </p>
+            </div>
+
+            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200 transition-all">
+              <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-5">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-slate-900 mb-1">
+                ISO 15189 &amp; KARS Ready
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-light">
+                {language === "ID"
+                  ? "Jejak audit digital permanen, validasi reagen, dan kontrol mutu internal (IQC) siap diuji asesor akreditasi setiap saat."
+                  : "Immutable digital audit trails, reagent validation telemetry, and IQC charting ready for accreditation audits anytime."}
               </p>
             </div>
           </div>
