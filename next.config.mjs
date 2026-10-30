@@ -53,6 +53,31 @@ const nextConfig = {
         destination: "/solutions#nova-ai",
         permanent: false,
       },
+      {
+        source: "/modules/routine-hematology",
+        destination: "/modules#routine-hematology",
+        permanent: false,
+      },
+      {
+        source: "/modules/blood-bank",
+        destination: "/modules#blood-bank",
+        permanent: false,
+      },
+      {
+        source: "/modules/inventory-reagent",
+        destination: "/modules#inventory-reagent",
+        permanent: false,
+      },
+      {
+        source: "/modules/pathology",
+        destination: "/modules#pathology",
+        permanent: false,
+      },
+      {
+        source: "/modules/microbiology",
+        destination: "/modules#microbiology",
+        permanent: false,
+      },
     ];
   },
 };
