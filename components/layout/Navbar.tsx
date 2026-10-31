@@ -641,6 +641,7 @@ export function Navbar() {
         <div className="flex items-center flex-1 justify-start">
           <Link
             href="/"
+            prefetch={true}
             className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-2.5 sm:-translate-x-3.5"
           >
             <Image
@@ -665,6 +666,8 @@ export function Navbar() {
             >
               <Link
                 href={item.href}
+                prefetch={true}
+                onClick={() => setActiveDropdown(null)}
                 className={cn(
                   "group/nav inline-flex items-center gap-1.5 py-2 px-1 text-[15px] xl:text-[15.5px] font-medium tracking-normal transition-colors duration-150",
                   pathname.startsWith(item.href)
@@ -692,6 +695,8 @@ export function Navbar() {
                         <Link
                           key={child.href}
                           href={child.href}
+                          prefetch={true}
+                          onClick={() => setActiveDropdown(null)}
                           className="group/item relative flex flex-col justify-center rounded-xl px-3.5 py-2.5 transition-all duration-150 hover:bg-slate-50/90 active:bg-slate-100/80"
                         >
                           {/* Micro indicator line on hover */}
@@ -721,6 +726,7 @@ export function Navbar() {
           {/* Primary CTA: Request Demo */}
           <Link
             href="/request-demo"
+            prefetch={true}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-6 py-2.5 xl:px-7 xl:py-3 text-[15px] xl:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
           >
             <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
@@ -731,6 +737,7 @@ export function Navbar() {
         <div className="flex items-center gap-2 lg:hidden">
           <Link
             href="/request-demo"
+            prefetch={true}
             className="inline-flex items-center gap-1.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm"
           >
             <span>Demo</span>
@@ -784,6 +791,7 @@ export function Navbar() {
                             <Link
                               key={child.href}
                               href={child.href}
+                              prefetch={true}
                               onClick={() => setMobileMenuOpen(false)}
                               className="block rounded-lg px-3 py-2 transition-colors hover:bg-slate-50"
                             >
@@ -798,6 +806,7 @@ export function Navbar() {
                           <div className="pt-1 px-3 pb-1">
                             <Link
                               href={item.href}
+                              prefetch={true}
                               onClick={() => setMobileMenuOpen(false)}
                               className="inline-flex items-center gap-1 text-[11px] font-semibold text-diagnova-blue"
                             >
@@ -813,6 +822,7 @@ export function Navbar() {
                   ) : (
                     <Link
                       href={item.href}
+                      prefetch={true}
                       onClick={() => setMobileMenuOpen(false)}
                       className="block p-3.5 text-sm font-semibold text-slate-800 hover:text-diagnova-blue"
                     >

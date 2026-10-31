@@ -495,7 +495,7 @@ export default function RequestDemoPage() {
         }}
         metrics={[
           {
-            value: "< 24 Jam",
+            value: language === "ID" ? "< 24 Jam" : "< 24 Hours",
             label: language === "ID" ? "Respon Cepat" : "Fast SLA Response",
             sub: language === "ID" ? "Jadwal dikonfirmasi dalam 1 hari" : "Confirmed within 1 business day",
           },
@@ -510,7 +510,7 @@ export default function RequestDemoPage() {
             sub: language === "ID" ? "Konsultasi & simulasi gratis" : "Complimentary consultation",
           },
           {
-            value: "Kustom",
+            value: language === "ID" ? "Kustom" : "Custom",
             label: language === "ID" ? "Skenario Faskes" : "Tailored Scenarios",
             sub: language === "ID" ? "Sesuai SIMRS & mesin analyzer" : "Matched to your HIS & analyzers",
           },

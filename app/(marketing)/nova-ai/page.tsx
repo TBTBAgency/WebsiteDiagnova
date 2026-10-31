@@ -32,7 +32,7 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
-import { novaAISampleTranslations, novaAIDisclaimer } from "@/content/nova-ai";
+import { novaAIDisclaimer } from "@/content/nova-ai";
 
 export default function NovaAIPage() {
   const { language } = useLanguage();
@@ -89,7 +89,102 @@ export default function NovaAIPage() {
     },
   ];
 
-  const currentSampleData = novaAISampleTranslations[selectedSample];
+  const sampleTranslationsID = [
+    {
+      parameter: "Hemoglobin (Hb)",
+      value: "8.4 g/dL",
+      referenceRange: "12.0 - 16.0 g/dL",
+      status: "Rendah",
+      rawStatusBadge: "text-amber-700 bg-amber-50 border-amber-200",
+      explanation:
+        "Kadar sel darah merah pembawa oksigen berada di bawah rentang normal (Anemia).",
+      clinicalNote:
+        "Penurunan signifikan sebesar 2.1 g/dL dari tes 3 hari lalu (Delta check alert). Direkomendasikan evaluasi perdarahan aktif atau defisiensi besi.",
+    },
+    {
+      parameter: "Glukosa Darah Puasa (GDP)",
+      value: "186 mg/dL",
+      referenceRange: "70 - 100 mg/dL",
+      status: "Tinggi",
+      rawStatusBadge: "text-red-700 bg-red-50 border-red-200",
+      explanation:
+        "Kadar gula dalam darah setelah puasa berada di atas batas normal (indikasi hiperglikemia).",
+      clinicalNote:
+        "Konsisten tinggi dalam 2 kunjungan terakhir. Disarankan konfirmasi pemeriksaan HbA1c untuk evaluasi kontrol glikemik jangka panjang.",
+    },
+    {
+      parameter: "Leukosit (Sel Darah Putih)",
+      value: "14.800 /µL",
+      referenceRange: "4.000 - 10.000 /µL",
+      status: "Tinggi",
+      rawStatusBadge: "text-red-700 bg-red-50 border-red-200",
+      explanation:
+        "Jumlah sel darah putih meningkat, menandakan respons tubuh terhadap kemungkinan infeksi atau inflamasi aktif.",
+      clinicalNote:
+        "Disertai peningkatan neutrofil segmen (Shift to the Left). Pertimbangkan evaluasi fokus infeksi bakteri akut.",
+    },
+    {
+      parameter: "Trombosit (Platelet)",
+      value: "245.000 /µL",
+      referenceRange: "150.000 - 450.000 /µL",
+      status: "Normal",
+      rawStatusBadge: "text-emerald-700 bg-emerald-50 border-emerald-200",
+      explanation:
+        "Jumlah keping darah yang membantu proses pembekuan berada dalam rentang yang sangat sehat dan aman.",
+      clinicalNote:
+        "Fungsi hemostasis primer dalam batas normal, tidak ditemukan kecurigaan trombositopenia.",
+    },
+  ];
+
+  const sampleTranslationsEN = [
+    {
+      parameter: "Hemoglobin (Hb)",
+      value: "8.4 g/dL",
+      referenceRange: "12.0 - 16.0 g/dL",
+      status: "Low",
+      rawStatusBadge: "text-amber-700 bg-amber-50 border-amber-200",
+      explanation:
+        "Oxygen-carrying red blood cell concentration is below normal clinical reference boundaries (Anemia).",
+      clinicalNote:
+        "Significant acute drop of 2.1 g/dL compared to test from 3 days ago (Delta check alert). Recommended evaluation for active occult bleeding or acute iron deficiency.",
+    },
+    {
+      parameter: "Fasting Blood Glucose",
+      value: "186 mg/dL",
+      referenceRange: "70 - 100 mg/dL",
+      status: "High",
+      rawStatusBadge: "text-red-700 bg-red-50 border-red-200",
+      explanation:
+        "Blood glucose concentration after fasting exceeds normal threshold (Hyperglycemia indication).",
+      clinicalNote:
+        "Consistently elevated across past 2 encounters. Confirmatory HbA1c testing advised for long-term glycemic management.",
+    },
+    {
+      parameter: "White Blood Cells (WBC)",
+      value: "14,800 /µL",
+      referenceRange: "4,000 - 10,000 /µL",
+      status: "High",
+      rawStatusBadge: "text-red-700 bg-red-50 border-red-200",
+      explanation:
+        "White blood cell count is elevated, indicating physiological immune response to potential infection or inflammation.",
+      clinicalNote:
+        "Accompanied by segmented neutrophil left-shift. Suggest clinical evaluation for acute bacterial infection focus.",
+    },
+    {
+      parameter: "Platelets (PLT)",
+      value: "245,000 /µL",
+      referenceRange: "150,000 - 450,000 /µL",
+      status: "Normal",
+      rawStatusBadge: "text-emerald-700 bg-emerald-50 border-emerald-200",
+      explanation:
+        "Platelet count supporting primary hemostasis and clotting falls within safe and optimal boundaries.",
+      clinicalNote:
+        "Primary hemostatic capacity intact; zero signs of thrombocytopenia.",
+    },
+  ];
+
+  const sampleTranslations = language === "ID" ? sampleTranslationsID : sampleTranslationsEN;
+  const currentSampleData = sampleTranslations[selectedSample];
 
   // Clinical simulation parameters detail
   const simulationDetails = [
@@ -101,49 +196,49 @@ export default function NovaAIPage() {
       prevVal: "10.5",
       delta: "-2.1",
       deltaPercent: "-20%",
-      status: "Rendah (Anemia)",
+      status: language === "ID" ? "Rendah (Anemia)" : "Low (Anemia)",
       isCritical: false,
       isWarning: true,
-      timeframe: "3 hari lalu",
+      timeframe: language === "ID" ? "3 hari lalu" : "3 days ago",
     },
     {
       id: "gdp",
-      name: "Glukosa Darah Puasa",
+      name: language === "ID" ? "Glukosa Darah Puasa" : "Fasting Blood Glucose",
       unit: "mg/dL",
       val: "186",
       prevVal: "178",
       delta: "+8",
       deltaPercent: "+4.5%",
-      status: "Tinggi (Hiperglikemia)",
+      status: language === "ID" ? "Tinggi (Hiperglikemia)" : "High (Hyperglycemia)",
       isCritical: false,
       isWarning: true,
-      timeframe: "2 minggu lalu",
+      timeframe: language === "ID" ? "2 minggu lalu" : "2 weeks ago",
     },
     {
       id: "leuko",
-      name: "Leukosit (WBC)",
+      name: language === "ID" ? "Leukosit (WBC)" : "White Blood Cells (WBC)",
       unit: "/µL",
-      val: "14.800",
-      prevVal: "8.200",
-      delta: "+6.600",
+      val: language === "ID" ? "14.800" : "14,800",
+      prevVal: language === "ID" ? "8.200" : "8,200",
+      delta: language === "ID" ? "+6.600" : "+6,600",
       deltaPercent: "+80.4%",
-      status: "Tinggi (Leukositosis)",
+      status: language === "ID" ? "Tinggi (Leukositosis)" : "High (Leukocytosis)",
       isCritical: true,
       isWarning: false,
-      timeframe: "Kemarin",
+      timeframe: language === "ID" ? "Kemarin" : "Yesterday",
     },
     {
       id: "plt",
-      name: "Trombosit (Platelet)",
+      name: language === "ID" ? "Trombosit (Platelet)" : "Platelets (PLT)",
       unit: "/µL",
-      val: "245.000",
-      prevVal: "240.000",
-      delta: "+5.000",
+      val: language === "ID" ? "245.000" : "245,000",
+      prevVal: language === "ID" ? "240.000" : "240,000",
+      delta: language === "ID" ? "+5.000" : "+5,000",
       deltaPercent: "+2.1%",
-      status: "Normal & Aman",
+      status: language === "ID" ? "Normal & Aman" : "Normal & Stable",
       isCritical: false,
       isWarning: false,
-      timeframe: "1 bulan lalu",
+      timeframe: language === "ID" ? "1 bulan lalu" : "1 month ago",
     },
   ];
 
@@ -191,7 +286,7 @@ export default function NovaAIPage() {
             sub: language === "ID" ? "Human-in-the-loop mutlak" : "Absolute clinical sovereignty",
           },
           {
-            value: "< 3 Detik",
+            value: language === "ID" ? "< 3 Detik" : "< 3 Sec",
             label: language === "ID" ? "Deteksi Anomali" : "Anomaly Detection",
             sub: language === "ID" ? "Pengecekan lonjakan delta" : "Instant delta check flag",
           },
@@ -249,7 +344,7 @@ export default function NovaAIPage() {
 
           {/* 4 Interactive Sample Tabs */}
           <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-3 mb-8 sm:mb-10">
-            {novaAISampleTranslations.map((sample, idx) => {
+            {sampleTranslations.map((sample, idx) => {
               const isActive = selectedSample === idx;
               return (
                 <button
@@ -357,25 +452,25 @@ export default function NovaAIPage() {
                 {/* Patient Delta Trend Visualizer */}
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-700">Komparasi Riwayat Pasien</span>
+                    <span className="font-semibold text-slate-700">{language === "ID" ? "Komparasi Riwayat Pasien" : "Patient History Comparison"}</span>
                     <span className="text-[11px] text-slate-400 font-light">RM: #44912</span>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200/70 text-xs">
                       <div>
-                        <span className="text-slate-400 text-[10px] block">Sebelumnya ({curSim.timeframe})</span>
+                        <span className="text-slate-400 text-[10px] block">{language === "ID" ? "Sebelumnya" : "Previous"} ({curSim.timeframe})</span>
                         <span className="font-mono font-bold text-slate-700">{curSim.prevVal} {curSim.unit}</span>
                       </div>
                       <span className="text-slate-300 text-sm">➔</span>
                       <div className="text-right">
-                        <span className="text-slate-400 text-[10px] block">Hasil Terkini</span>
+                        <span className="text-slate-400 text-[10px] block">{language === "ID" ? "Hasil Terkini" : "Current Result"}</span>
                         <span className="font-mono font-bold text-[#345DAB]">{curSim.val} {curSim.unit}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50/80 border border-blue-100 text-xs">
-                      <span className="text-slate-600 font-medium">Pergeseran Delta:</span>
+                      <span className="text-slate-600 font-medium">{language === "ID" ? "Pergeseran Delta:" : "Delta Shift:"}</span>
                       <span className={cn("font-bold font-mono", curSim.isCritical ? "text-rose-600" : curSim.isWarning ? "text-amber-700" : "text-emerald-600")}>
                         {curSim.delta} ({curSim.deltaPercent})
                       </span>
@@ -387,7 +482,7 @@ export default function NovaAIPage() {
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
                     <span className="font-display text-2xl font-bold text-[#345DAB] block tracking-tight">
-                      &lt; 3 Detik
+                      {language === "ID" ? "< 3 Detik" : "< 3 Sec"}
                     </span>
                     <span className="text-xs font-medium text-slate-600 block mt-1 leading-snug">
                       {language === "ID" ? "Waktu Inferensi" : "Inference Time"}
@@ -405,10 +500,10 @@ export default function NovaAIPage() {
 
                 <div className="flex flex-wrap gap-1.5 pt-2">
                   <span className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
-                    ✓ Delta Check Alert
+                    {language === "ID" ? "✓ Notifikasi Delta Check" : "✓ Delta Check Alert"}
                   </span>
                   <span className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
-                    ✓ E-Signature Gate
+                    {language === "ID" ? "✓ Gerbang E-Signature" : "✓ E-Signature Gate"}
                   </span>
                   <span className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
                     ✓ HL7 / FHIR Ready
@@ -544,13 +639,13 @@ export default function NovaAIPage() {
               {/* Quick Summary Pill Strip */}
               <div className="pt-2 flex flex-wrap gap-2 text-xs font-semibold text-slate-700">
                 <span className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80">
-                  ✓ Tanpa Resep Mandiri
+                  {language === "ID" ? "✓ Tanpa Resep Mandiri" : "✓ No Autonomous Prescriptions"}
                 </span>
                 <span className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80">
-                  ✓ Transparan &amp; Tervalidasi
+                  {language === "ID" ? "✓ Transparan & Tervalidasi" : "✓ Explainable & Validated"}
                 </span>
                 <span className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80">
-                  ✓ Tanggung Jawab Hukum pada Dokter
+                  {language === "ID" ? "✓ Tanggung Jawab Hukum pada Dokter" : "✓ Clinician Holds Legal Authority"}
                 </span>
               </div>
             </div>
@@ -567,7 +662,9 @@ export default function NovaAIPage() {
                     <h3 className="font-display text-lg font-bold text-slate-900">
                       {language === "ID" ? "Peran Nova AI (Asisten Analitis)" : "Role of Nova AI (Analytical Copilot)"}
                     </h3>
-                    <p className="text-xs text-slate-400">Komputasi Cepat &amp; Deteksi Dini Pola</p>
+                    <p className="text-xs text-slate-400">
+                      {language === "ID" ? "Komputasi Cepat & Deteksi Dini Pola" : "High-Speed Computing & Pattern Detection"}
+                    </p>
                   </div>
                 </div>
 
@@ -597,7 +694,9 @@ export default function NovaAIPage() {
                     <h3 className="font-display text-lg font-bold text-slate-900">
                       {language === "ID" ? "Peran Dokter (Otoritas Mutlak)" : "Role of Physician (Clinical Authority)"}
                     </h3>
-                    <p className="text-xs text-slate-400">Keputusan Medis, Diagnosis &amp; Terapi</p>
+                    <p className="text-xs text-slate-400">
+                      {language === "ID" ? "Keputusan Medis, Diagnosis & Terapi" : "Clinical Judgment, Diagnosis & Therapy"}
+                    </p>
                   </div>
                 </div>
 

@@ -173,7 +173,7 @@ export default function ModulesPage() {
         },
       ],
       metrics: [
-        { val: "0 Kali", label: language === "ID" ? "Kehabisan Reagen di Shift" : "Mid-Shift Stockout" },
+        { val: language === "ID" ? "0 Kali" : "0 Stockouts", label: language === "ID" ? "Kehabisan Reagen di Shift" : "Mid-Shift Stockout" },
         { val: "20%", label: language === "ID" ? "Penghematan Belanja Reagen" : "Procurement Savings" },
       ],
       previewDetails: {
@@ -218,7 +218,7 @@ export default function ModulesPage() {
       ],
       metrics: [
         { val: "Zero Error", label: language === "ID" ? "Spesimen Tertukar" : "Specimen Mix-up" },
-        { val: "< 1 Menit", label: language === "ID" ? "Pencarian Arsip Blok/Slide" : "Archive Retrieval" },
+        { val: language === "ID" ? "< 1 Menit" : "< 1 Min", label: language === "ID" ? "Pencarian Arsip Blok/Slide" : "Archive Retrieval" },
       ],
       previewDetails: {
         system: "Histopathology & Cytology Workflow Engine",
@@ -261,7 +261,7 @@ export default function ModulesPage() {
         },
       ],
       metrics: [
-        { val: "2x Cepat", label: language === "ID" ? "Rekomendasi Terapi Tepat" : "Definitive Therapy Speed" },
+        { val: language === "ID" ? "2x Cepat" : "2x Faster", label: language === "ID" ? "Rekomendasi Terapi Tepat" : "Definitive Therapy Speed" },
         { val: "100%", label: language === "ID" ? "Kepatuhan PPRA Kemenkes" : "Stewardship Compliance" },
       ],
       previewDetails: {
@@ -313,7 +313,7 @@ export default function ModulesPage() {
         }}
         metrics={[
           {
-            value: "5 Modul",
+            value: language === "ID" ? "5 Modul" : "5 Modules",
             label: language === "ID" ? "Spesialisasi Lengkap" : "Dedicated Modules",
             sub: language === "ID" ? "Rutin, BDRS, Stok, PA, Mikro" : "Hematology, Blood, Reagents, PA",
           },

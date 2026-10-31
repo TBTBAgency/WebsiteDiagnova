@@ -76,7 +76,7 @@ export default function SolutionsPage() {
         },
       ],
       metrics: [
-        { val: "< 25 Menit", label: language === "ID" ? "TAT Hasil Cito IGD" : "Stat ER Panic TAT" },
+        { val: language === "ID" ? "< 25 Menit" : "< 25 Mins", label: language === "ID" ? "TAT Hasil Cito IGD" : "Stat ER Panic TAT" },
         { val: "100%", label: language === "ID" ? "Bridging SIMRS & RME" : "Bidirectional HIS Sync" },
       ],
       previewInfo: {
@@ -114,13 +114,13 @@ export default function SolutionsPage() {
         },
       ],
       metrics: [
-        { val: "30 Detik", label: language === "ID" ? "Waktu Registrasi per Pasien" : "Registration Time per Patient" },
+        { val: language === "ID" ? "30 Detik" : "30 Sec", label: language === "ID" ? "Waktu Registrasi per Pasien" : "Registration Time per Patient" },
         { val: "100%", label: language === "ID" ? "Paperless Digital Delivery" : "Paperless Delivery" },
       ],
       previewInfo: {
         badge: "Outpatient & MCU",
         focus: language === "ID" ? "Batch MCU + WhatsApp PDF + B2B Billing" : "Batch MCU + WhatsApp PDF + B2B Billing",
-        tags: ["Fast Registration", "Portal Pasien", "B2B Outreach"],
+        tags: ["Fast Registration", language === "ID" ? "Portal Pasien" : "Patient Portal", "B2B Outreach"],
       },
     },
     {
@@ -153,12 +153,12 @@ export default function SolutionsPage() {
       ],
       metrics: [
         { val: "Zero Error", label: language === "ID" ? "Spesimen Tertukar" : "Specimen Mix-ups" },
-        { val: "< 1 Menit", label: language === "ID" ? "Pencarian Arsip Blok/Slide" : "Archive Retrieval" },
+        { val: language === "ID" ? "< 1 Menit" : "< 1 Min", label: language === "ID" ? "Pencarian Arsip Blok/Slide" : "Archive Retrieval" },
       ],
       previewInfo: {
         badge: "Anatomical Pathology",
         focus: language === "ID" ? "Tracking Kaset 2D + Template ICD-O" : "2D Cassette Tracking + ICD-O Reporting",
-        tags: ["Zero Mix-up", "Whole Slide Ready", "Arsip Digital"],
+        tags: ["Zero Mix-up", "Whole Slide Ready", language === "ID" ? "Arsip Digital" : "Digital Archive"],
       },
     },
     {
@@ -190,13 +190,13 @@ export default function SolutionsPage() {
         },
       ],
       metrics: [
-        { val: "2x Cepat", label: language === "ID" ? "Rekomendasi Terapi Antibiotik" : "Definitive Therapy Speed" },
+        { val: language === "ID" ? "2x Cepat" : "2x Faster", label: language === "ID" ? "Rekomendasi Terapi Antibiotik" : "Definitive Therapy Speed" },
         { val: "100%", label: language === "ID" ? "Kepatuhan PPRA Kemenkes" : "Stewardship Compliance" },
       ],
       previewInfo: {
         badge: "Microbiology & PPRA",
         focus: language === "ID" ? "Antibiogram Matriks + Alert MDRO" : "Antibiogram Matrix + MDRO Alerts",
-        tags: ["CLSI / EUCAST", "VITEK / Phoenix", "Pencegahan Infeksi"],
+        tags: ["CLSI / EUCAST", "VITEK / Phoenix", language === "ID" ? "Pencegahan Infeksi" : "Infection Control"],
       },
     },
     {
@@ -267,7 +267,7 @@ export default function SolutionsPage() {
       ],
       metrics: [
         { val: "100%", label: language === "ID" ? "Kendali di Tangan Dokter" : "Physician Control" },
-        { val: "Instan", label: language === "ID" ? "Deteksi Anomali Pasien" : "Anomaly Flagging" },
+        { val: language === "ID" ? "Instan" : "Instant", label: language === "ID" ? "Deteksi Anomali Pasien" : "Anomaly Flagging" },
       ],
       previewInfo: {
         badge: "Nova AI Engine",
@@ -380,7 +380,7 @@ export default function SolutionsPage() {
             sub: language === "ID" ? "KARS, JCI & Kemenkes" : "KARS & JCI compliant",
           },
           {
-            value: "6 Sektor",
+            value: language === "ID" ? "6 Sektor" : "6 Sectors",
             label: language === "ID" ? "Solusi Terdedikasi" : "Specialized Verticals",
             sub: language === "ID" ? "RS, MCU, PA, BDRS, AI" : "Hospital, Outpatient, Labs",
           },

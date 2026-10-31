@@ -98,7 +98,7 @@ export default function IntegrationPage() {
       protocols: ["HL7 v2.x (ORM / ORU)", "RESTful API / JSON", "Webservices / SOAP", "Direct DB Link"],
       metrics: [
         { val: "0 Error", label: language === "ID" ? "Salah Ketik Data Pasien" : "Patient ID Typing Error" },
-        { val: "< 1 Detik", label: language === "ID" ? "Latensi Pengiriman Hasil" : "Result Return Latency" },
+        { val: language === "ID" ? "< 1 Detik" : "< 1 Sec", label: language === "ID" ? "Latensi Pengiriman Hasil" : "Result Return Latency" },
       ],
       simulation: {
         type: "simrs",
@@ -156,7 +156,7 @@ export default function IntegrationPage() {
       protocols: ["FHIR R4 DiagnosticReport", "JSON REST API", "HL7 CDA", "Secure PDF Embed"],
       metrics: [
         { val: "100%", label: language === "ID" ? "Kepatuhan Permenkes 24" : "Permenkes 24 Compliance" },
-        { val: "Instan", label: language === "ID" ? "Notifikasi Panic Value" : "Panic Alert Dispatch" },
+        { val: language === "ID" ? "Instan" : "Instant", label: language === "ID" ? "Notifikasi Panic Value" : "Panic Alert Dispatch" },
       ],
       simulation: {
         type: "rme",
@@ -218,7 +218,7 @@ export default function IntegrationPage() {
       protocols: ["ASTM E1381 / E1394", "HL7 v2.3.1 / v2.5", "Serial RS-232", "TCP/IP LAN", "USB"],
       metrics: [
         { val: "500+", label: language === "ID" ? "Model Mesin Kompatibel" : "Compatible Analyzers" },
-        { val: "0 Detik", label: language === "ID" ? "Waktu Ketik Hasil" : "Manual Typing Time" },
+        { val: language === "ID" ? "0 Detik" : "0 Sec", label: language === "ID" ? "Waktu Ketik Hasil" : "Manual Typing Time" },
       ],
       simulation: {
         type: "analyzer",
@@ -405,7 +405,7 @@ export default function IntegrationPage() {
         }}
         metrics={[
           {
-            value: "500+ Mesin",
+            value: language === "ID" ? "500+ Mesin" : "500+ Analyzers",
             label: language === "ID" ? "Analyzer Teruji" : "Supported Analyzers",
             sub: language === "ID" ? "Roche, Sysmex, Abbott, Mindray" : "Roche, Sysmex, Abbott, Mindray",
           },
@@ -420,7 +420,7 @@ export default function IntegrationPage() {
             sub: language === "ID" ? "Order & billing otomatis realtime" : "Real-time automatic order & billing",
           },
           {
-            value: "72 Jam",
+            value: language === "ID" ? "72 Jam" : "72 Hours",
             label: language === "ID" ? "Buffer Offline Edge" : "Offline Resilient Edge",
             sub: language === "ID" ? "Zero data loss saat jaringan putus" : "Zero data loss during downtime",
           },
@@ -572,7 +572,7 @@ export default function IntegrationPage() {
                     {current.simulation.type === "simrs" && (
                       <div className="space-y-3">
                         <p className="text-xs text-slate-500 font-mono">
-                          // HL7 v2 Transaction Log (Bidirectional Sync)
+                          {"// HL7 v2 Transaction Log (Bidirectional Sync)"}
                         </p>
                         {current.simulation.flow?.map((item, idx) => (
                           <div
@@ -602,7 +602,7 @@ export default function IntegrationPage() {
                     {current.simulation.type === "rme" && (
                       <div className="space-y-3 font-mono text-xs">
                         <div className="p-3 bg-slate-900 text-slate-200 rounded-xl overflow-x-auto text-[11px] leading-relaxed">
-                          <p className="text-emerald-400 font-semibold">// FHIR R4 Resource Envelope</p>
+                          <p className="text-emerald-400 font-semibold">{"// FHIR R4 Resource Envelope"}</p>
                           <p className="text-sky-300">
                             &#123; <br />
                             &nbsp;&nbsp;<span className="text-amber-300">&quot;resourceType&quot;</span>: &quot;DiagnosticReport&quot;,<br />
@@ -654,7 +654,7 @@ export default function IntegrationPage() {
                         </div>
 
                         <div className="p-3 bg-slate-900 text-slate-100 rounded-xl text-[11px] leading-relaxed">
-                          <p className="text-sky-300 font-bold mb-1">// Raw Stream Ingestion</p>
+                          <p className="text-sky-300 font-bold mb-1">{"// Raw Stream Ingestion"}</p>
                           <p className="text-slate-300">{current.simulation.telemetry?.rawCapture}</p>
                         </div>
 
@@ -683,7 +683,7 @@ export default function IntegrationPage() {
                         </div>
 
                         <div className="p-3 bg-slate-900 text-slate-200 rounded-xl text-[11px] space-y-1">
-                          <p className="text-emerald-400 font-bold">// Transmitted FHIR Bundle</p>
+                          <p className="text-emerald-400 font-bold">{"// Transmitted FHIR Bundle"}</p>
                           <p className="text-slate-400">{current.simulation.satusehatState?.fhirBundle}</p>
                           <p className="text-amber-300 mt-2">{current.simulation.satusehatState?.transmission}</p>
                         </div>
@@ -715,7 +715,7 @@ export default function IntegrationPage() {
                         </div>
 
                         <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-xl text-[11px] text-[#2764B8] space-y-1">
-                          <p className="font-bold">// Offline Resilience Strategy</p>
+                          <p className="font-bold">{"// Offline Resilience Strategy"}</p>
                           <p className="text-slate-700">Storage Buffer: {current.simulation.edgeStatus?.offlineTolerance}</p>
                           <p className="text-slate-700">Reconciliation: Cito orders synced with top priority</p>
                         </div>
