@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, CheckCircle2, AlertCircle, ArrowRight, Sparkles, Calendar } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { Button } from "@/components/ui/Button";
 import { demoRequestSchema } from "@/lib/validations";
@@ -19,6 +19,7 @@ function RequestDemoForm() {
     email: initialEmail,
     phone: "",
     institutionType: "hospital" as InstitutionType,
+    demoDate: "",
     notes: "",
   });
 
@@ -113,6 +114,7 @@ function RequestDemoForm() {
                 email: "",
                 phone: "",
                 institutionType: "hospital",
+                demoDate: "",
                 notes: "",
               });
             }}
@@ -256,6 +258,24 @@ function RequestDemoForm() {
           />
           {errors.phone && <p className="text-[11px] text-rose-600">{errors.phone}</p>}
         </div>
+      </div>
+
+      {/* Pilihan Tanggal Demo */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+          <Calendar className="h-3.5 w-3.5 text-diagnova-blue" />
+          <span>Pilihan Tanggal Demo</span>
+        </label>
+        <input
+          type="datetime-local"
+          name="demoDate"
+          value={formData.demoDate}
+          onChange={handleChange}
+          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm transition-all focus:border-diagnova-blue focus:outline-none focus:ring-2 focus:ring-nova-blue/20"
+        />
+        <p className="text-[11px] text-slate-400">
+          Pilih perkiraan tanggal dan jam presentasi demo teknis yang Anda inginkan.
+        </p>
       </div>
 
       {/* Notes */}

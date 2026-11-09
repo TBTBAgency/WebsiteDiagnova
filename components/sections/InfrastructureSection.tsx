@@ -71,10 +71,34 @@ function getCardIcon(iconName: InfrastructureCard["iconName"], className = "h-5 
   }
 }
 
-export function InfrastructureSection() {
+export interface InfrastructureSectionProps {
+  initialData?: {
+    section?: any;
+  } | null;
+}
+
+export function InfrastructureSection({ initialData }: InfrastructureSectionProps = {}) {
   const { language } = useLanguage();
-  const infrastructureCards =
-    language === "ID" ? infrastructureCardsID : infrastructureCardsEN;
+  const baseCards = language === "ID" ? infrastructureCardsID : infrastructureCardsEN;
+
+  const dynamicCards: InfrastructureCard[] | null = initialData?.section?.extraContent?.cards?.map((cmsCard: any, idx: number) => {
+    const fallback = baseCards[idx] || baseCards[0];
+    return {
+      ...fallback,
+      title: (language === "ID" ? cmsCard.titleId : cmsCard.titleEn) || fallback.title,
+      description: (language === "ID" ? cmsCard.descriptionId : cmsCard.descriptionEn) || fallback.description,
+    };
+  });
+
+  const infrastructureCards: InfrastructureCard[] = dynamicCards && dynamicCards.length === 3 ? dynamicCards : baseCards;
+
+  const sectionBadge =
+    (language === "ID" ? initialData?.section?.badgeId : initialData?.section?.badgeEn) ||
+    (language === "ID" ? "Infrastruktur" : "Infrastructure");
+
+  const sectionTitle =
+    (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
+    (language === "ID" ? "Infrastruktur Cerdas untuk Operasional Tanpa Hambatan" : "Intelligent Infrastructure for Seamless Operations");
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -233,23 +257,11 @@ export function InfrastructureSection() {
             <div className="lg:col-span-5 flex flex-col justify-center">
               <div className="mb-3.5 sm:mb-4">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Infrastruktur" : "Infrastructure"}
+                  {sectionBadge}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-2xl sm:text-3xl lg:text-[36px] xl:text-[40px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#2A5298]">
-                {language === "ID" ? (
-                  <>
-                    Infrastruktur Cerdas
-                    <br />{" "}
-                    untuk Operasional Tanpa Hambatan
-                  </>
-                ) : (
-                  <>
-                    Intelligent Infrastructure
-                    <br />{" "}
-                    for Seamless Operations
-                  </>
-                )}
+                {sectionTitle}
               </h2>
             </div>
 

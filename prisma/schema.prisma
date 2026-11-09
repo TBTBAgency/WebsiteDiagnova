@@ -7,54 +7,92 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique @db.VarChar(50)
+  description String?  @db.VarChar(255)
+  createdAt   DateTime @default(now()) @map("created_at")
+  users       User[]
+
+  @@map("roles")
+}
+
 model User {
-  id           String     @id @default(cuid())
-  name         String     @db.VarChar(100)
-  email        String     @unique @db.VarChar(255)
-  passwordHash String     @map("password_hash") @db.VarChar(255)
-  role         UserRole   @default(SALES_ADMIN)
-  status       UserStatus @default(ACTIVE)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
-  auditLogs    AuditLog[]
-  leadNotes    LeadNote[]
+  id               String          @id @default(cuid())
+  name             String          @db.VarChar(100)
+  email            String          @unique @db.VarChar(255)
+  passwordHash     String?         @map("password_hash") @db.VarChar(255)
+  institution      String?         @db.VarChar(150)
+  jobTitle         String?         @map("job_title") @db.VarChar(100)
+  phone            String?         @db.VarChar(30)
+  roleId           String?         @map("role_id")
+  role             Role?           @relation(fields: [roleId], references: [id])
+  status           Int             @default(1)
+  demoDurationDays Int?            @map("demo_duration_days")
+  demoActivatedAt  DateTime?       @map("demo_activated_at")
+  demoExpiresAt    DateTime?       @map("demo_expires_at")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  leads            Lead[]
+  magicLinks       DemoMagicLink[]
 
   @@map("users")
 }
 
 model Lead {
-  id              String          @id @default(cuid())
-  name            String          @db.VarChar(100)
-  institution     String          @db.VarChar(150)
-  jobTitle        String          @db.VarChar(100)
-  email           String          @db.VarChar(255)
-  phone           String          @db.VarChar(30)
-  institutionType InstitutionType @default(HOSPITAL) @map("institution_type")
-  notes           String?
-  status          LeadStatus      @default(NEW)
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
-  notesHistory    LeadNote[]
+  id                 String             @id @default(cuid())
+  userId             String?            @map("user_id")
+  user               User?              @relation(fields: [userId], references: [id])
+  name               String             @db.VarChar(100)
+  institution        String             @db.VarChar(150)
+  jobTitle           String             @db.VarChar(100)
+  email              String             @db.VarChar(255)
+  phone              String             @db.VarChar(30)
+  institutionType    InstitutionType    @default(HOSPITAL) @map("institution_type")
+  notes              String?
+  status             Int                @default(1)
+  approvalStatus     LeadApprovalStatus @default(PENDING) @map("approval_status")
+  approvedAt         DateTime?          @map("approved_at")
+  approvedBy         String?            @map("approved_by") @db.VarChar(100)
+  rejectionReason    String?            @map("rejection_reason")
+  requestedDemoDate  DateTime?          @map("requested_demo_date")
+  confirmedDemoDate  DateTime?          @map("confirmed_demo_date")
+  demoDate           DateTime?          @map("demo_date")
+  demoDurationDays   Int                @default(3) @map("demo_duration_days")
+  voucherCode        String?            @map("voucher_code") @db.VarChar(50)
+  voucherExpiry      DateTime?          @map("voucher_expiry")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  magicLinks         DemoMagicLink[]
 
+  @@index([userId])
   @@index([email])
   @@index([status])
+  @@index([approvalStatus])
   @@index([createdAt])
   @@map("leads")
 }
 
-model LeadNote {
-  id        String   @id @default(cuid())
-  leadId    String   @map("lead_id")
-  authorId  String?  @map("author_id")
-  content   String
-  createdAt DateTime @default(now()) @map("created_at")
-  author    User?    @relation(fields: [authorId], references: [id])
-  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+model DemoMagicLink {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique @map("token_hash") @db.VarChar(128)
+  email     String    @db.VarChar(255)
+  leadId    String    @map("lead_id")
+  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId    String?   @map("user_id")
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  ipAddress String?   @map("ip_address") @db.VarChar(50)
+  userAgent String?   @map("user_agent") @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at")
 
+  @@index([tokenHash])
+  @@index([email])
   @@index([leadId])
-  @@index([authorId])
-  @@map("lead_notes")
+  @@map("demo_magic_links")
 }
+
 
 model AuditLog {
   id        String   @id @default(cuid())
@@ -67,7 +105,6 @@ model AuditLog {
   ipAddress String?  @map("ip_address") @db.VarChar(50)
   userAgent String?  @map("user_agent") @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
-  user      User?    @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([entity, recordId])
@@ -186,6 +223,14 @@ model Specimen {
   @@map("specimens")
 }
 
+enum LeadApprovalStatus {
+  PENDING  @map("pending")
+  APPROVED @map("approved")
+  REJECTED @map("rejected")
+
+  @@map("lead_approval_status")
+}
+
 enum LeadStatus {
   NEW       @map("new")
   CONTACTED @map("contacted")
@@ -211,6 +256,7 @@ enum UserRole {
   SALES_ADMIN @map("sales_admin")
   LAB_STAFF   @map("lab_staff")
   PATHOLOGIST @map("pathologist")
+  DEMO_USER   @map("demo_user")
 
   @@map("user_role")
 }
@@ -280,4 +326,121 @@ enum TubeColor {
 enum gender {
   male
   female
+}
+
+// ==========================================
+// CONTENT MANAGEMENT SYSTEM (CMS) MODELS
+// ==========================================
+
+model CmsSection {
+  id              String               @id @default(cuid())
+  sectionKey      String               @unique @map("section_key") @db.VarChar(50)
+  badgeId         String?              @map("badge_id")
+  badgeEn         String?              @map("badge_en")
+  titleId         String?              @map("title_id")
+  titleEn         String?              @map("title_en")
+  subtitleId      String?              @map("subtitle_id")
+  subtitleEn      String?              @map("subtitle_en")
+  extraContent    Json?                @map("extra_content")
+  isPublished     Boolean              @default(true) @map("is_published")
+  updatedBy       String?              @map("updated_by") @db.VarChar(100)
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+  heroSlides      CmsHeroSlide[]
+  comparisonItems CmsComparisonItem[]
+  testimonials    CmsTestimonial[]
+  partners        CmsPartner[]
+
+  @@map("cms_sections")
+}
+
+model CmsHeroSlide {
+  id                 String      @id @default(cuid())
+  sectionId          String?     @map("section_id")
+  section            CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  titleId            String      @map("title_id")
+  titleEn            String      @map("title_en")
+  subtitleId         String?     @map("subtitle_id")
+  subtitleEn         String?     @map("subtitle_en")
+  badgeId            String?     @map("badge_id")
+  badgeEn            String?     @map("badge_en")
+  ctaPrimaryTextId   String?     @map("cta_primary_text_id")
+  ctaPrimaryTextEn   String?     @map("cta_primary_text_en")
+  ctaPrimaryUrl      String?     @map("cta_primary_url")
+  ctaSecondaryTextId String?     @map("cta_secondary_text_id")
+  ctaSecondaryTextEn String?     @map("cta_secondary_text_en")
+  ctaSecondaryUrl    String?     @map("cta_secondary_url")
+  imageUrl           String      @map("image_url")
+  imageAlt           String?     @map("image_alt")
+  sortOrder          Int         @default(0) @map("sort_order")
+  isActive           Boolean     @default(true) @map("is_active")
+  createdAt          DateTime    @default(now()) @map("created_at")
+  updatedAt          DateTime    @updatedAt @map("updated_at")
+
+  @@index([sectionId])
+  @@index([sortOrder])
+  @@map("cms_hero_slides")
+}
+
+model CmsComparisonItem {
+  id                   String      @id @default(cuid())
+  sectionId            String?     @map("section_id")
+  section              CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  number               String      @db.VarChar(10)
+  conventionalTitleId  String      @map("conventional_title_id")
+  conventionalTitleEn  String      @map("conventional_title_en")
+  conventionalDescId   String      @map("conventional_desc_id")
+  conventionalDescEn   String      @map("conventional_desc_en")
+  diagnovaTitleId      String      @map("diagnova_title_id")
+  diagnovaTitleEn      String      @map("diagnova_title_en")
+  diagnovaDescId       String      @map("diagnova_desc_id")
+  diagnovaDescEn       String      @map("diagnova_desc_en")
+  impactMetric         String      @map("impact_metric") @db.VarChar(100)
+  sortOrder            Int         @default(0) @map("sort_order")
+  isActive             Boolean     @default(true) @map("is_active")
+  createdAt            DateTime    @default(now()) @map("created_at")
+  updatedAt            DateTime    @updatedAt @map("updated_at")
+
+  @@index([sectionId])
+  @@index([sortOrder])
+  @@map("cms_comparison_items")
+}
+
+model CmsTestimonial {
+  id          String      @id @default(cuid())
+  sectionId   String?     @map("section_id")
+  section     CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  name        String      @db.VarChar(120)
+  roleId      String      @map("role_id_text") @db.VarChar(120)
+  roleEn      String?     @map("role_en_text") @db.VarChar(120)
+  institution String      @db.VarChar(150)
+  quoteId     String      @map("quote_id")
+  quoteEn     String      @map("quote_en")
+  avatarUrl   String      @default("/images/testimonial-silhouette-female.jpg") @map("avatar_url")
+  rating      Int         @default(5)
+  sortOrder   Int         @default(0) @map("sort_order")
+  isActive    Boolean     @default(true) @map("is_active")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@index([sectionId])
+  @@index([sortOrder])
+  @@map("cms_testimonials")
+}
+
+model CmsPartner {
+  id        String      @id @default(cuid())
+  sectionId String?     @map("section_id")
+  section   CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  name      String      @db.VarChar(120)
+  logoUrl   String      @map("logo_url")
+  sortOrder Int         @default(0) @map("sort_order")
+  isActive  Boolean     @default(true) @map("is_active")
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@index([sectionId])
+  @@index([sortOrder])
+  @@map("cms_partners")
 }

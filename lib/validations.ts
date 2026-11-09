@@ -39,6 +39,8 @@ export const demoRequestSchema = z.object({
       "Format nomor telepon hanya boleh berisi angka dan tanda (+, -, space)"
     ),
   institutionType: institutionTypeEnum,
+  requestedDemoDate: z.string().optional().nullable(),
+  demoDate: z.string().optional().nullable(),
   notes: z
     .string()
     .max(1000, "Catatan maksimal 1000 karakter")
@@ -48,6 +50,20 @@ export const demoRequestSchema = z.object({
 
 export type DemoRequestSchemaType = z.infer<typeof demoRequestSchema>;
 
+export const approveLeadSchema = z.object({
+  confirmedDemoDate: z.string().optional().nullable(),
+  durationDays: z.coerce.number().min(1).max(90).default(7),
+  notes: z.string().optional(),
+});
+
+export type ApproveLeadSchemaType = z.infer<typeof approveLeadSchema>;
+
+export const rejectLeadSchema = z.object({
+  rejectionReason: z.string().min(2, "Alasan penolakan harus diisi"),
+});
+
+export type RejectLeadSchemaType = z.infer<typeof rejectLeadSchema>;
+
 export const loginSchema = z.object({
   email: z.string().email("Format alamat email tidak valid"),
   password: z.string().min(6, "Password minimal 6 karakter"),
@@ -55,23 +71,23 @@ export const loginSchema = z.object({
 
 export type LoginSchemaType = z.infer<typeof loginSchema>;
 
-export const leadStatusEnum = z.enum(["new", "contacted", "scheduled", "completed"], {
-  errorMap: () => ({ message: "Status lead tidak valid" }),
-});
-
 export const updateLeadStatusSchema = z.object({
-  status: leadStatusEnum,
-  note: z.string().max(1000, "Catatan maksimal 1000 karakter").optional(),
+  status: z.coerce.number().min(1).max(4),
+  voucherDays: z.coerce.number().min(3).optional().default(3),
+  demoDate: z.string().optional().nullable(),
 });
 
 export type UpdateLeadStatusSchemaType = z.infer<typeof updateLeadStatusSchema>;
 
-export const addLeadNoteSchema = z.object({
-  content: z
-    .string()
-    .min(2, "Catatan minimal 2 karakter")
-    .max(2000, "Catatan maksimal 2000 karakter"),
+export const createUserSchema = z.object({
+  name: z.string().min(2, "Nama minimal 2 karakter"),
+  email: z.string().email("Format email tidak valid"),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+  institution: z.string().optional(),
+  jobTitle: z.string().optional(),
+  phone: z.string().optional(),
+  roleId: z.string().min(1, "Role wajib dipilih"),
+  status: z.coerce.number().default(1),
 });
 
-export type AddLeadNoteSchemaType = z.infer<typeof addLeadNoteSchema>;
-
+export type CreateUserSchemaType = z.infer<typeof createUserSchema>;

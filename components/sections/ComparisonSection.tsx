@@ -8,12 +8,59 @@ import {
   comparisonContentEN,
 } from "@/content/comparison";
 
-export function ComparisonSection() {
+export interface ComparisonSectionProps {
+  initialData?: {
+    section?: any;
+    items?: any[];
+  } | null;
+}
+
+export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const { language } = useLanguage();
 
-  const content = language === "ID" ? comparisonContentID : comparisonContentEN;
+  const defaultContent = language === "ID" ? comparisonContentID : comparisonContentEN;
+
+  const dynamicItems =
+    initialData?.items && initialData.items.length > 0
+      ? initialData.items
+          .filter((item: any) => item.isActive !== false)
+          .map((item: any, idx: number) => ({
+            id: item.id || idx + 1,
+            number: item.number || `0${idx + 1}`,
+            conventional: {
+              title: language === "ID" ? item.conventionalTitleId : item.conventionalTitleEn,
+              description: language === "ID" ? item.conventionalDescId : item.conventionalDescEn,
+            },
+            diagnova: {
+              title: language === "ID" ? item.diagnovaTitleId : item.diagnovaTitleEn,
+              description: language === "ID" ? item.diagnovaDescId : item.diagnovaDescEn,
+            },
+            impactMetric: item.impactMetric || "",
+          }))
+      : null;
+
+  const content = {
+    sectionBadge:
+      (language === "ID" ? initialData?.section?.badgeId : initialData?.section?.badgeEn) ||
+      defaultContent.sectionBadge,
+    sectionTitle:
+      (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
+      defaultContent.sectionTitle,
+    sectionSubtitle:
+      (language === "ID" ? initialData?.section?.subtitleId : initialData?.section?.subtitleEn) ||
+      defaultContent.sectionSubtitle,
+    conventionalBadge:
+      (language === "ID"
+        ? initialData?.section?.extraContent?.conventionalBadgeId
+        : initialData?.section?.extraContent?.conventionalBadgeEn) || defaultContent.conventionalBadge,
+    diagnovaBadge:
+      (language === "ID"
+        ? initialData?.section?.extraContent?.diagnovaBadgeId
+        : initialData?.section?.extraContent?.diagnovaBadgeEn) || defaultContent.diagnovaBadge,
+    items: dynamicItems && dynamicItems.length > 0 ? dynamicItems : defaultContent.items,
+  };
 
   useEffect(() => {
     const el = sectionRef.current;

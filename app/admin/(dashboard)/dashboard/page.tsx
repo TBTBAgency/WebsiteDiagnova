@@ -165,11 +165,11 @@ export default function AdminOverviewDashboard() {
           </button>
 
           <Link
-            href="/admin/orders"
+            href="/admin/leads"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#087BEE] hover:bg-[#0667C7] text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
           >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Order Lab Baru</span>
+            <Users className="h-3.5 w-3.5" />
+            <span>Kelola Permohonan</span>
           </Link>
         </div>
       </div>
@@ -177,9 +177,9 @@ export default function AdminOverviewDashboard() {
       {/* 2. Key Metrics Overview (KPI Cards) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Permohonan Demo (Leads)"
-          value={data?.summary.leads.total ?? 0}
-          subtitle={`${data?.summary.leads.new ?? 0} prospek baru menunggu respon`}
+          title="Baru"
+          value={data?.summary.leads.new ?? 0}
+          subtitle="Prospek baru menunggu respon"
           icon={Users}
           iconBg="bg-blue-50"
           iconColor="text-[#087BEE]"
@@ -190,41 +190,41 @@ export default function AdminOverviewDashboard() {
         />
 
         <MetricCard
-          title="Lab Orders Pre-Analitik"
-          value={data?.summary.orders.total ?? 0}
-          subtitle={`${data?.summary.orders.received ?? 0} spesimen diterima di meja lab`}
-          icon={ClipboardList}
-          iconBg="bg-emerald-50"
-          iconColor="text-[#16A374]"
+          title="Dihubungi"
+          value={data?.summary.leads.contacted ?? 0}
+          subtitle="Prospek dalam tahap komunikasi"
+          icon={Phone}
+          iconBg="bg-amber-50"
+          iconColor="text-[#E5A23B]"
           badge={{
-            text: "LIS Aktif",
-            variant: "success",
+            text: (data?.summary.leads.contacted ?? 0) > 0 ? "Follow-up" : "Selesai",
+            variant: "warning",
           }}
         />
 
         <MetricCard
-          title="Order CITO / STAT"
-          value={data?.summary.orders.cito ?? 0}
-          subtitle="Prioritas gawat darurat (TAT 60 menit)"
-          icon={AlertTriangle}
-          iconBg="bg-rose-50"
-          iconColor="text-[#DC5A5A]"
-          badge={{
-            text: (data?.summary.orders.cito ?? 0) > 0 ? "Perhatian Khusus" : "Aman",
-            variant: (data?.summary.orders.cito ?? 0) > 0 ? "danger" : "default",
-          }}
-        />
-
-        <MetricCard
-          title="Pengguna Sistem Terotorisasi"
-          value={data?.summary.activeUsers ?? 0}
-          subtitle="Akses berbasis peran (RBAC & ISO 15189)"
-          icon={ShieldCheck}
+          title="Jadwal Demo"
+          value={data?.summary.leads.scheduled ?? 0}
+          subtitle="Jadwal presentasi teknis aktif"
+          icon={Calendar}
           iconBg="bg-purple-50"
           iconColor="text-purple-600"
           badge={{
-            text: "Terverifikasi",
-            variant: "purple",
+            text: (data?.summary.leads.scheduled ?? 0) > 0 ? "Terjadwal" : "Aman",
+            variant: (data?.summary.leads.scheduled ?? 0) > 0 ? "purple" : "default",
+          }}
+        />
+
+        <MetricCard
+          title="Selesai"
+          value={data?.summary.leads.completed ?? 0}
+          subtitle="Permohonan demo yang telah selesai"
+          icon={CheckCircle2}
+          iconBg="bg-emerald-50"
+          iconColor="text-[#16A374]"
+          badge={{
+            text: "Selesai",
+            variant: "success",
           }}
         />
       </div>
@@ -274,13 +274,13 @@ export default function AdminOverviewDashboard() {
               <div className="space-y-2">
                 {[
                   {
-                    label: "Prospek Baru",
+                    label: "Baru",
                     count: data?.summary.leads.new || 0,
                     color: "bg-[#087BEE]",
                     total: data?.summary.leads.total || 1,
                   },
                   {
-                    label: "Sedang Dihubungi",
+                    label: "Dihubungi",
                     count: data?.summary.leads.contacted || 0,
                     color: "bg-[#E5A23B]",
                     total: data?.summary.leads.total || 1,
@@ -292,7 +292,7 @@ export default function AdminOverviewDashboard() {
                     total: data?.summary.leads.total || 1,
                   },
                   {
-                    label: "Demo Selesai",
+                    label: "Selesai",
                     count: data?.summary.leads.completed || 0,
                     color: "bg-[#16A374]",
                     total: data?.summary.leads.total || 1,

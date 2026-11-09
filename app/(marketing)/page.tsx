@@ -8,6 +8,7 @@ import { InfrastructureSection } from "@/components/sections/InfrastructureSecti
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { CTABanner } from "@/components/sections/CTABanner";
+import { getCmsHomepageContent } from "@/lib/models/cms.model";
 
 export const metadata: Metadata = {
   title: "Diagnova — AI-Powered Laboratory Intelligence Platform",
@@ -15,32 +16,42 @@ export const metadata: Metadata = {
     "Solusi manajemen laboratorium medis end-to-end yang menjamin akurasi data, efisiensi operasional, dan kecepatan penyampaian hasil analisis klinis bagi Rumah Sakit & Klinis Modern.",
 };
 
-export default function HomePage() {
+// Revalidate page cache every 60 seconds (also on-demand revalidation on CMS save)
+export const revalidate = 60;
+
+export default async function HomePage() {
+  let cmsData = null;
+  try {
+    cmsData = await getCmsHomepageContent();
+  } catch (err) {
+    console.error("Gagal memuat data CMS, beralih ke konten default statis:", err);
+  }
+
   return (
     <>
       {/* 1. Hero Section */}
-      <Hero />
+      <Hero initialData={cmsData?.hero} />
 
       {/* 2. Trusted By Bar */}
-      <TrustedByBar />
+      <TrustedByBar initialData={cmsData?.trustedBy} />
 
       {/* 3. About Diagnova Section */}
-      <AboutSection />
+      <AboutSection initialData={cmsData?.about} />
 
       {/* 4. Comparison Section */}
-      <ComparisonSection />
+      <ComparisonSection initialData={cmsData?.comparison} />
 
       {/* 5. Workflow Section */}
-      <WorkflowSection />
+      <WorkflowSection initialData={cmsData?.workflow} />
 
       {/* 6. Infrastructure Section */}
-      <InfrastructureSection />
+      <InfrastructureSection initialData={cmsData?.infrastructure} />
 
       {/* 7. Customer Testimonials Section */}
-      <TestimonialsSection />
+      <TestimonialsSection initialData={cmsData?.testimonials} />
 
       {/* 8. Bottom CTA Banner */}
-      <CTABanner />
+      <CTABanner initialData={cmsData?.cta} />
     </>
   );
 }
