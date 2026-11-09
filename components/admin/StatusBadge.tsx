@@ -20,7 +20,7 @@ type BadgeType =
   | "specimen_rejected";
 
 interface StatusBadgeProps {
-  type: BadgeType | string;
+  type: BadgeType | string | number;
   label?: string;
   className?: string;
   showDot?: boolean;
@@ -30,7 +30,35 @@ const BADGE_MAP: Record<
   string,
   { label: string; bg: string; text: string; border: string; dot: string }
 > = {
-  // Leads
+  // Leads (Integer Status: 1 = Baru, 2 = Dihubungi, 3 = Jadwal Demo, 4 = Selesai)
+  "1": {
+    label: "Baru",
+    bg: "bg-blue-50/80",
+    text: "text-blue-700",
+    border: "border-blue-200/60",
+    dot: "bg-blue-600",
+  },
+  "2": {
+    label: "Dihubungi",
+    bg: "bg-amber-50/80",
+    text: "text-amber-700",
+    border: "border-amber-200/60",
+    dot: "bg-amber-500",
+  },
+  "3": {
+    label: "Jadwal Demo",
+    bg: "bg-purple-50/80",
+    text: "text-purple-700",
+    border: "border-purple-200/60",
+    dot: "bg-purple-500",
+  },
+  "4": {
+    label: "Selesai",
+    bg: "bg-emerald-50/80",
+    text: "text-emerald-700",
+    border: "border-emerald-200/60",
+    dot: "bg-emerald-500",
+  },
   lead_new: {
     label: "Baru",
     bg: "bg-blue-50/80",
@@ -206,8 +234,9 @@ export function StatusBadge({
   className,
   showDot = true,
 }: StatusBadgeProps) {
-  const config = BADGE_MAP[type.toLowerCase()] || {
-    label: label || type,
+  const key = String(type).toLowerCase();
+  const config = BADGE_MAP[key] || BADGE_MAP[String(type)] || {
+    label: label || String(type),
     bg: "bg-slate-100",
     text: "text-slate-700",
     border: "border-slate-200",

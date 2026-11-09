@@ -170,9 +170,41 @@ function getStepIcon(name: WorkflowStep["iconName"], className = "h-4 w-4") {
   }
 }
 
-export function WorkflowSection() {
+export interface WorkflowSectionProps {
+  initialData?: {
+    section?: any;
+  } | null;
+}
+
+export function WorkflowSection({ initialData }: WorkflowSectionProps = {}) {
   const { language } = useLanguage();
-  const workflowSteps = language === "ID" ? workflowStepsID : workflowStepsEN;
+  const baseSteps = language === "ID" ? workflowStepsID : workflowStepsEN;
+
+  const dynamicSteps: WorkflowStep[] | null = initialData?.section?.extraContent?.steps?.map((cmsStep: any, idx: number) => {
+    const fallback = baseSteps[idx] || baseSteps[0];
+    return {
+      ...fallback,
+      title: (language === "ID" ? cmsStep.titleId : cmsStep.titleEn) || fallback.title,
+      shortTitle: (language === "ID" ? cmsStep.shortTitleId : cmsStep.shortTitleEn) || fallback.shortTitle,
+      description: (language === "ID" ? cmsStep.descriptionId : cmsStep.descriptionEn) || fallback.description,
+    };
+  });
+
+  const workflowSteps: WorkflowStep[] = dynamicSteps && dynamicSteps.length > 0 ? dynamicSteps : baseSteps;
+
+  const sectionBadge =
+    (language === "ID" ? initialData?.section?.badgeId : initialData?.section?.badgeEn) ||
+    (language === "ID" ? "Alur Kerja" : "How It Works");
+
+  const sectionTitle =
+    (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
+    (language === "ID" ? "Bagaimana Diagnova Memandu Setiap Tetes Sampel" : "How Diagnova Guides a Drop of Blood");
+
+  const sectionSubtitle =
+    (language === "ID" ? initialData?.section?.subtitleId : initialData?.section?.subtitleEn) ||
+    (language === "ID"
+      ? "Pantau perjalanan spesimen laboratorium dengan transparansi penuh, dari registrasi hingga rilis hasil."
+      : "Monitor the specimen's journey with full visibility, from sample collection to physician release.");
 
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -365,30 +397,17 @@ export function WorkflowSection() {
           <div className="max-w-xl lg:max-w-2xl">
             <div className="mb-3.5 sm:mb-4">
               <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm">
-                {language === "ID" ? "Alur Kerja" : "How It Works"}
+                {sectionBadge}
               </span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-white tracking-tight leading-[1.18] sm:leading-[1.22]">
-              {language === "ID" ? (
-                <>
-                  Bagaimana Diagnova Memandu{" "}
-                  <br className="hidden sm:inline" />
-                  Setiap Tetes Sampel
-                </>
-              ) : (
-                <>
-                  How Diagnova Guides a <br className="hidden sm:inline" />
-                  Drop of Blood
-                </>
-              )}
+              {sectionTitle}
             </h2>
           </div>
 
           {/* Right: Subtitle */}
           <p className="max-w-xs sm:max-w-sm text-white/85 text-xs sm:text-sm lg:text-[15px] font-light leading-relaxed text-left lg:pt-8">
-            {language === "ID"
-              ? "Pantau perjalanan spesimen laboratorium dengan transparansi penuh, dari registrasi hingga rilis hasil."
-              : "Monitor the specimen's journey with full visibility, from sample collection to physician release."}
+            {sectionSubtitle}
           </p>
         </div>
 

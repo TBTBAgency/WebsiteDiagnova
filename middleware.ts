@@ -17,13 +17,37 @@ export async function middleware(request: NextRequest) {
 
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   let isValidSession = false;
+  let sessionPayload: Record<string, any> | null = null;
 
   if (sessionCookie) {
     try {
-      await jwtVerify(sessionCookie, JWT_SECRET);
+      const { payload } = await jwtVerify(sessionCookie, JWT_SECRET);
+      sessionPayload = payload as Record<string, any>;
       isValidSession = true;
     } catch {
       isValidSession = false;
+    }
+  }
+
+  // Jika sesi adalah Demo User, periksa masa aktif demo dan proteksi RBAC
+  if (isValidSession && sessionPayload?.role === "Demo User") {
+    // 1. Cek apakah masa aktif demo telah kedaluwarsa
+    if (
+      sessionPayload.demoExpiresAt &&
+      Date.now() > new Date(sessionPayload.demoExpiresAt).getTime()
+    ) {
+      const response = NextResponse.redirect(new URL("/demo-expired", request.url));
+      response.cookies.delete(SESSION_COOKIE_NAME);
+      return response;
+    }
+
+    // 2. Proteksi RBAC: Demo User dilarang membuka Pengguna (Users), CMS, atau Audit Logs
+    if (
+      pathname.startsWith("/admin/users") ||
+      pathname.startsWith("/admin/cms") ||
+      pathname.startsWith("/admin/audit-logs")
+    ) {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
   }
 

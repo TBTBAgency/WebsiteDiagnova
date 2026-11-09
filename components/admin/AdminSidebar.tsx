@@ -15,6 +15,7 @@ import {
   X,
   ChevronRight,
   UserCheck,
+  Globe,
 } from "lucide-react";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { AuthSessionPayload } from "@/types";
@@ -42,32 +43,18 @@ const NAV_ITEMS: NavItem[] = [
     badgeVariant: "blue",
   },
   {
-    name: "Lab Orders",
-    href: "/admin/orders",
-    icon: ClipboardList,
-    badge: "Pre-Analitik",
-    badgeVariant: "emerald",
-  },
-  {
-    name: "Analitik & QC",
-    href: "/admin/analytics-qc",
-    icon: Activity,
-    badge: "Fase 3",
-    badgeVariant: "amber",
-  },
-  {
-    name: "Nova AI Copilot",
-    href: "/admin/nova-ai",
-    icon: Sparkles,
-    badge: "Copilot",
+    name: "Pengguna (Users)",
+    href: "/admin/users",
+    icon: UserCheck,
+    badge: "Role",
     badgeVariant: "purple",
   },
   {
-    name: "Jejak Audit",
-    href: "/admin/audit-logs",
-    icon: ShieldCheck,
-    badge: "ISO 15189",
-    badgeVariant: "emerald",
+    name: "CMS Homepage",
+    href: "/admin/cms/homepage",
+    icon: Globe,
+    badge: "CMS",
+    badgeVariant: "blue",
   },
 ];
 

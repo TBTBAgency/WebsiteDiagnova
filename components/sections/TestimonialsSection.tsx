@@ -11,10 +11,50 @@ import {
 } from "@/content/testimonials";
 import { cn } from "@/lib/utils";
 
-export function TestimonialsSection() {
+export interface TestimonialsSectionProps {
+  initialData?: {
+    section?: any;
+    items?: any[];
+  } | null;
+}
+
+export function TestimonialsSection({ initialData }: TestimonialsSectionProps = {}) {
   const { language } = useLanguage();
-  const content =
-    language === "ID" ? testimonialsContentID : testimonialsContentEN;
+  const defaultContent = language === "ID" ? testimonialsContentID : testimonialsContentEN;
+
+  const dynamicItems =
+    initialData?.items && initialData.items.length > 0
+      ? initialData.items
+          .filter((t: any) => t.isActive !== false)
+          .map((t: any, idx: number) => {
+            const fallback = defaultContent.items[idx] || defaultContent.items[0];
+            return {
+              id: t.id || `testimonial-${idx + 1}`,
+              name: t.name,
+              role: language === "ID" ? t.roleId : t.roleEn || t.roleId,
+              organization: t.institution,
+              quote: language === "ID" ? t.quoteId : t.quoteEn,
+              imageSrc: t.avatarUrl || fallback.imageSrc,
+              readMoreLink: fallback.readMoreLink || "#",
+              accentGradient: fallback.accentGradient || "from-[#2A68B8] via-[#4F9DE6] to-[#7EC5F8]",
+            };
+          })
+      : null;
+
+  const content = {
+    sectionBadge:
+      (language === "ID" ? initialData?.section?.badgeId : initialData?.section?.badgeEn) ||
+      defaultContent.sectionBadge,
+    sectionTitle:
+      (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
+      defaultContent.sectionTitle,
+    sectionSubtitle:
+      (language === "ID" ? initialData?.section?.subtitleId : initialData?.section?.subtitleEn) ||
+      defaultContent.sectionSubtitle,
+    readMoreLabel: defaultContent.readMoreLabel,
+    partnerLogos: defaultContent.partnerLogos,
+    items: dynamicItems && dynamicItems.length > 0 ? dynamicItems : defaultContent.items,
+  };
   const sectionRef = useRef<HTMLElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);

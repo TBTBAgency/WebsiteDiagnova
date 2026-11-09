@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth-session";
 import { db } from "@/lib/db";
-import { getLeadMetrics, prismaToInstitutionType, prismaToLeadStatus } from "@/lib/models/lead.model";
+import { getLeadMetrics, prismaToInstitutionType } from "@/lib/models/lead.model";
 import { prismaPriorityToOrderPriority, prismaStatusToOrderStatus } from "@/lib/models/order.model";
 import { ApiResponse } from "@/types";
 import { OrderPriority, OrderStatus, SpecimenStatus } from "@prisma/client";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -16,7 +18,7 @@ export async function GET() {
       );
     }
 
-    // Eksekusi query database paralel untuk performa maksimal
+    // Eksekusi query database paralel
     const [
       leadMetrics,
       orderStats,
@@ -26,7 +28,6 @@ export async function GET() {
       recentLeads,
       recentOrders,
       institutionGroups,
-      recentAuditLogs,
     ] = await Promise.all([
       getLeadMetrics(),
       db.labOrder.groupBy({
@@ -41,7 +42,7 @@ export async function GET() {
         by: ["status"],
         _count: { status: true },
       }),
-      db.user.count({ where: { status: "ACTIVE" } }),
+      db.user.count({ where: { status: 1 } }),
       db.lead.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -59,11 +60,6 @@ export async function GET() {
       db.lead.groupBy({
         by: ["institutionType"],
         _count: { institutionType: true },
-      }),
-      db.auditLog.findMany({
-        take: 5,
-        orderBy: { createdAt: "desc" },
-        include: { user: { select: { name: true } } },
       }),
     ]);
 
@@ -119,7 +115,6 @@ export async function GET() {
       const dateStr = d.toISOString().split("T")[0];
       const label = d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
 
-      // Hitung data riil yang jatuh pada tanggal tersebut
       const leadsCount = recentLeads.filter(
         (l) => l.createdAt.toISOString().split("T")[0] === dateStr
       ).length;
@@ -144,7 +139,9 @@ export async function GET() {
       email: l.email,
       phone: l.phone,
       institutionType: prismaToInstitutionType[l.institutionType] || "other",
-      status: prismaToLeadStatus[l.status] || "new",
+      status: l.status,
+      voucherCode: l.voucherCode,
+      voucherExpiry: l.voucherExpiry ? l.voucherExpiry.toISOString() : null,
       createdAt: l.createdAt.toISOString(),
     }));
 
@@ -161,15 +158,6 @@ export async function GET() {
       itemsCount: o.items.length,
       specimensCount: o.specimens.length,
       receivedSpecimensCount: o.specimens.filter((s) => s.status === SpecimenStatus.RECEIVED_IN_LAB).length,
-    }));
-
-    // Format Recent Audit Logs
-    const formattedRecentAuditLogs = recentAuditLogs.map((a) => ({
-      id: a.id,
-      action: a.action,
-      entity: a.entity,
-      userName: a.user?.name || "Sistem Diagnova",
-      createdAt: a.createdAt.toISOString(),
     }));
 
     return NextResponse.json<ApiResponse>({
@@ -204,7 +192,7 @@ export async function GET() {
         institutionDistribution,
         recentLeads: formattedRecentLeads,
         recentOrders: formattedRecentOrders,
-        recentAuditLogs: formattedRecentAuditLogs,
+        recentAuditLogs: [],
       },
     });
   } catch (error) {

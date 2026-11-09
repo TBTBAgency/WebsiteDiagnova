@@ -1,9 +1,5 @@
-import { NextRequest } from "next/server";
-import { addLeadNoteController } from "@/lib/controllers/lead.controller";
+import { NextResponse } from "next/server";
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  return addLeadNoteController(request, params.id);
+export async function POST() {
+  return NextResponse.json({ success: true, message: "Lead notes telah dieliminasi." });
 }

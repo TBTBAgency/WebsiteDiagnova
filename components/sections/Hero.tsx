@@ -94,9 +94,48 @@ const slidesEN: SlideData[] = [
 
 const AUTOPLAY_INTERVAL = 5000; // 5 seconds per slide
 
-export function Hero() {
+export interface HeroProps {
+  initialData?: {
+    section?: any;
+    slides?: any[];
+  } | null;
+}
+
+export function Hero({ initialData }: HeroProps = {}) {
   const { language } = useLanguage();
-  const slides = language === "ID" ? slidesID : slidesEN;
+
+  const dynamicSlides =
+    initialData?.slides && initialData.slides.length > 0
+      ? initialData.slides
+          .filter((s: any) => s.isActive !== false)
+          .map((s: any, idx: number) => ({
+            id: s.id || idx + 1,
+            image: s.imageUrl || "/images/hero-bg-1.webp",
+            alt: s.imageAlt || "Diagnova Laboratory Intelligence Specialist",
+            title: language === "ID" ? s.titleId : s.titleEn,
+            objectPosition: idx === 0 ? "object-bottom" : "object-center",
+            badge: language === "ID" ? s.badgeId : s.badgeEn,
+            subtitle: language === "ID" ? s.subtitleId : s.subtitleEn,
+            ctaPrimaryText: language === "ID" ? s.ctaPrimaryTextId : s.ctaPrimaryTextEn,
+            ctaPrimaryUrl: s.ctaPrimaryUrl || "/request-demo",
+            ctaSecondaryText: language === "ID" ? s.ctaSecondaryTextId : s.ctaSecondaryTextEn,
+            ctaSecondaryUrl: s.ctaSecondaryUrl || "/modules",
+          }))
+      : null;
+
+  const slides = dynamicSlides && dynamicSlides.length > 0 ? dynamicSlides : (language === "ID" ? slidesID : slidesEN);
+
+  const sectionBadge =
+    (language === "ID" ? initialData?.section?.badgeId : initialData?.section?.badgeEn) ||
+    (language === "ID"
+      ? "Platform Intelijen Laboratorium Berbasis AI"
+      : "AI-Powered Laboratory Intelligence Platform");
+
+  const sectionSubtitle =
+    (language === "ID" ? initialData?.section?.subtitleId : initialData?.section?.subtitleEn) ||
+    (language === "ID"
+      ? "Sistem Informasi Laboratorium generasi baru yang menghubungkan instrumen medis secara otomatis dengan para klinisi. Mengubah data diagnostik kompleks menjadi keputusan medis yang cepat, akurat, dan transparan."
+      : "A next-generation Laboratory Information System autonomously connecting medical instruments with clinicians. Transforming complex diagnostic data into fast, accurate, and actionable medical decisions.");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [prevSlide, setPrevSlide] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -198,9 +237,7 @@ export function Hero() {
             )}
           >
             <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6 hover:bg-white/25 transition-colors">
-              {language === "ID"
-                ? "Platform Intelijen Laboratorium Berbasis AI"
-                : "AI-Powered Laboratory Intelligence Platform"}
+              {(slides[currentSlide] as any)?.badge || sectionBadge}
             </div>
           </div>
 
@@ -237,9 +274,7 @@ export function Hero() {
               isReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
             )}
           >
-            {language === "ID"
-              ? "Sistem Informasi Laboratorium generasi baru yang menghubungkan instrumen medis secara otomatis dengan para klinisi. Mengubah data diagnostik kompleks menjadi keputusan medis yang cepat, akurat, dan transparan."
-              : "A next-generation Laboratory Information System autonomously connecting medical instruments with clinicians. Transforming complex diagnostic data into fast, accurate, and actionable medical decisions."}
+            {(slides[currentSlide] as any)?.subtitle || sectionSubtitle}
           </p>
 
           {/* Static CTA Buttons with interactive hover & shimmer effects */}
@@ -250,20 +285,20 @@ export function Hero() {
             )}
           >
             <Link
-              href="/request-demo"
+              href={(slides[currentSlide] as any)?.ctaPrimaryUrl || "/request-demo"}
               className="group relative inline-flex items-center justify-center rounded-full bg-white text-slate-900 font-semibold px-8 py-3.5 text-sm sm:text-base hover:bg-slate-50 hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-xl active:scale-[0.98] overflow-hidden"
             >
               <span className="relative z-10">
-                {language === "ID" ? "Jadwalkan Demo" : "Schedule Demo"}
+                {(slides[currentSlide] as any)?.ctaPrimaryText || (language === "ID" ? "Jadwalkan Demo" : "Schedule Demo")}
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
             </Link>
 
             <Link
-              href="/modules"
+              href={(slides[currentSlide] as any)?.ctaSecondaryUrl || "/modules"}
               className="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 hover:bg-white/25 hover:border-white text-white font-semibold px-8 py-3.5 text-sm sm:text-base backdrop-blur-md hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98]"
             >
-              {language === "ID" ? "Jelajahi Modul" : "Explore Modules"}
+              {(slides[currentSlide] as any)?.ctaSecondaryText || (language === "ID" ? "Jelajahi Modul" : "Explore Modules")}
             </Link>
           </div>
 
