@@ -398,119 +398,134 @@ export default function SolutionsPage() {
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          INTERACTIVE SOLUTION EXPLORER (VERSUS 2 DENGAN ICON KONSISTEN)
+          INTERACTIVE SOLUTION EXPLORER: CLINICAL STUDIO CANVAS
+          (Integrated Docked Segmented Tabs + Expanded Micro-UI Workstation)
           ══════════════════════════════════════════════════════════════ */}
-      <section id="solutions-explorer" className="w-full bg-white py-12 sm:py-16 lg:py-20">
+      <section id="solutions-explorer" className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-2xl mb-8 sm:mb-10">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              {language === "ID" ? "Pilih Tipe Fasilitas & Solusi Spesifik" : "Select Facility Tier & Solutions"}
+          <div className="max-w-3xl mb-10 sm:mb-12">
+            <div className="mb-4">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Eksplorasi Solusi Spesialis" : "Specialized Solutions Explorer"}
+              </SectionBadge>
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.2]">
+              {language === "ID" ? "Pilih Tipe Fasilitas & Arsitektur Alur Kerja" : "Select Facility Tier & Workflow Architecture"}
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-600 font-normal">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed">
               {language === "ID"
-                ? "Klik solusi di bawah untuk melihat konfigurasi alur kerja, integrasi SIMRS, dan target performa klinis yang sesuai."
-                : "Select any solution below to explore workflow architecture, HIS integrations, and operational target metrics."}
+                ? "Konfigurasi alur kerja klinis spesifik yang disesuaikan dengan volume, regulasi, dan integrasi fasilitas Anda."
+                : "Explore purpose-built clinical architectures tailored to your facility's volume, regulatory standards, and HIS integrations."}
             </p>
           </div>
 
-          {/* 6 Clean Tab Selector Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-3 mb-8 sm:mb-10">
-            {solutionsList.map((s, idx) => {
-              const Icon = s.icon;
-              const isActive = selectedSolution === idx;
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setSelectedSolution(idx)}
-                  className={cn(
-                    "inline-flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border",
-                    isActive
-                      ? "bg-[#2764B8] text-white border-[#2764B8] shadow-sm"
-                      : "bg-[#F8FBFE] text-slate-700 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
-                  )}
-                >
-                  <Icon className={cn("h-4 w-4", isActive ? "text-white" : "text-[#2764B8]")} />
-                  <span>{s.tabLabel}</span>
-                </button>
-              );
-            })}
-          </div>
+          {/* Master Clinical Studio Window Container */}
+          <div className="rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(39,100,184,0.12)] overflow-hidden">
+            {/* 1. Docked Segmented Control Bar */}
+            <div className="bg-[#FAFBFD] px-4 sm:px-6 py-3 border-b border-slate-200/80 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+              <div className="inline-flex p-1 rounded-2xl bg-slate-100/90 border border-slate-200/60 gap-1 shrink-0">
+                {solutionsList.map((s, idx) => {
+                  const Icon = s.icon;
+                  const isActive = selectedSolution === idx;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setSelectedSolution(idx)}
+                      className={cn(
+                        "inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-[13px] font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap",
+                        isActive
+                          ? "bg-white text-[#2764B8] shadow-xs font-bold"
+                          : "text-slate-600 hover:text-slate-900"
+                      )}
+                    >
+                      <Icon className={cn("h-3.5 w-3.5", isActive ? "text-[#2764B8]" : "text-slate-400")} />
+                      <span>{s.tabLabel}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* Master Detail Focus Showcase Card */}
-          <div className="rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#F5F8FC] via-white to-[#F8FBFE] border border-slate-200/90 p-8 sm:p-10 lg:p-14 shadow-sm transition-all">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-              {/* Left Column: Clear Scannable Facts */}
-              <div className="lg:col-span-7 space-y-6">
-                <div>
-                  {/* Icon Box Konsisten Diagnova */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
-                      <CurrentSolIcon className="h-6 w-6" />
+              <div className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold font-mono shrink-0">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>ACTIVE CLINICAL WORKFLOW</span>
+              </div>
+            </div>
+
+            {/* 2. Studio Canvas Body */}
+            <div className="p-6 sm:p-8 lg:p-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                {/* Left Column: Scannable Clinical Facts (No Clunky Form Checklist) */}
+                <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+                  <div>
+                    {/* Facility Tier Badge */}
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/70 text-xs font-bold text-[#2764B8] mb-3">
+                      <CurrentSolIcon className="h-3.5 w-3.5" />
+                      <span>{currentSol.targetAudience}</span>
                     </div>
-                    <span className="text-xs font-semibold text-[#2764B8] bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-full">
-                      {currentSol.targetAudience}
-                    </span>
+
+                    <h3 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-snug">
+                      {currentSol.name}
+                    </h3>
+                    <p className="mt-1.5 text-sm sm:text-base font-semibold text-[#2764B8]">
+                      {currentSol.tagline}
+                    </p>
+                    <p className="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                      {currentSol.description}
+                    </p>
                   </div>
 
-                  <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-                    {currentSol.name}
-                  </h3>
-                  <p className="mt-2 text-sm sm:text-base font-semibold text-[#345DAB]">
-                    {currentSol.tagline}
-                  </p>
-                  <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
-                    {currentSol.description}
-                  </p>
-                </div>
-
-                {/* 3 Core Highlights (Easily Scannable) */}
-                <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    {language === "ID" ? "Kapabilitas Kunci Solusi:" : "Key Architectural Capabilities:"}
-                  </h4>
-                  <div className="space-y-2.5">
-                    {currentSol.highlights.map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs"
-                      >
-                        <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs sm:text-sm font-semibold text-slate-900">
-                            {h.title}
-                          </p>
-                          <p className="text-xs text-slate-600 font-normal mt-0.5 leading-relaxed">
-                            {h.desc}
-                          </p>
+                  {/* 3 Crisp Capability Chips */}
+                  <div className="space-y-2 pt-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
+                      {language === "ID" ? "Kapabilitas Arsitektur:" : "Core Capabilities:"}
+                    </span>
+                    <div className="space-y-2">
+                      {currentSol.highlights.map((h, i) => (
+                        <div key={i} className="flex items-center gap-2.5 text-xs text-slate-800">
+                          <span className="h-5 w-5 rounded-md bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shrink-0 shadow-2xs">
+                            <Check className="h-3 w-3 stroke-[2.5]" />
+                          </span>
+                          <span className="font-semibold text-slate-900">{h.title}</span>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 2 Big Stat Metrics (Proof Points) */}
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    {currentSol.metrics.map((m, i) => (
+                      <div key={i} className="p-3.5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 shadow-2xs">
+                        <span className="font-display text-2xl font-bold text-[#345DAB] block tracking-tight">
+                          {m.val}
+                        </span>
+                        <span className="text-xs font-medium text-slate-600 block mt-0.5 leading-snug">
+                          {m.label}
+                        </span>
                       </div>
                     ))}
                   </div>
+
+                  {/* CTA Action with continuous shine */}
+                  <div className="pt-2">
+                    <Link
+                      href="/request-demo"
+                      className="group relative inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-7 py-3 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] overflow-hidden w-fit"
+                    >
+                      <span className="animate-shine-continuous" />
+                      <span className="relative z-10">{language === "ID" ? "Konsultasikan Solusi Ini" : "Consult This Setup"}</span>
+                      <ArrowRight className="h-4 w-4 relative z-10 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </div>
                 </div>
 
-                {/* CTA Action with continuous shine */}
-                <div className="pt-2 flex flex-wrap items-center gap-4">
-                  <Link
-                    href="/request-demo"
-                    className="group relative inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-7 py-3.5 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] overflow-hidden"
-                  >
-                    <span className="animate-shine-continuous" />
-                    <span className="relative z-10">{language === "ID" ? "Konsultasikan Solusi Ini" : "Consult This Setup"}</span>
-                    <ArrowRight className="h-4 w-4 relative z-10 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                  <a
-                    href={`#${currentSol.id}`}
-                    className="text-xs font-semibold text-slate-600 hover:text-[#2764B8] transition-colors"
-                  >
-                    {language === "ID" ? "Lihat di Direktori ↓" : "View in Directory ↓"}
-                  </a>
-                </div>
-              </div>
+                {/* Right Column: Expanded High-Fidelity Micro-UI Workstation (lg:col-span-7) */}
+                <div className="lg:col-span-7 relative">
+                  {/* Subtle ambient aura behind workstation */}
+                  <div className="absolute -inset-2 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[32px] blur-xl pointer-events-none" />
 
-              {/* Right Column: Dynamic Discipline-Specific Micro-UI Stage */}
-              <div className="lg:col-span-5 rounded-[24px] sm:rounded-[28px] bg-white border border-slate-200/90 shadow-[0_16px_40px_-12px_rgba(39,100,184,0.12)] overflow-hidden transition-all duration-300">
+                  <div className="relative z-10 rounded-[22px] sm:rounded-[26px] bg-white border border-slate-200/90 shadow-[0_16px_40px_-12px_rgba(31,45,93,0.16)] overflow-hidden transition-all duration-300">
                 {/* 1. Hospital Laboratory Stage */}
                 {currentSol.id === "hospital-laboratory" && (
                   <div>
@@ -1022,7 +1037,9 @@ export default function SolutionsPage() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
       {/* ══════════════════════════════════════════════════════════════
           COMPLETE SOLUTIONS DIRECTORY: MODERN SAASET-STYLE BENTO GRID
