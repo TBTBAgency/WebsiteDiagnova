@@ -456,9 +456,14 @@ function RequestDemoForm() {
 
 export default function RequestDemoPage() {
   return (
-    <main className="bg-[#F8FAFC] min-h-[calc(100vh-80px)] py-8 sm:py-12 flex items-center justify-center">
-      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-8 lg:p-9">
+    <main
+      style={{
+        paddingTop: "calc(96px + var(--announcement-bar-height, 40px) + 28px)",
+      }}
+      className="bg-[#F8FAFC] min-h-screen pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8 transition-[padding-top] duration-300"
+    >
+      <div className="mx-auto w-full max-w-5xl">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/40 p-6 sm:p-8 lg:p-10">
           <Suspense fallback={<div className="h-80 animate-pulse rounded-2xl bg-slate-100" />}>
             <RequestDemoForm />
           </Suspense>
