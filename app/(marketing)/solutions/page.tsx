@@ -141,7 +141,7 @@ export default function SolutionsPage() {
         id="facility-solutions"
         className="scroll-mt-24 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
       >
-        <div className="mx-auto max-w-[1380px] px-4 sm:px-6 lg:px-8 w-full">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs font-semibold text-slate-700 mb-4">
@@ -485,7 +485,7 @@ export default function SolutionsPage() {
           FACILITY FIT MATRIX (TIER 1, 2, 3 MATCHING)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
-        <div className="mx-auto max-w-[1380px] px-4 sm:px-6 lg:px-8 w-full">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Header */}
           <div className="max-w-3xl mb-12 sm:mb-16">
             <div className="mb-4">
