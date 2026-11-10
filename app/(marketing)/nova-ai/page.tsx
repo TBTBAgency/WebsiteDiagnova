@@ -12,16 +12,13 @@ import {
   Stethoscope,
   TrendingDown,
   TrendingUp,
-  AlertTriangle,
   BadgeCheck,
   BellRing,
   RotateCcw,
   Server,
-  Layers,
   Lock,
   FileCheck2,
   Cpu,
-  Database,
   CheckCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -298,7 +295,7 @@ export default function NovaAIPage() {
   ];
 
   return (
-    <div className="w-full bg-white text-slate-800">
+    <div className="w-full bg-white text-slate-900">
       {/* ══════════════════════════════════════════════════════════════
           HERO SECTION: PageHero (Enterprise Medical SaaS Aesthetic)
           ══════════════════════════════════════════════════════════════ */}
@@ -357,13 +354,13 @@ export default function NovaAIPage() {
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          REGULATORY COMPLIANCE NOTICE BAR
+          HIGH-CONTRAST REGULATORY NOTICE BAR (Crisp & Clean)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FEF9EE] border-b border-amber-200/80 py-3.5 px-4 sm:px-6">
-        <div className="mx-auto max-w-[1560px] flex items-center justify-center gap-3 text-xs sm:text-sm text-amber-900 font-medium text-center">
-          <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-amber-700 shrink-0" />
-          <span>
-            <strong className="font-bold">
+      <section className="w-full bg-slate-900 text-white py-3.5 px-4 sm:px-6 border-b border-slate-800">
+        <div className="mx-auto max-w-[1560px] flex items-center justify-center gap-3 text-xs sm:text-sm font-medium text-center">
+          <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
+          <span className="text-slate-200">
+            <strong className="text-white font-bold">
               {language === "ID" ? "Standar Tata Kelola Klinis:" : "Clinical Governance Standard:"}
             </strong>{" "}
             {language === "ID"
@@ -375,7 +372,7 @@ export default function NovaAIPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: CLINICAL PATHOLOGY WORKSTATION (#workstation-demo)
-          (Tampilan Meja Kerja Dokter yang Otentik, Bersih, dan Presisi)
+          (High-Contrast, Crisp, Professional Medical SaaS Interface)
           ══════════════════════════════════════════════════════════════ */}
       <section id="workstation-demo" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
@@ -386,21 +383,21 @@ export default function NovaAIPage() {
                 {language === "ID" ? "Simulasi Meja Kerja Patologi Klinik" : "Pathologist Workstation Simulation"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-950">
               {language === "ID" ? (
                 <>Bagaimana Nova AI Mendukung Otorisasi Dokter</>
               ) : (
                 <>How Nova AI Powers Pathologist Sign-Off Workflows</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-700 font-normal">
               {language === "ID"
                 ? "Pilih profil spesimen klinis di bawah untuk melihat bagaimana Nova AI menghitung variasi delta-check longitudinal, menandai nilai kritis, dan menyiapkan draf narasi medis yang siap disahkan dokter."
                 : "Select a clinical specimen profile below to inspect how Nova AI calculates longitudinal delta-checks, flags panic values, and prepares clinical report impressions ready for pathologist authorization."}
             </p>
           </div>
 
-          {/* 4 Clean Clinical Specialty Tabs */}
+          {/* 4 High-Contrast Specialty Tabs */}
           <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-3 mb-8">
             {profiles.map((p, idx) => {
               const isActive = selectedProfileIdx === idx;
@@ -411,26 +408,26 @@ export default function NovaAIPage() {
                   type="button"
                   onClick={() => setSelectedProfileIdx(idx)}
                   className={cn(
-                    "inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border",
+                    "inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border",
                     isActive
-                      ? "bg-[#2764B8] text-white border-[#2764B8] shadow-sm"
-                      : "bg-[#F8FBFE] text-slate-700 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
+                      ? "bg-[#1E5299] text-white border-[#1E5299] shadow-sm"
+                      : "bg-white text-slate-800 border-slate-300 hover:bg-slate-100 hover:text-slate-950 hover:border-slate-400"
                   )}
                 >
-                  <Activity className={cn("h-4 w-4", isActive ? "text-white" : "text-[#2764B8]")} />
+                  <Activity className={cn("h-4 w-4", isActive ? "text-white" : "text-[#1E5299]")} />
                   <span>{language === "ID" ? p.tabLabel : p.tabLabelEn}</span>
                   {p.isPanicValue && (
                     <span
                       className={cn(
-                        "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase",
-                        isActive ? "bg-rose-500 text-white" : "bg-rose-100 text-rose-700"
+                        "text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        isActive ? "bg-rose-500 text-white" : "bg-rose-600 text-white"
                       )}
                     >
                       Panic
                     </span>
                   )}
                   {isDone && (
-                    <CheckCheck className={cn("h-4 w-4", isActive ? "text-emerald-300" : "text-emerald-600")} />
+                    <CheckCheck className={cn("h-4 w-4", isActive ? "text-emerald-300" : "text-emerald-700")} />
                   )}
                 </button>
               );
@@ -438,45 +435,45 @@ export default function NovaAIPage() {
           </div>
 
           {/* Master Clinical Pathology Workstation Card */}
-          <div className="rounded-[28px] sm:rounded-[32px] border border-slate-200/90 bg-white shadow-xs overflow-hidden">
-            {/* Header: Patient & Specimen Medical Context */}
-            <div className="bg-[#F8FBFE] border-b border-slate-200/80 px-6 sm:px-8 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-4">
+          <div className="rounded-[28px] sm:rounded-[32px] border-2 border-slate-300 bg-white shadow-sm overflow-hidden">
+            {/* Header: Patient & Specimen Medical Context (High Contrast) */}
+            <div className="bg-slate-100 border-b-2 border-slate-300 px-6 sm:px-8 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm">
                 <div>
-                  <span className="font-mono text-xs font-bold text-slate-400 block uppercase">No. Spesimen</span>
-                  <span className="font-mono font-bold text-[#2764B8]">{currentProfile.specimenNo}</span>
+                  <span className="font-mono text-xs font-bold text-slate-600 block uppercase">No. Spesimen</span>
+                  <span className="font-mono font-black text-[#1E5299] text-sm">{currentProfile.specimenNo}</span>
                 </div>
-                <div className="h-6 w-[1px] bg-slate-200 hidden sm:block" />
+                <div className="h-6 w-[2px] bg-slate-300 hidden sm:block" />
                 <div>
-                  <span className="font-bold text-slate-900 block">{currentProfile.patientName}</span>
-                  <span className="text-slate-500 text-xs font-light">
+                  <span className="font-bold text-slate-950 text-sm block">{currentProfile.patientName}</span>
+                  <span className="text-slate-700 text-xs font-medium">
                     {language === "ID" ? currentProfile.patientAgeGender : currentProfile.patientAgeGenderEn}
                   </span>
                 </div>
-                <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
+                <div className="h-6 w-[2px] bg-slate-300 hidden md:block" />
                 <div className="hidden md:block">
-                  <span className="text-slate-400 text-xs block">{language === "ID" ? "Ruangan Rawat" : "Ward"}</span>
-                  <span className="text-slate-700 text-xs font-medium">
+                  <span className="text-slate-600 text-xs font-bold block">{language === "ID" ? "Ruangan Rawat" : "Ward"}</span>
+                  <span className="text-slate-900 text-xs font-bold">
                     {language === "ID" ? currentProfile.ward : currentProfile.wardEn}
                   </span>
                 </div>
-                <div className="h-6 w-[1px] bg-slate-200 hidden lg:block" />
+                <div className="h-6 w-[2px] bg-slate-300 hidden lg:block" />
                 <div className="hidden lg:block">
-                  <span className="text-slate-400 text-xs block">{language === "ID" ? "Dokter Pengirim (DPJP)" : "Attending DPJP"}</span>
-                  <span className="text-slate-700 text-xs font-medium">{currentProfile.attendingDoc}</span>
+                  <span className="text-slate-600 text-xs font-bold block">{language === "ID" ? "Dokter Pengirim (DPJP)" : "Attending DPJP"}</span>
+                  <span className="text-slate-900 text-xs font-bold">{currentProfile.attendingDoc}</span>
                 </div>
               </div>
 
               {/* Status Verification Badge */}
               <div className="flex items-center gap-2">
                 {isAuthorized ? (
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
-                    <BadgeCheck className="h-4 w-4 text-emerald-600" />
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-700 text-white text-xs font-bold shadow-2xs">
+                    <BadgeCheck className="h-4 w-4 text-emerald-200" />
                     <span>{language === "ID" ? "Disahkan Dokter Sp.PK (E-Sign Valid)" : "Authorized by Pathologist (E-Sign)"}</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold border border-amber-200/80">
-                    <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500 text-white text-xs font-bold shadow-2xs">
+                    <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
                     <span>{language === "ID" ? "Menunggu Review Dokter Sp.PK" : "Pending Pathologist Review"}</span>
                   </span>
                 )}
@@ -484,20 +481,20 @@ export default function NovaAIPage() {
             </div>
 
             {/* Content Body: Split View (Data Analit vs Draf Catatan Patologi) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-200/80 items-stretch">
-              {/* Kolom Kiri: Parameter, Nilai & Visual Reference Gauge */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y-2 lg:divide-y-0 lg:divide-x-2 divide-slate-300 items-stretch">
+              {/* Kolom Kiri: Parameter, Nilai & Reference Range Display */}
               <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white">
                 <div>
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                    <span className="text-xs font-black text-slate-700 uppercase tracking-wider font-mono">
                       {currentProfile.analyteCode}
                     </span>
                     <span
                       className={cn(
-                        "text-xs font-bold px-3 py-0.5 rounded-full border uppercase tracking-wider",
+                        "text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider text-white shadow-2xs",
                         currentProfile.statusType === "critical"
-                          ? "bg-rose-50 text-rose-700 border-rose-200"
-                          : "bg-amber-50 text-amber-800 border-amber-200"
+                          ? "bg-rose-600"
+                          : "bg-amber-600"
                       )}
                     >
                       {language === "ID" ? currentProfile.statusLabel : currentProfile.statusLabelEn}
@@ -506,78 +503,72 @@ export default function NovaAIPage() {
 
                   {/* Nilai Pengujian Utama */}
                   <div className="mt-5 space-y-1">
-                    <h3 className="text-lg font-bold text-slate-900">
+                    <h3 className="text-xl font-bold text-slate-950">
                       {language === "ID" ? currentProfile.parameterName : currentProfile.parameterNameEn}
                     </h3>
                     <div className="flex items-baseline gap-2 pt-1">
-                      <span className="font-mono text-4xl sm:text-5xl font-extrabold text-[#345DAB] tracking-tight">
+                      <span className="font-mono text-5xl font-black text-[#1E5299] tracking-tight">
                         {currentProfile.currentValue}
                       </span>
-                      <span className="text-sm sm:text-base font-semibold text-slate-500 font-mono">
+                      <span className="text-base font-bold text-slate-700 font-mono">
                         {currentProfile.unit}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 font-mono pt-1">
-                      {language === "ID" ? "Rentang Rujukan:" : "Reference Interval:"} {currentProfile.refInterval}
-                    </p>
                   </div>
 
-                  {/* Visual Reference Gauge Bar */}
-                  <div className="mt-6 pt-5 border-t border-slate-100 space-y-2">
-                    <div className="flex justify-between text-[11px] font-medium text-slate-400">
-                      <span>{language === "ID" ? "Bawah" : "Low"}</span>
-                      <span className="text-emerald-700 font-semibold">{language === "ID" ? "Rentang Rujukan Normal" : "Normal Reference Range"}</span>
-                      <span>{language === "ID" ? "Atas" : "High"}</span>
+                  {/* High-Contrast Reference Range Comparison Block */}
+                  <div className="mt-6 pt-5 border-t border-slate-200 space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span className="text-slate-700">{language === "ID" ? "Rentang Rujukan Normal:" : "Normal Reference Range:"}</span>
+                      <span className="font-mono text-slate-950 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
+                        {currentProfile.refInterval}
+                      </span>
                     </div>
-                    <div className="relative h-2.5 w-full rounded-full bg-slate-100 overflow-hidden flex border border-slate-200/60">
-                      <div className="w-1/4 bg-amber-200" />
-                      <div className="w-2/4 bg-emerald-200" />
-                      <div className="w-1/4 bg-rose-200" />
-                    </div>
-                    {/* Gauge Marker */}
-                    <div className="relative w-full h-4">
-                      <div
-                        className="absolute top-0 -translate-x-1/2 flex flex-col items-center transition-all duration-300"
-                        style={{ left: `${currentProfile.gaugePercent}%` }}
-                      >
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#2764B8] ring-2 ring-white shadow-xs" />
-                        <span className="text-[10px] font-bold text-[#2764B8] font-mono mt-0.5">
-                          {currentProfile.currentValue}
-                        </span>
+
+                    {/* Clean High-Contrast Range Track */}
+                    <div className="space-y-1.5">
+                      <div className="relative h-3 w-full rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+                        {/* Target normal zone highlighted */}
+                        <div className="absolute inset-y-0 left-[25%] right-[25%] bg-slate-400" />
+                      </div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-600">
+                        <span>{language === "ID" ? "Bawah" : "Low"}</span>
+                        <span className="text-slate-900">{language === "ID" ? "Rentang Acuan Sehat" : "Healthy Reference"}</span>
+                        <span>{language === "ID" ? "Atas" : "High"}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Komparasi Delta-Check Riwayat Serial */}
-                <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/90 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-                    <span className="flex items-center gap-1.5 text-[#345DAB]">
-                      <TrendingUp className="h-4 w-4 text-[#2764B8]" />
+                {/* Komparasi Delta-Check Riwayat Serial (High-Contrast White Card) */}
+                <div className="p-4 rounded-2xl bg-slate-100 border-2 border-slate-300 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-900">
+                    <span className="flex items-center gap-1.5 text-[#1E5299]">
+                      <TrendingUp className="h-4 w-4 text-[#1E5299]" />
                       {language === "ID" ? "Kalkulasi Variasi Delta-Check:" : "Longitudinal Delta Variance:"}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-[11px] font-mono text-slate-700">
                       {language === "ID" ? currentProfile.prevTimestamp : currentProfile.prevTimestampEn}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <div className="text-xs text-slate-600">
+                    <div className="text-xs text-slate-800 font-medium">
                       {language === "ID" ? "Baseline Sebelumnya:" : "Prior Baseline:"}{" "}
-                      <strong className="font-mono text-slate-900">{currentProfile.prevValue}</strong>
+                      <strong className="font-mono text-slate-950 text-sm">{currentProfile.prevValue}</strong>
                     </div>
                     <div
                       className={cn(
-                        "inline-flex items-center gap-1 text-xs font-bold font-mono px-2.5 py-1 rounded-lg",
+                        "inline-flex items-center gap-1 text-xs font-black font-mono px-3 py-1 rounded-lg text-white shadow-2xs",
                         currentProfile.isDeltaDrop
-                          ? "bg-rose-100 text-rose-700"
-                          : "bg-amber-100 text-amber-800"
+                          ? "bg-rose-700"
+                          : "bg-amber-700"
                       )}
                     >
                       {currentProfile.isDeltaDrop ? (
-                        <TrendingDown className="h-3.5 w-3.5" />
+                        <TrendingDown className="h-4 w-4" />
                       ) : (
-                        <TrendingUp className="h-3.5 w-3.5" />
+                        <TrendingUp className="h-4 w-4" />
                       )}
                       <span>{currentProfile.deltaText} ({currentProfile.deltaPercent})</span>
                     </div>
@@ -586,44 +577,44 @@ export default function NovaAIPage() {
               </div>
 
               {/* Kolom Kanan: Draf Interpretasi Patologi & Tombol Verifikasi Dokter */}
-              <div className="lg:col-span-7 p-6 sm:p-8 bg-[#FAFBFD] flex flex-col justify-between space-y-6">
+              <div className="lg:col-span-7 p-6 sm:p-8 bg-slate-50 flex flex-col justify-between space-y-6">
                 <div className="space-y-5">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
-                    <div className="flex items-center gap-2 text-[#2764B8]">
-                      <Stethoscope className="h-4 w-4" />
-                      <span className="text-xs font-bold uppercase tracking-wider">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-300">
+                    <div className="flex items-center gap-2 text-[#1E5299]">
+                      <Stethoscope className="h-5 w-5" />
+                      <span className="text-xs font-black uppercase tracking-wider text-slate-900">
                         {language === "ID" ? "Draf Hasil Verifikasi Patologi Klinik" : "Pathology Clinical Interpretation Draft"}
                       </span>
                     </div>
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-xs font-mono font-bold text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-300">
                       CDSS ENGINE v2.4
                     </span>
                   </div>
 
                   {/* Kesan Klinis Patologi */}
-                  <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                  <div className="p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-2xs space-y-2">
+                    <span className="text-xs font-black text-slate-950 uppercase tracking-wider block">
                       {language === "ID" ? "1. Kesan Patologi (Clinical Impression):" : "1. Clinical Impression:"}
                     </span>
-                    <p className="text-sm text-slate-800 leading-relaxed font-normal">
+                    <p className="text-sm text-slate-900 leading-relaxed font-medium">
                       &ldquo;{language === "ID" ? currentProfile.clinicalImpression : currentProfile.clinicalImpressionEn}&rdquo;
                     </p>
                   </div>
 
                   {/* Rekomendasi Korelasi Klinis */}
-                  <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
-                    <span className="text-xs font-bold text-[#345DAB] uppercase tracking-wider block">
+                  <div className="p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-2xs space-y-2">
+                    <span className="text-xs font-black text-[#1E5299] uppercase tracking-wider block">
                       {language === "ID" ? "2. Rekomendasi Korelasi Tambahan:" : "2. Correlative Recommendation:"}
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-light">
+                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
                       {language === "ID" ? currentProfile.clinicalRecommendation : currentProfile.clinicalRecommendationEn}
                     </p>
                   </div>
 
                   {/* Status Alert Terkirim (Jika dipicu) */}
                   {isAlertSent && (
-                    <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-center gap-2.5 animate-fadeIn">
-                      <BellRing className="h-4 w-4 text-rose-600 shrink-0" />
+                    <div className="p-4 rounded-xl bg-rose-700 text-white text-xs font-bold flex items-center gap-3 shadow-xs animate-fadeIn">
+                      <BellRing className="h-5 w-5 text-rose-200 shrink-0" />
                       <span>
                         {language === "ID"
                           ? `Alert Nilai Kritis telah disiarkan ke WhatsApp & SIMRS ${currentProfile.attendingDoc} (Protokol KARS SKP 2.2).`
@@ -634,11 +625,11 @@ export default function NovaAIPage() {
 
                   {/* Status E-Sign Berhasil (Jika diverifikasi) */}
                   {isAuthorized && (
-                    <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2.5 animate-fadeIn">
-                      <BadgeCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <div className="p-4 rounded-xl bg-emerald-800 text-white text-xs flex items-center gap-3 shadow-xs animate-fadeIn">
+                      <BadgeCheck className="h-5 w-5 text-emerald-300 shrink-0" />
                       <div>
-                        <strong>{language === "ID" ? "Laporan Laboratorium Resmi Disahkan" : "Official Laboratory Report Authorized"}</strong>
-                        <div className="text-[11px] text-emerald-700">
+                        <strong className="block text-sm">{language === "ID" ? "Laporan Laboratorium Resmi Disahkan" : "Official Laboratory Report Authorized"}</strong>
+                        <div className="text-emerald-100 text-xs mt-0.5">
                           {language === "ID"
                             ? "Ditandatangani secara elektronik oleh dr. Sp.PK • Tersertifikasi BSrE & Rilis ke SIMRS"
                             : "Digitally signed by Attending Clinical Pathologist • BSrE Certified & Released to EMR"}
@@ -648,17 +639,17 @@ export default function NovaAIPage() {
                   )}
                 </div>
 
-                {/* Tombol Aksi Dokter (Tactile Enterprise Controls) */}
-                <div className="pt-4 border-t border-slate-200/80 space-y-2.5">
+                {/* Tombol Aksi Dokter (High Contrast Solid Buttons) */}
+                <div className="pt-4 border-t-2 border-slate-300 space-y-2.5">
                   <div className="flex flex-wrap items-center gap-3">
                     <button
                       type="button"
                       onClick={handleToggleAuthorize}
                       className={cn(
-                        "flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-[0.98]",
+                        "flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer active:scale-[0.98]",
                         isAuthorized
-                          ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
-                          : "bg-[#2764B8] hover:bg-[#1E5299] text-white"
+                          ? "bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-400"
+                          : "bg-[#1E5299] hover:bg-[#153B6F] text-white"
                       )}
                     >
                       <BadgeCheck className="h-4 w-4" />
@@ -675,10 +666,10 @@ export default function NovaAIPage() {
                         onClick={handleDispatchAlert}
                         disabled={isAlertSent}
                         className={cn(
-                          "inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border cursor-pointer active:scale-[0.98]",
+                          "inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer active:scale-[0.98]",
                           isAlertSent
-                            ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-                            : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+                            ? "bg-slate-200 text-slate-500 border-slate-300 cursor-not-allowed"
+                            : "bg-rose-600 text-white border-rose-700 hover:bg-rose-700 shadow-xs"
                         )}
                       >
                         <BellRing className="h-4 w-4" />
@@ -694,13 +685,13 @@ export default function NovaAIPage() {
                       type="button"
                       onClick={handleResetProfile}
                       title={language === "ID" ? "Atur Ulang Status" : "Reset Status"}
-                      className="p-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="p-3.5 rounded-xl border-2 border-slate-300 text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
                     >
                       <RotateCcw className="h-4 w-4" />
                     </button>
                   </div>
 
-                  <p className="text-[11px] text-slate-400 text-center font-light">
+                  <p className="text-xs text-slate-600 text-center font-medium">
                     {language === "ID"
                       ? "Interaksi simulasi: Klik tombol di atas untuk menguji pengesahan E-Sign dokter dan transmisi alert darurat."
                       : "Simulation interactive: Click above to test pathologist e-sign authorization and critical panic alert dispatch."}
@@ -714,11 +705,11 @@ export default function NovaAIPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: 4-STAGE LABORATORY PIPELINE (#how-it-works)
-          (Alur Nyata Laboratorium Medis, Bersih & Profesional)
+          (High-Contrast, Crisp Card Borders & Bold Typography)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="how-it-works"
-        className="scroll-mt-28 w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
+        className="scroll-mt-28 w-full bg-slate-50 py-16 sm:py-20 lg:py-24 border-t-2 border-slate-200"
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Header */}
@@ -728,14 +719,14 @@ export default function NovaAIPage() {
                 {language === "ID" ? "Alur Kerja 4 Tahap" : "4-Stage Clinical Pipeline"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-950">
               {language === "ID" ? (
                 <>Alur Kerja Terstruktur yang Menjamin Presisi & Keselamatan Pasien</>
               ) : (
                 <>Structured Pipeline Safeguarding Clinical Integrity & Accuracy</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-700 font-normal">
               {language === "ID"
                 ? "Dari pembacaan instrumen analitik hingga otorisasi digital dokter spesialis, setiap tahap didesain dengan ketertelusuran penuh dan kepatuhan akreditasi rumah sakit."
                 : "From direct analyzer telemetry to certified pathologist authorization, every phase is engineered with full audit traceability and hospital accreditation standards."}
@@ -749,29 +740,29 @@ export default function NovaAIPage() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
+                  className="rounded-[28px] bg-white border-2 border-slate-200 p-7 shadow-xs hover:border-[#1E5299] hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
-                    <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
+                    <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#1E5299] flex items-center justify-center shadow-xs">
                       <IconComponent className="h-6 w-6" />
                     </div>
 
                     <div>
-                      <span className="text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full inline-block mb-2 font-mono">
+                      <span className="text-xs font-black text-[#1E5299] bg-blue-100 px-3 py-1 rounded-full inline-block mb-2 font-mono">
                         {language === "ID" ? item.stepLabel : item.stepLabelEn}
                       </span>
-                      <h3 className="font-display text-lg font-bold text-slate-900 leading-snug">
+                      <h3 className="font-display text-lg font-bold text-slate-950 leading-snug">
                         {item.title}
                       </h3>
-                      <p className="text-xs text-slate-500 font-light leading-relaxed mt-2.5">
+                      <p className="text-xs text-slate-700 font-normal leading-relaxed mt-2.5">
                         {item.desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <div className="pt-4 mt-5 border-t border-slate-200 flex items-center justify-between text-xs font-mono font-bold text-slate-600">
                     <span>{item.protocol}</span>
-                    <Check className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <Check className="h-4 w-4 text-[#1E5299]" />
                   </div>
                 </div>
               );
@@ -782,11 +773,11 @@ export default function NovaAIPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: CLINICAL GOVERNANCE & RESPONSIBILITY MATRIX (#ai-doctor)
-          (Pembagian Peran Terstruktur & Akuntabilitas Hukum)
+          (High Contrast Split View & Sharp Borders)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="ai-doctor"
-        className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
+        className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t-2 border-slate-200 overflow-hidden"
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full space-y-12 sm:space-y-16">
           {/* Section Header */}
@@ -796,41 +787,41 @@ export default function NovaAIPage() {
                 {language === "ID" ? "Tata Kelola Klinis & Akuntabilitas" : "Clinical Governance & Legal Accountability"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-950">
               {language === "ID" ? (
                 <>Mengapa Dokter Tetap Menjadi Otoritas Klinis Tertinggi?</>
               ) : (
                 <>Why Physicians Retain Absolute Medical Authority</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-700 font-normal">
               {language === "ID"
                 ? "Dalam tata kelola klinis modern, sistem komputasi mempercepat pemrosesan data, sementara pertimbangan diagnosis holistik dan tanggung jawab hukum mutlak berada di tangan dokter spesialis teregistrasi."
                 : "In modern clinical governance, computational systems accelerate data processing, while holistic diagnostic judgment and full legal accountability remain with licensed medical practitioners."}
             </p>
           </div>
 
-          {/* Side-by-Side Responsibility Matrix */}
+          {/* Side-by-Side Responsibility Matrix (High Contrast Cards) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Box A: Sistem Nova AI */}
-            <div className="rounded-[28px] bg-[#F8FBFE] border border-blue-100/90 p-7 sm:p-9 space-y-6 shadow-2xs">
-              <div className="flex items-center gap-3.5 pb-4 border-b border-blue-100/80">
-                <div className="h-12 w-12 rounded-2xl bg-white border border-blue-200/70 text-[#2764B8] flex items-center justify-center shadow-xs">
+            <div className="rounded-[28px] bg-white border-2 border-slate-300 p-7 sm:p-9 space-y-6 shadow-xs">
+              <div className="flex items-center gap-3.5 pb-4 border-b-2 border-slate-200">
+                <div className="h-12 w-12 rounded-2xl bg-blue-100 text-[#1E5299] flex items-center justify-center shadow-xs">
                   <Cpu className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900">
+                  <h3 className="font-display text-xl font-bold text-slate-950">
                     {language === "ID" ? "Sistem Nova AI (Decision Support)" : "Nova AI System (Decision Support)"}
                   </h3>
-                  <p className="text-xs text-slate-500 font-light">
+                  <p className="text-xs text-slate-600 font-semibold">
                     {language === "ID" ? "Komputasi Presisi & Deteksi Deviasi" : "High-Speed Computing & Variance Detection"}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <div className="space-y-3 text-xs sm:text-sm text-slate-800">
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-[#1E5299] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Memindai ribuan hasil lab serial pasien dalam hitungan milidetik secara konsisten."
@@ -838,7 +829,7 @@ export default function NovaAIPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-[#1E5299] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Menghitung deviasi delta-check otomatis terhadap baseline individual pasien terdahulu."
@@ -846,7 +837,7 @@ export default function NovaAIPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-[#1E5299] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Menyiapkan draf narasi interpretasi terstruktur untuk mempercepat review dokter."
@@ -854,7 +845,7 @@ export default function NovaAIPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-[#1E5299] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Menyiarkan alarm nilai kritis (Panic Values) ke dokter jaga < 15 menit sesuai KARS."
@@ -864,11 +855,11 @@ export default function NovaAIPage() {
               </div>
 
               {/* Batasan Mutlak */}
-              <div className="pt-4 border-t border-blue-100/80 space-y-2 text-xs text-slate-600">
-                <span className="font-bold text-slate-400 uppercase tracking-wider block">
+              <div className="pt-4 border-t-2 border-slate-200 space-y-2 text-xs text-slate-800">
+                <span className="font-black text-slate-900 uppercase tracking-wider block">
                   {language === "ID" ? "Batasan Regulasi Mutlak:" : "Strict Regulatory Limits:"}
                 </span>
-                <p className="text-slate-600 font-light leading-relaxed">
+                <p className="text-slate-700 font-medium leading-relaxed">
                   {language === "ID"
                     ? "Nova AI tidak memiliki wewenang hukum untuk menegakkan diagnosis definitif mandiri atau meresepkan terapi obat."
                     : "Nova AI possesses zero legal authority to issue autonomous definitive diagnoses or prescribe therapeutic drugs."}
@@ -877,24 +868,24 @@ export default function NovaAIPage() {
             </div>
 
             {/* Box B: Dokter Spesialis Patologi Klinik & DPJP */}
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 space-y-6 shadow-xs">
-              <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
-                <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-xs">
+            <div className="rounded-[28px] bg-white border-2 border-slate-300 p-7 sm:p-9 space-y-6 shadow-xs">
+              <div className="flex items-center gap-3.5 pb-4 border-b-2 border-slate-200">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shadow-xs">
                   <Stethoscope className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold text-slate-900">
+                  <h3 className="font-display text-xl font-bold text-slate-950">
                     {language === "ID" ? "Dokter Sp.PK & DPJP (Otoritas Medis)" : "Pathologist & Attending Physician"}
                   </h3>
-                  <p className="text-xs text-slate-500 font-light">
+                  <p className="text-xs text-slate-600 font-semibold">
                     {language === "ID" ? "Pertimbangan Holistik & Akuntabilitas Hukum" : "Holistic Clinical Judgment & Legal Responsibility"}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-3 text-xs sm:text-sm text-slate-700">
+              <div className="space-y-3 text-xs sm:text-sm text-slate-800">
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Mengkorelasikan temuan laboratorium dengan anamnesis dan kondisi fisik riil pasien."
@@ -902,7 +893,7 @@ export default function NovaAIPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Menilai, mengedit, atau menolak draf narasi interpretasi yang diajukan sistem."
@@ -910,7 +901,7 @@ export default function NovaAIPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Menetapkan diagnosis medis definitif dan merumuskan rencana terapi penanganan."
@@ -918,7 +909,7 @@ export default function NovaAIPage() {
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
                       ? "Mengesahkan lembar hasil laboratorium dengan tanda tangan digital resmi (BSrE)."
@@ -928,11 +919,11 @@ export default function NovaAIPage() {
               </div>
 
               {/* Landasan Hukum */}
-              <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-600">
-                <span className="font-bold text-slate-400 uppercase tracking-wider block">
+              <div className="pt-4 border-t-2 border-slate-200 space-y-2 text-xs text-slate-800">
+                <span className="font-black text-slate-900 uppercase tracking-wider block">
                   {language === "ID" ? "Landasan Hukum Republik Indonesia:" : "Indonesian Statutory Foundation:"}
                 </span>
-                <p className="text-slate-600 font-light leading-relaxed">
+                <p className="text-slate-700 font-medium leading-relaxed">
                   {language === "ID"
                     ? "Berdasarkan UU Kesehatan No. 17/2023, seluruh pertimbangan klinis dan tanggung jawab hukum medis melekat pada dokter yang memiliki STR dan SIP aktif."
                     : "Under Healthcare Law No. 17/2023, all medical decisions and legal responsibilities rest exclusively with certified and registered physicians."}
@@ -941,33 +932,33 @@ export default function NovaAIPage() {
             </div>
           </div>
 
-          {/* 3 Regulatory Standards Trust Strip */}
+          {/* 3 High-Contrast Regulatory Trust Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 flex items-center gap-3">
-              <ShieldCheck className="h-5 w-5 text-[#2764B8] shrink-0" />
+            <div className="p-5 rounded-2xl bg-white border-2 border-slate-300 shadow-xs flex items-center gap-3">
+              <ShieldCheck className="h-6 w-6 text-[#1E5299] shrink-0" />
               <div>
-                <span className="font-bold text-xs text-slate-900 block">UU Kesehatan No. 17/2023</span>
-                <span className="text-[11px] text-slate-500 font-light">
+                <span className="font-black text-xs text-slate-950 block">UU Kesehatan No. 17/2023</span>
+                <span className="text-xs text-slate-700 font-medium">
                   {language === "ID" ? "Kepastian hukum tanggung jawab medis" : "Legal medical accountability"}
                 </span>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 flex items-center gap-3">
-              <Lock className="h-5 w-5 text-[#2764B8] shrink-0" />
+            <div className="p-5 rounded-2xl bg-white border-2 border-slate-300 shadow-xs flex items-center gap-3">
+              <Lock className="h-6 w-6 text-[#1E5299] shrink-0" />
               <div>
-                <span className="font-bold text-xs text-slate-900 block">Permenkes No. 24/2022</span>
-                <span className="text-[11px] text-slate-500 font-light">
+                <span className="font-black text-xs text-slate-950 block">Permenkes No. 24/2022</span>
+                <span className="text-xs text-slate-700 font-medium">
                   {language === "ID" ? "Interoperabilitas RME & SATUSEHAT" : "EMR & SATUSEHAT interoperability"}
                 </span>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 flex items-center gap-3">
-              <Activity className="h-5 w-5 text-[#2764B8] shrink-0" />
+            <div className="p-5 rounded-2xl bg-white border-2 border-slate-300 shadow-xs flex items-center gap-3">
+              <Activity className="h-6 w-6 text-[#1E5299] shrink-0" />
               <div>
-                <span className="font-bold text-xs text-slate-900 block">KARS SKP 2.2 & ISO 15189</span>
-                <span className="text-[11px] text-slate-500 font-light">
+                <span className="font-black text-xs text-slate-950 block">KARS SKP 2.2 & ISO 15189</span>
+                <span className="text-xs text-slate-700 font-medium">
                   {language === "ID" ? "Prosedur baku pelaporan nilai kritis" : "Accredited panic value triage"}
                 </span>
               </div>
