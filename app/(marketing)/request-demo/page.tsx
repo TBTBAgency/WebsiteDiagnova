@@ -2,6 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import {
   Mail,
@@ -16,11 +17,153 @@ import {
   Layers,
   Sparkles,
   Lock,
+  Building2,
 } from "lucide-react";
 import { demoRequestSchema } from "@/lib/validations";
 import { InstitutionType } from "@/types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
+
+// ─── Inline Logoipsum Vector Logos (White Monochrome for Trust Marquee) ───
+function LogoipsumOne() {
+  return (
+    <svg className="h-5 sm:h-6 w-auto text-white" viewBox="0 0 142 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.5 0L24.6244 7V21L12.5 28L0.375645 21V7L12.5 0Z" fill="currentColor" fillOpacity="0.85" />
+      <path d="M12.5 6L19 9.8V17.2L12.5 21L6 17.2V9.8L12.5 6Z" fill="#1D5496" />
+      <text x="36" y="20" fill="currentColor" fontSize="17" fontWeight="700" letterSpacing="-0.5px" fontFamily="system-ui, sans-serif">
+        logoipsum
+      </text>
+    </svg>
+  );
+}
+
+function LogoipsumTwo() {
+  return (
+    <svg className="h-5 sm:h-6 w-auto text-white" viewBox="0 0 146 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="13" stroke="currentColor" strokeWidth="2.5" strokeOpacity="0.85" />
+      <circle cx="14" cy="14" r="6" fill="currentColor" fillOpacity="0.9" />
+      <circle cx="21" cy="7" r="3" fill="#60A5FA" />
+      <text x="38" y="20" fill="currentColor" fontSize="17" fontWeight="700" letterSpacing="-0.5px" fontFamily="system-ui, sans-serif">
+        logoipsum
+      </text>
+    </svg>
+  );
+}
+
+function LogoipsumThree() {
+  return (
+    <div className="flex items-center">
+      <Image
+        src="/images/trust-logo.svg"
+        alt="Partner Logo"
+        width={110}
+        height={28}
+        className="h-5 sm:h-5.5 w-auto object-contain brightness-0 invert opacity-90"
+      />
+    </div>
+  );
+}
+
+function LogoipsumFour() {
+  return (
+    <svg className="h-5 sm:h-6 w-auto text-white" viewBox="0 0 144 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="5" width="10" height="18" rx="3" fill="currentColor" fillOpacity="0.85" />
+      <rect x="15" y="10" width="10" height="13" rx="3" fill="#60A5FA" fillOpacity="0.9" />
+      <text x="36" y="20" fill="currentColor" fontSize="17" fontWeight="700" letterSpacing="-0.5px" fontFamily="system-ui, sans-serif">
+        logoipsum
+      </text>
+    </svg>
+  );
+}
+
+function LogoipsumFive() {
+  return (
+    <svg className="h-5 sm:h-6 w-auto text-white" viewBox="0 0 148 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 22L14 4L24 22H4Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" strokeOpacity="0.85" />
+      <circle cx="14" cy="15" r="3" fill="currentColor" />
+      <text x="38" y="20" fill="currentColor" fontSize="17" fontWeight="700" letterSpacing="-0.5px" fontFamily="system-ui, sans-serif">
+        logoipsum
+      </text>
+    </svg>
+  );
+}
+
+function LogoipsumSix() {
+  return (
+    <svg className="h-5 sm:h-6 w-auto text-white" viewBox="0 0 146 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 14C6 9.58172 9.58172 6 14 6C18.4183 6 22 9.58172 22 14C22 18.4183 18.4183 22 14 22" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.85" />
+      <circle cx="14" cy="14" r="2.5" fill="#93C5FD" />
+      <text x="36" y="20" fill="currentColor" fontSize="17" fontWeight="700" letterSpacing="-0.5px" fontFamily="system-ui, sans-serif">
+        logoipsum
+      </text>
+    </svg>
+  );
+}
+
+function TrustMarquee({ language }: { language: "ID" | "EN" }) {
+  const logos = [
+    { id: 1, component: LogoipsumOne },
+    { id: 2, component: LogoipsumTwo },
+    { id: 3, component: LogoipsumThree },
+    { id: 4, component: LogoipsumFour },
+    { id: 5, component: LogoipsumFive },
+    { id: 6, component: LogoipsumSix },
+  ];
+
+  // Repeat for continuous seamless infinite scroll
+  const marqueeItems = [...logos, ...logos, ...logos];
+
+  return (
+    <div className="relative z-10 pt-4 mt-auto border-t border-white/15 overflow-hidden">
+      <style>{`
+        @keyframes marqueeTrustPanel {
+          0% {
+            transform: translate3d(0%, 0, 0);
+          }
+          100% {
+            transform: translate3d(-33.333%, 0, 0);
+          }
+        }
+        .animate-marquee-trust-panel {
+          display: flex;
+          width: max-content;
+          animation: marqueeTrustPanel 24s linear infinite;
+          will-change: transform;
+        }
+        .animate-marquee-trust-panel:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
+      <p className="text-[11px] uppercase tracking-wider text-blue-200/80 font-semibold mb-3">
+        {language === "ID" ? "Dipercaya oleh Mitra & Jaringan Faskes" : "Trusted by Healthcare Partners"}
+      </p>
+
+      {/* Marquee Track with Left & Right Soft Fade Masks */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          maskImage: "linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%)",
+        }}
+      >
+        <div className="animate-marquee-trust-panel flex items-center gap-9 sm:gap-11 py-1">
+          {marqueeItems.map((item, idx) => {
+            const Comp = item.component;
+            return (
+              <div
+                key={idx}
+                className="flex items-center justify-center shrink-0 opacity-70 hover:opacity-100 transition-opacity duration-200 select-none cursor-default"
+              >
+                <Comp />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function RequestDemoForm() {
   const { language } = useLanguage();
@@ -487,26 +630,8 @@ export default function RequestDemoPage() {
                 </div>
               </div>
 
-              {/* Bottom Content: Our Partners / Compliance Badges */}
-              <div className="relative z-10 pt-6 mt-auto border-t border-white/15">
-                <p className="text-[11px] uppercase tracking-wider text-blue-200/80 font-semibold mb-2.5">
-                  {language === "ID" ? "Standar & Kepatuhan Medis" : "Standards & Compliance"}
-                </p>
-                <div className="flex flex-wrap items-center gap-2 text-[11px] text-white/90 font-medium">
-                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                    SATUSEHAT
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                    Kemenkes RI
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                    ISO 27001
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                    HL7 / FHIR
-                  </span>
-                </div>
-              </div>
+              {/* Bottom Content: Infinite Trust Marquee with Logoipsum Logos */}
+              <TrustMarquee language={language} />
             </div>
 
             {/* RIGHT: Clean Form Area (Matching Screenshot) */}
