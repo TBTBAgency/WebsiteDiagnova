@@ -102,29 +102,12 @@ export function CTABanner({ initialData }: CTABannerProps = {}) {
                   type="submit"
                   className="group relative inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2E68B4] hover:bg-[#235899] text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-all duration-200 shadow-sm cursor-pointer active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/25 overflow-hidden"
                 >
-                  <span className="animate-shine-continuous" />
                   <span className="relative z-10 flex items-center gap-1.5">
                     {buttonText}
                     <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </span>
                 </button>
               </form>
-
-              {/* Trust Indicators below Form */}
-              <div className="mt-4 sm:mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] sm:text-xs text-slate-500">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  {language === "ID" ? "Kepatuhan SATUSEHAT & HL7/FHIR" : "SATUSEHAT & HL7/FHIR Ready"}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#2E68B4]" />
-                  {language === "ID" ? "Dukungan 500+ Analyzer" : "500+ Analyzers Supported"}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#2E68B4]" />
-                  {language === "ID" ? "Demo Privat Disesuaikan Alur RS" : "Tailored Hospital Walkthrough"}
-                </span>
-              </div>
             </div>
 
             {/* Right Column: Official CTA Image (Responsive & Flexible across mobile, tablet, desktop) */}

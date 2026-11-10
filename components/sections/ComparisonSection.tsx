@@ -199,10 +199,8 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
                 <div className="relative z-10">
                   {/* Badge */}
                   <div className="mb-4 sm:mb-5">
-                    <span className="relative inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-semibold tracking-wide text-white shadow-sm hover:bg-white/25 transition-colors overflow-hidden">
-                      <span className="animate-shine-continuous" />
-                      <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_8px_#6EE7B7]" />
-                      <span className="relative z-10">{content.diagnovaBadge}</span>
+                    <span className="inline-flex items-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-white/25 transition-colors">
+                      {content.diagnovaBadge}
                     </span>
                   </div>
 
@@ -211,10 +209,10 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
                     {content.items.map((item, index) => (
                       <div
                         key={item.number}
-                        className={`group/item flex items-start gap-3.5 sm:gap-4 p-2 -mx-2 rounded-xl hover:bg-white/[0.08] transition-all duration-300 ease-out ${
+                        className={`flex items-start gap-3.5 sm:gap-4 transition-all duration-500 ease-out ${
                           index !== content.items.length - 1
-                            ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-2 sm:mb-2.5"
-                            : "pb-2 mb-0"
+                            ? "border-b border-white/15 pb-3.5 sm:pb-4 mb-3.5 sm:mb-4"
+                            : "pb-0 mb-0"
                         } ${
                           isVisible
                             ? "opacity-100 translate-y-0"
@@ -226,14 +224,14 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
                             : "0ms",
                         }}
                       >
-                        <span className="text-white/60 group-hover/item:text-white font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5 transition-colors">
+                        <span className="text-white/60 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
                           {item.number}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1 group-hover/item:translate-x-0.5 transition-transform duration-200">
+                          <h3 className="font-semibold text-white text-sm sm:text-base leading-snug tracking-tight mb-1">
                             {item.diagnova.title}
                           </h3>
-                          <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-light">
+                          <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
                             {item.diagnova.description}
                           </p>
                         </div>

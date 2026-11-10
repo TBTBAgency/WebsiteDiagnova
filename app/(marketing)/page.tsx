@@ -5,7 +5,6 @@ import { TrustedByBar } from "@/components/sections/TrustedByBar";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
 import { InfrastructureSection } from "@/components/sections/InfrastructureSection";
-import { PersonaBenefitsSection } from "@/components/sections/PersonaBenefitsSection";
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -49,16 +48,13 @@ export default async function HomePage() {
       {/* 6. Infrastructure Section */}
       <InfrastructureSection initialData={cmsData?.infrastructure} />
 
-      {/* 7. Role-Based Stakeholder Value Section (LigoLab Section 8 Architecture) */}
-      <PersonaBenefitsSection />
-
-      {/* 8. Customer Testimonials Section */}
+      {/* 7. Customer Testimonials Section */}
       <TestimonialsSection initialData={cmsData?.testimonials} />
 
-      {/* 9. Frequently Asked Questions (FAQ) Section */}
+      {/* 8. Frequently Asked Questions (FAQ) Section */}
       <FAQSection />
 
-      {/* 10. Bottom CTA Banner */}
+      {/* 9. Bottom CTA Banner */}
       <CTABanner initialData={cmsData?.cta} />
     </>
   );
