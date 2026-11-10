@@ -143,17 +143,20 @@ export default function SolutionsPage() {
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs font-semibold text-slate-700 mb-4">
-              <span className="h-2 w-2 rounded-full bg-[#2764B8]" />
-              <span>{language === "ID" ? "Alur Kerja Diagnostik Terpadu" : "Tailored Diagnostic Architecture"}</span>
+          <div className="max-w-3xl mb-12 sm:mb-16">
+            <div className="mb-4">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Alur Kerja Diagnostik Terpadu" : "Tailored Diagnostic Architecture"}
+              </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-[1.18]">
-              {language === "ID"
-                ? "Dirancang untuk Efisiensi Diagnostik Tanpa Batas"
-                : "Designed to Make Clinical Work Effortless"}
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+              {language === "ID" ? (
+                <>Dirancang untuk Efisiensi Diagnostik Tanpa Batas</>
+              ) : (
+                <>Designed to Make Clinical Work Effortless</>
+              )}
             </h2>
-            <p className="mt-3.5 text-sm sm:text-base lg:text-lg text-slate-500 font-normal leading-relaxed">
+            <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Pengalaman diagnostik yang lebih cepat, akurat, dan terstandar untuk setiap instalasi faskes."
                 : "Experience a smoother, smarter way to orchestrate clinical orders, automate analyzers, and deliver life-critical results."}
