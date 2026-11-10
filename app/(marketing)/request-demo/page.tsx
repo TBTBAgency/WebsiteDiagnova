@@ -300,10 +300,10 @@ function RequestDemoForm() {
             onChange={handleChange}
             placeholder={language === "ID" ? "dr. Ahmad Fauzi, Sp.PK" : "Dr. John Doe, Pathologist"}
             className={cn(
-              "w-full h-10 rounded-xl border bg-slate-50/60 hover:bg-white focus:bg-white px-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-2",
+              "w-full h-10 rounded-xl border bg-white px-3.5 text-xs sm:text-sm transition-all focus:outline-none focus:ring-2",
               errors.name
                 ? "border-rose-300 ring-rose-100 bg-rose-50/20"
-                : "border-slate-200/80 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100/80"
+                : "border-slate-200 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100"
             )}
           />
           {errors.name && <p className="text-[11px] text-rose-600">{errors.name}</p>}
@@ -321,10 +321,10 @@ function RequestDemoForm() {
             onChange={handleChange}
             placeholder={language === "ID" ? "Kepala Lab / Ka. IT / Direktur" : "Lab Director / CIO / Chief Doctor"}
             className={cn(
-              "w-full h-10 rounded-xl border bg-slate-50/60 hover:bg-white focus:bg-white px-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-2",
+              "w-full h-10 rounded-xl border bg-white px-3.5 text-xs sm:text-sm transition-all focus:outline-none focus:ring-2",
               errors.jobTitle
                 ? "border-rose-300 ring-rose-100 bg-rose-50/20"
-                : "border-slate-200/80 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100/80"
+                : "border-slate-200 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100"
             )}
           />
           {errors.jobTitle && <p className="text-[11px] text-rose-600">{errors.jobTitle}</p>}
@@ -342,10 +342,10 @@ function RequestDemoForm() {
             onChange={handleChange}
             placeholder="nama@rumahsakit.id"
             className={cn(
-              "w-full h-10 rounded-xl border bg-slate-50/60 hover:bg-white focus:bg-white px-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-2",
+              "w-full h-10 rounded-xl border bg-white px-3.5 text-xs sm:text-sm transition-all focus:outline-none focus:ring-2",
               errors.email
                 ? "border-rose-300 ring-rose-100 bg-rose-50/20"
-                : "border-slate-200/80 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100/80"
+                : "border-slate-200 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100"
             )}
           />
           {errors.email && <p className="text-[11px] text-rose-600">{errors.email}</p>}
@@ -363,10 +363,10 @@ function RequestDemoForm() {
             onChange={handleChange}
             placeholder="0812 3456 7890"
             className={cn(
-              "w-full h-10 rounded-xl border bg-slate-50/60 hover:bg-white focus:bg-white px-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-2",
+              "w-full h-10 rounded-xl border bg-white px-3.5 text-xs sm:text-sm transition-all focus:outline-none focus:ring-2",
               errors.phone
                 ? "border-rose-300 ring-rose-100 bg-rose-50/20"
-                : "border-slate-200/80 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100/80"
+                : "border-slate-200 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100"
             )}
           />
           {errors.phone && <p className="text-[11px] text-rose-600">{errors.phone}</p>}
@@ -384,10 +384,10 @@ function RequestDemoForm() {
             onChange={handleChange}
             placeholder={language === "ID" ? "RSUP / RSUD / Lab Utama" : "Memorial Hospital / City Lab"}
             className={cn(
-              "w-full h-10 rounded-xl border bg-slate-50/60 hover:bg-white focus:bg-white px-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-2",
+              "w-full h-10 rounded-xl border bg-white px-3.5 text-xs sm:text-sm transition-all focus:outline-none focus:ring-2",
               errors.institution
                 ? "border-rose-300 ring-rose-100 bg-rose-50/20"
-                : "border-slate-200/80 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100/80"
+                : "border-slate-200 hover:border-slate-300 focus:border-[#2568BA] focus:ring-blue-100"
             )}
           />
           {errors.institution && <p className="text-[11px] text-rose-600">{errors.institution}</p>}
@@ -402,7 +402,7 @@ function RequestDemoForm() {
             name="institutionType"
             value={formData.institutionType}
             onChange={handleChange}
-            className="w-full h-10 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-white focus:bg-white px-3 text-xs sm:text-sm text-slate-800 transition-all hover:border-slate-300 focus:border-[#2568BA] focus:outline-none focus:ring-2 focus:ring-blue-100/80 cursor-pointer"
+            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs sm:text-sm text-slate-800 transition-all hover:border-slate-300 focus:border-[#2568BA] focus:outline-none focus:ring-2 focus:ring-blue-100"
           >
             <option value="hospital">{language === "ID" ? "Rumah Sakit (Tipe A / B / C / D)" : "Hospital (General / Specialized)"}</option>
             <option value="clinical-lab">{language === "ID" ? "Laboratorium Klinik Mandiri" : "Independent Clinical Laboratory"}</option>
@@ -427,7 +427,7 @@ function RequestDemoForm() {
             name="demoDate"
             value={formData.demoDate}
             onChange={handleChange}
-            className="w-full h-10 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-white focus:bg-white px-3 text-xs sm:text-sm text-slate-800 transition-all hover:border-slate-300 focus:border-[#2568BA] focus:outline-none focus:ring-2 focus:ring-blue-100/80"
+            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs sm:text-sm text-slate-800 transition-all hover:border-slate-300 focus:border-[#2568BA] focus:outline-none focus:ring-2 focus:ring-blue-100"
           />
         </div>
 
@@ -447,7 +447,7 @@ function RequestDemoForm() {
                 ? "Sysmex XN-1000, Cobas c501..."
                 : "Sysmex XN-1000, Cobas c501..."
             }
-            className="w-full h-10 rounded-xl border border-slate-200/80 bg-slate-50/60 hover:bg-white focus:bg-white px-3 text-xs sm:text-sm text-slate-800 transition-all hover:border-slate-300 focus:border-[#2568BA] focus:outline-none focus:ring-2 focus:ring-blue-100/80"
+            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs sm:text-sm text-slate-800 transition-all hover:border-slate-300 focus:border-[#2568BA] focus:outline-none focus:ring-2 focus:ring-blue-100"
           />
           {errors.notes && <p className="text-[11px] text-rose-600">{errors.notes}</p>}
         </div>
@@ -524,56 +524,55 @@ export default function RequestDemoPage() {
         <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.07)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 xl:gap-8 h-full items-stretch">
 
-            {/* LEFT: Vibrant Blue Feature Banner (Matching Screenshot) */}
-            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2467BA] via-[#1D5496] to-[#123168] text-white p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
-              {/* Ambient glowing orbs */}
-              <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-[#56ADE2]/25 blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-[#1D3F82]/50 blur-3xl pointer-events-none" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-blue-400/10 blur-2xl pointer-events-none" />
+            {/* LEFT: Vibrant Bright Blue Feature Banner (Modern, Segar & Tidak Gelap) */}
+            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] text-white p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full shadow-inner">
+              {/* Ambient glowing orbs (Bright & luminous) */}
+              <div className="absolute -top-16 -left-16 w-80 h-80 rounded-full bg-[#60A5FA]/40 blur-3xl pointer-events-none" />
+              <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#38BDF8]/30 blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-16 left-1/4 w-72 h-72 rounded-full bg-[#56ADE2]/35 blur-3xl pointer-events-none" />
 
               {/* Top Content */}
-              <div className="relative z-10 space-y-3.5 sm:space-y-4">
+              <div className="relative z-10 space-y-3.5">
                 <div>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.12] hover:bg-white/[0.18] border border-white/20 backdrop-blur-md px-3.5 py-1 text-[11px] sm:text-xs font-medium text-white/95 shadow-sm transition-colors duration-200">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#60A5FA] shadow-[0_0_8px_#60A5FA]" />
+                  <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 backdrop-blur-md px-3.5 py-1 text-xs font-medium text-white shadow-xs">
                     {language === "ID" ? "Platform Diagnostik Modern" : "Modern Diagnostic Platform"}
                   </span>
                 </div>
-                <h2 className="font-display text-2xl sm:text-3xl lg:text-[30px] xl:text-[34px] font-bold leading-[1.22] text-white tracking-tight">
+                <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-bold leading-tight text-white tracking-tight">
                   {language === "ID"
                     ? "Percepat & Otomasi Alur Kerja Laboratorium Anda"
                     : "Speed up your lab workflow with Diagnova LIS"}
                 </h2>
-                <p className="text-xs sm:text-[13px] text-blue-100/80 font-light leading-relaxed">
+                <p className="text-xs sm:text-sm text-blue-100/80 font-light leading-relaxed pt-0.5">
                   {language === "ID"
                     ? "Satu platform terintegrasi untuk interfacing analyzer instan, verifikasi hasil berbasis AI, dan pelaporan nasional."
                     : "An all-in-one platform for analyzer interfacing, AI auto-verification, and seamless healthcare integration."}
                 </p>
 
                 {/* Value Highlight Pills */}
-                <div className="pt-2 sm:pt-3 space-y-2.5">
-                  <div className="flex items-center gap-2.5 text-xs text-white/95">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 border border-white/20 text-white shrink-0 shadow-xs">
-                      <Check className="h-3 w-3 text-blue-200 stroke-[2.5]" />
+                <div className="pt-3 sm:pt-4 space-y-2.5">
+                  <div className="flex items-center gap-2.5 text-xs text-white/90">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
+                      <Check className="h-3 w-3" />
                     </span>
-                    <span className="font-medium text-[12.5px]">{language === "ID" ? "100% Bridging SATUSEHAT & SIMRS" : "Full SATUSEHAT & HIS Bridging"}</span>
+                    <span>{language === "ID" ? "100% Bridging SATUSEHAT & SIMRS" : "Full SATUSEHAT & HIS Bridging"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs text-white/95">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 border border-white/20 text-white shrink-0 shadow-xs">
-                      <Check className="h-3 w-3 text-blue-200 stroke-[2.5]" />
+                  <div className="flex items-center gap-2.5 text-xs text-white/90">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
+                      <Check className="h-3 w-3" />
                     </span>
-                    <span className="font-medium text-[12.5px]">{language === "ID" ? "Dukungan 500+ Model Analyzer Klinis" : "Supports 500+ Clinical Analyzers"}</span>
+                    <span>{language === "ID" ? "Dukungan 500+ Model Analyzer Klinis" : "Supports 500+ Clinical Analyzers"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs text-white/95">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 border border-white/20 text-white shrink-0 shadow-xs">
-                      <Check className="h-3 w-3 text-blue-200 stroke-[2.5]" />
+                  <div className="flex items-center gap-2.5 text-xs text-white/90">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
+                      <Check className="h-3 w-3" />
                     </span>
-                    <span className="font-medium text-[12.5px]">{language === "ID" ? "Didampingi Spesialis Aplikasi Klinis" : "Dedicated Clinical Specialist Support"}</span>
+                    <span>{language === "ID" ? "Didampingi Spesialis Aplikasi Klinis" : "Dedicated Clinical Specialist Support"}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Content: Infinite Trust Marquee */}
+              {/* Bottom Content: Infinite Trust Marquee with Logoipsum Logos */}
               <TrustMarquee language={language} />
             </div>
 
