@@ -171,7 +171,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative w-full bg-[#F9F9F9] pt-14 sm:pt-18 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 select-none overflow-x-hidden content-auto"
+      className="relative w-full bg-white pt-14 sm:pt-18 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 select-none overflow-x-hidden content-auto"
       aria-label="Customer Testimonials"
     >
       <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
@@ -214,7 +214,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
           <div
             key={item.id}
             className={cn(
-              "w-[85vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/80 p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
+              "w-[85vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-[#F4F8FD] border border-[#D5E5F7] p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-[#B8D5F5] transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-6"
