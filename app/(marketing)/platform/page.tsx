@@ -318,9 +318,9 @@ export default function PlatformPage() {
         className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            {/* Left Column: Context, Accreditation & Key Audit Capabilities */}
-            <div className="lg:col-span-5 flex flex-col justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            {/* Left Column: Context & Accreditation Details (Original Style) */}
+            <div className="lg:col-span-6 flex flex-col justify-center">
               <div className="mb-4">
                 <SectionBadge variant="blue">
                   {language === "ID" ? "Kepatuhan & Akreditasi" : "Compliance & Accreditation"}
@@ -347,63 +347,35 @@ export default function PlatformPage() {
                   : "Absolute transparency for every clinical action. Every result change, instrument calibration, and physician sign-off is permanently recorded with millisecond-level timestamps."}
               </p>
 
-              {/* 3 Value Pillars */}
-              <div className="mt-8 space-y-3.5">
-                {/* Item 1: Anti-Manipulasi */}
-                <div className="rounded-2xl bg-[#F8FBFE] border border-blue-100/80 p-4 sm:p-4.5 flex items-start gap-3.5 hover:border-blue-200 transition-colors">
-                  <div className="h-9 w-9 rounded-xl bg-[#EBF3FB] text-[#2764B8] border border-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <Lock className="h-4.5 w-4.5" />
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-[20px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
+                  <div className="flex items-center gap-2 text-[#2764B8] font-bold text-sm">
+                    <Lock className="h-4 w-4" />
+                    <span>{language === "ID" ? "Log Anti-Manipulasi" : "Tamper-Proof Logs"}</span>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">
-                      {language === "ID" ? "Log Kriptografis Anti-Manipulasi" : "Tamper-Proof Cryptographic Logs"}
-                    </h4>
-                    <p className="text-xs text-slate-600 leading-relaxed font-normal mt-0.5">
-                      {language === "ID"
-                        ? "Catatan historis tidak dapat diedit atau dihapus secara manual, memenuhi standar audit KARS SKP 2.2 & ISO 15189."
-                        : "Historical entries cannot be altered or purged, satisfying strict KARS & ISO 15189 compliance."}
-                    </p>
-                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Catatan historis tidak dapat diedit atau dihapus, memenuhi persyaratan akreditasi KARS & JCI."
+                      : "Historical entries cannot be altered or purged, satisfying KARS & JCI accreditation criteria."}
+                  </p>
                 </div>
 
-                {/* Item 2: E-Sign BSrE */}
-                <div className="rounded-2xl bg-[#F8FBFE] border border-blue-100/80 p-4 sm:p-4.5 flex items-start gap-3.5 hover:border-blue-200 transition-colors">
-                  <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shrink-0 mt-0.5">
-                    <FileCheck2 className="h-4.5 w-4.5" />
+                <div className="rounded-[20px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
+                  <div className="flex items-center gap-2 text-[#2764B8] font-bold text-sm">
+                    <FileCheck2 className="h-4 w-4" />
+                    <span>{language === "ID" ? "E-Sign Dokter Bersertifikat" : "Certified E-Signatures"}</span>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">
-                      {language === "ID" ? "E-Sign Dokter Resmi BSrE BSSN" : "BSrE-Certified Pathologist E-Sign"}
-                    </h4>
-                    <p className="text-xs text-slate-600 leading-relaxed font-normal mt-0.5">
-                      {language === "ID"
-                        ? "Tanda tangan digital Sp.PK berkeabsahan hukum penuh dengan QR verifikasi instan terhubung ke SATUSEHAT Kemenkes."
-                        : "Legally accredited pathologist electronic signatures with instant QR verification bridged to SATUSEHAT."}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Item 3: Chain of Custody */}
-                <div className="rounded-2xl bg-[#F8FBFE] border border-blue-100/80 p-4 sm:p-4.5 flex items-start gap-3.5 hover:border-blue-200 transition-colors">
-                  <div className="h-9 w-9 rounded-xl bg-[#EBF3FB] text-[#2764B8] border border-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">
-                      {language === "ID" ? "Ketertelusuran Spesimen Penuh" : "Full Specimen Chain of Custody"}
-                    </h4>
-                    <p className="text-xs text-slate-600 leading-relaxed font-normal mt-0.5">
-                      {language === "ID"
-                        ? "Lacak posisi tabung dari phlebotomy IGD/ranap, transfer analyzer, hingga lembar hasil pasien."
-                        : "Track sample tubes at every second from phlebotomy barcode scanning to analyzer and final report."}
-                    </p>
-                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Tanda tangan digital dokter Sp.PK dengan QR verifikasi keaslian langsung pada lembar hasil."
+                      : "Certified pathologist e-signatures with instant QR-code verification on patient reports."}
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Right Column: Modern Desktop Workstation Showcase with Floating Accent Card */}
-            <div className="lg:col-span-7 relative mt-8 lg:mt-0 pb-10 sm:pb-12 lg:pb-0">
+            <div className="lg:col-span-6 relative mt-8 lg:mt-0 pb-8 sm:pb-10 lg:pb-0">
               {/* Subtle ambient glow behind monitor */}
               <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[36px] blur-2xl pointer-events-none" />
 
