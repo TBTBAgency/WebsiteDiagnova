@@ -26,14 +26,9 @@ function AdminLoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleQuickFill = (type: "super_admin" | "sales_admin") => {
-    if (type === "super_admin") {
-      setEmail("admin@diagnova.id");
-      setPassword("Diagnova2026!");
-    } else {
-      setEmail("sales@diagnova.id");
-      setPassword("Sales2026!");
-    }
+  const handleQuickFill = () => {
+    setEmail("admin@diagnova.id");
+    setPassword("Diagnova2026!");
     setErrorMessage("");
   };
 
@@ -113,39 +108,38 @@ function AdminLoginForm() {
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700 mb-2">
               <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
-              <span>Portal Internal LIS & Admin</span>
+              <span>Portal Super Admin Diagnova</span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 font-display">Masuk ke Sistem</h1>
             <p className="text-xs text-slate-500 mt-1 max-w-xs">
-              Autentikasi terenkripsi untuk Analis Laboratorium, Dokter Sp.PK, dan Admin.
+              Akses terpusat Super Admin Diagnova Laboratory Intelligence Platform.
             </p>
           </div>
 
-          {/* Quick Demo Fill Box */}
-          <div className="mb-6 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+          {/* Quick Super Admin Fill Box */}
+          <div className="mb-6 p-3.5 rounded-2xl bg-blue-50/60 border border-blue-200/80 text-xs">
             <div className="flex items-center justify-between text-slate-700 font-semibold mb-2">
-              <span>Akun Demo Bawaan:</span>
-              <span className="text-[10px] text-blue-600 font-bold">Klik untuk isi</span>
+              <span className="flex items-center gap-1.5 text-blue-950 font-bold text-[11px]">
+                <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
+                <span>Akun Akses Super Admin:</span>
+              </span>
+              <span className="text-[10px] text-blue-600 font-semibold">Klik untuk isi otomatis</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickFill("super_admin")}
-                className="py-2 px-2.5 rounded-xl bg-white hover:bg-blue-50/50 border border-slate-200 text-[11px] font-medium text-slate-700 transition-colors text-left flex flex-col shadow-2xs"
-              >
-                <span className="text-slate-900 font-bold">Super Admin</span>
+            <button
+              type="button"
+              onClick={handleQuickFill}
+              className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-blue-100/50 border border-blue-200 text-[11px] font-medium text-slate-700 transition-all text-left flex items-center justify-between shadow-2xs group cursor-pointer"
+            >
+              <div>
+                <span className="text-slate-900 font-bold block group-hover:text-blue-600 transition-colors">
+                  Super Admin
+                </span>
                 <span className="text-[10px] text-slate-400 font-mono">admin@diagnova.id</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill("sales_admin")}
-                className="py-2 px-2.5 rounded-xl bg-white hover:bg-blue-50/50 border border-slate-200 text-[11px] font-medium text-slate-700 transition-colors text-left flex flex-col shadow-2xs"
-              >
-                <span className="text-slate-900 font-bold">Sales Admin</span>
-                <span className="text-[10px] text-slate-400 font-mono">sales@diagnova.id</span>
-              </button>
-            </div>
+              </div>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                Isi Kredensial
+              </span>
+            </button>
           </div>
 
           {/* Error Banner */}

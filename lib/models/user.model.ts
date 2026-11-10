@@ -138,7 +138,7 @@ export async function createUser(data: {
   let roleId = data.roleId;
   if (!roleId) {
     const defaultRole = await db.role.findFirst({
-      where: { name: "Sales Admin" },
+      where: { name: "Super Admin" },
     });
     roleId = defaultRole?.id;
   }
