@@ -286,7 +286,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
         {/* Spacer to ensure last card doesn't stick to edge */}
         <div className="shrink-0 w-1 lg:w-4" aria-hidden="true" />
       </div>
-      </div>{/* end relative wrapper */}
+    </div>
 
       {/* ═══ NAVIGATION BUTTONS ═══ */}
       <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
