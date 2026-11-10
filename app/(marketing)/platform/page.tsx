@@ -34,7 +34,6 @@ import { CTABanner } from "@/components/sections/CTABanner";
 
 export default function PlatformPage() {
   const { language } = useLanguage();
-  const [activeAuditStep, setActiveAuditStep] = useState<number>(0);
 
   return (
     <div className="w-full bg-white text-slate-800">
@@ -137,86 +136,172 @@ export default function PlatformPage() {
             </p>
           </div>
 
-          {/* 3 Large Characteristic Cards (Matching Comparison/Infrastructure Cards) */}
+          {/* 3 Bento Cards with Top Visual Stage (Ref: Modern SaaS Micro-UI Architecture) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
-              <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
-                  <Clock className="h-6 w-6" />
+            {/* Card 1: Pangkas TAT & Zero Rekeying */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage (Micro-UI Mockup) */}
+              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                {/* Subtle Grid Accent */}
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                />
+
+                {/* Ambient Soft Glow */}
+                <div className="absolute w-28 h-28 rounded-full bg-blue-400/15 blur-2xl pointer-events-none" />
+
+                {/* Floating Visual: Connection Handshake & Instant TAT Meter */}
+                <div className="relative z-10 w-full max-w-[280px] space-y-3">
+                  {/* Two Connected Instruments */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="bg-white/90 backdrop-blur-xs px-2.5 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-1.5">
+                      <Cpu className="h-3.5 w-3.5 text-[#2764B8]" />
+                      <span>Sysmex XN</span>
+                    </div>
+
+                    {/* Animated Connection Dots */}
+                    <div className="flex-1 flex items-center justify-center gap-1 px-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                      <span className="h-1 w-6 bg-gradient-to-r from-blue-300 to-[#2764B8] rounded-full" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#2764B8]" />
+                    </div>
+
+                    <div className="bg-[#2764B8] px-2.5 py-1.5 rounded-xl shadow-xs text-[11px] font-semibold text-white flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-blue-200" />
+                      <span>LIS Host</span>
+                    </div>
+                  </div>
+
+                  {/* Stopwatch TAT Reduction Pill */}
+                  <div className="bg-white/95 backdrop-blur-xs p-2.5 rounded-xl border border-blue-100/90 shadow-2xs flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-[#2764B8]" />
+                      <span className="line-through text-slate-400 text-[11px] font-mono">8 min manual</span>
+                    </div>
+                    <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
+                      0.04s Ingested
+                    </span>
+                  </div>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+              </div>
+
+              {/* Bottom Content (Crisp, High Contrast, No AI Slop) */}
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
-                    ? "Hasil uji hematologi, kimia darah, dan urin langsung terkirim begitu mesin selesai beroperasi tanpa antrean ketik manual oleh analis."
-                    : "Hematology, biochemistry, and urinalysis results stream directly to physician screens upon analyzer completion with zero manual typing."}
+                    ? "Hasil uji hematologi, kimia, dan urin mengalir langsung ke layar dokter tanpa antrean ketik manual oleh analis."
+                    : "Analyzer telemetry streams directly to clinical screens with zero manual transcription."}
                 </p>
-              </div>
-
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-700">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Bebas antrean ketik analis" : "No typing backlog during peak shifts"}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Notifikasi nilai kritis otomatis" : "Real-time critical value alerts"}</span>
-                </div>
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
-              <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
-                  <Zap className="h-6 w-6" />
+            {/* Card 2: Smart Auto-Verification Engine */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage (Micro-UI Mockup) */}
+              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                />
+                <div className="absolute w-28 h-28 rounded-full bg-emerald-400/15 blur-2xl pointer-events-none" />
+
+                {/* Floating Visual: Dual-Branching Decision Node */}
+                <div className="relative z-10 w-full max-w-[280px] space-y-2.5">
+                  {/* Central Inbound Specimen */}
+                  <div className="mx-auto w-fit bg-white/95 px-3 py-1 rounded-full border border-slate-200/90 shadow-2xs text-[11px] font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-blue-500" />
+                    <span>Specimen #DX-889</span>
+                  </div>
+
+                  {/* Branching Split Cards */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-white/95 p-2 rounded-xl border border-emerald-200/80 shadow-2xs text-center">
+                      <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-emerald-700">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>Auto-Release</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono block mt-0.5">85% Normal SOP</span>
+                    </div>
+
+                    <div className="bg-white/95 p-2 rounded-xl border border-blue-200/80 shadow-2xs text-center">
+                      <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#2764B8]">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        <span>Doctor Triage</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono block mt-0.5">15% Critical Risk</span>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
-                    ? "Rule engine fleksibel sesuai SOP RS. Spesimen dengan nilai normal dan lolos uji delta-check diverifikasi otomatis sehingga dokter fokus pada kasus darurat."
-                    : "Flexible rule engine matching your hospital SOPs. Samples within normal limits and passing delta checks verify automatically, freeing doctors for complex cases."}
+                    ? "Rule engine otomatis memverifikasi sampel normal, membebaskan dokter untuk fokus pada kasus anomali kritis."
+                    : "Automated rules instantly release normal specimens, keeping physicians focused on critical anomalies."}
                 </p>
-              </div>
-
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-700">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Konfigurasi delta-check RS" : "Hospital-specific delta checks"}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Pemisahan kasus abnormal instan" : "Instant abnormal sample triage"}</span>
-                </div>
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
-              <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
-                  <Server className="h-6 w-6" />
+            {/* Card 3: Resilient Edge Buffer */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage (Micro-UI Mockup) */}
+              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                />
+                <div className="absolute w-28 h-28 rounded-full bg-blue-500/15 blur-2xl pointer-events-none" />
+
+                {/* Floating Visual: Edge Buffer Storage Box & Live Toggle */}
+                <div className="relative z-10 w-full max-w-[280px] space-y-2.5">
+                  {/* Status Toggle Header */}
+                  <div className="bg-white/95 px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 text-[11px] flex items-center gap-1.5">
+                      <Server className="h-3.5 w-3.5 text-[#2764B8]" />
+                      Edge Gateway
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      72H Retention Safe
+                    </span>
+                  </div>
+
+                  {/* Packet Resync Badge */}
+                  <div className="bg-white/95 p-2 rounded-xl border border-blue-100/90 shadow-2xs flex items-center justify-between text-[11px] font-mono text-slate-600">
+                    <span>Pending: 0 Packets</span>
+                    <span className="text-[#2764B8] font-bold">Zero Data Loss</span>
+                  </div>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Resilient Edge Buffer" : "Resilient Edge Buffer"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
-                    ? "Koneksi jaringan terganggu? Diagnova Gateway menyimpan data analyzer di buffer edge lokal dan menyinkronkan seluruh paket data begitu jaringan pulih."
-                    : "Network instability? Diagnova's edge gateway locally buffers analyzer transmissions and resyncs all data packets upon reconnection with zero data loss."}
+                    ? "Jaringan RS drop? Buffer lokal mengamankan data analyzer dan menyinkronkan otomatis saat koneksi pulih."
+                    : "Hospital network down? Edge buffers store transmissions and auto-resync upon reconnection."}
                 </p>
-              </div>
-
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-700">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Toleransi offline hingga 72 jam" : "Offline resilience up to 72 hours"}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
-                  <span>{language === "ID" ? "Uptime operasional lab 99,9%" : "99.9% laboratory operational uptime"}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -288,300 +373,110 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right Column: Realistic Clinical Specimen Timeline Card (Bukan Terminal Hitam) */}
+            {/* Right Column: Clean Clinical Specimen Card (Ref: High-Contrast Micro-UI Artifact) */}
             <div className="lg:col-span-6">
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-sm overflow-hidden">
-                {/* 1. Realistic Specimen Tube & Barcode Header Strip */}
-                <div className="bg-[#FAFBFD] border-b border-slate-200/80 p-5 sm:p-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    {/* Visual Vacutainer & Patient Identity */}
-                    <div className="flex items-center gap-3.5">
-                      {/* CSS/SVG Rendered Vacutainer Tube (Lavender K2-EDTA) */}
-                      <div className="relative flex items-center justify-center shrink-0">
-                        <div className="w-5 h-14 rounded-b-full border border-slate-300 bg-gradient-to-b from-transparent via-red-900/80 to-red-950 p-[2px] shadow-2xs relative overflow-hidden">
-                          {/* Tube Cap (Lavender EDTA) */}
-                          <div className="absolute top-0 inset-x-0 h-3 bg-purple-600 rounded-xs border-b border-purple-800" />
-                          {/* Blood Meniscus Line */}
-                          <div className="absolute bottom-1 inset-x-0.5 h-7 bg-gradient-to-t from-red-950 to-red-800 rounded-b-full opacity-90" />
-                          {/* Tube Measurement Graduations */}
-                          <div className="absolute top-5 right-0.5 w-1.5 h-[1px] bg-white/40" />
-                          <div className="absolute top-7 right-0.5 w-2 h-[1px] bg-white/40" />
-                          <div className="absolute top-9 right-0.5 w-1.5 h-[1px] bg-white/40" />
-                        </div>
-                      </div>
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-md transition-all duration-300">
+                {/* 1. Top Visual Stage: Certified Cryptographic Specimen Card */}
+                <div className="rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-5 sm:p-6 mb-6 relative overflow-hidden">
+                  <div
+                    className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                    style={{
+                      backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                      backgroundSize: "16px 16px",
+                    }}
+                  />
 
+                  {/* Header Badge & Barcode */}
+                  <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-10 w-10 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-[#2764B8]">
+                        <QrCode className="h-5 w-5" />
+                      </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-[#2764B8] tracking-tight bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60">
-                            #DX-98214
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700 border border-red-200">
+                          <span className="font-mono text-xs font-bold text-[#2764B8]">#DX-98214</span>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-100 text-red-700 border border-red-200">
                             CITO / IGD
                           </span>
                         </div>
-                        <h4 className="font-display text-sm sm:text-base font-bold text-slate-900 mt-1">
-                          Bpk. Suryadi (54 Th / L)
-                        </h4>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5 font-mono">
-                          <span>RM-44912</span>
-                          <span>•</span>
-                          <span>K2-EDTA (3.0 mL)</span>
-                          <span>•</span>
-                          <span>TAT: 19 Min</span>
-                        </div>
+                        <span className="text-[11px] text-slate-500 font-medium block">
+                          Bpk. Suryadi (54 Th) • RM-44912
+                        </span>
                       </div>
                     </div>
 
-                    {/* Verification Status Pill */}
-                    <div className="text-right">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-2xs">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                        <span>{language === "ID" ? "E-Sign Sah BSrE" : "BSrE E-Sign Valid"}</span>
-                      </span>
-                      <span className="block text-[10px] font-mono text-slate-400 mt-1">
-                        ISO 15189 Compliant
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Visual Barcode 2D Graphic */}
-                  <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600">
-                    <div className="flex items-center gap-2">
-                      {/* Barcode Lines Graphic */}
-                      <div className="h-4 flex items-center gap-[2px] opacity-75">
-                        <span className="w-[1.5px] h-3.5 bg-slate-800" />
-                        <span className="w-[3px] h-3.5 bg-slate-800" />
-                        <span className="w-[1px] h-3.5 bg-slate-800" />
-                        <span className="w-[2px] h-3.5 bg-slate-800" />
-                        <span className="w-[1px] h-3.5 bg-slate-800" />
-                        <span className="w-[3px] h-3.5 bg-slate-800" />
-                        <span className="w-[1px] h-3.5 bg-slate-800" />
-                        <span className="w-[2px] h-3.5 bg-slate-800" />
-                        <span className="w-[1.5px] h-3.5 bg-slate-800" />
-                        <span className="w-[2.5px] h-3.5 bg-slate-800" />
-                        <span className="w-[1px] h-3.5 bg-slate-800" />
-                        <span className="w-[3px] h-3.5 bg-slate-800" />
-                      </div>
-                      <span className="font-mono text-[11px] text-slate-500">2D-BARCODE: 98214-IGD-CITO-K2</span>
-                    </div>
-                    <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      {language === "ID" ? "Target TAT Terpenuhi" : "TAT Target Met"}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold shadow-2xs">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                      <span>{language === "ID" ? "E-Sign BSrE Sah" : "BSrE Certified"}</span>
                     </span>
                   </div>
+
+                  {/* Barcode Strip Graphic */}
+                  <div className="relative z-10 mt-4 pt-3 border-t border-blue-100/80 flex items-center justify-between text-xs font-mono text-slate-500">
+                    <span>BARCODE: 98214-IGD-K2EDTA</span>
+                    <span className="text-emerald-700 font-semibold font-sans">TAT: 19 Menit (Selesai)</span>
+                  </div>
                 </div>
 
-                {/* 2. Interactive Medical Lifecycle Timeline */}
-                <div className="p-5 sm:p-6 space-y-3 bg-white">
-                  {/* Step 0: E-Sign & Validation (Active / High Impact) */}
-                  <div
-                    onClick={() => setActiveAuditStep(0)}
-                    className={cn(
-                      "rounded-2xl p-4 transition-all duration-200 cursor-pointer border text-left",
-                      activeAuditStep === 0
-                        ? "bg-[#F8FBFE] border-[#2764B8]/40 shadow-xs ring-1 ring-[#2764B8]/20"
-                        : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
-                          <FileCheck2 className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-semibold text-slate-500">08:14:22 WIB</span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              {language === "ID" ? "Tahap Akhir" : "Final Stage"}
-                            </span>
-                          </div>
-                          <p className="text-xs sm:text-sm font-bold text-slate-900 mt-0.5">
-                            {language === "ID"
-                              ? "Validasi E-Sign & Rilis Otomatis ke RME SIMRS"
-                              : "E-Signature Validated & Auto-Released to HIS EMR"}
-                          </p>
-                          <p className="text-[11px] text-[#2764B8] font-semibold mt-0.5">
-                            Dr. dr. Handoko, Sp.PK • SIP: 446/182/SIP-DS/2023
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0",
-                          activeAuditStep === 0 && "rotate-180 text-[#2764B8]"
-                        )}
-                      />
+                {/* 2. Clean 3-Step Milestone (Ringkas & Terbaca, Tanpa Accordion Rumit) */}
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3.5 pb-3.5 border-b border-slate-100">
+                    <div className="h-8 w-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                      <FileCheck2 className="h-4 w-4" />
                     </div>
-
-                    {/* Expanded Detail Panel when Selected */}
-                    {activeAuditStep === 0 && (
-                      <div className="mt-3 pt-3 border-t border-blue-100/80 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div className="p-2.5 rounded-xl bg-white border border-blue-100/90 flex items-center gap-2">
-                          <QrCode className="h-6 w-6 text-[#2764B8] shrink-0" />
-                          <div className="overflow-hidden">
-                            <span className="text-[10px] text-slate-500 font-medium block">Sertifikat BSrE BSSN</span>
-                            <span className="font-mono text-[10px] text-slate-800 font-bold truncate block">
-                              ID: 8821-BSSN-MOH-VALID
-                            </span>
-                          </div>
-                        </div>
-                        <div className="p-2.5 rounded-xl bg-white border border-blue-100/90 flex items-center gap-2">
-                          <ShieldCheck className="h-6 w-6 text-emerald-600 shrink-0" />
-                          <div>
-                            <span className="text-[10px] text-slate-500 font-medium block">Bridging SATUSEHAT</span>
-                            <span className="text-[10px] font-bold text-emerald-700 block">
-                              FHIR DiagnosticReport Sent
-                            </span>
-                          </div>
-                        </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-900">
+                          {language === "ID" ? "Otorisasi Dokter Sp.PK (E-Sign BSrE Sah)" : "Pathologist Sign-Off (BSrE E-Sign)"}
+                        </span>
+                        <span className="font-mono text-slate-500 text-[11px]">08:14 WIB</span>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Step 1: Analyzer Telemetry */}
-                  <div
-                    onClick={() => setActiveAuditStep(1)}
-                    className={cn(
-                      "rounded-2xl p-4 transition-all duration-200 cursor-pointer border text-left",
-                      activeAuditStep === 1
-                        ? "bg-[#F8FBFE] border-[#2764B8]/40 shadow-xs ring-1 ring-[#2764B8]/20"
-                        : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-xl bg-blue-100 text-[#2764B8] flex items-center justify-center shrink-0 mt-0.5">
-                          <Activity className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-semibold text-slate-500">08:11:05 WIB</span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#2764B8] border border-blue-200/60">
-                              Sysmex XN-1000
-                            </span>
-                          </div>
-                          <p className="text-xs sm:text-sm font-bold text-slate-900 mt-0.5">
-                            {language === "ID"
-                              ? "Telemetri Hasil Analyzer Terserap (Zero Rekeying)"
-                              : "Analyzer Values Ingested Directly via ASTM"}
-                          </p>
-                          <p className="text-[11px] text-slate-600 mt-0.5">
-                            TCP/IP Bidirectional Host Query • QC Westgard: Pass
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0",
-                          activeAuditStep === 1 && "rotate-180 text-[#2764B8]"
-                        )}
-                      />
-                    </div>
-
-                    {/* Ingested Lab Values when clicked */}
-                    {activeAuditStep === 1 && (
-                      <div className="mt-3 pt-3 border-t border-blue-100/80">
-                        <div className="grid grid-cols-3 gap-2 text-center">
-                          <div className="p-2 rounded-xl bg-white border border-slate-200">
-                            <span className="text-[10px] text-slate-500 block">Hemoglobin</span>
-                            <span className="font-mono text-xs font-bold text-slate-900">14.2 g/dL</span>
-                            <span className="text-[9px] text-emerald-600 block">Normal</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-white border border-slate-200">
-                            <span className="text-[10px] text-slate-500 block">Leukosit (WBC)</span>
-                            <span className="font-mono text-xs font-bold text-slate-900">7.400 /µL</span>
-                            <span className="text-[9px] text-emerald-600 block">Normal</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-white border border-slate-200">
-                            <span className="text-[10px] text-slate-500 block">Trombosit</span>
-                            <span className="font-mono text-xs font-bold text-slate-900">245.000 /µL</span>
-                            <span className="text-[9px] text-emerald-600 block">Normal</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Step 2: Phlebotomy & Centrifuge Scanning */}
-                  <div
-                    onClick={() => setActiveAuditStep(2)}
-                    className={cn(
-                      "rounded-2xl p-4 transition-all duration-200 cursor-pointer border text-left",
-                      activeAuditStep === 2
-                        ? "bg-[#F8FBFE] border-[#2764B8]/40 shadow-xs ring-1 ring-[#2764B8]/20"
-                        : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
-                          <Layers className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-semibold text-slate-500">08:02:18 WIB</span>
-                            <span className="text-[11px] font-medium text-slate-600">Siti N., A.Md.AK</span>
-                          </div>
-                          <p className="text-xs sm:text-sm font-semibold text-slate-900 mt-0.5">
-                            {language === "ID"
-                              ? "Barcode Dipindai & Masuk Rak Sentrifus #B-04"
-                              : "Barcode Scanned & Assigned to Centrifuge Rack #B-04"}
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0",
-                          activeAuditStep === 2 && "rotate-180 text-[#2764B8]"
-                        )}
-                      />
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        Dr. dr. Handoko, Sp.PK • Otomatis bridging ke RME SIMRS &amp; SATUSEHAT
+                      </p>
                     </div>
                   </div>
 
-                  {/* Step 3: Inbound Bridging from SIMRS */}
-                  <div
-                    onClick={() => setActiveAuditStep(3)}
-                    className={cn(
-                      "rounded-2xl p-4 transition-all duration-200 cursor-pointer border text-left",
-                      activeAuditStep === 3
-                        ? "bg-[#F8FBFE] border-[#2764B8]/40 shadow-xs ring-1 ring-[#2764B8]/20"
-                        : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
-                          <Server className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-semibold text-slate-500">07:55:00 WIB</span>
-                            <span className="text-[11px] font-medium text-slate-600">Bridging SIMRS IGD</span>
-                          </div>
-                          <p className="text-xs sm:text-sm font-semibold text-slate-900 mt-0.5">
-                            {language === "ID"
-                              ? "Order Masuk dari dr. Jaga IGD (Prioritas CITO)"
-                              : "Inbound Order from ER (CITO Priority)"}
-                          </p>
-                        </div>
+                  <div className="flex items-start gap-3.5 pb-3.5 border-b border-slate-100">
+                    <div className="h-8 w-8 rounded-full bg-blue-100 text-[#2764B8] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                      <Activity className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-900">
+                          {language === "ID" ? "Telemetri Sysmex XN-1000 Terserap" : "Analyzer Telemetry Ingested"}
+                        </span>
+                        <span className="font-mono text-slate-500 text-[11px]">08:11 WIB</span>
                       </div>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0",
-                          activeAuditStep === 3 && "rotate-180 text-[#2764B8]"
-                        )}
-                      />
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        Hb 14.2 g/dL, Leuko 7.400 /µL, Trombo 245.000 /µL (QC Westgard: Pass)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3.5">
+                    <div className="h-8 w-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+                      <Server className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-900">
+                          {language === "ID" ? "Order Masuk dari SIMRS IGD" : "Inbound Order from HIS"}
+                        </span>
+                        <span className="font-mono text-slate-500 text-[11px]">07:55 WIB</span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        HL7 v2.5 Ingested • Barcode dicetak &amp; ditempatkan di Rak #B-04
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* 3. Tamper-Proof Cryptographic Hash Footer */}
-                <div className="bg-[#FAFBFD] px-5 sm:px-6 py-3.5 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-2 text-slate-600 font-mono text-[11px]">
+                {/* 3. Tamper-Proof Cryptographic Hash Strip */}
+                <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-500">
                     <Lock className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span className="truncate max-w-[240px] sm:max-w-[320px]">
-                      SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4
-                    </span>
+                    <span>SHA-256: e3b0c44298fc1c... (Anti-Manipulasi)</span>
                   </div>
                   <span className="text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/60">
                     KARS SKP 2.2 Ready
