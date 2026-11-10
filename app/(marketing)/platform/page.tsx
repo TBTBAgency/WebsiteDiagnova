@@ -374,47 +374,184 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right Column: LigoLab-Style Photorealistic Desktop Monitor Mockup with Pop-Out Card */}
-            <div className="lg:col-span-6 relative mt-10 lg:mt-0">
-              {/* Monitor Hardware Housing Container */}
-              <div className="relative max-w-[580px] mx-auto lg:ml-auto">
-                {/* 1. Overlapping Pop-Out Blue Card (Exact LigoLab Signature Style) */}
-                <div className="absolute bottom-6 -left-3 sm:bottom-10 sm:-left-8 z-30 max-w-[270px] sm:max-w-[310px] rounded-[24px] bg-[#0073FC] text-white p-5 sm:p-6 shadow-[0_20px_50px_-5px_rgba(0,115,252,0.48)] border border-blue-300/40 animate-fadeIn">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="h-9 w-9 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white shrink-0 shadow-2xs">
-                      <ShieldCheck className="h-5 w-5" />
+            {/* Right Column: Clean Medical LIS Workstation Window (Pure UI Software Architecture) */}
+            <div className="lg:col-span-6 relative mt-8 lg:mt-0">
+              {/* Modern Glass Workstation Window Container */}
+              <div className="rounded-[24px] sm:rounded-[28px] border border-slate-200/90 bg-white shadow-[0_16px_45px_-10px_rgba(39,100,184,0.12)] overflow-hidden transition-all duration-300">
+                {/* 1. Window Titlebar with Software Tabs */}
+                <div className="bg-[#FAFBFD] px-4 sm:px-6 py-3 border-b border-slate-200/80 flex items-center justify-between gap-3">
+                  {/* Left: Window Dots & Active Specimen Tab */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-slate-300 inline-block" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-slate-300 inline-block" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-slate-300 inline-block" />
                     </div>
-                    <div>
-                      <h5 className="font-bold text-sm sm:text-base leading-tight text-white">
-                        {language === "ID" ? "Jejak Audit Sah" : "Permanent Audit"}
-                      </h5>
-                      <p className="text-[11px] text-blue-100">KARS SKP 2.2 &amp; ISO 15189</p>
+
+                    <div className="flex items-center gap-1.5 bg-white border border-slate-200 px-3 py-1 rounded-lg text-xs font-bold text-slate-800 shadow-2xs">
+                      <FileCheck2 className="h-3.5 w-3.5 text-[#2764B8]" />
+                      <span>#DX-98214 — Darah Lengkap</span>
                     </div>
                   </div>
-                  <p className="text-xs sm:text-[13px] text-blue-50 leading-relaxed font-normal mb-4">
-                    {language === "ID"
-                      ? "Seluruh riwayat spesimen dan otorisasi dokter terkunci kriptografi BSrE BSSN tanpa celah manipulasi."
-                      : "Every specimen movement and doctor authorization is permanently locked with cryptographic proof."}
-                  </p>
-                  <Link
-                    href="/request-demo"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-blue-100 transition-colors group/link"
-                  >
-                    <span>{language === "ID" ? "Pelajari Sistem Kepatuhan" : "Learn More"}</span>
-                    <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-0.5" />
-                  </Link>
+
+                  {/* Right: Telemetry Live Status */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold font-mono">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>SYS-XN: INGESTED</span>
+                  </div>
                 </div>
 
-                {/* 2. Photorealistic Studio Monitor Render (Full 3D Hardware Image) */}
-                <div className="relative z-10 w-full select-none">
-                  <Image
-                    src="/images/desktop-monitor-mockup.jpg"
-                    alt="Diagnova LIS Desktop Workstation on Curved Stand"
-                    width={1920}
-                    height={1080}
-                    className="w-full h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.18)]"
-                    priority
-                  />
+                {/* 2. Patient & Specimen Info Header Strip */}
+                <div className="p-4 sm:p-5 bg-white border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-[#EBF3FB] text-[#2764B8] border border-blue-100 flex items-center justify-center font-bold text-sm shrink-0">
+                      DL
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-display text-sm sm:text-base font-bold text-slate-900">
+                          Bpk. Suryadi (54 Th / L)
+                        </h4>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-100 text-red-700 border border-red-200">
+                          CITO / IGD
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">
+                        No. RM: #44912 • Dokter DPJP: Dr. dr. Handoko, Sp.PK
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                      <Clock className="h-3.5 w-3.5 text-emerald-600" />
+                      <span>TAT: 19 Menit (Goal &lt; 60m)</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Clinical Telemetry Data Grid (Clean Medical Table) */}
+                <div className="p-4 sm:p-5 space-y-2 bg-white">
+                  <div className="rounded-xl border border-slate-200/90 overflow-hidden shadow-2xs">
+                    <div className="bg-slate-50/90 px-4 py-2 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider grid grid-cols-12">
+                      <span className="col-span-5">{language === "ID" ? "Parameter Analit" : "Analyte Parameter"}</span>
+                      <span className="col-span-3 text-right">{language === "ID" ? "Hasil Uji" : "Result"}</span>
+                      <span className="col-span-2 text-right hidden sm:block">{language === "ID" ? "Nilai Rujukan" : "Ref"}</span>
+                      <span className="col-span-4 sm:col-span-2 text-right">Status</span>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 text-xs">
+                      {/* Row 1: Hemoglobin */}
+                      <div className="px-4 py-2.5 grid grid-cols-12 items-center hover:bg-slate-50/50 transition-colors">
+                        <div className="col-span-5">
+                          <span className="font-bold text-slate-900 block">Hemoglobin (Hb)</span>
+                          <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
+                        </div>
+                        <div className="col-span-3 text-right font-mono font-bold text-slate-900">
+                          14.2 <span className="text-[10px] font-normal text-slate-500">g/dL</span>
+                        </div>
+                        <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
+                          13.5 - 17.5
+                        </div>
+                        <div className="col-span-4 sm:col-span-2 text-right">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            NORMAL
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Row 2: Leukosit */}
+                      <div className="px-4 py-2.5 grid grid-cols-12 items-center hover:bg-slate-50/50 transition-colors">
+                        <div className="col-span-5">
+                          <span className="font-bold text-slate-900 block">Leukosit (WBC)</span>
+                          <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
+                        </div>
+                        <div className="col-span-3 text-right font-mono font-bold text-slate-900">
+                          7.400 <span className="text-[10px] font-normal text-slate-500">/µL</span>
+                        </div>
+                        <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
+                          4.000 - 10k
+                        </div>
+                        <div className="col-span-4 sm:col-span-2 text-right">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            NORMAL
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Row 3: Trombosit */}
+                      <div className="px-4 py-2.5 grid grid-cols-12 items-center hover:bg-slate-50/50 transition-colors">
+                        <div className="col-span-5">
+                          <span className="font-bold text-slate-900 block">Trombosit (PLT)</span>
+                          <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
+                        </div>
+                        <div className="col-span-3 text-right font-mono font-bold text-slate-900">
+                          245.000 <span className="text-[10px] font-normal text-slate-500">/µL</span>
+                        </div>
+                        <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
+                          150k - 450k
+                        </div>
+                        <div className="col-span-4 sm:col-span-2 text-right">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            NORMAL
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Row 4: Hematokrit */}
+                      <div className="px-4 py-2.5 grid grid-cols-12 items-center hover:bg-slate-50/50 transition-colors">
+                        <div className="col-span-5">
+                          <span className="font-bold text-slate-900 block">Hematokrit (Ht)</span>
+                          <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
+                        </div>
+                        <div className="col-span-3 text-right font-mono font-bold text-slate-900">
+                          42.1 <span className="text-[10px] font-normal text-slate-500">%</span>
+                        </div>
+                        <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
+                          40.0 - 52.0
+                        </div>
+                        <div className="col-span-4 sm:col-span-2 text-right">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            NORMAL
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Doctor Digital E-Signature & SATUSEHAT Strip */}
+                <div className="p-4 sm:p-5 bg-[#F8FBFE] border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
+                      <FileCheck2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900">Dr. dr. Handoko, Sp.PK</span>
+                        <span className="text-[10px] font-mono text-slate-400">08:14:22 WIB</span>
+                      </div>
+                      <span className="text-[11px] text-emerald-700 font-semibold block">
+                        Tanda Tangan Elektronik Sah (BSrE BSSN)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#2764B8] border border-blue-200/80 text-xs font-semibold shadow-2xs">
+                      <QrCode className="h-3.5 w-3.5" />
+                      <span>SATUSEHAT FHIR Ingested</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* 5. Cryptographic Console Audit Footer */}
+                <div className="px-5 py-2.5 bg-white border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-500">
+                  <span className="flex items-center gap-1.5">
+                    <Lock className="h-3.5 w-3.5 text-[#2764B8]" />
+                    SHA-256: e3b0c44298fc1c14... (Anti-Manipulasi)
+                  </span>
+                  <span className="text-[#2764B8] font-bold">KARS SKP 2.2 Ready</span>
                 </div>
               </div>
             </div>
