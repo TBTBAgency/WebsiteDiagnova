@@ -2,17 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, ArrowRight, HelpCircle, MessageSquare } from "lucide-react";
-import { SectionBadge } from "@/components/ui/SectionBadge";
+import { Plus, Minus, ArrowRight, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { faqContentID, faqContentEN, FAQItem } from "@/content/faq";
+import { faqContentID, faqContentEN } from "@/content/faq";
 import { cn } from "@/lib/utils";
 
 export interface FAQSectionProps {
   initialData?: any;
 }
 
-export function FAQSection({ initialData }: FAQSectionProps = {}) {
+export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) {
   const { language } = useLanguage();
   const defaultContent = language === "ID" ? faqContentID : faqContentEN;
 
@@ -26,13 +25,12 @@ export function FAQSection({ initialData }: FAQSectionProps = {}) {
     items: defaultContent.items,
   };
 
-  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState<string>("general");
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const filteredItems =
-    activeCategory === "all"
-      ? content.items
-      : content.items.filter((item) => item.category === activeCategory || item.category === "all");
+  const filteredItems = content.items.filter(
+    (item) => item.category === activeCategory
+  );
 
   const toggleAccordion = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -41,117 +39,128 @@ export function FAQSection({ initialData }: FAQSectionProps = {}) {
   return (
     <section
       id="faq"
-      className="relative w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden content-auto"
+      className="relative w-full bg-white py-20 sm:py-24 lg:py-28 border-t border-slate-200/60 overflow-hidden content-auto"
       aria-label="Frequently Asked Questions"
     >
-      {/* Subtle ambient background glow */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-blue-50/50 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 left-0 w-80 h-80 rounded-full bg-blue-100/30 blur-[100px] pointer-events-none" />
+      <div className="relative z-10 mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-12 w-full">
+        {/* ═══ BADGE: / FAQS ═══ */}
+        <div className="mb-4 sm:mb-5">
+          <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider text-sky-600 bg-sky-50 border border-sky-200/90 shadow-2xs">
+            / {content.sectionBadge}
+          </span>
+        </div>
 
-      <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-        {/* ═══ SECTION HEADER ═══ */}
-        <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12 lg:mb-14">
-          <div className="inline-flex items-center justify-center mb-3.5 sm:mb-4">
-            <SectionBadge variant="blue">
-              <span className="flex items-center gap-1.5">
-                <HelpCircle className="h-3.5 w-3.5 text-[#2764B8]" />
-                <span>{content.sectionBadge}</span>
-              </span>
-            </SectionBadge>
-          </div>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+        {/* ═══ HEADER ROW: TITLE (LEFT) & SUBTITLE (RIGHT) ═══ */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-12 mb-12 sm:mb-16 pb-2">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-semibold tracking-tight text-slate-900 leading-[1.18]">
             {content.sectionTitle}
           </h2>
-          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base lg:text-[17px] leading-relaxed text-slate-500 font-light max-w-2xl mx-auto">
+          <p className="text-slate-500 text-xs sm:text-sm lg:text-[14px] leading-relaxed font-light max-w-sm sm:max-w-md lg:text-left shrink-0">
             {content.sectionSubtitle}
           </p>
+        </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mt-7 sm:mt-8">
-            {content.categories.map((cat) => {
-              const isActive = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveCategory(cat.id);
-                    setOpenIndex(0);
-                  }}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer border",
-                    isActive
-                      ? "bg-[#2764B8] text-white border-[#2764B8] shadow-xs"
-                      : "bg-[#F8FBFE] text-slate-600 border-slate-200/90 hover:bg-slate-100 hover:text-slate-900"
-                  )}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
+        {/* ═══ MAIN 2-COLUMN LAYOUT: CATEGORIES (LEFT) & ACCORDION (RIGHT) ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
+          {/* ── LEFT COLUMN: CATEGORIES ── */}
+          <div className="lg:col-span-3 xl:col-span-3">
+            <div className="flex flex-row lg:flex-col gap-1.5 sm:gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-none">
+              {content.categories.map((cat) => {
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveCategory(cat.id);
+                      setOpenIndex(0); // open first question of newly selected category
+                    }}
+                    className={cn(
+                      "px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 text-left whitespace-nowrap cursor-pointer",
+                      isActive
+                        ? "bg-[#EBF4FD] border border-sky-300 text-sky-700 shadow-2xs font-semibold"
+                        : "text-slate-500 hover:text-slate-900 hover:bg-slate-50 border border-transparent font-normal"
+                    )}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── RIGHT COLUMN: ACCORDION LIST ── */}
+          <div className="lg:col-span-9 xl:col-span-9">
+            <div className="flex flex-col gap-2.5 sm:gap-3">
+              {filteredItems.map((item, idx) => {
+                const isOpen = openIndex === idx;
+
+                if (isOpen) {
+                  return (
+                    <div
+                      key={item.id}
+                      className="rounded-2xl sm:rounded-[22px] bg-[#F8FAFC] border border-slate-100/90 p-6 sm:p-7 shadow-2xs transition-all duration-200"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleAccordion(idx)}
+                        className="w-full flex items-start justify-between gap-4 text-left cursor-pointer group"
+                        aria-expanded="true"
+                      >
+                        <span className="font-semibold text-slate-900 text-sm sm:text-base lg:text-[17px] leading-snug">
+                          {item.question}
+                        </span>
+                        <div className="shrink-0 mt-0.5 text-slate-700 transition-transform duration-200">
+                          <Minus className="h-4 w-4" />
+                        </div>
+                      </button>
+
+                      <div className="text-slate-500 text-xs sm:text-sm lg:text-[15px] leading-relaxed mt-3.5 pr-4 sm:pr-8 font-light animate-in fade-in duration-200">
+                        <p>{item.answer}</p>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-xl transition-colors duration-150 hover:bg-slate-50/70"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleAccordion(idx)}
+                      className="w-full py-3.5 sm:py-4 px-4 sm:px-6 flex items-center justify-between gap-4 text-left cursor-pointer group"
+                      aria-expanded="false"
+                    >
+                      <span className="text-slate-800 group-hover:text-sky-700 font-medium sm:font-normal text-sm sm:text-base lg:text-[16px] leading-snug transition-colors">
+                        {item.question}
+                      </span>
+                      <div className="shrink-0 text-slate-400 group-hover:text-slate-700 transition-colors">
+                        <Plus className="h-4 w-4" />
+                      </div>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* ═══ ACCORDION CONTAINER ═══ */}
-        <div className="max-w-4xl mx-auto space-y-3 sm:space-y-3.5">
-          {filteredItems.map((item, idx) => {
-            const isOpen = openIndex === idx;
-            return (
-              <div
-                key={item.id}
-                className={cn(
-                  "rounded-2xl transition-all duration-200 overflow-hidden border",
-                  isOpen
-                    ? "bg-white border-[#2764B8]/40 shadow-[0_4px_22px_-6px_rgba(39,100,184,0.12)]"
-                    : "bg-[#FAFBFD] border-slate-200/90 hover:border-slate-300 hover:bg-white"
-                )}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleAccordion(idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-display font-semibold text-sm sm:text-base text-slate-900 hover:text-[#2764B8] transition-colors cursor-pointer"
-                  aria-expanded={isOpen}
-                >
-                  <span className="leading-snug pr-2">{item.question}</span>
-                  <div
-                    className={cn(
-                      "h-8 w-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200",
-                      isOpen ? "bg-[#EBF3FB] text-[#2764B8]" : "bg-slate-100 text-slate-500"
-                    )}
-                  >
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 transition-transform duration-200",
-                        isOpen && "rotate-180 text-[#2764B8]"
-                      )}
-                    />
-                  </div>
-                </button>
-
-                {isOpen && (
-                  <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-xs sm:text-sm text-slate-600 leading-relaxed font-light border-t border-slate-100/90 pt-4 animate-in fade-in duration-200">
-                    <p className="max-w-3xl">{item.answer}</p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* ═══ SUPPORT / CONSULTATION MINI BANNER ═══ */}
-        <div className="max-w-4xl mx-auto mt-12 sm:mt-14">
-          <div className="rounded-[24px] sm:rounded-[28px] bg-gradient-to-r from-[#F0F6FC] via-[#F5F9FE] to-[#EBF3FB] border border-blue-100/80 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6 shadow-2xs">
+        {/* ═══ BOTTOM SUPPORT CALLOUT BANNER ═══ */}
+        <div className="mt-14 sm:mt-18 pt-6 border-t border-slate-100">
+          <div className="rounded-[22px] sm:rounded-[26px] bg-gradient-to-r from-[#F0F6FC] via-[#F6F9FE] to-[#EEF5FC] border border-blue-100/70 p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xs">
             <div className="flex items-center gap-4 text-center sm:text-left">
-              <div className="h-12 w-12 rounded-2xl bg-[#2764B8] text-white flex items-center justify-center shrink-0 shadow-xs">
-                <MessageSquare className="h-6 w-6" />
+              <div className="h-11 w-11 rounded-2xl bg-[#2764B8] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <MessageSquare className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-display text-base sm:text-lg font-bold text-slate-900">
+                <h4 className="font-display text-sm sm:text-base font-bold text-slate-900">
                   {content.supportPrompt}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-light mt-0.5">
+                <p className="text-xs sm:text-[13px] text-slate-500 font-light mt-0.5">
                   {language === "ID"
-                    ? "Jadwalkan sesi demonstrasi teknis atau konsultasi spesifikasi faskes Anda."
+                    ? "Jadwalkan sesi demonstrasi langsung atau konsultasi teknis kebutuhan lab Anda."
                     : "Schedule a tailored technical consultation or request a live interactive demo."}
                 </p>
               </div>
@@ -159,7 +168,7 @@ export function FAQSection({ initialData }: FAQSectionProps = {}) {
 
             <Link
               href="/request-demo"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs transition-all duration-200 active:scale-[0.98] shrink-0"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold shadow-xs transition-all duration-200 active:scale-[0.98] shrink-0"
             >
               <span>{content.supportCta}</span>
               <ArrowRight className="h-4 w-4" />
