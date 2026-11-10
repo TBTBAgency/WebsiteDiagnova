@@ -40,7 +40,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
   return (
     <section
       id="faq"
-      className="relative w-full bg-[#F9F9F9] py-14 sm:py-18 lg:py-22 border-t border-slate-200/60 overflow-hidden content-auto"
+      className="relative w-full bg-white py-14 sm:py-18 lg:py-22 border-t border-slate-200/60 overflow-hidden content-auto"
       aria-label="Frequently Asked Questions"
     >
       {/* Subtle ambient Diagnova gradient glow */}
@@ -108,7 +108,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                   return (
                     <div
                       key={item.id}
-                      className="rounded-2xl sm:rounded-[22px] bg-white border border-[#D5E5F7] p-6 sm:p-7 shadow-[0_4px_24px_-6px_rgba(40,90,165,0.08)] transition-all duration-200"
+                      className="rounded-2xl sm:rounded-[22px] bg-[#EBF3FB] border border-[#D5E5F7] p-6 sm:p-7 shadow-[0_4px_24px_-6px_rgba(40,90,165,0.10)] transition-all duration-200"
                     >
                       <button
                         type="button"
@@ -134,7 +134,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                 return (
                   <div
                     key={item.id}
-                    className="border-b border-slate-200/70 rounded-xl transition-colors duration-150 hover:bg-white/60"
+                    className="border-b border-slate-200/80 rounded-xl transition-colors duration-150 hover:bg-slate-50"
                   >
                     <button
                       type="button"
