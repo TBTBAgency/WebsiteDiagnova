@@ -374,13 +374,13 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right Column: Modern Desktop Workstation Showcase with Floating Accent Card (Aligned Flush Right with Precision Width) */}
+            {/* Right Column: Modern Desktop Workstation Showcase with Floating Accent Card (Shifted to the Right, Compact Width) */}
             <div className="lg:col-span-6 relative mt-8 lg:mt-0 flex justify-end pb-8 sm:pb-10 lg:pb-0 w-full">
               {/* Subtle ambient glow behind monitor */}
               <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[36px] blur-2xl pointer-events-none" />
 
-              {/* Monitor Chassis Container (Flush to Right Edge with Precision Responsive Width) */}
-              <div className="relative z-10 w-full ml-auto max-w-full sm:max-w-[640px] lg:max-w-[660px] xl:max-w-[710px] 2xl:max-w-[740px]">
+              {/* Monitor Chassis Container (Compact Original Width, Shifted Further to the Right) */}
+              <div className="relative z-10 w-full ml-auto max-w-[540px] sm:max-w-[580px] lg:max-w-[600px] lg:translate-x-8 xl:translate-x-14">
                 {/* 1. Monitor Bezel Frame */}
                 <div className="rounded-[22px] sm:rounded-[26px] bg-slate-900 p-2 sm:p-2.5 shadow-[0_25px_60px_-15px_rgba(31,45,93,0.25)] border border-slate-700/80 transition-all duration-300">
                   {/* Subtle top bezel webcam indicator */}
