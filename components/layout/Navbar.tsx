@@ -592,6 +592,22 @@ export function Navbar() {
     updateNavPosition(window.scrollY);
   }, [pathname]);
 
+  const handleNavClick = (href: string) => {
+    setActiveDropdown(null);
+    setMobileMenuOpen(false);
+
+    // Fast in-page anchor scroll if clicking a link for the current page
+    if (href.includes("#")) {
+      const [targetPath, hash] = href.split("#");
+      if ((targetPath === pathname || targetPath === "") && hash) {
+        const el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+  };
+
   const effectiveBarHeight = isDismissed ? 0 : barHeight;
 
   return (
@@ -667,7 +683,7 @@ export function Navbar() {
               <Link
                 href={item.href}
                 prefetch={true}
-                onClick={() => setActiveDropdown(null)}
+                onClick={() => handleNavClick(item.href)}
                 className={cn(
                   "group/nav inline-flex items-center gap-1.5 py-2 px-1 text-[15px] xl:text-[15.5px] font-medium tracking-normal transition-colors duration-150",
                   pathname.startsWith(item.href)
@@ -695,8 +711,7 @@ export function Navbar() {
                         <Link
                           key={child.href}
                           href={child.href}
-                          prefetch={true}
-                          onClick={() => setActiveDropdown(null)}
+                          onClick={() => handleNavClick(child.href)}
                           className="group/item relative flex flex-col justify-center rounded-xl px-3.5 py-2.5 transition-all duration-150 hover:bg-slate-50/90 active:bg-slate-100/80"
                         >
                           {/* Micro indicator line on hover */}
@@ -791,8 +806,7 @@ export function Navbar() {
                             <Link
                               key={child.href}
                               href={child.href}
-                              prefetch={true}
-                              onClick={() => setMobileMenuOpen(false)}
+                              onClick={() => handleNavClick(child.href)}
                               className="block rounded-lg px-3 py-2 transition-colors hover:bg-slate-50"
                             >
                               <p className="text-xs font-medium text-slate-800">
@@ -807,7 +821,7 @@ export function Navbar() {
                             <Link
                               href={item.href}
                               prefetch={true}
-                              onClick={() => setMobileMenuOpen(false)}
+                              onClick={() => handleNavClick(item.href)}
                               className="inline-flex items-center gap-1 text-[11px] font-semibold text-diagnova-blue"
                             >
                               <span>
@@ -823,7 +837,7 @@ export function Navbar() {
                     <Link
                       href={item.href}
                       prefetch={true}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => handleNavClick(item.href)}
                       className="block p-3.5 text-sm font-semibold text-slate-800 hover:text-diagnova-blue"
                     >
                       {item.label}
