@@ -7,6 +7,7 @@ import { WorkflowSection } from "@/components/sections/WorkflowSection";
 import { InfrastructureSection } from "@/components/sections/InfrastructureSection";
 import { ComparisonSection } from "@/components/sections/ComparisonSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { FAQSection } from "@/components/sections/FAQSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { getCmsHomepageContent } from "@/lib/models/cms.model";
 
@@ -50,7 +51,10 @@ export default async function HomePage() {
       {/* 7. Customer Testimonials Section */}
       <TestimonialsSection initialData={cmsData?.testimonials} />
 
-      {/* 8. Bottom CTA Banner */}
+      {/* 8. Frequently Asked Questions (FAQ) Section */}
+      <FAQSection />
+
+      {/* 9. Bottom CTA Banner */}
       <CTABanner initialData={cmsData?.cta} />
     </>
   );
