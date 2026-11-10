@@ -184,13 +184,13 @@ function RequestDemoForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-3.5">
       {/* Header Form */}
       <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+        <h1 className="font-display text-2xl lg:text-[28px] xl:text-3xl font-bold text-slate-900 tracking-tight">
           {language === "ID" ? "Jadwalkan Demo Langsung" : "Get Started Now"}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 font-light mt-1">
+        <p className="text-xs sm:text-sm text-slate-500 font-light mt-0.5">
           {language === "ID"
             ? "Lengkapi formulir di bawah untuk memulai sesi demonstrasi privat & konsultasi alur lab Anda."
             : "Please fill in your details to schedule a tailored walkthrough for your facility."}
@@ -198,7 +198,7 @@ function RequestDemoForm() {
       </div>
 
       {submitMessage && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 flex items-center gap-2">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-700 flex items-center gap-2">
           <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
           <span>{submitMessage}</span>
         </div>
@@ -372,11 +372,11 @@ function RequestDemoForm() {
       </div>
 
       {/* Submit Button & Security Note */}
-      <div className="pt-1.5 space-y-2.5">
+      <div className="pt-1.5 space-y-2">
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full h-11 sm:h-12 inline-flex items-center justify-center gap-2 rounded-xl bg-[#2568BA] hover:bg-[#1D5496] px-6 text-sm sm:text-base font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-200 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-[#2568BA] hover:bg-[#1D5496] px-6 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-200 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <>
@@ -402,7 +402,7 @@ function RequestDemoForm() {
       </div>
 
       {/* Direct Contact Links */}
-      <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
         <span className="font-light text-[11px]">
           {language === "ID" ? "Pertanyaan langsung? Hubungi kami:" : "Questions? Contact us directly:"}
         </span>
@@ -432,13 +432,14 @@ export default function RequestDemoPage() {
   return (
     <main
       style={{
-        paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
+        paddingTop: "calc(88px + var(--announcement-bar-height, 0px) + 20px)",
+        paddingBottom: "20px",
       }}
-      className="relative w-full lg:h-[100dvh] min-h-[660px] pb-3 sm:pb-4 lg:pb-6 px-4 sm:px-6 lg:px-10 bg-[#F4F6F9] flex flex-col justify-center transition-[padding-top] duration-300 ease-in-out"
+      className="relative w-full lg:h-[100dvh] min-h-[660px] bg-[#F4F6F9] flex flex-col justify-center transition-[padding-top] duration-300 ease-in-out"
     >
-      {/* Outer Card with Exact Standard Width max-w-[1560px] Matching All Site Content */}
-      <div className="mx-auto w-full max-w-[1560px] h-full flex flex-col justify-center">
-        <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_16px_45px_-12px_rgba(15,23,42,0.08)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
+      {/* Outer Card with Exact Standard Width max-w-[1560px] px-4 sm:px-6 lg:px-10 Matching Navbar & Site Content */}
+      <div className="mx-auto w-full max-w-[1560px] px-4 sm:px-6 lg:px-10 h-full flex flex-col justify-center">
+        <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.07)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 xl:gap-8 h-full items-stretch">
 
             {/* LEFT: Vibrant Blue Feature Banner (Matching Screenshot) */}
