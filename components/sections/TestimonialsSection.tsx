@@ -201,6 +201,16 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
       </div>
 
       {/* ═══ SCROLLABLE CARD TRACK ═══ */}
+      <div className="relative">
+        {/* Left fade edge */}
+        <div className="absolute left-0 top-0 h-full w-16 sm:w-24 lg:w-32 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to right, #ffffff 0%, transparent 100%)" }}
+        />
+        {/* Right fade edge */}
+        <div className="absolute right-0 top-0 h-full w-16 sm:w-24 lg:w-32 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to left, #ffffff 0%, transparent 100%)" }}
+        />
+
       <div
         ref={scrollContainerRef}
         className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-4 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
@@ -276,6 +286,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
         {/* Spacer to ensure last card doesn't stick to edge */}
         <div className="shrink-0 w-1 lg:w-4" aria-hidden="true" />
       </div>
+      </div>{/* end relative wrapper */}
 
       {/* ═══ NAVIGATION BUTTONS ═══ */}
       <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
