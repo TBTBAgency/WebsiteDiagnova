@@ -373,107 +373,145 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right Column: Clean Clinical Specimen Card (Ref: High-Contrast Micro-UI Artifact) */}
+            {/* Right Column: Premium Clinical Specimen Audit Passport (Ref: High-Contrast Floating Micro-Cards) */}
             <div className="lg:col-span-6">
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-md transition-all duration-300">
-                {/* 1. Top Visual Stage: Certified Cryptographic Specimen Card */}
-                <div className="rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-5 sm:p-6 mb-6 relative overflow-hidden">
+                {/* 1. Top Visual Stage: Floating Specimen Passport Card */}
+                <div className="rounded-2xl bg-gradient-to-b from-[#F6FAFE] via-[#F1F6FC] to-[#EAF2FB] border border-blue-100/80 p-5 sm:p-6 mb-5 relative overflow-hidden">
                   <div
-                    className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                    className="absolute inset-0 opacity-[0.35] pointer-events-none"
                     style={{
                       backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
                       backgroundSize: "16px 16px",
                     }}
                   />
+                  <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-blue-400/20 blur-2xl pointer-events-none" />
 
-                  {/* Header Badge & Barcode */}
-                  <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="h-10 w-10 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-[#2764B8]">
-                        <QrCode className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-[#2764B8]">#DX-98214</span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-100 text-red-700 border border-red-200">
-                            CITO / IGD
+                  {/* Floating Identity & Barcode Card */}
+                  <div className="relative z-10 bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white shadow-[0_10px_25px_-5px_rgba(39,100,184,0.12)]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-[#EBF3FB] text-[#2764B8] border border-blue-200/60 flex items-center justify-center shadow-2xs shrink-0">
+                          <QrCode className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-[#2764B8]">#DX-98214</span>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-red-100 text-red-700 border border-red-200">
+                              CITO / IGD
+                            </span>
+                          </div>
+                          <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                            Bpk. Suryadi (54 Th / L)
                           </span>
                         </div>
-                        <span className="text-[11px] text-slate-500 font-medium block">
-                          Bpk. Suryadi (54 Th) • RM-44912
+                      </div>
+
+                      {/* Official BSrE Seal Badge */}
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold shadow-2xs">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        <span>BSrE Certified</span>
+                      </span>
+                    </div>
+
+                    {/* Barcode & Elapsed TAT Meter */}
+                    <div className="pt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <div className="flex items-center gap-2 font-mono text-[11px] text-slate-500">
+                        {/* CSS Realistic Barcode Lines */}
+                        <div className="h-3.5 flex items-center gap-[2px] opacity-75">
+                          <span className="w-[1.5px] h-3 bg-slate-800" />
+                          <span className="w-[3px] h-3 bg-slate-800" />
+                          <span className="w-[1px] h-3 bg-slate-800" />
+                          <span className="w-[2px] h-3 bg-slate-800" />
+                          <span className="w-[1px] h-3 bg-slate-800" />
+                          <span className="w-[3px] h-3 bg-slate-800" />
+                          <span className="w-[1.5px] h-3 bg-slate-800" />
+                          <span className="w-[2.5px] h-3 bg-slate-800" />
+                        </div>
+                        <span>98214-IGD-K2</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-slate-500">TAT:</span>
+                        <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          19m (Target &lt; 60m)
                         </span>
                       </div>
                     </div>
+                  </div>
+                </div>
 
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold shadow-2xs">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                      <span>{language === "ID" ? "E-Sign BSrE Sah" : "BSrE Certified"}</span>
+                {/* 2. Micro Floating Milestone Cards (Modern Stack Architecture) */}
+                <div className="space-y-2.5">
+                  {/* Milestone 1: Doctor E-Sign Authorization */}
+                  <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-2xs hover:border-emerald-300 hover:shadow-xs transition-all flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0">
+                        <FileCheck2 className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h5 className="font-bold text-xs sm:text-sm text-slate-900 truncate">
+                            {language === "ID" ? "Otorisasi Dokter Sp.PK (E-Sign)" : "Pathologist Sign-Off (E-Sign)"}
+                          </h5>
+                        </div>
+                        <p className="text-[11px] text-slate-600 truncate mt-0.5">
+                          Dr. dr. Handoko, Sp.PK • Bridged to SIMRS &amp; SATUSEHAT
+                        </p>
+                      </div>
+                    </div>
+                    <span className="font-mono text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 shrink-0">
+                      08:14 WIB
                     </span>
                   </div>
 
-                  {/* Barcode Strip Graphic */}
-                  <div className="relative z-10 mt-4 pt-3 border-t border-blue-100/80 flex items-center justify-between text-xs font-mono text-slate-500">
-                    <span>BARCODE: 98214-IGD-K2EDTA</span>
-                    <span className="text-emerald-700 font-semibold font-sans">TAT: 19 Menit (Selesai)</span>
-                  </div>
-                </div>
-
-                {/* 2. Clean 3-Step Milestone (Ringkas & Terbaca, Tanpa Accordion Rumit) */}
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3.5 pb-3.5 border-b border-slate-100">
-                    <div className="h-8 w-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                      <FileCheck2 className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-900">
-                          {language === "ID" ? "Otorisasi Dokter Sp.PK (E-Sign BSrE Sah)" : "Pathologist Sign-Off (BSrE E-Sign)"}
-                        </span>
-                        <span className="font-mono text-slate-500 text-[11px]">08:14 WIB</span>
+                  {/* Milestone 2: Analyzer Telemetry */}
+                  <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-2xs hover:border-blue-300 hover:shadow-xs transition-all flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-blue-50 text-[#2764B8] border border-blue-100 flex items-center justify-center shrink-0">
+                        <Activity className="h-4 w-4" />
                       </div>
-                      <p className="text-xs text-slate-600 mt-0.5">
-                        Dr. dr. Handoko, Sp.PK • Otomatis bridging ke RME SIMRS &amp; SATUSEHAT
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3.5 pb-3.5 border-b border-slate-100">
-                    <div className="h-8 w-8 rounded-full bg-blue-100 text-[#2764B8] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                      <Activity className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-900">
+                      <div className="min-w-0">
+                        <h5 className="font-bold text-xs sm:text-sm text-slate-900 truncate">
                           {language === "ID" ? "Telemetri Sysmex XN-1000 Terserap" : "Analyzer Telemetry Ingested"}
-                        </span>
-                        <span className="font-mono text-slate-500 text-[11px]">08:11 WIB</span>
+                        </h5>
+                        <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-mono text-slate-600">
+                          <span>Hb 14.2</span>
+                          <span>•</span>
+                          <span>WBC 7.4k</span>
+                          <span>•</span>
+                          <span className="text-emerald-600 font-semibold">Pass QC</span>
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-600 mt-0.5">
-                        Hb 14.2 g/dL, Leuko 7.400 /µL, Trombo 245.000 /µL (QC Westgard: Pass)
-                      </p>
                     </div>
+                    <span className="font-mono text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2 py-1 rounded-lg border border-blue-200/60 shrink-0">
+                      08:11 WIB
+                    </span>
                   </div>
 
-                  <div className="flex items-start gap-3.5">
-                    <div className="h-8 w-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
-                      <Server className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-900">
-                          {language === "ID" ? "Order Masuk dari SIMRS IGD" : "Inbound Order from HIS"}
-                        </span>
-                        <span className="font-mono text-slate-500 text-[11px]">07:55 WIB</span>
+                  {/* Milestone 3: Inbound Bridging from SIMRS */}
+                  <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-2xs hover:border-slate-300 transition-all flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-slate-50 text-slate-700 border border-slate-200 flex items-center justify-center shrink-0">
+                        <Server className="h-4 w-4" />
                       </div>
-                      <p className="text-xs text-slate-600 mt-0.5">
-                        HL7 v2.5 Ingested • Barcode dicetak &amp; ditempatkan di Rak #B-04
-                      </p>
+                      <div className="min-w-0">
+                        <h5 className="font-bold text-xs sm:text-sm text-slate-900 truncate">
+                          {language === "ID" ? "Order Masuk dari SIMRS IGD" : "Inbound Order from HIS"}
+                        </h5>
+                        <p className="text-[11px] text-slate-600 truncate mt-0.5">
+                          HL7 v2.5 Ingested • Barcode Ditempatkan di Rak #B-04
+                        </p>
+                      </div>
                     </div>
+                    <span className="font-mono text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg shrink-0">
+                      07:55 WIB
+                    </span>
                   </div>
                 </div>
 
-                {/* 3. Tamper-Proof Cryptographic Hash Strip */}
-                <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                {/* 3. Security Seal Barcode Footer */}
+                <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-500">
                     <Lock className="h-3.5 w-3.5 text-[#2764B8]" />
                     <span>SHA-256: e3b0c44298fc1c... (Anti-Manipulasi)</span>
