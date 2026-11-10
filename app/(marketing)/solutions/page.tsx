@@ -18,6 +18,15 @@ import {
   Clock,
   Layers,
   FileCheck2,
+  AlertTriangle,
+  TrendingUp,
+  Send,
+  QrCode,
+  FileText,
+  Activity,
+  Database,
+  Users,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -499,58 +508,515 @@ export default function SolutionsPage() {
                 </div>
               </div>
 
-              {/* Right Column: Clean High-Fidelity Solution Preview Card */}
-              <div className="lg:col-span-5 rounded-[24px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-50 animate-pulse" />
-                    <span className="text-xs font-bold text-slate-800">
-                      {language === "ID" ? "Diagnova Live Setup" : "Diagnova Architecture"}
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200/60 text-[#2764B8] font-bold">
-                    {currentSol.previewInfo.badge}
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 mb-1">
-                    <span>{language === "ID" ? "KONFIGURASI ALUR" : "WORKFLOW CONFIG"}</span>
-                    <span className="text-emerald-700 font-bold">● Active</span>
-                  </div>
-                  <p className="text-sm font-bold text-slate-900">
-                    {currentSol.name}
-                  </p>
-                  <p className="text-xs text-slate-600 mt-1 font-medium">
-                    {currentSol.previewInfo.focus}
-                  </p>
-                </div>
-
-                {/* Metrics */}
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  {currentSol.metrics.map((m, i) => (
-                    <div key={i} className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
-                      <span className="font-display text-2xl font-bold text-[#345DAB] block tracking-tight">
-                        {m.val}
-                      </span>
-                      <span className="text-xs font-semibold text-slate-700 block mt-1 leading-snug">
-                        {m.label}
+              {/* Right Column: Dynamic Discipline-Specific Micro-UI Stage */}
+              <div className="lg:col-span-5 rounded-[24px] sm:rounded-[28px] bg-white border border-slate-200/90 shadow-[0_16px_40px_-12px_rgba(39,100,184,0.12)] overflow-hidden transition-all duration-300">
+                {/* 1. Hospital Laboratory Stage */}
+                {currentSol.id === "hospital-laboratory" && (
+                  <div>
+                    {/* Window Titlebar */}
+                    <div className="bg-[#FAFBFD] px-4 py-3 border-b border-slate-200/80 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded shadow-2xs">
+                          #DX-CITO-4491
+                        </span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        SIMRS BRIDGED • HL7
                       </span>
                     </div>
-                  ))}
-                </div>
 
-                {/* Feature Tags */}
-                <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100">
-                  {currentSol.previewInfo.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/70 px-3 py-1 rounded-full"
-                    >
-                      ✓ {tag}
-                    </span>
-                  ))}
-                </div>
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 space-y-3.5">
+                      {/* Patient & CITO Status */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xs sm:text-sm text-slate-900">Bpk. Suryadi (54 Th)</span>
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-red-100 text-red-700 border border-red-200">
+                              CITO / IGD
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-500 font-mono">Bed IGD-04 • DPJP: Dr. dr. Handoko, Sp.PK</span>
+                        </div>
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 font-mono">
+                          TAT: 14m (&lt;25m)
+                        </span>
+                      </div>
+
+                      {/* Bridge Flow Pipeline */}
+                      <div className="p-2.5 rounded-xl bg-[#F8FBFE] border border-blue-100/80">
+                        <div className="flex items-center justify-between text-[10px] font-mono">
+                          <div className="text-center">
+                            <span className="block font-bold text-slate-700">SIMRS Order</span>
+                            <span className="text-slate-400">07:50 WIB</span>
+                          </div>
+                          <span className="h-0.5 w-6 bg-[#2764B8] rounded-full" />
+                          <div className="text-center">
+                            <span className="block font-bold text-slate-700">Cobas 6000</span>
+                            <span className="text-slate-400">07:58 WIB</span>
+                          </div>
+                          <span className="h-0.5 w-6 bg-red-400 rounded-full" />
+                          <div className="text-center">
+                            <span className="block font-bold text-red-600">Panic Flag</span>
+                            <span className="text-red-500 font-bold">08:04 WIB</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Panic Value Alert Card */}
+                      <div className="p-3 rounded-xl bg-red-50/80 border border-red-200/80 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-red-800 flex items-center gap-1.5">
+                            <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
+                            Troponin I Kuantitatif
+                          </span>
+                          <span className="text-[10px] font-mono font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded">
+                            NILAI KRITIS
+                          </span>
+                        </div>
+                        <div className="flex items-baseline justify-between">
+                          <span className="text-base font-bold font-mono text-red-900">1.84 ng/mL</span>
+                          <span className="text-[10px] text-red-600 font-mono">Rujukan &lt; 0.04 ng/mL</span>
+                        </div>
+                        <p className="text-[10px] text-red-700 pt-1 border-t border-red-200/60 leading-tight">
+                          Notifikasi instan terkirim otomatis ke layar DPJP IGD &amp; WhatsApp dokter jaga.
+                        </p>
+                      </div>
+
+                      {/* Metrics Pill Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-[#345DAB] block">&lt; 25 Menit</span>
+                          <span className="text-[10px] text-slate-600 font-medium">TAT Cito Darah IGD</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-emerald-600 block">100% Bridging</span>
+                          <span className="text-[10px] text-slate-600 font-medium">SIMRS Dua Arah</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. Clinical Laboratory & MCU Stage */}
+                {currentSol.id === "clinical-laboratory" && (
+                  <div>
+                    {/* Window Titlebar */}
+                    <div className="bg-[#FAFBFD] px-4 py-3 border-b border-slate-200/80 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded shadow-2xs">
+                          BATCH MCU #CORP-8821
+                        </span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                        PT TELKOM (450 PAX)
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 space-y-3.5">
+                      {/* Batch Import Progress Box */}
+                      <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/90 space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <Users className="h-3.5 w-3.5 text-[#2764B8]" />
+                            Proses Cetak Barcode Massal
+                          </span>
+                          <span className="font-mono text-emerald-700 font-bold text-[11px]">450 / 450 Siap</span>
+                        </div>
+                        <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                          <div className="bg-emerald-500 h-full rounded-full w-full" />
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                          <span>Auto-Generate Barcode Tabung</span>
+                          <span className="text-emerald-700 font-semibold">0.4s / Peserta</span>
+                        </div>
+                      </div>
+
+                      {/* WhatsApp PDF Dispatch Channel */}
+                      <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <Send className="h-3.5 w-3.5 text-emerald-600" />
+                            Pengiriman PDF Terenkripsi
+                          </span>
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            99.6% Terkirim
+                          </span>
+                        </div>
+                        <div className="space-y-1 text-[11px] font-mono text-slate-600">
+                          <div className="flex items-center justify-between py-1 border-b border-slate-100">
+                            <span>WA Gateway Bot</span>
+                            <span className="text-slate-900 font-bold">448 Terkirim Langsung</span>
+                          </div>
+                          <div className="flex items-center justify-between py-1">
+                            <span>Portal Hasil Online</span>
+                            <span className="text-[#2764B8] font-bold">QR Token Valid</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* B2B Billing Status */}
+                      <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-600 font-medium">Rekap Billing Korporasi:</span>
+                        <span className="font-bold text-slate-900 font-mono">Net 30 • Bridged ERP</span>
+                      </div>
+
+                      {/* Metrics Pill Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-[#345DAB] block">30 Detik</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Registrasi per Pasien</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-emerald-600 block">100% Digital</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Paperless WhatsApp</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. Anatomical Pathology Stage */}
+                {currentSol.id === "pathology" && (
+                  <div>
+                    {/* Window Titlebar */}
+                    <div className="bg-[#FAFBFD] px-4 py-3 border-b border-slate-200/80 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded shadow-2xs">
+                          #PA-24-0982 (BIOPSI)
+                        </span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        2D DATAMATRIX TRACKED
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 space-y-3.5">
+                      {/* 2D Cassette & Slide Tracking Pipeline */}
+                      <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/90 space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900">Chain of Custody Jaringan</span>
+                          <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold">
+                            Zero Mix-Up
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
+                          <div className="bg-white p-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span className="block font-bold text-slate-800">Grossing</span>
+                            <span className="text-slate-400">Kaset A1-A4</span>
+                          </div>
+                          <div className="bg-white p-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span className="block font-bold text-slate-800">Microtomy</span>
+                            <span className="text-slate-400">4 Slide Kaca</span>
+                          </div>
+                          <div className="bg-emerald-50 p-1.5 rounded-lg border border-emerald-200 shadow-2xs">
+                            <span className="block font-bold text-emerald-800">H&amp;E / IHC</span>
+                            <span className="text-emerald-600 font-bold">Slide #A1 OK</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Synoptic Reporting Card */}
+                      <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-900">Format Baku ICD-O</span>
+                          <span className="text-[10px] font-mono text-[#2764B8] font-bold">ICD-O 8500/3</span>
+                        </div>
+                        <p className="text-xs font-semibold text-[#1F2D5D]">
+                          Invasive Ductal Carcinoma, NST (Grade II)
+                        </p>
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100 font-mono">
+                          <span>DPJP: dr. Ratna, Sp.PA (K)</span>
+                          <span className="text-emerald-700 font-bold">Digital Sign-Off</span>
+                        </div>
+                      </div>
+
+                      {/* Whole Slide Digital Image Scan */}
+                      <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-600 font-medium">Digital Whole Slide Scan:</span>
+                        <span className="font-bold text-[#2764B8] font-mono">40x Zoom Ready</span>
+                      </div>
+
+                      {/* Metrics Pill Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-emerald-600 block">Zero Error</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Spesimen Tertukar</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-[#345DAB] block">&lt; 1 Menit</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Temu Arsip Blok/Slide</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. Microbiology & PPRA Stage */}
+                {currentSol.id === "microbiology" && (
+                  <div>
+                    {/* Window Titlebar */}
+                    <div className="bg-[#FAFBFD] px-4 py-3 border-b border-slate-200/80 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded shadow-2xs">
+                          KULTUR #MB-3312
+                        </span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                        VITEK-2 • CLSI 2024
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 space-y-3.5">
+                      {/* Pathogen Identification */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-slate-900 block">Staphylococcus aureus</span>
+                          <span className="text-[11px] text-slate-500 font-mono">Spesimen: Kultur Darah (ICU Bed 02)</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 font-mono">
+                          18h Positif
+                        </span>
+                      </div>
+
+                      {/* Antibiogram Susceptibility (AST) Matrix */}
+                      <div className="rounded-xl border border-slate-200/90 overflow-hidden shadow-2xs">
+                        <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase grid grid-cols-12">
+                          <span className="col-span-5">Antibiotik</span>
+                          <span className="col-span-3 text-right">MIC</span>
+                          <span className="col-span-4 text-right">Interpretasi</span>
+                        </div>
+                        <div className="divide-y divide-slate-100 text-[11px] font-mono">
+                          <div className="px-3 py-1.5 grid grid-cols-12 items-center">
+                            <span className="col-span-5 font-bold text-slate-900">Vancomycin</span>
+                            <span className="col-span-3 text-right text-slate-600">&le; 0.5</span>
+                            <span className="col-span-4 text-right text-emerald-700 font-bold">SENSITIVE (S)</span>
+                          </div>
+                          <div className="px-3 py-1.5 grid grid-cols-12 items-center">
+                            <span className="col-span-5 font-bold text-slate-900">Meropenem</span>
+                            <span className="col-span-3 text-right text-slate-600">&le; 0.25</span>
+                            <span className="col-span-4 text-right text-emerald-700 font-bold">SENSITIVE (S)</span>
+                          </div>
+                          <div className="px-3 py-1.5 grid grid-cols-12 items-center bg-red-50/50">
+                            <span className="col-span-5 font-bold text-red-900">Cefoxitin / Oxa</span>
+                            <span className="col-span-3 text-right text-red-700">&ge; 8.0</span>
+                            <span className="col-span-4 text-right text-red-700 font-bold">RESISTANT (R)</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* PPRA Alert Banner */}
+                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-between text-xs">
+                        <span className="text-amber-900 font-bold flex items-center gap-1.5 text-[11px]">
+                          <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                          Alert MDRO / MRSA Terdeteksi
+                        </span>
+                        <span className="text-[10px] text-amber-700 font-mono font-semibold">Komite PPRA Notified</span>
+                      </div>
+
+                      {/* Metrics Pill Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-[#345DAB] block">2x Cepat</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Rekomendasi Terapi</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-emerald-600 block">100% PPRA</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Standar CLSI / EUCAST</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. Blood Bank & Transfusion Stage */}
+                {currentSol.id === "blood-bank" && (
+                  <div>
+                    {/* Window Titlebar */}
+                    <div className="bg-[#FAFBFD] px-4 py-3 border-b border-slate-200/80 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded shadow-2xs">
+                          CROSSMATCH #BDRS-8812
+                        </span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        ISBT-128 VERIFIED
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 space-y-3.5">
+                      {/* Recipient vs Donor Compatibility Grid */}
+                      <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/90 space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900">Uji Silang Serasi (Mayor / Minor)</span>
+                          <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold">
+                            Kompatibel
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                          <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                            <span className="text-slate-400 text-[10px] block">Pasien (Resipien)</span>
+                            <span className="font-bold text-slate-900 block">Ny. Mariam (B+)</span>
+                            <span className="text-emerald-700 text-[10px] font-bold">Mayor: Negatif (OK)</span>
+                          </div>
+                          <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                            <span className="text-slate-400 text-[10px] block">Kantong Donor</span>
+                            <span className="font-bold text-slate-900 block">#ID-0892 (B+ / PRC)</span>
+                            <span className="text-emerald-700 text-[10px] font-bold">Minor: Negatif (OK)</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Cold Chain 24/7 Telemetry Strip */}
+                      <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-1.5">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <ShieldCheck className="h-3.5 w-3.5 text-[#2764B8]" />
+                            Telemetri Rantai Dingin 24/7
+                          </span>
+                          <span className="text-[11px] font-mono font-bold text-emerald-700">3.8°C (Optimal)</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                          <span>Kulkas BDRS Unit #02</span>
+                          <span>Batas Aman: 2.0°C - 6.0°C</span>
+                        </div>
+                      </div>
+
+                      {/* FEFO Expiry Guard */}
+                      <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-600 font-medium">Rotasi FEFO Stok Darah:</span>
+                        <span className="font-bold text-emerald-700 font-mono">Sisa 24 Hari • Siap Rilis</span>
+                      </div>
+
+                      {/* Metrics Pill Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-emerald-600 block">Zero Error</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Inkompatibilitas Darah</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-[#345DAB] block">-45%</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Darah Expired Terbuang</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. Nova AI Clinical Copilot Stage */}
+                {currentSol.id === "nova-ai" && (
+                  <div>
+                    {/* Window Titlebar */}
+                    <div className="bg-[#FAFBFD] px-4 py-3 border-b border-slate-200/80 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                          <span className="h-2 w-2 rounded-full bg-slate-300 inline-block" />
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded shadow-2xs">
+                          LONGITUDINAL DELTA CHECK
+                        </span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                        NOVA AI ACTIVE • COPILOT
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 sm:p-5 space-y-3.5">
+                      {/* Trendline Delta Shift Box */}
+                      <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/90 space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900">Pergeseran Biomarker Kreatinin</span>
+                          <span className="text-[10px] font-mono text-red-700 bg-red-100 px-1.5 py-0.5 rounded font-bold">
+                            Spike +115%
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
+                          <div className="bg-white p-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span className="text-slate-400 block">3 Bln Lalu</span>
+                            <span className="font-bold text-slate-800">1.1 mg/dL</span>
+                          </div>
+                          <div className="bg-white p-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span className="text-slate-400 block">1 Bln Lalu</span>
+                            <span className="font-bold text-slate-800">1.3 mg/dL</span>
+                          </div>
+                          <div className="bg-red-50 p-1.5 rounded-lg border border-red-200 shadow-2xs">
+                            <span className="text-red-500 font-bold block">Hari Ini</span>
+                            <span className="font-bold text-red-700">2.8 mg/dL</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* AI Medical Summary for DPJP */}
+                      <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            <Sparkles className="h-3.5 w-3.5 text-[#2764B8]" />
+                            Rangkuman Klinis Nova AI
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-400">Asisten Klinis</span>
+                        </div>
+                        <p className="text-[11px] text-slate-700 leading-relaxed">
+                          Terdeteksi lonjakan serum kreatinin akut (+115% vs baseline). Disarankan evaluasi Acute Kidney Injury (AKI) sebelum peresepan obat nefrotoksik.
+                        </p>
+                        <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100 font-mono">
+                          <span>Etika AI: Transparan &amp; Terbuka</span>
+                          <span className="text-emerald-700 font-bold">Otorisasi Mutlak di Dokter</span>
+                        </div>
+                      </div>
+
+                      {/* Clinician in the Loop Tag */}
+                      <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-600 font-medium">Validasi Dokter DPJP:</span>
+                        <span className="font-bold text-[#2764B8] font-mono">100% Keputusan Klinis</span>
+                      </div>
+
+                      {/* Metrics Pill Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-emerald-600 block">100%</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Kendali di Tangan Dokter</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 text-center shadow-2xs">
+                          <span className="text-base font-bold font-display text-[#345DAB] block">Instan</span>
+                          <span className="text-[10px] text-slate-600 font-medium">Deteksi Anomali Pasien</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
