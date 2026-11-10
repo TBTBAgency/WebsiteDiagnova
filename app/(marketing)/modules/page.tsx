@@ -432,7 +432,7 @@ export default function ModulesPage() {
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <Link
                     href="/request-demo"
-                    className="group relative inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-7 py-3.5 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] animate-shine-continuous overflow-hidden"
+                    className="group relative inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-7 py-3.5 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] overflow-hidden"
                   >
                     <span className="animate-shine-continuous" />
                     <span className="relative z-10">{language === "ID" ? "Minta Demo Modul Ini" : "Request Module Demo"}</span>
