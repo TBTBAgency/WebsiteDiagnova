@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, useRef, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -24,9 +24,28 @@ import { InstitutionType } from "@/types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 
-// ─── Trust Marquee using Exact Home Page Logos (/images/trust-logo.svg) ───
+// ─── Trust Marquee using Exact Home Page Logos & Slow-Down Hover Animation ───
 function TrustMarquee({ language }: { language: "ID" | "EN" }) {
+  const marqueeRef = useRef<HTMLDivElement>(null);
   const logos = Array.from({ length: 8 });
+
+  const handleMouseEnter = () => {
+    if (marqueeRef.current && typeof marqueeRef.current.getAnimations === "function") {
+      const anims = marqueeRef.current.getAnimations();
+      anims.forEach((anim) => {
+        anim.playbackRate = 0.25; // Bergerak pelan (25% kecepatan) saat kena kursor persis seperti di home
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (marqueeRef.current && typeof marqueeRef.current.getAnimations === "function") {
+      const anims = marqueeRef.current.getAnimations();
+      anims.forEach((anim) => {
+        anim.playbackRate = 1; // Kembali ke kecepatan normal saat kursor keluar
+      });
+    }
+  };
 
   return (
     <div className="relative z-10 pt-4 mt-auto border-t border-white/15 overflow-hidden">
@@ -45,28 +64,30 @@ function TrustMarquee({ language }: { language: "ID" | "EN" }) {
           animation: marqueeTrustPanel 28s linear infinite;
           will-change: transform;
         }
-        .animate-marquee-trust-panel:hover {
-          animation-play-state: paused;
-        }
       `}</style>
 
       <p className="text-[11px] uppercase tracking-wider text-blue-200/80 font-semibold mb-2.5">
         {language === "ID" ? "Dipercaya oleh Mitra & Jaringan Faskes" : "Trusted by Healthcare Partners"}
       </p>
 
-      {/* Marquee Track with Left & Right Soft Fade Masks */}
+      {/* Marquee Track with Left & Right Soft Fade Masks and Hover Slow-Down */}
       <div
         className="relative w-full overflow-hidden"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         style={{
           maskImage: "linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%)",
         }}
       >
-        <div className="animate-marquee-trust-panel flex items-center gap-10 sm:gap-12 py-1">
+        <div
+          ref={marqueeRef}
+          className="animate-marquee-trust-panel flex items-center gap-10 sm:gap-12 py-1"
+        >
           {[...logos, ...logos].map((_, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-center shrink-0 opacity-75 hover:opacity-100 transition-opacity duration-200 select-none cursor-default"
+              className="flex items-center justify-center shrink-0 opacity-50 hover:opacity-100 transition-all duration-300 select-none cursor-default"
             >
               <Image
                 src="/images/trust-logo.svg"
