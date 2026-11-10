@@ -988,13 +988,8 @@ export default function NovaAIPage() {
                   className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
-                        <IconComponent className="h-6 w-6" />
-                      </div>
-                      <span className="font-mono text-sm font-bold text-slate-400">
-                        {ws.step}
-                      </span>
+                    <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
+                      <IconComponent className="h-6 w-6" />
                     </div>
 
                     <div>
