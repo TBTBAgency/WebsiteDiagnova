@@ -15,10 +15,7 @@ import {
   Calendar,
   Lock,
   Check,
-  Users,
 } from "lucide-react";
-import { PageHero } from "@/components/sections/PageHero";
-import { Button } from "@/components/ui/Button";
 import { demoRequestSchema } from "@/lib/validations";
 import { InstitutionType } from "@/types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -118,7 +115,7 @@ function RequestDemoForm() {
 
   if (submitSuccess) {
     return (
-      <div className="text-center py-12 sm:py-16 space-y-6">
+      <div className="text-center py-8 sm:py-12 space-y-6">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200">
           <CheckCircle2 className="h-9 w-9" />
         </div>
@@ -131,21 +128,21 @@ function RequestDemoForm() {
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100 max-w-md mx-auto text-left space-y-2">
+        <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100 max-w-md mx-auto text-left space-y-2.5">
           <p className="text-xs font-bold text-[#2764B8] uppercase tracking-wider">
             {language === "ID" ? "Tahap Selanjutnya:" : "Next Steps:"}
           </p>
-          <ul className="text-xs text-slate-600 space-y-1.5 font-light">
+          <ul className="text-xs text-slate-600 space-y-2 font-light">
             <li className="flex items-center gap-2">
-              <Check className="h-3.5 w-3.5 text-[#2764B8]" />
+              <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
               <span>{language === "ID" ? "Spesialis lab kami menghubungi via WhatsApp/Email" : "Our specialist will reach out via WhatsApp/Email"}</span>
             </li>
             <li className="flex items-center gap-2">
-              <Check className="h-3.5 w-3.5 text-[#2764B8]" />
+              <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
               <span>{language === "ID" ? "Konfirmasi jadwal demo online / onsite" : "Confirmation of online / onsite demo session"}</span>
             </li>
             <li className="flex items-center gap-2">
-              <Check className="h-3.5 w-3.5 text-[#2764B8]" />
+              <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
               <span>{language === "ID" ? "Simulasi interaktif dengan skenario analyzer RS Anda" : "Live interactive walkthrough tailored to your hospital"}</span>
             </li>
           </ul>
@@ -182,16 +179,37 @@ function RequestDemoForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7">
-      <div>
-        <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          {language === "ID" ? "Formulir Permohonan Demo Langsung" : "Live Demo Request Form"}
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 font-light">
+    <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+      {/* Header Inside Card */}
+      <div className="space-y-3 pb-2 border-b border-slate-100">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/70 text-[#2568BA] text-xs font-semibold">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>{language === "ID" ? "Live Demo Diagnova" : "Diagnova Live Demo"}</span>
+        </div>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          {language === "ID" ? "Jadwalkan Demo Platform" : "Schedule a Platform Demo"}
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
           {language === "ID"
-            ? "Lengkapi informasi di bawah agar Clinical Application Specialist kami dapat menyiapkan skenario pengujian yang relevan."
-            : "Complete the details below so our Clinical Application Specialists can prepare a tailored demonstration scenario."}
+            ? "Konsultasikan alur kerja laboratorium Anda langsung dengan tim spesialis klinis kami. Sesi privat, interaktif, dan disesuaikan dengan analyzer & SIMRS yang Anda gunakan."
+            : "Consult your laboratory workflow directly with our clinical specialists. A private, interactive walkthrough tailored to your analyzers and HIS."}
         </p>
+
+        {/* Trust Chips Strip */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-slate-600">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/70 font-medium">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            {language === "ID" ? "Gratis & Privat" : "Free & Private"}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/70 font-medium">
+            <Clock className="w-3.5 h-3.5 text-[#2764B8]" />
+            {language === "ID" ? "Durasi 30-45 Menit" : "30-45 Minutes"}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/70 font-medium">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#2764B8]" />
+            {language === "ID" ? "Bridging SIMRS & SATUSEHAT" : "SIMRS & SATUSEHAT"}
+          </span>
+        </div>
       </div>
 
       {submitMessage && (
@@ -414,153 +432,42 @@ function RequestDemoForm() {
           </span>
         </p>
       </div>
+
+      {/* Card Footer: Quick Contact */}
+      <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <span className="font-light">
+          {language === "ID" ? "Pertanyaan mendesak? Hubungi kami langsung:" : "Urgent questions? Reach out directly:"}
+        </span>
+        <div className="flex items-center gap-4 font-medium text-[#2764B8]">
+          <a href="mailto:hello@diagnova.id" className="flex items-center gap-1.5 hover:underline">
+            <Mail className="h-3.5 w-3.5" />
+            <span>hello@diagnova.id</span>
+          </a>
+          <a
+            href="https://wa.me/6281234567890"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 hover:underline"
+          >
+            <Phone className="h-3.5 w-3.5" />
+            <span>+62 812-3456-7890</span>
+          </a>
+        </div>
+      </div>
     </form>
   );
 }
 
-const benefits = [
-  {
-    icon: Clock,
-    id: { title: "Implementasi 2–4 Minggu", desc: "Tim kami mendampingi penuh dari onboarding hingga go-live tanpa gangguan operasional." },
-    en: { title: "2–4 Week Implementation", desc: "Our team guides you end-to-end from onboarding to go-live with zero disruption." },
-  },
-  {
-    icon: ShieldCheck,
-    id: { title: "Bridging SATUSEHAT & SIMRS", desc: "Integrasi dua arah langsung ke LIS, HIS, dan portal nasional SATUSEHAT." },
-    en: { title: "SATUSEHAT & HIS Integration", desc: "Bidirectional bridging to your existing LIS, HIS, and national SATUSEHAT portal." },
-  },
-  {
-    icon: Sparkles,
-    id: { title: "AI Auto-Verification", desc: "Verifikasi hasil otomatis berbasis AI, mengurangi beban kerja analis hingga 60%." },
-    en: { title: "AI Auto-Verification", desc: "AI-based result auto-verification reduces analyst workload by up to 60%." },
-  },
-  {
-    icon: Users,
-    id: { title: "Didampingi Spesialis Klinis", desc: "Setiap faskes mendapat Clinical Application Specialist dedicated selama implementasi." },
-    en: { title: "Dedicated Clinical Specialist", desc: "Every facility gets a dedicated Clinical Application Specialist throughout rollout." },
-  },
-];
-
 export default function RequestDemoPage() {
-  const { language } = useLanguage();
-
   return (
-    <main className="bg-[#F9FAFB] min-h-screen">
-      <PageHero
-        badge={language === "ID" ? "Demo Langsung" : "Live Demo"}
-        title={
-          language === "ID"
-            ? "Jadwalkan Demo\nPersonal Diagnova"
-            : "Schedule Your\nPersonal Diagnova Demo"
-        }
-        subtitle={
-          language === "ID"
-            ? "Lihat langsung bagaimana Diagnova bekerja dengan analyzer Anda. Demo privat, disesuaikan dengan kebutuhan faskes Anda."
-            : "See exactly how Diagnova works with your analyzers. A private demo, tailored to your facility's workflow."
-        }
-        metrics={[
-          {
-            value: "2–4",
-            label: language === "ID" ? "Minggu implementasi" : "Week implementation",
-            sub: language === "ID" ? "Onboarding penuh" : "Full onboarding",
-          },
-          {
-            value: "60%",
-            label: language === "ID" ? "Efisiensi analis" : "Analyst efficiency",
-            sub: language === "ID" ? "Lebih sedikit beban kerja" : "Less manual workload",
-          },
-          {
-            value: "100%",
-            label: language === "ID" ? "SATUSEHAT bridging" : "SATUSEHAT integration",
-            sub: language === "ID" ? "Direct & real-time" : "Direct & real-time",
-          },
-        ]}
-      />
-
-      <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-14 items-start">
-
-            {/* LEFT: Form Card */}
-            <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-7 sm:p-10">
-              <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-slate-100" />}>
-                <RequestDemoForm />
-              </Suspense>
-            </div>
-
-            {/* RIGHT: Trust & Benefits */}
-            <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28">
-
-              {/* Benefits list */}
-              <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8 space-y-5">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#2764B8]">
-                    {language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?"}
-                  </p>
-                  <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mt-1">
-                    {language === "ID"
-                      ? "Platform LIS terpadu untuk faskes Indonesia"
-                      : "The integrated LIS platform for Indonesian healthcare"}
-                  </h3>
-                </div>
-
-                <ul className="space-y-4">
-                  {benefits.map((item, i) => {
-                    const Icon = item.icon;
-                    const content = language === "ID" ? item.id : item.en;
-                    return (
-                      <li key={i} className="flex items-start gap-3.5">
-                        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#EBF3FF]">
-                          <Icon className="h-4 w-4 text-[#2764B8]" />
-                        </span>
-                        <div>
-                          <p className="text-sm font-semibold text-slate-900">{content.title}</p>
-                          <p className="text-xs text-slate-500 font-light mt-0.5 leading-relaxed">{content.desc}</p>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-
-              {/* Contact card */}
-              <div className="rounded-2xl bg-[#1D3F82] p-6 space-y-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
-                  {language === "ID" ? "Hubungi Kami Langsung" : "Get in Touch Directly"}
-                </p>
-                <div className="space-y-3">
-                  <a
-                    href="mailto:hello@diagnova.id"
-                    className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group"
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                      <Mail className="h-4 w-4" />
-                    </span>
-                    <span className="text-sm font-medium">hello@diagnova.id</span>
-                  </a>
-                  <a
-                    href="https://wa.me/6281234567890"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group"
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                      <Phone className="h-4 w-4" />
-                    </span>
-                    <span className="text-sm font-medium">+62 812-3456-7890</span>
-                  </a>
-                </div>
-                <p className="text-xs text-blue-200 font-light">
-                  {language === "ID"
-                    ? "Jam operasional: Senin–Jumat, 08.00–17.00 WIB"
-                    : "Office hours: Mon–Fri, 08:00–17:00 WIB"}
-                </p>
-              </div>
-
-            </div>
-          </div>
+    <main className="bg-[#F8FAFC] min-h-[calc(100vh-80px)] py-10 sm:py-14 lg:py-16">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 p-6 sm:p-10 lg:p-12">
+          <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-slate-100" />}>
+            <RequestDemoForm />
+          </Suspense>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
