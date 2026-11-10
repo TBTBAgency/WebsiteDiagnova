@@ -184,12 +184,46 @@ html.lenis, html.lenis body {
   contain-intrinsic-size: 1px 750px;
 }
 
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideRight {
+  0% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-slide-right {
+  animation: fadeSlideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-dna-float,
   .animate-dna-glow,
   .animate-pulse-glow,
-  .animate-float-subtle {
+  .animate-float-subtle,
+  .animate-fade-slide-up,
+  .animate-fade-slide-right {
     animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
