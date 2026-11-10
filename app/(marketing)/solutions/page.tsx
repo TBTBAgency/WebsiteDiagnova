@@ -37,6 +37,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function SolutionsPage() {
   const { language } = useLanguage();
   const [selectedSolution, setSelectedSolution] = useState<number>(0);
+  const [subTab, setSubTab] = useState<"micro" | "blood">("micro");
 
   // Sync tab with URL hash if present
   useEffect(() => {
@@ -1024,97 +1025,348 @@ export default function SolutionsPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          COMPLETE SOLUTIONS DIRECTORY (ICON KONSISTEN)
+          COMPLETE SOLUTIONS DIRECTORY: MODERN SAASET-STYLE BENTO GRID
+          (Row 1: 3 Bento Cards with Pastel Tints | Row 2: 2 Asymmetrical Cards 65%:35%)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Header */}
-          <div className="max-w-3xl mb-12">
-            <div className="mb-4">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Direktori Solusi" : "Solutions Directory"}
-              </SectionBadge>
+          {/* Section Header (Centered Clean Typography) */}
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-2xs text-xs font-semibold text-slate-700 mb-4">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?"}</span>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>Daftar Lengkap 6 Solusi Spesialis</>
-              ) : (
-                <>Complete Suite of 6 Purpose-Built Solutions</>
-              )}
-            </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold leading-[1.18] tracking-tight text-slate-900">
               {language === "ID"
-                ? "Ringkasan arsitektur terdedikasi untuk mempermudah evaluasi komite medis dan tim manajemen IT."
-                : "A concise overview of dedicated configurations for streamlined clinical and IT leadership evaluation."}
+                ? "Dirancang untuk Efisiensi Mutlak Laboratorium"
+                : "Designed to Make Laboratory Work Effortless"}
+            </h2>
+            <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+              {language === "ID"
+                ? "Alur kerja terintegrasi dari bridging SIMRS, registrasi MCU massal, hingga ringkasan klinis Nova AI."
+                : "Experience a smoother, smarter way to run clinical workflows from HIS bridging to Nova AI summaries."}
             </p>
           </div>
 
-          {/* Clean 6-Card Grid (3 Columns) with Consistent Icon Box */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {solutionsList.map((sol, idx) => {
-              const Icon = sol.icon;
-              return (
-                <div
-                  key={sol.id}
-                  id={sol.id}
-                  className="scroll-mt-32 rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      {/* Icon Box Konsisten Diagnova */}
-                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <span className="text-[11px] font-mono font-semibold text-slate-400">
-                        SOL-0{idx + 1}
-                      </span>
-                    </div>
+          {/* ══════════════════════════════════════════════════════════════
+              ROW 1: 3 Bento Cards with Soft Pastel Gradient Backdrops
+              ══════════════════════════════════════════════════════════════ */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-6 lg:mb-8">
+            {/* Card 1: Hospital Laboratory (Warm Sunset / Peach Tint) */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-orange-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage: 3 Stacked Floating Glass Pills */}
+              <div className="h-56 sm:h-60 w-full rounded-2xl bg-gradient-to-b from-[#FFF2EB] via-[#FFF7F2] to-[#FFFBF8] border border-orange-100/80 relative flex flex-col justify-center gap-2.5 p-4 sm:p-5 overflow-hidden mb-6">
+                <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/90 shadow-[0_4px_12px_rgba(251,146,60,0.12)] flex items-center gap-2.5 text-xs font-semibold text-slate-800 transition-transform group-hover:translate-x-1 duration-200">
+                  <div className="h-7 w-7 rounded-lg bg-orange-100 text-[#EA580C] flex items-center justify-center shrink-0">
+                    <Building2 className="h-3.5 w-3.5" />
+                  </div>
+                  <span>{language === "ID" ? "Bridging Otomatis SIMRS & RME" : "Automated HIS & EMR Bridging"}</span>
+                </div>
 
-                    <div>
-                      <span className="text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full inline-block mb-2">
-                        {sol.targetAudience}
-                      </span>
-                      <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                        {sol.name}
-                      </h3>
-                      <p className="text-xs text-slate-600 font-normal leading-relaxed mt-2 line-clamp-3">
-                        {sol.description}
-                      </p>
-                    </div>
+                <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/90 shadow-[0_4px_12px_rgba(251,146,60,0.12)] flex items-center gap-2.5 text-xs font-semibold text-slate-800 transition-transform group-hover:translate-x-1.5 duration-200">
+                  <div className="h-7 w-7 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                  </div>
+                  <span>{language === "ID" ? "Panic Values IGD & ICU < 25m" : "ER & ICU Panic Alerts < 25m"}</span>
+                </div>
 
-                    {/* Quick Highlights */}
-                    <div className="pt-2 border-t border-slate-100 space-y-1.5 text-xs text-slate-700">
-                      {sol.highlights.slice(0, 2).map((h, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                          <span className="font-medium line-clamp-1">{h.title}</span>
-                        </div>
-                      ))}
-                    </div>
+                <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/90 shadow-[0_4px_12px_rgba(251,146,60,0.12)] flex items-center gap-2.5 text-xs font-semibold text-slate-800 transition-transform group-hover:translate-x-1 duration-200">
+                  <div className="h-7 w-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                    <Zap className="h-3.5 w-3.5" />
+                  </div>
+                  <span>{language === "ID" ? "Bedside Barcode Scanner Flebotomi" : "Bedside Phlebotomy Barcode"}</span>
+                </div>
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-1.5 group-hover:text-[#2764B8] transition-colors">
+                  {language === "ID" ? "Hospital Laboratory Sentral" : "Central Hospital Laboratory"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {language === "ID"
+                    ? "Menghubungkan lab sentral dengan IGD, ICU, dan bangsal tanpa risiko antrean ketik manual."
+                    : "Unifies central lab operations with ER and ICU, eliminating manual transcription errors."}
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2: Clinical Laboratory & MCU (Soft Ice Blue Tint) */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage: Schedule & Batch Modal */}
+              <div className="h-56 sm:h-60 w-full rounded-2xl bg-gradient-to-b from-[#EBF5FE] via-[#F2F8FE] to-[#F8FBFE] border border-blue-100/80 relative flex flex-col justify-center p-4 sm:p-5 overflow-hidden mb-6">
+                <div className="bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_6px_20px_rgba(39,100,184,0.1)] space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="flex items-center gap-1.5 text-emerald-700 font-semibold">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Batch Ingested
+                    </span>
+                    <span className="text-[#2764B8] font-bold">PT Telkom (450 Pax)</span>
                   </div>
 
-                  <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedSolution(idx);
-                        window.scrollTo({ top: 380, behavior: "smooth" });
-                      }}
-                      className="text-xs font-semibold text-[#2764B8] hover:text-[#1E5299] transition-colors cursor-pointer"
-                    >
-                      {language === "ID" ? "Buka di Explorer ↑" : "Open in Explorer ↑"}
-                    </button>
-                    <Link
-                      href="/request-demo"
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-[#2764B8] transition-colors"
-                    >
-                      <span>Demo</span>
-                      <ChevronRight className="h-3 w-3" />
-                    </Link>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900">
+                      {language === "ID" ? "Registrasi MCU Korporat" : "Corporate MCU Roster"}
+                    </h4>
+                    <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                      450 Barcode Terbit • 0.4s / Peserta
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[10px]">
+                    <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                      <div className="flex -space-x-1.5">
+                        <span className="h-5 w-5 rounded-full bg-blue-100 text-[#2764B8] border border-white flex items-center justify-center font-bold text-[8px]">
+                          A
+                        </span>
+                        <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-700 border border-white flex items-center justify-center font-bold text-[8px]">
+                          B
+                        </span>
+                        <span className="h-5 w-5 rounded-full bg-purple-100 text-purple-700 border border-white flex items-center justify-center font-bold text-[8px]">
+                          C
+                        </span>
+                      </div>
+                      <span className="font-mono text-slate-500">+447 Lainnya</span>
+                    </div>
+                    <span className="text-[#2764B8] font-semibold flex items-center gap-1">
+                      <Send className="h-3 w-3" />
+                      WhatsApp PDF
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-1.5 group-hover:text-[#2764B8] transition-colors">
+                  {language === "ID" ? "Clinical Lab & MCU Massal" : "Clinical & Reference Labs"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {language === "ID"
+                    ? "Throughput tinggi ribuan spesimen harian dengan registrasi kilat dan kirim PDF via WhatsApp."
+                    : "High daily volume handling with rapid check-in and automated encrypted WhatsApp delivery."}
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3: Anatomical Pathology (Soft Mint Tint) */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-emerald-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage: Milestone Tracking Widget */}
+              <div className="h-56 sm:h-60 w-full rounded-2xl bg-gradient-to-b from-[#EBFDF3] via-[#F2FEF7] to-[#F8FEFA] border border-emerald-100/80 relative flex flex-col justify-center p-4 sm:p-5 overflow-hidden mb-6">
+                <div className="bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_6px_20px_rgba(16,185,129,0.1)] space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-800">Alur Kaset &amp; Slide</span>
+                    <span className="text-emerald-700 font-mono font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      Zero Mix-Up
+                    </span>
+                  </div>
+
+                  {/* Milestone Stages Indicator */}
+                  <div className="flex items-center justify-between gap-1 text-[10px] font-mono font-bold">
+                    <span className="h-6 w-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
+                      G
+                    </span>
+                    <span className="h-6 w-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
+                      E
+                    </span>
+                    <span className="h-6 w-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
+                      M
+                    </span>
+                    <span className="h-6 w-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
+                      S
+                    </span>
+                    <span className="h-6 w-6 rounded-md bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                      V
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-1">
+                    <span>#PA-24-0982 (Biopsi)</span>
+                    <span className="text-slate-700 font-semibold">ICD-O 8500/3</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1 border-t border-slate-100 text-[10px]">
+                    <button
+                      type="button"
+                      className="flex-1 py-1 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                    >
+                      Arsip Blok
+                    </button>
+                    <button
+                      type="button"
+                      className="flex-1 py-1 rounded-lg bg-slate-900 text-white font-medium hover:bg-slate-800 transition-colors"
+                    >
+                      Validasi Sp.PA
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-1.5 group-hover:text-[#2764B8] transition-colors">
+                  {language === "ID" ? "Patologi Anatomi Presisi" : "Anatomical Pathology"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {language === "ID"
+                    ? "Pelacakan kaset dan slide kaca ber-barcode mikro 2D untuk eliminasi risiko sampel tertukar."
+                    : "2D micro-barcode tracking across cassettes and glass slides for zero specimen mix-ups."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════
+              ROW 2: 2 Asymmetrical Cards (Wide 65% + Narrow 35%)
+              ══════════════════════════════════════════════════════════════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            {/* Card 4 (Wide ~65% / lg:col-span-8): Mikrobiologi PPRA & Bank Darah BDRS */}
+            <div className="lg:col-span-8 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage: Interactive Toolbar, Analytics Boxes & Prompt Input */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FAFBFD] to-[#F1F6FC] border border-slate-200/80 mb-6 space-y-3.5">
+                {/* Toolbar */}
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="inline-flex p-1 rounded-xl bg-white border border-slate-200 shadow-2xs gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setSubTab("micro")}
+                      className={cn(
+                        "px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                        subTab === "micro"
+                          ? "bg-[#2764B8] text-white shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      )}
+                    >
+                      Kultur Mikrobiologi PPRA
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSubTab("blood")}
+                      className={cn(
+                        "px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer",
+                        subTab === "blood"
+                          ? "bg-[#2764B8] text-white shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      )}
+                    >
+                      Bank Darah (BDRS)
+                    </button>
+                  </div>
+
+                  <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-semibold">
+                    ● Real-Time Telemetry
+                  </span>
+                </div>
+
+                {/* 3 Analytics Cards Grid */}
+                {subTab === "micro" ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs space-y-1">
+                      <span className="text-[10px] text-slate-500 font-mono block">Isolat Kuman</span>
+                      <span className="font-bold text-xs text-slate-900 block truncate">S. aureus (18h)</span>
+                      <span className="text-[10px] font-mono text-emerald-700 font-semibold">VITEK-2 Ingested</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs space-y-1">
+                      <span className="text-[10px] text-slate-500 font-mono block">Sensitivitas Utama</span>
+                      <span className="font-bold text-xs text-emerald-700 block truncate">Vancomycin (S)</span>
+                      <span className="text-[10px] font-mono text-slate-600">MIC &le; 0.5 µg/mL</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-red-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] text-red-600 font-mono block font-bold">Resistensi Terdeteksi</span>
+                      <span className="font-bold text-xs text-red-700 block truncate">Cefoxitin / MRSA (R)</span>
+                      <span className="text-[10px] font-mono text-red-600">PPRA Alert Sent</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs space-y-1">
+                      <span className="text-[10px] text-slate-500 font-mono block">Resipien Pasien</span>
+                      <span className="font-bold text-xs text-slate-900 block truncate">Ny. Mariam (B+)</span>
+                      <span className="text-[10px] font-mono text-emerald-700 font-semibold">Mayor: Negatif (OK)</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs space-y-1">
+                      <span className="text-[10px] text-slate-500 font-mono block">Kantong Donor</span>
+                      <span className="font-bold text-xs text-slate-900 block truncate">#ID-0892 (B+ PRC)</span>
+                      <span className="text-[10px] font-mono text-emerald-700 font-semibold">Minor: Negatif (OK)</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-blue-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] text-slate-500 font-mono block">Suhu Kulkas BDRS</span>
+                      <span className="font-bold text-xs text-[#2764B8] block truncate">3.8°C (Optimal)</span>
+                      <span className="text-[10px] font-mono text-emerald-700 font-semibold">FEFO: Sisa 24 Hari</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom Search / Prompt Input Bar (Matching Saaset Reference) */}
+                <div className="bg-white px-3.5 py-2 rounded-xl border border-slate-200/90 shadow-2xs flex items-center justify-between gap-3 text-xs">
+                  <span className="text-slate-400 truncate text-[11px] font-mono">
+                    {subTab === "micro"
+                      ? "Cari riwayat kultur kuman atau pola resistensi antibiogram..."
+                      : "Cari stok kantong darah BDRS atau nomor uji silang serasi..."}
+                  </span>
+                  <button
+                    type="button"
+                    className="bg-[#F97316] hover:bg-[#EA580C] text-white px-3.5 py-1 rounded-full text-xs font-bold transition-colors shrink-0 shadow-2xs"
+                  >
+                    Enter
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-[#2764B8] transition-colors">
+                  {language === "ID"
+                    ? "Mikrobiologi PPRA & Bank Darah BDRS"
+                    : "Microbiology Stewardship & Blood Bank"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {language === "ID"
+                    ? "Kendali penuh kultur kuman antibiotik terstandar CLSI dan uji silang serasi darah 100% aman tanpa risiko fatal."
+                    : "Complete command for CLSI-compliant stewardship antibiograms and 100% zero-mismatch blood transfusions."}
+                </p>
+              </div>
+            </div>
+
+            {/* Card 5 (Narrow ~35% / lg:col-span-4): Rangkuman Klinis Nova AI (Matching Saaset "Summary" Card) */}
+            <div className="lg:col-span-4 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Visual Stage: AI Clinical Narrative Summary */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FAFBFD] to-[#F8FAFD] border border-slate-200/80 mb-6 space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-200/70 pb-2">
+                  <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-[#2764B8]" />
+                    Summary Nova AI
+                  </h4>
+                  <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-semibold">
+                    Delta Check
+                  </span>
+                </div>
+
+                <div className="space-y-2 text-[11px] text-slate-600 leading-relaxed font-normal">
+                  <p className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+                    Terdeteksi lonjakan biomarker serum Kreatinin (+115% vs baseline 3 bulan lalu).
+                  </p>
+                  <p className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+                    Rekomendasi DPJP: Lakukan evaluasi Acute Kidney Injury (AKI) sebelum memulai peresepan nefrotoksik.
+                  </p>
+                  <p className="p-2 rounded-lg bg-emerald-50/60 border border-emerald-100 text-emerald-800 font-medium">
+                    Otorisasi Klinis: Keputusan diagnostik dan tindakan medis 100% di tangan dokter spesialis.
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-1.5 group-hover:text-[#2764B8] transition-colors">
+                  {language === "ID" ? "Rangkuman Klinis Nova AI" : "Nova AI Clinical Summaries"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {language === "ID"
+                    ? "Otomatis menangkap pergeseran data biomarker kritis dan menyajikan narasi medis instan untuk DPJP."
+                    : "Automatically flags longitudinal shifts and delivers instant clinical narratives for attending doctors."}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
