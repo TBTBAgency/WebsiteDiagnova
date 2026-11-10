@@ -18,6 +18,7 @@ import {
   Sparkles,
   Lock,
   Building2,
+  Users,
 } from "lucide-react";
 import { demoRequestSchema } from "@/lib/validations";
 import { InstitutionType } from "@/types";
@@ -549,25 +550,66 @@ export default function RequestDemoPage() {
                     : "An all-in-one platform for analyzer interfacing, AI auto-verification, and seamless healthcare integration."}
                 </p>
 
-                {/* Value Highlight Pills */}
-                <div className="pt-3 sm:pt-4 space-y-2.5">
-                  <div className="flex items-center gap-2.5 text-xs text-white/90">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
-                      <Check className="h-3 w-3" />
-                    </span>
-                    <span>{language === "ID" ? "100% Bridging SATUSEHAT & SIMRS" : "Full SATUSEHAT & HIS Bridging"}</span>
+                {/* Value Highlight Feature Cards */}
+                <div className="pt-2 sm:pt-3 space-y-2.5">
+                  {/* Item 1: SATUSEHAT & SIMRS */}
+                  <div className="group flex items-center gap-3.5 rounded-2xl bg-white/[0.12] hover:bg-white/[0.18] border border-white/20 p-2.5 sm:p-3 backdrop-blur-md transition-all duration-200 shadow-sm">
+                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/20 border border-white/30 text-white shrink-0 group-hover:scale-105 group-hover:bg-white/30 transition-all shadow-xs">
+                      <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-blue-100" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-[13px] font-semibold text-white tracking-tight leading-tight">
+                        {language === "ID" ? "100% Bridging SATUSEHAT & SIMRS" : "Full SATUSEHAT & HIS Bridging"}
+                      </p>
+                      <p className="text-[11px] text-blue-100/75 font-light leading-snug truncate sm:whitespace-normal mt-0.5">
+                        {language === "ID"
+                          ? "Kepatuhan standar interoperabilitas HL7 / FHIR Kemenkes"
+                          : "Native compliance with MoH HL7 / FHIR standards"}
+                      </p>
+                    </div>
+                    <div className="shrink-0 pr-1">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs text-white/90">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
-                      <Check className="h-3 w-3" />
-                    </span>
-                    <span>{language === "ID" ? "Dukungan 500+ Model Analyzer Klinis" : "Supports 500+ Clinical Analyzers"}</span>
+
+                  {/* Item 2: 500+ Analyzers */}
+                  <div className="group flex items-center gap-3.5 rounded-2xl bg-white/[0.12] hover:bg-white/[0.18] border border-white/20 p-2.5 sm:p-3 backdrop-blur-md transition-all duration-200 shadow-sm">
+                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/20 border border-white/30 text-white shrink-0 group-hover:scale-105 group-hover:bg-white/30 transition-all shadow-xs">
+                      <Layers className="h-4 w-4 sm:h-5 sm:w-5 text-blue-100" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-[13px] font-semibold text-white tracking-tight leading-tight">
+                        {language === "ID" ? "Dukungan 500+ Model Analyzer Klinis" : "Supports 500+ Clinical Analyzers"}
+                      </p>
+                      <p className="text-[11px] text-blue-100/75 font-light leading-snug truncate sm:whitespace-normal mt-0.5">
+                        {language === "ID"
+                          ? "Interfacing instan hematologi, kimia klinik & imunologi"
+                          : "Bidirectional interfacing for all major modalities"}
+                      </p>
+                    </div>
+                    <div className="shrink-0 pr-1">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs text-white/90">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
-                      <Check className="h-3 w-3" />
-                    </span>
-                    <span>{language === "ID" ? "Didampingi Spesialis Aplikasi Klinis" : "Dedicated Clinical Specialist Support"}</span>
+
+                  {/* Item 3: Clinical Specialist Support */}
+                  <div className="group flex items-center gap-3.5 rounded-2xl bg-white/[0.12] hover:bg-white/[0.18] border border-white/20 p-2.5 sm:p-3 backdrop-blur-md transition-all duration-200 shadow-sm">
+                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/20 border border-white/30 text-white shrink-0 group-hover:scale-105 group-hover:bg-white/30 transition-all shadow-xs">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-100" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-[13px] font-semibold text-white tracking-tight leading-tight">
+                        {language === "ID" ? "Didampingi Spesialis Aplikasi Klinis" : "Dedicated Clinical Specialist Support"}
+                      </p>
+                      <p className="text-[11px] text-blue-100/75 font-light leading-snug truncate sm:whitespace-normal mt-0.5">
+                        {language === "ID"
+                          ? "Konsultasi alur kerja, setup instrumen & pelatihan lab"
+                          : "Expert guidance from analyzer setup to lab go-live"}
+                      </p>
+                    </div>
+                    <div className="shrink-0 pr-1">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                    </div>
                   </div>
                 </div>
               </div>
