@@ -374,13 +374,13 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right Column: Modern Desktop Workstation Showcase with Floating Accent Card */}
-            <div className="lg:col-span-6 relative mt-8 lg:mt-0 pb-8 sm:pb-10 lg:pb-0">
+            {/* Right Column: Modern Desktop Workstation Showcase with Floating Accent Card (Aligned Flush Right with Precision Width) */}
+            <div className="lg:col-span-6 relative mt-8 lg:mt-0 flex justify-end pb-8 sm:pb-10 lg:pb-0 w-full">
               {/* Subtle ambient glow behind monitor */}
               <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[36px] blur-2xl pointer-events-none" />
 
-              {/* Monitor Chassis Container */}
-              <div className="relative z-10 mx-auto max-w-[620px]">
+              {/* Monitor Chassis Container (Flush to Right Edge with Precision Responsive Width) */}
+              <div className="relative z-10 w-full ml-auto max-w-full sm:max-w-[640px] lg:max-w-[660px] xl:max-w-[710px] 2xl:max-w-[740px]">
                 {/* 1. Monitor Bezel Frame */}
                 <div className="rounded-[22px] sm:rounded-[26px] bg-slate-900 p-2 sm:p-2.5 shadow-[0_25px_60px_-15px_rgba(31,45,93,0.25)] border border-slate-700/80 transition-all duration-300">
                   {/* Subtle top bezel webcam indicator */}
@@ -440,7 +440,7 @@ export default function PlatformPage() {
                     {/* Clinical Telemetry Table */}
                     <div className="p-3 sm:p-4 space-y-1.5 bg-white">
                       <div className="rounded-lg border border-slate-200/90 overflow-hidden shadow-2xs">
-                        <div className="bg-slate-50/90 px-3 py-1.5 border-b border-slate-100 text-[9px] font-bold text-slate-500 uppercase tracking-wider grid grid-cols-12">
+                        <div className="bg-slate-50/90 px-3.5 py-1.5 border-b border-slate-100 text-[9px] font-bold text-slate-500 uppercase tracking-wider grid grid-cols-12">
                           <span className="col-span-5">{language === "ID" ? "Parameter Analit" : "Analyte Parameter"}</span>
                           <span className="col-span-3 text-right">{language === "ID" ? "Hasil Uji" : "Result"}</span>
                           <span className="col-span-2 text-right hidden sm:block">{language === "ID" ? "Nilai Rujukan" : "Ref"}</span>
@@ -449,7 +449,7 @@ export default function PlatformPage() {
 
                         <div className="divide-y divide-slate-100 text-[11px]">
                           {/* Row 1: Hb */}
-                          <div className="px-3 py-2 grid grid-cols-12 items-center hover:bg-slate-50/50">
+                          <div className="px-3.5 py-2 grid grid-cols-12 items-center hover:bg-slate-50/50">
                             <div className="col-span-5">
                               <span className="font-bold text-slate-900 block">Hemoglobin (Hb)</span>
                               <span className="text-[9px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
@@ -468,7 +468,7 @@ export default function PlatformPage() {
                           </div>
 
                           {/* Row 2: WBC */}
-                          <div className="px-3 py-2 grid grid-cols-12 items-center hover:bg-slate-50/50">
+                          <div className="px-3.5 py-2 grid grid-cols-12 items-center hover:bg-slate-50/50">
                             <div className="col-span-5">
                               <span className="font-bold text-slate-900 block">Leukosit (WBC)</span>
                               <span className="text-[9px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
@@ -487,7 +487,7 @@ export default function PlatformPage() {
                           </div>
 
                           {/* Row 3: PLT */}
-                          <div className="px-3 py-2 grid grid-cols-12 items-center hover:bg-slate-50/50">
+                          <div className="px-3.5 py-2 grid grid-cols-12 items-center hover:bg-slate-50/50">
                             <div className="col-span-5">
                               <span className="font-bold text-slate-900 block">Trombosit (PLT)</span>
                               <span className="text-[9px] text-slate-400 font-mono">Sysmex XN-1000 • ASTM</span>
