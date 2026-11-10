@@ -86,7 +86,7 @@ export default function SolutionsPage() {
       tier: "Tier 3",
       tag: language === "ID" ? "Diagnostik Spesialis" : "Precision Diagnostics",
       icon: Microscope,
-      iconBg: "bg-indigo-50 text-indigo-600 border border-indigo-100",
+      iconBg: "bg-blue-50 text-[#2764B8] border border-blue-100",
       isPopular: false,
       title: language === "ID" ? "Pusat Diagnostik Spesialis" : "Specialized Diagnostic Centers",
       desc:
