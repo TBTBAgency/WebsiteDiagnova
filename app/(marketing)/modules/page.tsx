@@ -345,7 +345,7 @@ export default function ModulesPage() {
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
               {language === "ID" ? "Pilih dan Pelajari Setiap Modul" : "Explore Each Module"}
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-500 font-light">
+            <p className="mt-2 text-sm sm:text-base text-slate-600 font-normal">
               {language === "ID"
                 ? "Klik modul di bawah untuk melihat ringkasan fungsi, kapabilitas klinis, dan dampaknya pada operasional laboratorium Anda."
                 : "Click any module below to review core capabilities, workflow integrations, and clinical outcomes."}
@@ -398,28 +398,28 @@ export default function ModulesPage() {
                   <p className="mt-2 text-sm sm:text-base font-semibold text-[#345DAB]">
                     {current.tagline}
                   </p>
-                  <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed font-light">
+                  <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
                     {current.description}
                   </p>
                 </div>
 
                 {/* 3 Core Highlights (Easily Scannable) */}
                 <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                     {language === "ID" ? "Kapabilitas Utama:" : "Core Capabilities:"}
                   </h4>
                   <div className="space-y-2.5">
                     {current.highlights.map((h, i) => (
                       <div
                         key={i}
-                        className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-100 shadow-2xs"
+                        className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs"
                       >
                         <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                          <p className="text-xs sm:text-sm font-semibold text-slate-900">
                             {h.title}
                           </p>
-                          <p className="text-xs text-slate-500 font-light mt-0.5 leading-relaxed">
+                          <p className="text-xs text-slate-600 font-normal mt-0.5 leading-relaxed">
                             {h.desc}
                           </p>
                         </div>
@@ -428,14 +428,15 @@ export default function ModulesPage() {
                   </div>
                 </div>
 
-                {/* CTA Action */}
+                {/* CTA Action with continuous shine */}
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <Link
                     href="/request-demo"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-6 py-3 text-sm font-semibold shadow-xs transition-all active:scale-[0.98]"
+                    className="group relative inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-7 py-3.5 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] animate-shine-continuous overflow-hidden"
                   >
-                    <span>{language === "ID" ? "Minta Demo Modul Ini" : "Request Module Demo"}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <span className="animate-shine-continuous" />
+                    <span className="relative z-10">{language === "ID" ? "Minta Demo Modul Ini" : "Request Module Demo"}</span>
+                    <ArrowRight className="h-4 w-4 relative z-10 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                   <a
                     href={`#${current.id}`}
@@ -446,27 +447,29 @@ export default function ModulesPage() {
                 </div>
               </div>
 
-              {/* Right Column: Clean Software Preview Card */}
+              {/* Right Column: Clean High-Fidelity Software Preview Card */}
               <div className="lg:col-span-5 rounded-[24px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
                 {/* Window Header */}
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="ml-2 text-xs font-semibold text-slate-700">Diagnova LIS</span>
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-50 animate-pulse" />
+                    <span className="text-xs font-bold text-slate-800">Diagnova LIS Station</span>
                   </div>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-blue-50 text-[#2764B8] font-bold">
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200/60 text-[#2764B8] font-bold">
                     {current.previewDetails.badge}
                   </span>
                 </div>
 
                 {/* System Status Strip */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <p className="text-xs font-bold text-slate-800">
+                <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 mb-1">
+                    <span>{language === "ID" ? "STATUS MODUL" : "MODULE STATUS"}</span>
+                    <span className="text-emerald-700 font-bold">● Connected</span>
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">
                     {current.previewDetails.system}
                   </p>
-                  <p className="text-[11px] text-slate-500 font-light mt-0.5">
+                  <p className="text-xs text-slate-600 mt-1 font-medium">
                     {current.previewDetails.status}
                   </p>
                 </div>
@@ -474,11 +477,11 @@ export default function ModulesPage() {
                 {/* Impact Metrics (Large, Legible) */}
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   {current.metrics.map((m, i) => (
-                    <div key={i} className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
+                    <div key={i} className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
                       <span className="font-display text-2xl font-bold text-[#345DAB] block tracking-tight">
                         {m.val}
                       </span>
-                      <span className="text-xs font-medium text-slate-600 block mt-1 leading-snug">
+                      <span className="text-xs font-semibold text-slate-700 block mt-1 leading-snug">
                         {m.label}
                       </span>
                     </div>
@@ -486,11 +489,11 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Feature Pills */}
-                <div className="flex flex-wrap gap-1.5 pt-2">
+                <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100">
                   {current.previewDetails.pills.map((pill, i) => (
                     <span
                       key={i}
-                      className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg"
+                      className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/70 px-3 py-1 rounded-full"
                     >
                       ✓ {pill}
                     </span>
@@ -521,7 +524,7 @@ export default function ModulesPage() {
                 <>Complete Suite of 5 Laboratory Modules</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Daftar spesifikasi ringkas untuk memudahkan peninjauan tim medis dan manajemen rumah sakit."
                 : "A concise specifications catalog for streamlined medical and administrative evaluation."}
@@ -540,7 +543,7 @@ export default function ModulesPage() {
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center">
+                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
                         <Icon className="h-6 w-6" />
                       </div>
                       <span className="text-[11px] font-mono font-semibold text-slate-400">
@@ -555,7 +558,7 @@ export default function ModulesPage() {
                       <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
                         {m.name}
                       </h3>
-                      <p className="text-xs text-slate-500 font-light leading-relaxed mt-2 line-clamp-3">
+                      <p className="text-xs text-slate-600 font-normal leading-relaxed mt-2 line-clamp-3">
                         {m.description}
                       </p>
                     </div>
@@ -614,7 +617,7 @@ export default function ModulesPage() {
                   <>Single Patient ID, One Unified Laboratory Database</>
                 )}
               </h2>
-              <p className="text-sm sm:text-base text-slate-500 font-light leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
                 {language === "ID"
                   ? "Walaupun setiap modul menangani alur kerja spesifik, seluruh data bermuara pada satu pusat data Diagnova. Dokter dapat melihat hasil darah rutin, riwayat transfusi, dan laporan patologi dalam satu rekam medis terpadu."
                   : "Even with department-specific workflows, all data converges in a single Diagnova registry. Physicians review routine hematology, transfusion logs, and pathology reports in one seamless patient timeline."}
@@ -627,7 +630,7 @@ export default function ModulesPage() {
                 <h4 className="text-sm font-bold text-slate-900">
                   {language === "ID" ? "Single Medical Record" : "Single Patient Record"}
                 </h4>
-                <p className="text-xs text-slate-500 font-light leading-relaxed">
+                <p className="text-xs text-slate-600 font-normal leading-relaxed">
                   {language === "ID"
                     ? "Eliminasi duplikasi data pasien antar instalasi lab sentral, IGD, dan poliklinik."
                     : "Zero duplicate patient records across central lab, ER, and outpatient clinics."}
@@ -639,7 +642,7 @@ export default function ModulesPage() {
                 <h4 className="text-sm font-bold text-slate-900">
                   {language === "ID" ? "Smart Gateway" : "Smart Gateway"}
                 </h4>
-                <p className="text-xs text-slate-500 font-light leading-relaxed">
+                <p className="text-xs text-slate-600 font-normal leading-relaxed">
                   {language === "ID"
                     ? "Satu pintu komunikasi untuk seluruh instrumen analyzer dengan buffer offline."
                     : "Unified communication gateway with offline buffer for uninterrupted testing."}
@@ -651,7 +654,7 @@ export default function ModulesPage() {
                 <h4 className="text-sm font-bold text-slate-900">
                   {language === "ID" ? "Kepatuhan KARS & ISO" : "Regulatory Compliance"}
                 </h4>
-                <p className="text-xs text-slate-500 font-light leading-relaxed">
+                <p className="text-xs text-slate-600 font-normal leading-relaxed">
                   {language === "ID"
                     ? "Jejak audit digital otomatis siap diuji oleh asesor akreditasi setiap saat."
                     : "Immutable digital audit trail ready for KARS, JCI, and ISO 15189 surveys."}

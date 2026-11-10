@@ -397,7 +397,7 @@ export default function SolutionsPage() {
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
               {language === "ID" ? "Pilih Tipe Fasilitas & Solusi Spesifik" : "Select Facility Tier & Solutions"}
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-500 font-light">
+            <p className="mt-2 text-sm sm:text-base text-slate-600 font-normal">
               {language === "ID"
                 ? "Klik solusi di bawah untuk melihat konfigurasi alur kerja, integrasi SIMRS, dan target performa klinis yang sesuai."
                 : "Select any solution below to explore workflow architecture, HIS integrations, and operational target metrics."}
@@ -450,28 +450,28 @@ export default function SolutionsPage() {
                   <p className="mt-2 text-sm sm:text-base font-semibold text-[#345DAB]">
                     {currentSol.tagline}
                   </p>
-                  <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed font-light">
+                  <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
                     {currentSol.description}
                   </p>
                 </div>
 
                 {/* 3 Core Highlights (Easily Scannable) */}
                 <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                     {language === "ID" ? "Kapabilitas Kunci Solusi:" : "Key Architectural Capabilities:"}
                   </h4>
                   <div className="space-y-2.5">
                     {currentSol.highlights.map((h, i) => (
                       <div
                         key={i}
-                        className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-100 shadow-2xs"
+                        className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs"
                       >
                         <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                          <p className="text-xs sm:text-sm font-semibold text-slate-900">
                             {h.title}
                           </p>
-                          <p className="text-xs text-slate-500 font-light mt-0.5 leading-relaxed">
+                          <p className="text-xs text-slate-600 font-normal mt-0.5 leading-relaxed">
                             {h.desc}
                           </p>
                         </div>
@@ -480,14 +480,15 @@ export default function SolutionsPage() {
                   </div>
                 </div>
 
-                {/* CTA Action */}
+                {/* CTA Action with continuous shine */}
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <Link
                     href="/request-demo"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-6 py-3 text-sm font-semibold shadow-xs transition-all active:scale-[0.98]"
+                    className="group relative inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-7 py-3.5 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] animate-shine-continuous overflow-hidden"
                   >
-                    <span>{language === "ID" ? "Konsultasikan Solusi Ini" : "Consult This Setup"}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <span className="animate-shine-continuous" />
+                    <span className="relative z-10">{language === "ID" ? "Konsultasikan Solusi Ini" : "Consult This Setup"}</span>
+                    <ArrowRight className="h-4 w-4 relative z-10 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                   <a
                     href={`#${currentSol.id}`}
@@ -498,25 +499,29 @@ export default function SolutionsPage() {
                 </div>
               </div>
 
-              {/* Right Column: Clean Solution Preview Card */}
+              {/* Right Column: Clean High-Fidelity Solution Preview Card */}
               <div className="lg:col-span-5 rounded-[24px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                    <span className="ml-2 text-xs font-semibold text-slate-700">Diagnova Setup</span>
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-50 animate-pulse" />
+                    <span className="text-xs font-bold text-slate-800">
+                      {language === "ID" ? "Diagnova Live Setup" : "Diagnova Architecture"}
+                    </span>
                   </div>
-                  <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-md bg-blue-50 text-[#2764B8] font-bold">
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200/60 text-[#2764B8] font-bold">
                     {currentSol.previewInfo.badge}
                   </span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <p className="text-xs font-bold text-slate-800">
-                    {currentSol.name} Architecture
+                <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 mb-1">
+                    <span>{language === "ID" ? "KONFIGURASI ALUR" : "WORKFLOW CONFIG"}</span>
+                    <span className="text-emerald-700 font-bold">● Active</span>
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">
+                    {currentSol.name}
                   </p>
-                  <p className="text-[11px] text-slate-500 font-light mt-0.5">
+                  <p className="text-xs text-slate-600 mt-1 font-medium">
                     {currentSol.previewInfo.focus}
                   </p>
                 </div>
@@ -524,11 +529,11 @@ export default function SolutionsPage() {
                 {/* Metrics */}
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   {currentSol.metrics.map((m, i) => (
-                    <div key={i} className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/70">
+                    <div key={i} className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
                       <span className="font-display text-2xl font-bold text-[#345DAB] block tracking-tight">
                         {m.val}
                       </span>
-                      <span className="text-xs font-medium text-slate-600 block mt-1 leading-snug">
+                      <span className="text-xs font-semibold text-slate-700 block mt-1 leading-snug">
                         {m.label}
                       </span>
                     </div>
@@ -536,11 +541,11 @@ export default function SolutionsPage() {
                 </div>
 
                 {/* Feature Tags */}
-                <div className="flex flex-wrap gap-1.5 pt-2">
+                <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100">
                   {currentSol.previewInfo.tags.map((tag, i) => (
                     <span
                       key={i}
-                      className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg"
+                      className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/70 px-3 py-1 rounded-full"
                     >
                       ✓ {tag}
                     </span>
@@ -571,7 +576,7 @@ export default function SolutionsPage() {
                 <>Complete Suite of 6 Purpose-Built Solutions</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Ringkasan arsitektur terdedikasi untuk mempermudah evaluasi komite medis dan tim manajemen IT."
                 : "A concise overview of dedicated configurations for streamlined clinical and IT leadership evaluation."}
@@ -606,7 +611,7 @@ export default function SolutionsPage() {
                       <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
                         {sol.name}
                       </h3>
-                      <p className="text-xs text-slate-500 font-light leading-relaxed mt-2 line-clamp-3">
+                      <p className="text-xs text-slate-600 font-normal leading-relaxed mt-2 line-clamp-3">
                         {sol.description}
                       </p>
                     </div>
@@ -667,7 +672,7 @@ export default function SolutionsPage() {
                 <>Match Solutions to Your Operational Tier</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Diagnova beradaptasi dengan kapasitas Anda. Lihat paket solusi dan modul yang direkomendasikan berdasarkan tipe fasilitas kesehatan Anda."
                 : "Diagnova scales to your institution. Review recommended architectures and modules tailored to your operational tier."}
@@ -688,12 +693,12 @@ export default function SolutionsPage() {
                   <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
                     {tier.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
                     {tier.desc}
                   </p>
 
                   <div className="pt-2 border-t border-blue-100/80 space-y-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
                       {language === "ID" ? "Paket Rekomendasi:" : "Recommended Package:"}
                     </span>
                     {tier.solutionsRecommended.map((sol, i) => (

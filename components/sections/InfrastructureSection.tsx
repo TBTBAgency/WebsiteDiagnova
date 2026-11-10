@@ -386,7 +386,7 @@ export function InfrastructureSection({ initialData }: InfrastructureSectionProp
                           </div>
                           <p
                             className={`text-xs sm:text-sm leading-relaxed max-w-xl transition-colors duration-500 ease-in-out ${
-                              isActive ? "text-white/85" : "text-slate-500"
+                              isActive ? "text-white/90" : "text-slate-600 font-normal"
                             }`}
                           >
                             {card.description}

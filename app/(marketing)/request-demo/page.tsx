@@ -209,7 +209,7 @@ function RequestDemoForm() {
           <h2 className="font-display text-2xl font-bold text-slate-900 tracking-tight">
             {language === "ID" ? "Permohonan Demo Terkirim!" : "Demo Request Submitted!"}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
             {submitMessage}
           </p>
         </div>
@@ -218,7 +218,7 @@ function RequestDemoForm() {
           <p className="text-xs font-bold text-slate-900 uppercase tracking-wider">
             {language === "ID" ? "Tahap Berikutnya" : "Next Steps"}
           </p>
-          <ul className="text-xs text-slate-600 space-y-1.5 font-light">
+          <ul className="text-xs text-slate-600 space-y-1.5 font-normal">
             <li className="flex items-start gap-2">
               <Check className="h-3.5 w-3.5 text-[#2568BA] shrink-0 mt-0.5" />
               <span>
@@ -275,7 +275,7 @@ function RequestDemoForm() {
         <h1 className="font-display text-2xl lg:text-[28px] xl:text-3xl font-bold text-slate-900 tracking-tight">
           {language === "ID" ? "Jadwalkan Demo Langsung" : "Get Started Now"}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 font-light mt-0.5">
+        <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
           {language === "ID"
             ? "Lengkapi formulir di bawah untuk memulai sesi demonstrasi privat & konsultasi alur lab Anda."
             : "Please fill in your details to schedule a tailored walkthrough for your facility."}
@@ -538,7 +538,7 @@ function RequestDemoForm() {
           )}
         </button>
 
-        <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1.5 text-center font-light">
+        <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1.5 text-center font-normal">
           <Lock className="h-3 w-3 text-slate-400 shrink-0" />
           <span>
             {language === "ID"
@@ -550,7 +550,7 @@ function RequestDemoForm() {
 
       {/* Direct Contact Links */}
       <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-        <span className="font-light text-[11px]">
+        <span className="font-normal text-[11px]">
           {language === "ID" ? "Pertanyaan langsung? Hubungi kami:" : "Questions? Contact us directly:"}
         </span>
         <div className="flex items-center gap-4 font-medium text-[#2568BA] text-xs">
@@ -608,7 +608,7 @@ export default function RequestDemoPage() {
                     ? "Percepat & Otomasi Alur Kerja Laboratorium Anda"
                     : "Speed up your lab workflow with Diagnova LIS"}
                 </h2>
-                <p className="text-xs sm:text-sm text-blue-100/80 font-light leading-relaxed pt-0.5">
+                <p className="text-xs sm:text-sm text-blue-100/80 font-normal leading-relaxed pt-0.5">
                   {language === "ID"
                     ? "Satu platform terintegrasi untuk interfacing analyzer instan, verifikasi hasil berbasis AI, dan pelaporan nasional."
                     : "An all-in-one platform for analyzer interfacing, AI auto-verification, and seamless healthcare integration."}

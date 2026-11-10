@@ -448,7 +448,7 @@ export default function IntegrationPage() {
                 ? "Pilih Jalur Integrasi Sesuai Ekosistem IT Anda"
                 : "Select the Integration Path Tailored to Your IT Ecosystem"}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Klik tab di bawah untuk melihat spesifikasi protokol, alur pesan data medis, dan mekanisme keamanan masing-masing integrasi."
                 : "Click the tabs below to inspect protocol specs, medical message workflows, and resilience mechanisms for each pillar."}
@@ -502,7 +502,7 @@ export default function IntegrationPage() {
                   <p className="text-sm sm:text-base font-semibold text-[#2764B8] mt-1.5">
                     {current.tagline}
                   </p>
-                  <p className="text-sm sm:text-base text-slate-600 mt-4 leading-relaxed font-light">
+                  <p className="text-sm sm:text-base text-slate-600 mt-4 leading-relaxed font-normal">
                     {current.description}
                   </p>
 
@@ -515,7 +515,7 @@ export default function IntegrationPage() {
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-slate-900">{h.title}</p>
-                          <p className="text-xs text-slate-600 mt-0.5 leading-relaxed font-light">{h.desc}</p>
+                          <p className="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal">{h.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -787,7 +787,7 @@ export default function IntegrationPage() {
                 ? "Bagaimana Diagnova Menyatukan Seluruh Alur Data Laboratorium"
                 : "How Diagnova Unifies the Complete Laboratory Data Pipeline"}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Dari pembacaan instrumen analitik di meja lab hingga pelaporan rekam medis nasional, setiap layer berkomunikasi tanpa hambatan format atau risiko kehilangan data."
                 : "From analytical instrument query to national electronic medical record reporting, every layer communicates seamlessly without format friction or packet loss."}
@@ -853,7 +853,7 @@ export default function IntegrationPage() {
                 ? "Kompatibel dengan 500+ Mesin Laboratorium Global"
                 : "Compatible with 500+ Global Medical Analyzers"}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Diagnova telah teruji di ratusan rumah sakit dan laboratorium klinik terkemuka dengan dukungan protokol standar internasional (ASTM E1381/E1394, HL7 v2.x, Serial RS-232, dan TCP/IP LAN)."
                 : "Diagnova is proven across hundreds of healthcare facilities, supporting international protocols including ASTM E1381/E1394, HL7 v2.x, Serial RS-232, and TCP/IP LAN."}
@@ -873,7 +873,7 @@ export default function IntegrationPage() {
                 <h4 className="font-display text-sm sm:text-base font-bold text-slate-900">
                   {brand.name}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1 font-light">
+                <p className="text-xs text-slate-500 mt-1 font-normal">
                   {brand.category}
                 </p>
                 <span className="inline-block mt-3 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-[#2764B8]">
@@ -910,7 +910,7 @@ export default function IntegrationPage() {
                     ? "Arsitektur Aman Sesuai Regulasi Kesehatan Nasional"
                     : "Secure Architecture Compliant with National Health Regulations"}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Setiap transmisi data dilindungi enkripsi kelas enterprise (TLS 1.3 / AES-256) serta memenuhi amanat UU Perlindungan Data Pribadi (UU PDP) dan standar Kemenkes RI."
                     : "Every data transmission is guarded by enterprise-grade TLS 1.3 / AES-256 encryption, fully aligning with Indonesia's PDP Act and Ministry of Health standards."}
@@ -943,7 +943,7 @@ export default function IntegrationPage() {
                           <ComplianceIcon className="h-5 w-5" />
                         </div>
                         <p className="text-sm font-bold text-slate-900">{item.title}</p>
-                        <p className="text-xs text-slate-600 mt-1 leading-relaxed font-light">{item.desc}</p>
+                        <p className="text-xs text-slate-600 mt-1 leading-relaxed font-normal">{item.desc}</p>
                       </div>
                     </div>
                   );

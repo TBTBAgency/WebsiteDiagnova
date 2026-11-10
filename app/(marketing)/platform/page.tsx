@@ -125,7 +125,7 @@ export default function PlatformPage() {
                 </>
               )}
             </h2>
-            <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
+            <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Mengeliminasi entri data manual sepenuhnya. Diagnova berkomunikasi langsung dua arah dengan instrumen laboratorium melalui protokol HL7 dan ASTM standar internasional."
                 : "Completely eliminate manual data entry. Diagnova establishes native two-way communication with any laboratory instrument brand via industry-standard HL7 and ASTM protocols."}
@@ -136,20 +136,20 @@ export default function PlatformPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
                   <Clock className="h-6 w-6" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
                   {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Hasil uji hematologi, kimia darah, dan urin langsung terkirim begitu mesin selesai beroperasi tanpa antrean ketik manual oleh analis."
                     : "Hematology, biochemistry, and urinalysis results stream directly to physician screens upon analyzer completion with zero manual typing."}
                 </p>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-700">
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
                   <span>{language === "ID" ? "Bebas antrean ketik analis" : "No typing backlog during peak shifts"}</span>
@@ -163,20 +163,20 @@ export default function PlatformPage() {
 
             <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
                   <Zap className="h-6 w-6" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
                   {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Rule engine fleksibel sesuai SOP RS. Spesimen dengan nilai normal dan lolos uji delta-check diverifikasi otomatis sehingga dokter fokus pada kasus darurat."
                     : "Flexible rule engine matching your hospital SOPs. Samples within normal limits and passing delta checks verify automatically, freeing doctors for complex cases."}
                 </p>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-700">
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
                   <span>{language === "ID" ? "Konfigurasi delta-check RS" : "Hospital-specific delta checks"}</span>
@@ -190,20 +190,20 @@ export default function PlatformPage() {
 
             <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
                   <Server className="h-6 w-6" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
                   {language === "ID" ? "Resilient Edge Buffer" : "Resilient Edge Buffer"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Koneksi jaringan terganggu? Diagnova Gateway menyimpan data analyzer di buffer edge lokal dan menyinkronkan seluruh paket data begitu jaringan pulih."
                     : "Network instability? Diagnova's edge gateway locally buffers analyzer transmissions and resyncs all data packets upon reconnection with zero data loss."}
                 </p>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-700">
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#2764B8] shrink-0" />
                   <span>{language === "ID" ? "Toleransi offline hingga 72 jam" : "Offline resilience up to 72 hours"}</span>
@@ -250,31 +250,31 @@ export default function PlatformPage() {
                   </>
                 )}
               </h2>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
                 {language === "ID"
                   ? "Transparansi penuh untuk setiap tindakan laboratorium. Setiap perubahan hasil, kalibrasi alat, dan approval dokter tercatat permanen dengan cap waktu (timestamp) hingga milidetik."
                   : "Absolute transparency for every clinical action. Every result change, instrument calibration, and physician sign-off is permanently recorded with millisecond-level timestamps."}
               </p>
 
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-[20px] bg-[#F5F7FA] border border-slate-200/80 p-5 space-y-2">
-                  <div className="flex items-center gap-2 text-[#345DAB] font-bold text-sm">
+                <div className="rounded-[20px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
+                  <div className="flex items-center gap-2 text-[#2764B8] font-bold text-sm">
                     <Lock className="h-4 w-4" />
                     <span>{language === "ID" ? "Log Anti-Manipulasi" : "Tamper-Proof Logs"}</span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
                     {language === "ID"
                       ? "Catatan historis tidak dapat diedit atau dihapus, memenuhi persyaratan akreditasi KARS & JCI."
                       : "Historical entries cannot be altered or purged, satisfying KARS & JCI accreditation criteria."}
                   </p>
                 </div>
 
-                <div className="rounded-[20px] bg-[#F5F7FA] border border-slate-200/80 p-5 space-y-2">
-                  <div className="flex items-center gap-2 text-[#345DAB] font-bold text-sm">
+                <div className="rounded-[20px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
+                  <div className="flex items-center gap-2 text-[#2764B8] font-bold text-sm">
                     <FileCheck2 className="h-4 w-4" />
                     <span>{language === "ID" ? "E-Sign Dokter Bersertifikat" : "Certified E-Signatures"}</span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
                     {language === "ID"
                       ? "Tanda tangan digital dokter Sp.PK dengan QR verifikasi keaslian langsung pada lembar hasil."
                       : "Certified pathologist e-signatures with instant QR-code verification on patient reports."}
@@ -285,11 +285,11 @@ export default function PlatformPage() {
 
             {/* Right Column: Realistic Clinical Specimen Timeline Card (Bukan Terminal Hitam) */}
             <div className="lg:col-span-6">
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200 p-6 sm:p-7 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs">
                 {/* Specimen Header */}
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
                   <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                       {language === "ID" ? "Rekam Jejak Spesimen" : "Specimen Audit Log"}
                     </span>
                     <h4 className="font-display text-base font-bold text-slate-900 mt-0.5">
@@ -306,27 +306,29 @@ export default function PlatformPage() {
                 <div className="space-y-4">
                   <div className="relative pl-6 border-l-2 border-[#2764B8]">
                     <span className="absolute -left-[7px] top-1 h-3 w-3 rounded-full bg-[#2764B8] ring-4 ring-blue-50" />
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-0.5">
                       <span>08:14:22 WIB</span>
-                      <span className="font-medium text-[#2764B8]">Dr. dr. Handoko, Sp.PK</span>
+                      <span className="font-semibold text-[#2764B8]">Dr. dr. Handoko, Sp.PK</span>
                     </div>
-                    <p className="text-xs font-semibold text-slate-800">
+                    <p className="text-xs font-semibold text-slate-900">
                       {language === "ID"
                         ? "Validasi E-Sign & Rilis Otomatis ke RME SIMRS"
                         : "E-Signature Validated & Auto-Released to HIS EMR"}
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Hash Kriptografis: c4ca4238a0b923820dcc509a6f75849b
+                    <p className="text-[11px] text-slate-600 mt-0.5 font-medium">
+                      {language === "ID"
+                        ? "Kriptografi: SHA-256 Valid • Tersertifikasi BSrE BSSN & Kemenkes"
+                        : "Cryptography: SHA-256 Valid • Certified by BSrE & MoH"}
                     </p>
                   </div>
 
                   <div className="relative pl-6 border-l-2 border-slate-200">
-                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-300" />
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-400" />
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-0.5">
                       <span>08:11:05 WIB</span>
-                      <span>Sysmex XN-1000 Interface</span>
+                      <span className="font-medium text-slate-700">Sysmex XN-1000 Interface</span>
                     </div>
-                    <p className="text-xs font-medium text-slate-700">
+                    <p className="text-xs font-medium text-slate-800">
                       {language === "ID"
                         ? "Nilai Analyzer Diterima: Hb 14.2 g/dL, Leuko 7.400 /uL (Pass QC)"
                         : "Analyzer Values Ingested: Hb 14.2 g/dL, WBC 7,400 /uL (Pass QC)"}
@@ -334,12 +336,12 @@ export default function PlatformPage() {
                   </div>
 
                   <div className="relative pl-6 border-l-2 border-slate-200">
-                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-300" />
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-400" />
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-0.5">
                       <span>08:02:18 WIB</span>
-                      <span>Siti N., A.Md.AK (Analis Lab)</span>
+                      <span className="font-medium text-slate-700">Siti N., A.Md.AK (Analis Lab)</span>
                     </div>
-                    <p className="text-xs font-medium text-slate-700">
+                    <p className="text-xs font-medium text-slate-800">
                       {language === "ID"
                         ? "Barcode Dipindai & Masuk Antrean Sentrifugasi Rack #B-04"
                         : "Barcode Scanned & Assigned to Centrifuge Rack #B-04"}
@@ -347,12 +349,12 @@ export default function PlatformPage() {
                   </div>
 
                   <div className="relative pl-6">
-                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-300" />
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-0.5">
+                    <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-slate-400" />
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-0.5">
                       <span>07:55:00 WIB</span>
-                      <span>Bridging SIMRS IGD</span>
+                      <span className="font-medium text-slate-700">Bridging SIMRS IGD</span>
                     </div>
-                    <p className="text-xs font-medium text-slate-700">
+                    <p className="text-xs font-medium text-slate-800">
                       {language === "ID"
                         ? "Order Masuk dari dr. Jaga IGD (Pasien: Bpk. Suryadi / RM-44912)"
                         : "Inbound Order from ER (Patient: Mr. Suryadi / MRN-44912)"}
@@ -360,9 +362,9 @@ export default function PlatformPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                   <span>Standar: Permenkes 24/2022 &amp; HL7 FHIR</span>
-                  <span className="font-medium text-slate-700">SATUSEHAT Ready</span>
+                  <span className="font-semibold text-[#2764B8]">SATUSEHAT Ready</span>
                 </div>
               </div>
             </div>
@@ -397,7 +399,7 @@ export default function PlatformPage() {
                 </>
               )}
             </h2>
-            <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
+            <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Mengubah jutaan titik data pemeriksaan laboratorium menjadi wawasan strategis. Memantau utilisasi instrumen, efisiensi reagen, dan membantu dokter mendeteksi lonjakan biomarker kritis."
                 : "Transforming millions of laboratory data points into actionable intelligence. Monitor analyzer utilization, reagent efficiency, and empower clinicians with rapid anomaly detection."}
@@ -408,13 +410,13 @@ export default function PlatformPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
                   <TrendingUp className="h-6 w-6" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
                   {language === "ID" ? "TAT Real-Time & Bottleneck Heatmap" : "TAT Real-Time & Bottleneck Heatmap"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Pantau durasi sampel per departemen (IGD, Rawat Inap, Rawat Jalan). Kenali secara visual tahap yang menyebabkan penundaan sebelum mengganggu alur pelayanan pasien."
                     : "Monitor specimen turnaround across ER, Inpatient, and Clinics. Pinpoint bottlenecks before they impact patient care."}
@@ -429,13 +431,13 @@ export default function PlatformPage() {
 
             <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
                   <BarChart3 className="h-6 w-6" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
                   {language === "ID" ? "Beban Instrumen & Utilisasi Reagen" : "Analyzer Load & Reagent Tracking"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Kalkulasi otomatis jumlah tes per reagen, masa kadaluarsa, dan distribusi beban kerja antar mesin agar throughput laboratorium beroperasi maksimal tanpa reagen terbuang."
                     : "Automatic tracking of tests per reagent cartridge, expiry dates, and load distribution across machines to maximize throughput with zero wastage."}
@@ -450,13 +452,13 @@ export default function PlatformPage() {
 
             <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
                   <Sparkles className="h-6 w-6" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
                   {language === "ID" ? "Nova AI Clinical Delta Check" : "Nova AI Clinical Delta Check"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
                     ? "Nova AI mendeteksi lonjakan nilai abnormal terhadap riwayat lampau pasien, menyajikan peringatan dini, dan merangkum narasi medis. Keputusan akhir tetap 100% pada dokter."
                     : "Nova AI detects abnormal biomarker spikes against past patient history, offering early alerts while leaving 100% of clinical decisions with physicians."}

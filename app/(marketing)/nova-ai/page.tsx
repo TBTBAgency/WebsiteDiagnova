@@ -377,7 +377,7 @@ export default function NovaAIPage() {
                 <>How Nova AI Powers Pathologist Sign-Off Workflows</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Pilih profil spesimen klinis di bawah untuk melihat bagaimana Nova AI menghitung variasi delta-check longitudinal, menandai deviasi penting, dan menyusun draf narasi medis yang siap disahkan dokter."
                 : "Select a clinical specimen profile below to inspect how Nova AI calculates longitudinal delta-checks, flags key deviations, and prepares clinical report impressions ready for pathologist authorization."}
@@ -533,7 +533,7 @@ export default function NovaAIPage() {
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-400 font-light flex items-center justify-between pt-2 border-t border-slate-100">
+                <div className="text-[11px] text-slate-500 font-normal flex items-center justify-between pt-2 border-t border-slate-100">
                   <span>{language === "ID" ? "Verifikasi Otomatis Analyzer" : "Analyzer Auto-Verification"}</span>
                   <span className="font-mono">ASTM E1381</span>
                 </div>
@@ -574,7 +574,7 @@ export default function NovaAIPage() {
                       <span className="text-xs font-bold text-[#2764B8] uppercase tracking-wider block">
                         {language === "ID" ? "2. Rekomendasi Korelasi Tambahan:" : "2. Correlative Recommendation:"}
                       </span>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                         {language === "ID" ? currentProfile.clinicalRecommendation : currentProfile.clinicalRecommendationEn}
                       </p>
                     </div>
@@ -662,7 +662,7 @@ export default function NovaAIPage() {
                     </button>
                   </div>
 
-                  <p className="text-[11px] text-slate-400 text-center font-light">
+                  <p className="text-[11px] text-slate-400 text-center font-normal">
                     {language === "ID"
                       ? "Interaksi simulasi: Klik tombol di atas untuk menguji pengesahan E-Sign dokter dan transmisi alert darurat."
                       : "Simulation interactive: Click above to test pathologist e-sign authorization and critical panic alert dispatch."}
@@ -697,7 +697,7 @@ export default function NovaAIPage() {
                 <>Structured Pipeline Safeguarding Clinical Integrity & Accuracy</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Dari pembacaan instrumen analitik hingga otorisasi digital dokter spesialis, setiap tahap didesain dengan ketertelusuran penuh dan kepatuhan akreditasi rumah sakit."
                 : "From direct analyzer telemetry to certified pathologist authorization, every phase is engineered with full audit traceability and hospital accreditation standards."}
@@ -767,7 +767,7 @@ export default function NovaAIPage() {
                 <>Why Physicians Retain Absolute Medical Authority</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Dalam tata kelola klinis modern, sistem komputasi mempercepat pemrosesan data, sementara pertimbangan diagnosis holistik dan tanggung jawab hukum mutlak berada di tangan dokter spesialis teregistrasi."
                 : "In modern clinical governance, computational systems accelerate data processing, while holistic diagnostic judgment and full legal accountability remain with licensed medical practitioners."}
@@ -778,7 +778,7 @@ export default function NovaAIPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Box A: Sistem Nova AI */}
             <div className="rounded-[28px] bg-[#F8FBFE] border border-blue-100/90 p-7 sm:p-9 space-y-6 shadow-2xs">
-              <div className="flex items-center gap-3.5 pb-4 border-b border-blue-100/80">
+              <div className="flex items-center gap-3.5 pb-4 border-blue-100/80">
                 <div className="h-12 w-12 rounded-2xl bg-white border border-blue-200/70 text-[#2764B8] flex items-center justify-center shadow-xs">
                   <Cpu className="h-6 w-6" />
                 </div>
@@ -786,7 +786,7 @@ export default function NovaAIPage() {
                   <h3 className="font-display text-xl font-bold text-slate-900">
                     {language === "ID" ? "Sistem Nova AI (Decision Support)" : "Nova AI System (Decision Support)"}
                   </h3>
-                  <p className="text-xs text-slate-500 font-light">
+                  <p className="text-xs text-slate-600 font-medium">
                     {language === "ID" ? "Komputasi Presisi & Deteksi Deviasi" : "High-Speed Computing & Variance Detection"}
                   </p>
                 </div>
@@ -829,10 +829,10 @@ export default function NovaAIPage() {
 
               {/* Batasan Mutlak */}
               <div className="pt-4 border-t border-blue-100/80 space-y-2 text-xs text-slate-600">
-                <span className="font-bold text-slate-400 uppercase tracking-wider block">
+                <span className="font-bold text-slate-500 uppercase tracking-wider block">
                   {language === "ID" ? "Batasan Regulasi Mutlak:" : "Strict Regulatory Limits:"}
                 </span>
-                <p className="text-slate-600 font-light leading-relaxed">
+                <p className="text-slate-700 font-normal leading-relaxed">
                   {language === "ID"
                     ? "Nova AI tidak memiliki wewenang hukum untuk menegakkan diagnosis definitif mandiri atau meresepkan terapi obat."
                     : "Nova AI possesses zero legal authority to issue autonomous definitive diagnoses or prescribe therapeutic drugs."}
@@ -850,7 +850,7 @@ export default function NovaAIPage() {
                   <h3 className="font-display text-xl font-bold text-slate-900">
                     {language === "ID" ? "Dokter Sp.PK & DPJP (Otoritas Medis)" : "Pathologist & Attending Physician"}
                   </h3>
-                  <p className="text-xs text-slate-500 font-light">
+                  <p className="text-xs text-slate-600 font-medium">
                     {language === "ID" ? "Pertimbangan Holistik & Akuntabilitas Hukum" : "Holistic Clinical Judgment & Legal Responsibility"}
                   </p>
                 </div>
@@ -893,10 +893,10 @@ export default function NovaAIPage() {
 
               {/* Landasan Hukum */}
               <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-600">
-                <span className="font-bold text-slate-400 uppercase tracking-wider block">
+                <span className="font-bold text-slate-500 uppercase tracking-wider block">
                   {language === "ID" ? "Landasan Hukum Republik Indonesia:" : "Indonesian Statutory Foundation:"}
                 </span>
-                <p className="text-slate-600 font-light leading-relaxed">
+                <p className="text-slate-600 font-normal leading-relaxed">
                   {language === "ID"
                     ? "Berdasarkan UU Kesehatan No. 17/2023, seluruh pertimbangan klinis dan tanggung jawab hukum medis melekat pada dokter yang memiliki STR dan SIP aktif."
                     : "Under Healthcare Law No. 17/2023, all medical decisions and legal responsibilities rest exclusively with certified and registered physicians."}
@@ -911,7 +911,7 @@ export default function NovaAIPage() {
               <ShieldCheck className="h-5 w-5 text-[#2764B8] shrink-0" />
               <div>
                 <span className="font-bold text-xs text-slate-900 block">UU Kesehatan No. 17/2023</span>
-                <span className="text-[11px] text-slate-500 font-light">
+                <span className="text-[11px] text-slate-500 font-normal">
                   {language === "ID" ? "Kepastian hukum tanggung jawab medis" : "Legal medical accountability"}
                 </span>
               </div>
@@ -921,7 +921,7 @@ export default function NovaAIPage() {
               <Lock className="h-5 w-5 text-[#2764B8] shrink-0" />
               <div>
                 <span className="font-bold text-xs text-slate-900 block">Permenkes No. 24/2022</span>
-                <span className="text-[11px] text-slate-500 font-light">
+                <span className="text-[11px] text-slate-500 font-normal">
                   {language === "ID" ? "Interoperabilitas RME & SATUSEHAT" : "EMR & SATUSEHAT interoperability"}
                 </span>
               </div>
@@ -931,7 +931,7 @@ export default function NovaAIPage() {
               <Activity className="h-5 w-5 text-[#2764B8] shrink-0" />
               <div>
                 <span className="font-bold text-xs text-slate-900 block">KARS SKP 2.2 & ISO 15189</span>
-                <span className="text-[11px] text-slate-500 font-light">
+                <span className="text-[11px] text-slate-500 font-normal">
                   {language === "ID" ? "Prosedur baku pelaporan nilai kritis" : "Accredited panic value triage"}
                 </span>
               </div>

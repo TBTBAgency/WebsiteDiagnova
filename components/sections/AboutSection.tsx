@@ -181,7 +181,7 @@ export function AboutSection({ initialData }: AboutSectionProps = {}) {
             </h2>
 
             {/* Subtitle / Paragraph Description */}
-            <p className="text-sm sm:text-base lg:text-lg text-slate-500 font-normal leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl">
               {subtitleText}
             </p>
           </div>

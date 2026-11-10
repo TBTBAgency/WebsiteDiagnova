@@ -83,7 +83,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
               {content.sectionTitle}
             </h2>
           </div>
-          <p className="max-w-md text-slate-500 text-xs sm:text-sm lg:text-[15px] font-light leading-relaxed lg:text-right pb-1 shrink-0">
+          <p className="max-w-md text-slate-600 text-xs sm:text-sm lg:text-[15px] font-normal leading-relaxed lg:text-right pb-1 shrink-0">
             {content.sectionSubtitle}
           </p>
         </div>
@@ -113,7 +113,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                       "px-5 py-2.5 rounded-full text-xs sm:text-[13px] transition-all duration-200 text-left whitespace-nowrap cursor-pointer",
                       isActive
                         ? "bg-[#EBF3FB] border border-[#3880DB]/35 text-[#2568BA] font-semibold"
-                        : "text-slate-500 hover:text-[#2568BA] hover:bg-white/80 border border-transparent font-normal"
+                        : "text-slate-600 hover:text-[#2568BA] hover:bg-white/80 border border-transparent font-medium"
                     )}
                   >
                     {cat.label}
@@ -173,7 +173,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                       )}
                     >
                       <div className="overflow-hidden">
-                        <p className="text-slate-500 text-xs sm:text-[13px] lg:text-sm leading-relaxed font-light pb-5 sm:pb-6 pr-10 sm:pr-14">
+                        <p className="text-slate-600 text-xs sm:text-[13px] lg:text-sm leading-relaxed font-normal pb-5 sm:pb-6 pr-10 sm:pr-14">
                           {item.answer}
                         </p>
                       </div>

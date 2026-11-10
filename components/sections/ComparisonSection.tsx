@@ -101,7 +101,7 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
           <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
             {content.sectionTitle}
           </h2>
-          <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500">
+          <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
             {content.sectionSubtitle}
           </p>
         </div>
@@ -126,7 +126,7 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
                 <div>
                   {/* Badge */}
                   <div className="mb-4 sm:mb-5">
-                    <span className="inline-flex items-center rounded-full bg-[#EBF3FB] border border-[#D5E5F7] px-4 py-1.5 text-xs sm:text-sm font-medium text-[#2A5EAA]">
+                    <span className="inline-flex items-center rounded-full bg-[#EBF3FB] border border-[#D5E5F7] px-4 py-1.5 text-xs sm:text-sm font-semibold text-[#2764B8]">
                       {content.conventionalBadge}
                     </span>
                   </div>
@@ -151,14 +151,14 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
                             : "0ms",
                         }}
                       >
-                        <span className="text-slate-400 font-medium text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
+                        <span className="text-slate-400 font-semibold text-xs sm:text-sm w-5 sm:w-6 shrink-0 select-none pt-0.5">
                           {item.number}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-700 text-sm sm:text-base leading-snug tracking-tight mb-1">
+                          <h3 className="font-semibold text-slate-900 text-sm sm:text-base leading-snug tracking-tight mb-1">
                             {item.conventional.title}
                           </h3>
-                          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                             {item.conventional.description}
                           </p>
                         </div>
