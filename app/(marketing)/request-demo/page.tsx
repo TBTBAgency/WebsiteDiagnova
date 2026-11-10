@@ -458,6 +458,23 @@ export default function RequestDemoPage() {
             ? "Lihat langsung bagaimana Diagnova bekerja dengan analyzer Anda. Demo privat, disesuaikan dengan kebutuhan faskes Anda."
             : "See exactly how Diagnova works with your analyzers. A private demo, tailored to your facility's workflow."
         }
+        metrics={[
+          {
+            value: "2–4",
+            label: language === "ID" ? "Minggu implementasi" : "Week implementation",
+            sub: language === "ID" ? "Onboarding penuh" : "Full onboarding",
+          },
+          {
+            value: "60%",
+            label: language === "ID" ? "Efisiensi analis" : "Analyst efficiency",
+            sub: language === "ID" ? "Lebih sedikit beban kerja" : "Less manual workload",
+          },
+          {
+            value: "100%",
+            label: language === "ID" ? "SATUSEHAT bridging" : "SATUSEHAT integration",
+            sub: language === "ID" ? "Direct & real-time" : "Direct & real-time",
+          },
+        ]}
       />
 
       <section className="py-14 sm:py-20">
