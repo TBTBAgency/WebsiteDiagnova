@@ -610,68 +610,328 @@ export default function PlatformPage() {
             </p>
           </div>
 
-          {/* 3 Intelligence Cards */}
+          {/* 3 LigoLab-Style Intelligence Cards with Isometric Vector Art */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 1: TAT Real-Time & Bottleneck Heatmap */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Isometric Illustration Stage (LigoLab Aesthetic) */}
+              <div className="h-48 sm:h-52 w-full rounded-2xl bg-gradient-to-b from-white to-[#F6FAFE] border border-blue-50/80 relative flex items-center justify-center p-3 overflow-hidden mb-6 group-hover:scale-[1.02] transition-transform duration-300">
+                <svg
+                  viewBox="0 0 280 170"
+                  className="w-full h-full max-w-[240px] select-none"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  {/* Subtle Background Radial Aura */}
+                  <circle cx="140" cy="85" r="70" fill="#EBF3FB" fillOpacity="0.7" />
+
+                  {/* Isometric Monitor Screen */}
+                  <g transform="translate(45, 20)">
+                    {/* Monitor Stand Base & Stem */}
+                    <path d="M75 110 L95 100 L115 110 L95 120 Z" fill="#E2EDF9" stroke="#2764B8" strokeWidth="1.5" />
+                    <path d="M92 90 L98 87 L98 105 L92 108 Z" fill="#CBDDF5" stroke="#2764B8" strokeWidth="1.5" />
+
+                    {/* Monitor Back Housing */}
+                    <path
+                      d="M30 45 L110 5 L160 30 L80 70 Z"
+                      fill="#F4F8FD"
+                      stroke="#2764B8"
+                      strokeWidth="1.75"
+                      strokeLinejoin="round"
+                    />
+                    {/* Screen Bezel Front Face */}
+                    <path
+                      d="M35 48 L105 13 L155 38 L85 73 Z"
+                      fill="#FFFFFF"
+                      stroke="#2764B8"
+                      strokeWidth="1.75"
+                      strokeLinejoin="round"
+                    />
+                    {/* Screen Display Content (Heatmap Bars) */}
+                    <path d="M50 48 L80 33 L100 43 L70 58 Z" fill="#EBF3FB" />
+                    <line x1="55" y1="46" x2="75" y2="36" stroke="#2764B8" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="60" y1="52" x2="85" y2="40" stroke="#0073FC" strokeWidth="2.5" strokeLinecap="round" />
+                    <line x1="70" y1="58" x2="95" y2="46" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
+
+                    {/* Floating Document with Verified Checkmark */}
+                    <g transform="translate(-15, 20)">
+                      <path
+                        d="M20 30 L55 12 L85 27 L50 45 Z"
+                        fill="#FFFFFF"
+                        stroke="#2764B8"
+                        strokeWidth="1.75"
+                        strokeLinejoin="round"
+                      />
+                      <line x1="32" y1="28" x2="60" y2="15" stroke="#94BBE9" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="35" y1="34" x2="65" y2="20" stroke="#94BBE9" strokeWidth="1.5" strokeLinecap="round" />
+                      {/* Checkmark Badge */}
+                      <circle cx="52" cy="30" r="9" fill="#0073FC" stroke="#FFFFFF" strokeWidth="1.5" />
+                      <path
+                        d="M48 30 L51 33 L56 27"
+                        stroke="#FFFFFF"
+                        strokeWidth="1.75"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+
+                    {/* Floating Mini Graph Window (Right) */}
+                    <g transform="translate(100, 30)">
+                      <path
+                        d="M10 25 L40 10 L65 22 L35 37 Z"
+                        fill="#FFFFFF"
+                        stroke="#2764B8"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M18 25 Q28 15 35 22 T50 18"
+                        stroke="#0073FC"
+                        strokeWidth="1.75"
+                        strokeLinecap="round"
+                        fill="none"
+                      />
+                      <circle cx="50" cy="18" r="2" fill="#0073FC" />
+                    </g>
+
+                    {/* Isometric Magnifying Glass */}
+                    <g transform="translate(65, 45)">
+                      <ellipse
+                        cx="22"
+                        cy="18"
+                        rx="12"
+                        ry="10"
+                        fill="#FFFFFF"
+                        fillOpacity="0.8"
+                        stroke="#0073FC"
+                        strokeWidth="2"
+                      />
+                      <path d="M30 25 L44 38" stroke="#2764B8" strokeWidth="3" strokeLinecap="round" />
+                      <circle cx="22" cy="18" r="4" fill="#38BDF8" fillOpacity="0.4" />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+              {/* Bottom Content (LigoLab Typography & Layout Standard) */}
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
-                  <TrendingUp className="h-6 w-6" />
-                </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mb-2.5 leading-snug group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "TAT Real-Time & Bottleneck Heatmap" : "TAT Real-Time & Bottleneck Heatmap"}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                <p className="text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
-                    ? "Pantau durasi sampel per departemen (IGD, Rawat Inap, Rawat Jalan). Kenali secara visual tahap yang menyebabkan penundaan sebelum mengganggu alur pelayanan pasien."
-                    : "Monitor specimen turnaround across ER, Inpatient, and Clinics. Pinpoint bottlenecks before they impact patient care."}
+                    ? "Diagnova menghubungkan setiap alur pemeriksaan untuk memantau durasi sampel per shift secara live, mengeliminasi antrean sebelum mempengaruhi waktu tunggu pasien."
+                    : "Diagnova monitors specimen velocity across shifts in real time, exposing bottlenecks and ensuring tight turnaround times across all departments."}
                 </p>
-              </div>
-
-              <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
-                <span>{language === "ID" ? "Monitoring Live Per Shift" : "Live Shift Monitoring"}</span>
-                <ChevronRight className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 2: Analyzer Load & Reagent Tracking */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Isometric Illustration Stage (LigoLab Aesthetic: Monitor + Gear + Clock) */}
+              <div className="h-48 sm:h-52 w-full rounded-2xl bg-gradient-to-b from-white to-[#F6FAFE] border border-blue-50/80 relative flex items-center justify-center p-3 overflow-hidden mb-6 group-hover:scale-[1.02] transition-transform duration-300">
+                <svg
+                  viewBox="0 0 280 170"
+                  className="w-full h-full max-w-[240px] select-none"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="140" cy="85" r="70" fill="#EBF3FB" fillOpacity="0.7" />
+
+                  <g transform="translate(45, 18)">
+                    {/* Background Server Monitor Panel */}
+                    <path
+                      d="M30 45 L110 5 L160 30 L80 70 Z"
+                      fill="#F4F8FD"
+                      stroke="#2764B8"
+                      strokeWidth="1.75"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M35 48 L105 13 L155 38 L85 73 Z"
+                      fill="#FFFFFF"
+                      stroke="#2764B8"
+                      strokeWidth="1.75"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Stand */}
+                    <path d="M75 110 L95 100 L115 110 L95 120 Z" fill="#E2EDF9" stroke="#2764B8" strokeWidth="1.5" />
+                    <path d="M92 90 L98 87 L98 105 L92 108 Z" fill="#CBDDF5" stroke="#2764B8" strokeWidth="1.5" />
+
+                    {/* Prominent Isometric Blue Gear (Ciri Khas LigoLab) */}
+                    <g transform="translate(60, 22)">
+                      {/* Outer Gear Teeth Outline */}
+                      <path
+                        d="M30 8 L36 9 L38 14 L44 18 L49 16 L53 20 L51 26 L54 32 L60 34 L60 40 L54 42 L51 48 L53 54 L49 58 L44 56 L38 60 L36 65 L30 66 L28 61 L22 57 L17 59 L13 55 L15 49 L12 43 L6 41 L6 35 L12 33 L15 27 L13 21 L17 17 L22 19 L28 15 Z"
+                        fill="#0073FC"
+                        stroke="#1F2D5D"
+                        strokeWidth="1.75"
+                        strokeLinejoin="round"
+                      />
+                      {/* Inner Gear Core Hole */}
+                      <ellipse cx="33" cy="37" rx="10" ry="8" fill="#FFFFFF" stroke="#1F2D5D" strokeWidth="1.75" />
+                    </g>
+
+                    {/* Isometric Stopwatch Timer (Left) */}
+                    <g transform="translate(5, 38)">
+                      <ellipse cx="20" cy="25" rx="14" ry="12" fill="#FFFFFF" stroke="#2764B8" strokeWidth="1.75" />
+                      {/* Top Pin */}
+                      <path d="M18 13 L22 13 L22 9 L18 9 Z" fill="#2764B8" />
+                      {/* Clock Hand */}
+                      <path d="M20 25 L20 18" stroke="#0073FC" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M20 25 L25 28" stroke="#0073FC" strokeWidth="2" strokeLinecap="round" />
+                      <circle cx="20" cy="25" r="2" fill="#1F2D5D" />
+                    </g>
+
+                    {/* Floating Document Sheets (Right) */}
+                    <g transform="translate(108, 25)">
+                      <path
+                        d="M10 25 L35 12 L55 22 L30 35 Z"
+                        fill="#FFFFFF"
+                        stroke="#2764B8"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      <line x1="18" y1="23" x2="38" y2="13" stroke="#94BBE9" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="22" y1="28" x2="42" y2="18" stroke="#94BBE9" strokeWidth="1.5" strokeLinecap="round" />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+              {/* Bottom Content */}
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
-                  <BarChart3 className="h-6 w-6" />
-                </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mb-2.5 leading-snug group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Beban Instrumen & Utilisasi Reagen" : "Analyzer Load & Reagent Tracking"}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                <p className="text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
                   {language === "ID"
-                    ? "Kalkulasi otomatis jumlah tes per reagen, masa kadaluarsa, dan distribusi beban kerja antar mesin agar throughput laboratorium beroperasi maksimal tanpa reagen terbuang."
-                    : "Automatic tracking of tests per reagent cartridge, expiry dates, and load distribution across machines to maximize throughput with zero wastage."}
+                    ? "Diagnova dapat dikonfigurasi secara leluasa untuk menghitung volume tes per reagen, mengotomatisasi rotasi instrumen, dan memastikan nol pemborosan operasional."
+                    : "Infinitely configurable rules automatically distribute workload across analyzers, track reagent consumption, and eliminate wastage entirely."}
                 </p>
-              </div>
-
-              <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
-                <span>{language === "ID" ? "Zero Reagent Wastage" : "Zero Reagent Wastage"}</span>
-                <ChevronRight className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
-              <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center mb-6 shadow-xs">
-                  <Sparkles className="h-6 w-6" />
-                </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
-                  {language === "ID" ? "Nova AI Clinical Delta Check" : "Nova AI Clinical Delta Check"}
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                  {language === "ID"
-                    ? "Nova AI mendeteksi lonjakan nilai abnormal terhadap riwayat lampau pasien, menyajikan peringatan dini, dan merangkum narasi medis. Keputusan akhir tetap 100% pada dokter."
-                    : "Nova AI detects abnormal biomarker spikes against past patient history, offering early alerts while leaving 100% of clinical decisions with physicians."}
-                </p>
+            {/* Card 3: Nova AI Clinical Delta Check */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+              {/* Top Isometric Illustration Stage (LigoLab Aesthetic: Database Cylinder + Test Tubes + Monitor) */}
+              <div className="h-48 sm:h-52 w-full rounded-2xl bg-gradient-to-b from-white to-[#F6FAFE] border border-blue-50/80 relative flex items-center justify-center p-3 overflow-hidden mb-6 group-hover:scale-[1.02] transition-transform duration-300">
+                <svg
+                  viewBox="0 0 280 170"
+                  className="w-full h-full max-w-[240px] select-none"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="140" cy="85" r="70" fill="#EBF3FB" fillOpacity="0.7" />
+
+                  <g transform="translate(40, 16)">
+                    {/* Multi-Tiered Database Disks Cylinder (Center-Left) */}
+                    <g transform="translate(50, 42)">
+                      {/* Tier 3 (Bottom) */}
+                      <path
+                        d="M0 40 C0 32 30 32 30 32 C30 32 60 32 60 40 L60 52 C60 60 30 60 30 60 C30 60 0 60 0 52 Z"
+                        fill="#CBDDF5"
+                        stroke="#2764B8"
+                        strokeWidth="1.5"
+                      />
+                      <ellipse cx="30" cy="40" rx="30" ry="8" fill="#EBF3FB" stroke="#2764B8" strokeWidth="1.5" />
+
+                      {/* Tier 2 (Middle) */}
+                      <path
+                        d="M0 22 C0 14 30 14 30 14 C30 14 60 14 60 22 L60 34 C60 42 30 42 30 42 C30 42 0 42 0 34 Z"
+                        fill="#CBDDF5"
+                        stroke="#2764B8"
+                        strokeWidth="1.5"
+                      />
+                      <ellipse cx="30" cy="22" rx="30" ry="8" fill="#EBF3FB" stroke="#2764B8" strokeWidth="1.5" />
+
+                      {/* Tier 1 (Top) */}
+                      <path
+                        d="M0 4 C0 -4 30 -4 30 -4 C30 -4 60 -4 60 4 L60 16 C60 24 30 24 30 24 C30 24 0 24 0 16 Z"
+                        fill="#CBDDF5"
+                        stroke="#2764B8"
+                        strokeWidth="1.5"
+                      />
+                      <ellipse cx="30" cy="4" rx="30" ry="8" fill="#FFFFFF" stroke="#0073FC" strokeWidth="1.75" />
+                    </g>
+
+                    {/* Right Monitor Screen */}
+                    <g transform="translate(65, 10)">
+                      <path
+                        d="M30 45 L95 12 L135 32 L70 65 Z"
+                        fill="#FFFFFF"
+                        stroke="#2764B8"
+                        strokeWidth="1.75"
+                        strokeLinejoin="round"
+                      />
+                      {/* Flask Glyph on Screen */}
+                      <path
+                        d="M80 32 L85 32 L87 38 L78 44 L92 44 L83 38 L85 32"
+                        stroke="#0073FC"
+                        strokeWidth="1.75"
+                        strokeLinejoin="round"
+                        fill="#EBF3FB"
+                      />
+                      <circle cx="85" cy="41" r="1.5" fill="#0073FC" />
+                    </g>
+
+                    {/* Left Test Tubes & Specimen Rack */}
+                    <g transform="translate(18, 55)">
+                      {/* Document Page Backing */}
+                      <path
+                        d="M0 20 L24 8 L42 17 L18 29 Z"
+                        fill="#FFFFFF"
+                        stroke="#2764B8"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      {/* Mini Tube 1 */}
+                      <rect
+                        x="10"
+                        y="0"
+                        width="6"
+                        height="18"
+                        rx="3"
+                        fill="#EBF3FB"
+                        stroke="#0073FC"
+                        strokeWidth="1.25"
+                      />
+                      <path d="M10 9 L16 9 L16 15 C16 16.5 14.5 18 13 18 C11.5 18 10 16.5 10 15 Z" fill="#0073FC" />
+
+                      {/* Mini Tube 2 */}
+                      <rect
+                        x="20"
+                        y="4"
+                        width="6"
+                        height="18"
+                        rx="3"
+                        fill="#EBF3FB"
+                        stroke="#2764B8"
+                        strokeWidth="1.25"
+                      />
+                      <path d="M20 13 L26 13 L26 19 C26 20.5 24.5 22 23 22 C21.5 22 20 20.5 20 19 Z" fill="#38BDF8" />
+
+                      {/* Mini Gear Acent */}
+                      <g transform="translate(-5, 20)">
+                        <circle cx="10" cy="10" r="8" fill="#0073FC" stroke="#1F2D5D" strokeWidth="1.5" />
+                        <circle cx="10" cy="10" r="3" fill="#FFFFFF" />
+                      </g>
+                    </g>
+                  </g>
+                </svg>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
-                <span>{language === "ID" ? "AI Membantu, Dokter Memutuskan" : "AI Assists, Doctors Decide"}</span>
-                <ChevronRight className="h-4 w-4" />
+              {/* Bottom Content */}
+              <div>
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mb-2.5 leading-snug group-hover:text-[#2764B8] transition-colors">
+                  {language === "ID" ? "Nova AI Clinical Delta Check" : "Nova AI Clinical Delta Check"}
+                </h3>
+                <p className="text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                  {language === "ID"
+                    ? "Nova AI menyatukan database riwayat pasien untuk menghitung deviasi longitudinal, membunyikan alarm kritis secara otomatis, dengan otoritas diagnosis mutlak pada dokter."
+                    : "Nova AI leverages unified database intelligence to run longitudinal delta-checks, reducing human error while keeping pathologists in total command."}
+                </p>
               </div>
             </div>
           </div>
