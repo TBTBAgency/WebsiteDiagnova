@@ -143,8 +143,8 @@ export default function SolutionsPage() {
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-3xl mb-12 sm:mb-16">
-            <div className="mb-4">
+          <div className="max-w-3xl mb-10 sm:mb-12">
+            <div className="mb-3.5">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Alur Kerja Diagnostik Terpadu" : "Tailored Diagnostic Architecture"}
               </SectionBadge>
@@ -164,9 +164,11 @@ export default function SolutionsPage() {
           </div>
 
           {/* ══════════════════════════════════════════════════════════════
-              ROW 1: 3 EQUAL VERTICAL CARDS (Hospital, Clinical/MCU, Pathology)
+              5-CARD ARCHITECTURE (UNIFIED 2-ROW GRID WITH BALANCED GAPS)
               ══════════════════════════════════════════════════════════════ */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-6 lg:mb-8">
+          <div className="space-y-6 sm:space-y-7">
+            {/* ROW 1: 3 EQUAL VERTICAL CARDS (Hospital, Clinical/MCU, Pathology) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
             {/* Card 1: Hospital Laboratory & ER */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
               <div>
@@ -336,12 +338,12 @@ export default function SolutionsPage() {
             </div>
           </div>
 
-          {/* ══════════════════════════════════════════════════════════════
-              ROW 2: 2 BALANCED CARDS (Microbiology Wide 7-col + Blood Bank 5-col)
-              ══════════════════════════════════════════════════════════════ */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-            {/* Card 4: Clinical Microbiology & PPRA Stewardship (Wide 7-col) */}
-            <div className="lg:col-span-7 xl:col-span-8 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+            {/* ══════════════════════════════════════════════════════════════
+                ROW 2: 2 BALANCED CARDS (Microbiology Wide 7-col + Blood Bank 5-col)
+                ══════════════════════════════════════════════════════════════ */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7">
+              {/* Card 4: Clinical Microbiology & PPRA Stewardship (Wide 7-col) */}
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
               <div>
                 {/* Top Visual Stage: Workstation Telemetry & AST Sensitivity Table */}
                 <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-b from-[#F6F9FD] via-[#FAFBFD] to-white border border-slate-200/80 mb-6 space-y-3.5">
@@ -426,8 +428,8 @@ export default function SolutionsPage() {
               </div>
             </div>
 
-            {/* Card 5: Blood Bank & Transfusion Safety BDRS (Compact 5-col) */}
-            <div className="lg:col-span-5 xl:col-span-4 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              {/* Card 5: Blood Bank & Transfusion Safety BDRS (Compact 5-col) */}
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
               <div>
                 {/* Top Visual Stage: Bulleted Transfusion Safety Checklist (mimicking Image 1 Card 5's Summary) */}
                 <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-b from-[#FAFBFD] to-white border border-slate-200/80 mb-6 space-y-3">
@@ -481,6 +483,7 @@ export default function SolutionsPage() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </section>
 
