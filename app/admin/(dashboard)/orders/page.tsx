@@ -787,10 +787,10 @@ export default function LabOrdersPage() {
                                     ? "bg-emerald-50 text-emerald-800 border-emerald-300"
                                     : `${tStyle.bg} ${tStyle.text} ${tStyle.border}`
                                 }`}
-                                title={`Barcode: ${sp.barcode} | Status: ${sp.status}`}
+                                title={`Barcode: ${sp.barcode || (sp as any).barcodeNumber || "-"} | Status: ${sp.status}`}
                               >
                                 <span className={`h-2 w-2 rounded-full ${tStyle.cap}`} />
-                                <span>{sp.barcode.split("-").slice(-1)[0]}</span>
+                                <span>{(sp.barcode || (sp as any).barcodeNumber || "").split("-").slice(-1)[0] || "-"}</span>
                                 {isReceived && <Check className="h-3 w-3 text-emerald-600" />}
                                 {isRejected && <X className="h-3 w-3 text-rose-600" />}
                               </span>

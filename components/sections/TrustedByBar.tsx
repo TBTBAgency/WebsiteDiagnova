@@ -7,9 +7,27 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 // Repeat trust logos to create an infinite, seamless scrolling marquee loop
 const logos = Array.from({ length: 8 });
 
-export function TrustedByBar() {
+export interface TrustedByBarProps {
+  initialData?: {
+    section?: any;
+    partners?: any[];
+  } | null;
+}
+
+export function TrustedByBar({ initialData }: TrustedByBarProps = {}) {
   const { language } = useLanguage();
   const marqueeRef = useRef<HTMLDivElement>(null);
+
+  const activePartners =
+    initialData?.partners && initialData.partners.length > 0
+      ? initialData.partners.filter((p: any) => p.isActive !== false)
+      : null;
+
+  const displayList = activePartners && activePartners.length > 0 ? activePartners : logos.map(() => ({ name: "Partner", logoUrl: "/images/trust-logo.svg" }));
+
+  const headingLabel =
+    (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
+    (language === "ID" ? "DIPERCAYA OLEH" : "TRUSTED BY");
 
   const handleMouseEnter = () => {
     if (marqueeRef.current && typeof marqueeRef.current.getAnimations === "function") {
@@ -51,7 +69,7 @@ export function TrustedByBar() {
       {/* Centered Heading Label */}
       <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 text-center mb-6 sm:mb-8">
         <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
-          {language === "ID" ? "DIPERCAYA OLEH" : "TRUSTED BY"}
+          {headingLabel}
         </p>
       </div>
 
@@ -72,14 +90,14 @@ export function TrustedByBar() {
           ref={marqueeRef}
           className="animate-marquee-trust flex items-center gap-10 sm:gap-14 md:gap-18"
         >
-          {[...logos, ...logos].map((_, index) => (
+          {[...displayList, ...displayList].map((p: any, index: number) => (
             <div
               key={index}
               className="flex items-center justify-center shrink-0 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
             >
               <Image
-                src="/images/trust-logo.svg"
-                alt="Partner Trust Logo"
+                src={p.logoUrl || "/images/trust-logo.svg"}
+                alt={p.name || "Partner Trust Logo"}
                 width={280}
                 height={82}
                 className="h-14 sm:h-16 md:h-20 lg:h-[76px] xl:h-[82px] w-auto object-contain"

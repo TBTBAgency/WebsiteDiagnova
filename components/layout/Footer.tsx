@@ -30,7 +30,7 @@ const footerSectionsID = [
   },
   {
     title: "Modul",
-    links: [
+    links: [  
       { label: "Gambaran Modul", href: "/modules" },
       { label: "Rutin & Hematologi", href: "/modules/routine-hematology" },
       { label: "Kimia Klinik", href: "/modules/clinical-chemistry" },

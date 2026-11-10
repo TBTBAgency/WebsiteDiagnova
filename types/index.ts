@@ -6,11 +6,20 @@ export type InstitutionType =
   | "blood-bank"
   | "other";
 
-export type LeadStatus = "new" | "contacted" | "scheduled" | "completed";
+export type LeadStatus = number; // 1: Baru, 2: Dihubungi, 3: Jadwal Demo, 4: Selesai
 
-export type UserRole = "super_admin" | "sales_admin" | "lab_staff" | "pathologist";
+export type LeadApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
 
-export type UserStatus = "active" | "inactive";
+export type UserRole = string;
+
+export type UserStatus = number; // 1: Aktif, 0: Nonaktif
+
+export interface RoleRecord {
+  id: string;
+  name: string;
+  description?: string | null;
+  createdAt?: string;
+}
 
 export interface DemoRequestInput {
   name: string;
@@ -19,31 +28,55 @@ export interface DemoRequestInput {
   email: string;
   phone: string;
   institutionType: InstitutionType;
+  requestedDemoDate?: string | null;
+  confirmedDemoDate?: string | null;
+  demoDate?: string | null;
   notes?: string;
-}
-
-export interface LeadNoteRecord {
-  id: string;
-  leadId: string;
-  authorId?: string | null;
-  authorName?: string | null;
-  content: string;
-  createdAt: string;
 }
 
 export interface DemoRequestRecord extends DemoRequestInput {
   id: string;
+  userId?: string | null;
+  user?: UserRecord | null;
   createdAt: string;
-  status: LeadStatus;
-  notesHistory?: LeadNoteRecord[];
+  status: number; // 1: Baru, 2: Dihubungi, 3: Jadwal Demo, 4: Selesai
+  approvalStatus: LeadApprovalStatus;
+  approvedAt?: string | null;
+  approvedBy?: string | null;
+  rejectionReason?: string | null;
+  demoDurationDays?: number;
+  voucherCode?: string | null;
+  voucherExpiry?: string | null;
+  demoDate?: string | null;
+  magicLinkUrl?: string | null;
+  magicLinkExpiry?: string | null;
+}
+
+export interface DemoMagicLinkRecord {
+  id: string;
+  tokenHash: string;
+  email: string;
+  leadId: string;
+  userId?: string | null;
+  expiresAt: string;
+  usedAt?: string | null;
+  createdAt: string;
 }
 
 export interface UserRecord {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
-  status: UserStatus;
+  institution?: string | null;
+  jobTitle?: string | null;
+  phone?: string | null;
+  roleId?: string | null;
+  roleName?: string | null;
+  role?: RoleRecord | string | null;
+  status: number; // 1: Aktif, 0: Nonaktif
+  demoDurationDays?: number | null;
+  demoActivatedAt?: string | null;
+  demoExpiresAt?: string | null;
   createdAt: string;
 }
 
@@ -51,7 +84,8 @@ export interface AuthSessionPayload {
   userId: string;
   name: string;
   email: string;
-  role: UserRole;
+  role: string;
+  demoExpiresAt?: string;
 }
 
 export interface AuditLogRecord {
@@ -69,9 +103,11 @@ export interface AuditLogRecord {
 }
 
 export interface LeadFilterQuery {
-  status?: LeadStatus | "all";
+  status?: number | "all";
   institutionType?: InstitutionType | "all";
   search?: string;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   limit?: number;
 }
@@ -266,4 +302,3 @@ export interface LabOrderRecord {
   specimens: SpecimenRecord[];
   createdAt: string;
 }
-

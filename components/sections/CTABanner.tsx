@@ -6,10 +6,38 @@ import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
-export function CTABanner() {
+export interface CTABannerProps {
+  initialData?: {
+    section?: any;
+  } | null;
+}
+
+export function CTABanner({ initialData }: CTABannerProps = {}) {
   const { language } = useLanguage();
   const [email, setEmail] = useState("");
   const router = useRouter();
+
+  const titleText =
+    (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
+    (language === "ID" ? "Transformasi Laboratorium Anda Bersama Diagnova" : "Transform Your Laboratory with Diagnova");
+
+  const subtitleText =
+    (language === "ID" ? initialData?.section?.subtitleId : initialData?.section?.subtitleEn) ||
+    (language === "ID"
+      ? "Hadirkan keandalan tinggi, kecepatan analisis, dan presisi klinis bagi institusi kesehatan Anda hari ini."
+      : "Bring high reliability, speed, and precision to your healthcare institution today.");
+
+  const buttonText =
+    (language === "ID"
+      ? initialData?.section?.extraContent?.buttonTextId
+      : initialData?.section?.extraContent?.buttonTextEn) ||
+    (language === "ID" ? "Minta Demo" : "Request Demo");
+
+  const placeholderText =
+    (language === "ID"
+      ? initialData?.section?.extraContent?.placeholderId
+      : initialData?.section?.extraContent?.placeholderEn) ||
+    (language === "ID" ? "Masukkan alamat email Anda" : "Enter your email address");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,23 +78,11 @@ export function CTABanner() {
             {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
             <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
               <h2 className="font-display text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-[#275EA8] tracking-tight leading-[1.18] sm:leading-[1.22] mb-3 sm:mb-5">
-                {language === "ID" ? (
-                  <>
-                    Transformasi Laboratorium Anda <br className="hidden sm:inline" />
-                    Bersama Diagnova
-                  </>
-                ) : (
-                  <>
-                    Transform Your Laboratory <br className="hidden sm:inline" />
-                    with Diagnova
-                  </>
-                )}
+                {titleText}
               </h2>
 
               <p className="text-slate-500 text-xs sm:text-base lg:text-lg leading-relaxed max-w-lg mb-6 sm:mb-10">
-                {language === "ID"
-                  ? "Hadirkan keandalan tinggi, kecepatan analisis, dan presisi klinis bagi institusi kesehatan Anda hari ini."
-                  : "Bring high reliability, speed, and precision to your healthcare institution today."}
+                {subtitleText}
               </p>
 
               {/* White Pill Input Container (Adaptive: stacked card on tiny screens, sleek pill on sm+) */}
@@ -78,11 +94,7 @@ export function CTABanner() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={
-                    language === "ID"
-                      ? "Masukkan alamat email Anda"
-                      : "Enter your email address"
-                  }
+                  placeholder={placeholderText}
                   className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder-slate-400 outline-none pr-3 py-1.5 sm:py-0"
                   required
                 />
@@ -91,7 +103,7 @@ export function CTABanner() {
                   className="group relative inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2E68B4] hover:bg-[#235899] text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-all duration-200 shadow-sm cursor-pointer active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/25 overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center gap-1.5">
-                    {language === "ID" ? "Minta Demo" : "Request Demo"}
+                    {buttonText}
                     <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </span>
                 </button>

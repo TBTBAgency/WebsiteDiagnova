@@ -43,9 +43,31 @@ const headlineWordsEN = [
   "Decisions.",
 ];
 
-export function AboutSection() {
+export interface AboutSectionProps {
+  initialData?: {
+    section?: any;
+  } | null;
+}
+
+export function AboutSection({ initialData }: AboutSectionProps = {}) {
   const { language } = useLanguage();
-  const headlineWords = language === "ID" ? headlineWordsID : headlineWordsEN;
+
+  const dynamicStatement = language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn;
+  const headlineWords: string[] = dynamicStatement && dynamicStatement.trim().length > 0
+    ? dynamicStatement.trim().split(/\s+/)
+    : language === "ID"
+    ? headlineWordsID
+    : headlineWordsEN;
+
+  const badgeText =
+    (language === "ID" ? initialData?.section?.badgeId : initialData?.section?.badgeEn) ||
+    (language === "ID" ? "Tentang Diagnova" : "About Diagnova");
+
+  const subtitleText =
+    (language === "ID" ? initialData?.section?.subtitleId : initialData?.section?.subtitleEn) ||
+    (language === "ID"
+      ? "Lebih dari sekadar LIS konvensional, Diagnova adalah ekosistem cerdas yang menghubungkan tenaga medis, instrumen laboratorium, dan alur kerja klinis. Kami membantu laboratorium modern melangkah dari sekadar mengelola data menuju penyajian wawasan klinis yang akurat dan dapat ditindaklanjuti."
+      : "More than a traditional LIS, Diagnova is an intelligent ecosystem connecting clinicians, instruments, and laboratory workflows. We empower modern laboratories to move beyond managing data to delivering clear, actionable clinical insights.");
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const lastProgressRef = useRef(0);
@@ -121,7 +143,7 @@ export function AboutSection() {
             {/* Pill Badge */}
             <div className="mb-3.5 sm:mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Tentang Diagnova" : "About Diagnova"}
+                {badgeText}
               </SectionBadge>
             </div>
 
@@ -160,9 +182,7 @@ export function AboutSection() {
 
             {/* Subtitle / Paragraph Description */}
             <p className="text-sm sm:text-base lg:text-lg text-slate-500 font-normal leading-relaxed max-w-2xl">
-              {language === "ID"
-                ? "Lebih dari sekadar LIS konvensional, Diagnova adalah ekosistem cerdas yang menghubungkan tenaga medis, instrumen laboratorium, dan alur kerja klinis. Kami membantu laboratorium modern melangkah dari sekadar mengelola data menuju penyajian wawasan klinis yang akurat dan dapat ditindaklanjuti."
-                : "More than a traditional LIS, Diagnova is an intelligent ecosystem connecting clinicians, instruments, and laboratory workflows. We empower modern laboratories to move beyond managing data to delivering clear, actionable clinical insights."}
+              {subtitleText}
             </p>
           </div>
         </div>

@@ -3,16 +3,15 @@ import {
   DemoRequestInput,
   DemoRequestRecord,
   InstitutionType,
+  LeadApprovalStatus,
   LeadFilterQuery,
-  LeadNoteRecord,
-  LeadStatus,
 } from "@/types";
 import {
   InstitutionType as PrismaInstitutionType,
-  LeadStatus as PrismaLeadStatus,
+  LeadApprovalStatus as PrismaLeadApprovalStatus,
   Prisma,
 } from "@prisma/client";
-import { recordAuditLog } from "./audit.model";
+import { createDemoMagicLink } from "@/lib/magic-link";
 
 export const institutionTypeToPrisma: Record<InstitutionType, PrismaInstitutionType> = {
   hospital: PrismaInstitutionType.HOSPITAL,
@@ -32,71 +31,151 @@ export const prismaToInstitutionType: Record<PrismaInstitutionType, InstitutionT
   [PrismaInstitutionType.OTHER]: "other",
 };
 
-export const leadStatusToPrisma: Record<LeadStatus, PrismaLeadStatus> = {
-  new: PrismaLeadStatus.NEW,
-  contacted: PrismaLeadStatus.CONTACTED,
-  scheduled: PrismaLeadStatus.SCHEDULED,
-  completed: PrismaLeadStatus.COMPLETED,
-};
-
-export const prismaToLeadStatus: Record<PrismaLeadStatus, LeadStatus> = {
-  [PrismaLeadStatus.NEW]: "new",
-  [PrismaLeadStatus.CONTACTED]: "contacted",
-  [PrismaLeadStatus.SCHEDULED]: "scheduled",
-  [PrismaLeadStatus.COMPLETED]: "completed",
+/**
+ * Status Alur CRM Sales:
+ * 1 = Baru
+ * 2 = Dihubungi
+ * 3 = Jadwal Demo
+ * 4 = Selesai
+ */
+export const STATUS_LABELS: Record<number, string> = {
+  1: "Baru",
+  2: "Dihubungi",
+  3: "Jadwal Demo",
+  4: "Selesai",
 };
 
 /**
- * Menyimpan lead baru dari form publik Request Demo
+ * Helper untuk format Lead Record Prisma ke DemoRequestRecord
  */
-export async function createLead(input: DemoRequestInput): Promise<DemoRequestRecord> {
-  const prismaInstitution =
-    institutionTypeToPrisma[input.institutionType] ?? PrismaInstitutionType.HOSPITAL;
-
-  const record = await db.lead.create({
-    data: {
-      name: input.name,
-      institution: input.institution,
-      jobTitle: input.jobTitle,
-      email: input.email,
-      phone: input.phone,
-      institutionType: prismaInstitution,
-      notes: input.notes && input.notes.trim() !== "" ? input.notes.trim() : null,
-      status: PrismaLeadStatus.NEW,
-    },
-  });
-
-  // Record audit log for lead creation
-  await recordAuditLog({
-    action: "CREATE_LEAD",
-    entity: "Lead",
-    recordId: record.id,
-    newValue: {
-      name: record.name,
-      institution: record.institution,
-      email: record.email,
-      status: "new",
-    },
-  });
+function formatLeadRecord(record: any): DemoRequestRecord {
+  const latestMagicLink =
+    record.magicLinks && record.magicLinks.length > 0
+      ? record.magicLinks[0]
+      : null;
 
   return {
     id: record.id,
+    userId: record.userId,
+    user: record.user
+      ? {
+          id: record.user.id,
+          name: record.user.name,
+          email: record.user.email,
+          institution: record.user.institution,
+          jobTitle: record.user.jobTitle,
+          phone: record.user.phone,
+          status: record.user.status,
+          demoDurationDays: record.user.demoDurationDays,
+          demoActivatedAt: record.user.demoActivatedAt
+            ? record.user.demoActivatedAt.toISOString()
+            : null,
+          demoExpiresAt: record.user.demoExpiresAt
+            ? record.user.demoExpiresAt.toISOString()
+            : null,
+          createdAt: record.user.createdAt.toISOString(),
+        }
+      : null,
     name: record.name,
     institution: record.institution,
     jobTitle: record.jobTitle,
     email: record.email,
     phone: record.phone,
-    institutionType: prismaToInstitutionType[record.institutionType] ?? "other",
+    institutionType: prismaToInstitutionType[record.institutionType as PrismaInstitutionType] ?? "other",
     notes: record.notes ?? undefined,
-    status: prismaToLeadStatus[record.status] ?? "new",
+    status: record.status,
+    approvalStatus: (record.approvalStatus as LeadApprovalStatus) || "PENDING",
+    approvedAt: record.approvedAt ? record.approvedAt.toISOString() : null,
+    approvedBy: record.approvedBy ?? null,
+    rejectionReason: record.rejectionReason ?? null,
+    requestedDemoDate: record.requestedDemoDate
+      ? record.requestedDemoDate.toISOString()
+      : record.demoDate
+      ? record.demoDate.toISOString()
+      : null,
+    confirmedDemoDate: record.confirmedDemoDate
+      ? record.confirmedDemoDate.toISOString()
+      : null,
+    demoDate: record.confirmedDemoDate
+      ? record.confirmedDemoDate.toISOString()
+      : record.requestedDemoDate
+      ? record.requestedDemoDate.toISOString()
+      : record.demoDate
+      ? record.demoDate.toISOString()
+      : null,
+    demoDurationDays: record.demoDurationDays || 3,
+    voucherCode: record.voucherCode ?? null,
+    voucherExpiry: record.voucherExpiry ? record.voucherExpiry.toISOString() : null,
+    magicLinkUrl: latestMagicLink ? `http://localhost:3000/auth/verify-magic-link?token=${latestMagicLink.tokenHash}` : null,
+    magicLinkExpiry: latestMagicLink ? latestMagicLink.expiresAt.toISOString() : null,
     createdAt: record.createdAt.toISOString(),
   };
 }
 
 /**
- * Mengambil daftar leads dengan filter, pagination, dan search
+ * Helper untuk membuat kode voucher unik jadwal demo
  */
-export async function getLeadsWithPagination(query: LeadFilterQuery = {}): Promise<{
+function generateVoucherCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "DGN-";
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+/**
+ * Menyimpan lead baru dari form publik Request Demo
+ * (TIDAK membuat user dummy secara prematur; hanya mengaitkan jika email sudah pernah terdaftar)
+ */
+export async function createLead(input: DemoRequestInput): Promise<DemoRequestRecord> {
+  const prismaInstitution =
+    institutionTypeToPrisma[input.institutionType] ?? PrismaInstitutionType.HOSPITAL;
+
+  // Cek apakah email pemohon sudah pernah ada di database pengguna
+  const existingUser = await db.user.findUnique({
+    where: { email: input.email.toLowerCase().trim() },
+  });
+
+  const requestedDate = input.requestedDemoDate
+    ? new Date(input.requestedDemoDate)
+    : input.demoDate
+    ? new Date(input.demoDate)
+    : null;
+
+  const record = await db.lead.create({
+    data: {
+      userId: existingUser ? existingUser.id : null,
+      name: input.name,
+      institution: input.institution,
+      jobTitle: input.jobTitle,
+      email: input.email.toLowerCase().trim(),
+      phone: input.phone,
+      institutionType: prismaInstitution,
+      notes: input.notes && input.notes.trim() !== "" ? input.notes.trim() : null,
+      requestedDemoDate: requestedDate,
+      demoDate: requestedDate,
+      status: 1, // Status awal: 1 (Baru)
+      approvalStatus: PrismaLeadApprovalStatus.PENDING,
+    },
+    include: {
+      user: true,
+      magicLinks: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
+    },
+  });
+
+  return formatLeadRecord(record);
+}
+
+/**
+ * Mengambil daftar leads dengan filter status CRM, approvalStatus, tipe institusi, search, dan tanggal
+ */
+export async function getLeadsWithPagination(
+  query: LeadFilterQuery & { approvalStatus?: LeadApprovalStatus | "all" } = {}
+): Promise<{
   leads: DemoRequestRecord[];
   total: number;
   page: number;
@@ -109,12 +188,29 @@ export async function getLeadsWithPagination(query: LeadFilterQuery = {}): Promi
 
   const where: Prisma.LeadWhereInput = {};
 
-  if (query.status && query.status !== "all") {
-    where.status = leadStatusToPrisma[query.status];
+  if (query.status && query.status !== ("all" as unknown)) {
+    where.status = Number(query.status);
+  }
+
+  if (query.approvalStatus && query.approvalStatus !== "all") {
+    where.approvalStatus = query.approvalStatus as PrismaLeadApprovalStatus;
   }
 
   if (query.institutionType && query.institutionType !== "all") {
     where.institutionType = institutionTypeToPrisma[query.institutionType];
+  }
+
+  // Filter Tanggal
+  if (query.startDate || query.endDate) {
+    where.createdAt = {};
+    if (query.startDate) {
+      where.createdAt.gte = new Date(query.startDate);
+    }
+    if (query.endDate) {
+      const end = new Date(query.endDate);
+      end.setHours(23, 59, 59, 999);
+      where.createdAt.lte = end;
+    }
   }
 
   if (query.search && query.search.trim() !== "") {
@@ -135,41 +231,18 @@ export async function getLeadsWithPagination(query: LeadFilterQuery = {}): Promi
       skip,
       take: limit,
       include: {
-        notesHistory: {
+        user: true,
+        magicLinks: {
           orderBy: { createdAt: "desc" },
-          take: 3,
-          include: {
-            author: { select: { name: true } },
-          },
+          take: 1,
         },
       },
     }),
     db.lead.count({ where }),
   ]);
 
-  const leads: DemoRequestRecord[] = records.map((record) => ({
-    id: record.id,
-    name: record.name,
-    institution: record.institution,
-    jobTitle: record.jobTitle,
-    email: record.email,
-    phone: record.phone,
-    institutionType: prismaToInstitutionType[record.institutionType] ?? "other",
-    notes: record.notes ?? undefined,
-    status: prismaToLeadStatus[record.status] ?? "new",
-    createdAt: record.createdAt.toISOString(),
-    notesHistory: record.notesHistory?.map((n) => ({
-      id: n.id,
-      leadId: n.leadId,
-      authorId: n.authorId,
-      authorName: n.author?.name ?? null,
-      content: n.content,
-      createdAt: n.createdAt.toISOString(),
-    })),
-  }));
-
   return {
-    leads,
+    leads: records.map(formatLeadRecord),
     total,
     page,
     limit,
@@ -184,128 +257,203 @@ export async function getLeadById(id: string): Promise<DemoRequestRecord | null>
   const record = await db.lead.findUnique({
     where: { id },
     include: {
-      notesHistory: {
+      user: true,
+      magicLinks: {
         orderBy: { createdAt: "desc" },
-        include: {
-          author: { select: { name: true } },
-        },
+        take: 1,
       },
     },
   });
 
   if (!record) return null;
-
-  return {
-    id: record.id,
-    name: record.name,
-    institution: record.institution,
-    jobTitle: record.jobTitle,
-    email: record.email,
-    phone: record.phone,
-    institutionType: prismaToInstitutionType[record.institutionType] ?? "other",
-    notes: record.notes ?? undefined,
-    status: prismaToLeadStatus[record.status] ?? "new",
-    createdAt: record.createdAt.toISOString(),
-    notesHistory: record.notesHistory?.map((n) => ({
-      id: n.id,
-      leadId: n.leadId,
-      authorId: n.authorId,
-      authorName: n.author?.name ?? null,
-      content: n.content,
-      createdAt: n.createdAt.toISOString(),
-    })),
-  };
+  return formatLeadRecord(record);
 }
 
 /**
- * Memperbarui status lead serta menambahkan catatan (opsional) dan audit log
+ * Menyetujui permohonan demo, menyiapkan akun demo, dan menghasilkan Magic Link
  */
-export async function updateLeadStatus(
+export async function approveLead(
   leadId: string,
-  newStatus: LeadStatus,
-  userId?: string,
-  noteContent?: string
-): Promise<DemoRequestRecord> {
-  const currentLead = await db.lead.findUnique({ where: { id: leadId } });
+  options: {
+    confirmedDemoDate?: string | null;
+    durationDays?: number;
+    approvedBy?: string;
+  }
+): Promise<{
+  lead: DemoRequestRecord;
+  magicLinkUrl: string;
+  expiresAt: string;
+}> {
+  const currentLead = await db.lead.findUnique({
+    where: { id: leadId },
+    include: { user: true },
+  });
+
   if (!currentLead) {
-    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan`);
+    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan.`);
   }
 
-  const oldStatusStr = prismaToLeadStatus[currentLead.status];
-  const prismaNewStatus = leadStatusToPrisma[newStatus];
+  const durationDays = options.durationDays ? Math.max(1, options.durationDays) : 7;
+  const confirmedDate = options.confirmedDemoDate
+    ? new Date(options.confirmedDemoDate)
+    : currentLead.requestedDemoDate || currentLead.demoDate;
 
-  // Gunakan Prisma transaction jika ada penambahan catatan sekaligus
-  await db.$transaction(async (tx) => {
-    const updated = await tx.lead.update({
-      where: { id: leadId },
-      data: { status: prismaNewStatus },
+  // 1. Dapatkan atau buat akun User dengan role "Demo User"
+  let userId = currentLead.userId;
+  let user = currentLead.user;
+
+  if (!user) {
+    user = await db.user.findUnique({
+      where: { email: currentLead.email.toLowerCase().trim() },
     });
+  }
 
-    if (noteContent && noteContent.trim() !== "") {
-      await tx.leadNote.create({
+  if (!user) {
+    let demoRole = await db.role.findFirst({ where: { name: "Demo User" } });
+    if (!demoRole) {
+      demoRole = await db.role.create({
         data: {
-          leadId,
-          authorId: userId ?? null,
-          content: noteContent.trim(),
+          name: "Demo User",
+          description: "Akses terbatas untuk akun uji coba / demo LIS",
         },
       });
     }
 
-    return updated;
+    user = await db.user.create({
+      data: {
+        name: currentLead.name,
+        email: currentLead.email.toLowerCase().trim(),
+        institution: currentLead.institution,
+        jobTitle: currentLead.jobTitle,
+        phone: currentLead.phone,
+        roleId: demoRole.id,
+        status: 1,
+        demoDurationDays: durationDays,
+      },
+    });
+    userId = user.id;
+  } else {
+    userId = user.id;
+    // Perbarui durasi demo pada user yang sudah ada
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        demoDurationDays: durationDays,
+        status: 1,
+      },
+    });
+  }
+
+  // 2. Generate token Magic Link berkekuatan tinggi (masa berlaku token link: 24 jam)
+  const magicLinkResult = await createDemoMagicLink(
+    leadId,
+    currentLead.email,
+    userId,
+    24
+  );
+
+  // 3. Update data lead: disetujui, sinkron status Jadwal Demo (3)
+  const voucherCode = currentLead.voucherCode || generateVoucherCode();
+  const voucherExpiry = new Date();
+  voucherExpiry.setDate(voucherExpiry.getDate() + durationDays);
+
+  await db.lead.update({
+    where: { id: leadId },
+    data: {
+      userId,
+      approvalStatus: PrismaLeadApprovalStatus.APPROVED,
+      approvedAt: new Date(),
+      approvedBy: options.approvedBy || "Admin Diagnova",
+      rejectionReason: null,
+      confirmedDemoDate: confirmedDate,
+      demoDate: confirmedDate,
+      demoDurationDays: durationDays,
+      voucherCode,
+      voucherExpiry,
+      status: 3, // Otomatis sync dengan status Jadwal Demo di CRM
+    },
   });
 
-  // Catat jejak audit
-  await recordAuditLog({
-    userId,
-    action: "UPDATE_LEAD_STATUS",
-    entity: "Lead",
-    recordId: leadId,
-    oldValue: { status: oldStatusStr },
-    newValue: { status: newStatus, note: noteContent ?? null },
+  const updatedLead = (await getLeadById(leadId))!;
+  return {
+    lead: updatedLead,
+    magicLinkUrl: magicLinkResult.magicLinkUrl,
+    expiresAt: magicLinkResult.expiresAt.toISOString(),
+  };
+}
+
+/**
+ * Menolak permohonan demo
+ */
+export async function rejectLead(
+  leadId: string,
+  options: {
+    rejectionReason: string;
+    rejectedBy?: string;
+  }
+): Promise<DemoRequestRecord> {
+  const currentLead = await db.lead.findUnique({ where: { id: leadId } });
+  if (!currentLead) {
+    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan.`);
+  }
+
+  await db.lead.update({
+    where: { id: leadId },
+    data: {
+      approvalStatus: PrismaLeadApprovalStatus.REJECTED,
+      approvedAt: new Date(),
+      approvedBy: options.rejectedBy || "Admin Diagnova",
+      rejectionReason: options.rejectionReason,
+    },
   });
 
   return (await getLeadById(leadId))!;
 }
 
 /**
- * Menambahkan catatan tindak lanjut sales pada lead
+ * Memperbarui status CRM lead serta men-generate voucher jika status menjadi Jadwal Demo (3)
  */
-export async function addLeadNote(
+export async function updateLeadStatus(
   leadId: string,
-  content: string,
-  authorId?: string
-): Promise<LeadNoteRecord> {
-  const note = await db.leadNote.create({
-    data: {
-      leadId,
-      authorId: authorId ?? null,
-      content: content.trim(),
-    },
-    include: {
-      author: { select: { name: true } },
-    },
-  });
+  newStatus: number,
+  voucherDays: number = 3,
+  demoDate?: string | Date | null
+): Promise<DemoRequestRecord> {
+  const currentLead = await db.lead.findUnique({ where: { id: leadId } });
+  if (!currentLead) {
+    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan`);
+  }
 
-  await recordAuditLog({
-    userId: authorId,
-    action: "ADD_LEAD_NOTE",
-    entity: "LeadNote",
-    recordId: note.id,
-    newValue: { leadId, content: note.content },
-  });
-
-  return {
-    id: note.id,
-    leadId: note.leadId,
-    authorId: note.authorId,
-    authorName: note.author?.name ?? null,
-    content: note.content,
-    createdAt: note.createdAt.toISOString(),
+  const updateData: Prisma.LeadUpdateInput = {
+    status: newStatus,
   };
+
+  if (demoDate !== undefined) {
+    const targetDate = demoDate ? new Date(demoDate) : null;
+    updateData.confirmedDemoDate = targetDate;
+    updateData.demoDate = targetDate;
+  }
+
+  if (newStatus === 3) {
+    const days = Math.max(3, voucherDays);
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + days);
+
+    updateData.voucherCode = currentLead.voucherCode || generateVoucherCode();
+    updateData.voucherExpiry = expiry;
+    updateData.demoDurationDays = days;
+  }
+
+  await db.lead.update({
+    where: { id: leadId },
+    data: updateData,
+  });
+
+  return (await getLeadById(leadId))!;
 }
 
 /**
- * Menghitung metrik agregat permohonan demo
+ * Menghitung metrik agregat permohonan demo berdasarkan status integer (1, 2, 3, 4)
  */
 export async function getLeadMetrics(): Promise<{
   total: number;
@@ -328,10 +476,10 @@ export async function getLeadMetrics(): Promise<{
   for (const item of counts) {
     const count = item._count.status;
     total += count;
-    if (item.status === PrismaLeadStatus.NEW) newCount = count;
-    else if (item.status === PrismaLeadStatus.CONTACTED) contactedCount = count;
-    else if (item.status === PrismaLeadStatus.SCHEDULED) scheduledCount = count;
-    else if (item.status === PrismaLeadStatus.COMPLETED) completedCount = count;
+    if (item.status === 1) newCount = count;
+    else if (item.status === 2) contactedCount = count;
+    else if (item.status === 3) scheduledCount = count;
+    else if (item.status === 4) completedCount = count;
   }
 
   return {

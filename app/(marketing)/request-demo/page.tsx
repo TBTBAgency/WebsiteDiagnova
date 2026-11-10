@@ -44,6 +44,7 @@ function RequestDemoForm() {
     email: initialEmail,
     phone: "",
     institutionType: "hospital" as InstitutionType,
+    demoDate: "",
     notes: "",
   });
 
@@ -170,6 +171,7 @@ function RequestDemoForm() {
                 email: "",
                 phone: "",
                 institutionType: "hospital",
+                demoDate: "",
                 notes: "",
               });
             }}
@@ -354,6 +356,28 @@ function RequestDemoForm() {
               <option value="other">{language === "ID" ? "Fasilitas Lainnya" : "Other Healthcare Facility"}</option>
             </select>
           </div>
+        </div>
+
+        {/* Pilihan Tanggal Demo */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <Calendar className="h-3.5 w-3.5 text-[#2764B8]" />
+            <span>
+              {language === "ID" ? "Pilihan Tanggal Demo (Opsional)" : "Preferred Demo Date & Time (Optional)"}
+            </span>
+          </label>
+          <input
+            type="datetime-local"
+            name="demoDate"
+            value={formData.demoDate}
+            onChange={handleChange}
+            className="w-full rounded-xl border border-slate-200/90 bg-[#FAFBFD] px-3.5 py-2.5 text-xs sm:text-sm transition-all focus:border-[#2764B8] focus:outline-none focus:ring-2 focus:ring-blue-100 text-slate-800"
+          />
+          <p className="text-[11px] text-slate-400">
+            {language === "ID"
+              ? "Pilih perkiraan tanggal dan jam presentasi demo teknis yang Anda inginkan."
+              : "Select your preferred date and time for the technical demo presentation."}
+          </p>
         </div>
 
         {/* Notes & Analyzers */}

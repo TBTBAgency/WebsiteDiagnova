@@ -52,7 +52,7 @@ export async function loginController(request: NextRequest): Promise<NextRespons
       );
     }
 
-    if (user.status !== "active") {
+    if (user.status !== 1) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -87,7 +87,7 @@ export async function loginController(request: NextRequest): Promise<NextRespons
       userId: user.id,
       name: user.name,
       email: user.email,
-      role: user.role,
+      role: typeof user.role === "string" ? user.role : user.roleName || "User",
     };
 
     await setSessionCookie(sessionPayload);

@@ -53,14 +53,6 @@ export async function getAuditLogs(options?: {
       ...(options?.recordId ? { recordId: options.recordId } : {}),
       ...(options?.userId ? { userId: options.userId } : {}),
     },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-    },
     orderBy: { createdAt: "desc" },
     take: limit,
   });
@@ -68,7 +60,7 @@ export async function getAuditLogs(options?: {
   return logs.map((log) => ({
     id: log.id,
     userId: log.userId,
-    userName: log.user?.name ?? null,
+    userName: null,
     action: log.action,
     entity: log.entity,
     recordId: log.recordId,
