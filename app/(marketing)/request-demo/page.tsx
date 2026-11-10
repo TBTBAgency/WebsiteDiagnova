@@ -187,10 +187,10 @@ function RequestDemoForm() {
         <SectionBadge variant="blue">
           {language === "ID" ? "Demo Platform" : "Platform Demo"}
         </SectionBadge>
-        <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
           {language === "ID" ? "Jadwalkan Demo Diagnova LIS" : "Schedule a Diagnova LIS Demo"}
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl">
+        <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
           {language === "ID"
             ? "Konsultasikan alur kerja laboratorium, integrasi analyzer, dan bridging SATUSEHAT/SIMRS bersama tim spesialis klinis kami."
             : "Explore laboratory workflows, analyzer interfacing, and SATUSEHAT/HIS interoperability directly with our clinical specialists."}
@@ -204,8 +204,8 @@ function RequestDemoForm() {
         </div>
       )}
 
-      {/* Main Form Fields: 2 Columns on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-12 items-start">
+      {/* Main Form Fields: 2 Columns with Natural Vertical Flow */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
         {/* Left Column: Contact Person */}
         <div className="space-y-4">
           <div className="pb-1 border-b border-slate-100">
@@ -214,86 +214,84 @@ function RequestDemoForm() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700">
-                {language === "ID" ? "Nama Lengkap" : "Full Name"} <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder={language === "ID" ? "dr. Hendra Pratama, Sp.PK" : "Dr. John Doe, Pathologist"}
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
-                  errors.name
-                    ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
-                    : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
-                )}
-              />
-              {errors.name && <p className="text-xs text-rose-600">{errors.name}</p>}
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700">
+              {language === "ID" ? "Nama Lengkap" : "Full Name"} <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder={language === "ID" ? "dr. Hendra Pratama, Sp.PK" : "Dr. John Doe, Pathologist"}
+              className={cn(
+                "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
+                errors.name
+                  ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
+                  : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
+              )}
+            />
+            {errors.name && <p className="text-xs text-rose-600">{errors.name}</p>}
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700">
-                {language === "ID" ? "Jabatan / Peran" : "Role / Title"} <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="jobTitle"
-                value={formData.jobTitle}
-                onChange={handleChange}
-                placeholder={language === "ID" ? "Kepala Lab / Ka. IT RS / Direktur" : "Lab Director / CIO / Chief Doctor"}
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
-                  errors.jobTitle
-                    ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
-                    : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
-                )}
-              />
-              {errors.jobTitle && <p className="text-xs text-rose-600">{errors.jobTitle}</p>}
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700">
+              {language === "ID" ? "Jabatan / Peran" : "Role / Title"} <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="jobTitle"
+              value={formData.jobTitle}
+              onChange={handleChange}
+              placeholder={language === "ID" ? "Kepala Laboratorium / Ka. IT RS / Direktur" : "Lab Director / CIO / Chief Doctor"}
+              className={cn(
+                "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
+                errors.jobTitle
+                  ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
+                  : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
+              )}
+            />
+            {errors.jobTitle && <p className="text-xs text-rose-600">{errors.jobTitle}</p>}
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700">
-                {language === "ID" ? "Email Resmi Instansi" : "Work Email"} <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="nama@rumahsakit.id"
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
-                  errors.email
-                    ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
-                    : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
-                )}
-              />
-              {errors.email && <p className="text-xs text-rose-600">{errors.email}</p>}
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700">
+              {language === "ID" ? "Email Resmi Instansi" : "Work Email"} <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="nama@rumahsakit.id"
+              className={cn(
+                "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
+                errors.email
+                  ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
+                  : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
+              )}
+            />
+            {errors.email && <p className="text-xs text-rose-600">{errors.email}</p>}
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700">
-                {language === "ID" ? "Nomor WhatsApp / Telepon" : "WhatsApp / Phone"} <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="0812 3456 7890"
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
-                  errors.phone
-                    ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
-                    : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
-                )}
-              />
-              {errors.phone && <p className="text-xs text-rose-600">{errors.phone}</p>}
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700">
+              {language === "ID" ? "Nomor WhatsApp / Telepon" : "WhatsApp / Phone"} <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="0812 3456 7890"
+              className={cn(
+                "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
+                errors.phone
+                  ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
+                  : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
+              )}
+            />
+            {errors.phone && <p className="text-xs text-rose-600">{errors.phone}</p>}
           </div>
         </div>
 
@@ -305,89 +303,87 @@ function RequestDemoForm() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700">
-                {language === "ID" ? "Nama Rumah Sakit / Laboratorium" : "Hospital / Laboratory Name"} <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="institution"
-                value={formData.institution}
-                onChange={handleChange}
-                placeholder={language === "ID" ? "RSUP / RSUD / Klinik Utama" : "Memorial Hospital / Diagnostic Lab"}
-                className={cn(
-                  "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
-                  errors.institution
-                    ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
-                    : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
-                )}
-              />
-              {errors.institution && <p className="text-xs text-rose-600">{errors.institution}</p>}
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700">
+              {language === "ID" ? "Nama Rumah Sakit / Laboratorium" : "Hospital / Laboratory Name"} <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="institution"
+              value={formData.institution}
+              onChange={handleChange}
+              placeholder={language === "ID" ? "RSUP / RSUD / Klinik Utama" : "Memorial Hospital / Diagnostic Lab"}
+              className={cn(
+                "w-full h-11 rounded-lg border bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:ring-4",
+                errors.institution
+                  ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/10"
+                  : "border-slate-200 hover:border-slate-300 focus:border-[#2764B8] focus:ring-[#2764B8]/10"
+              )}
+            />
+            {errors.institution && <p className="text-xs text-rose-600">{errors.institution}</p>}
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700">
-                {language === "ID" ? "Jenis Fasilitas" : "Facility Type"} <span className="text-rose-500">*</span>
-              </label>
-              <select
-                name="institutionType"
-                value={formData.institutionType}
-                onChange={handleChange}
-                className="w-full h-11 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 transition-colors hover:border-slate-300 focus:border-[#2764B8] focus:outline-none focus:ring-4 focus:ring-[#2764B8]/10"
-              >
-                <option value="hospital">{language === "ID" ? "Rumah Sakit (Tipe A / B / C / D)" : "Hospital (General / Specialized)"}</option>
-                <option value="clinical-lab">{language === "ID" ? "Laboratorium Klinik Mandiri" : "Independent Clinical Laboratory"}</option>
-                <option value="pathology-center">{language === "ID" ? "Pusat Patologi Anatomi" : "Anatomical Pathology Center"}</option>
-                <option value="microbiology-center">{language === "ID" ? "Laboratorium Mikrobiologi" : "Microbiology Center"}</option>
-                <option value="blood-bank">{language === "ID" ? "Bank Darah / UTD PMI" : "Blood Bank / Transfusion Center"}</option>
-                <option value="other">{language === "ID" ? "Fasilitas Lainnya" : "Other Healthcare Facility"}</option>
-              </select>
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700">
+              {language === "ID" ? "Jenis Fasilitas" : "Facility Type"} <span className="text-rose-500">*</span>
+            </label>
+            <select
+              name="institutionType"
+              value={formData.institutionType}
+              onChange={handleChange}
+              className="w-full h-11 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 transition-colors hover:border-slate-300 focus:border-[#2764B8] focus:outline-none focus:ring-4 focus:ring-[#2764B8]/10"
+            >
+              <option value="hospital">{language === "ID" ? "Rumah Sakit (Tipe A / B / C / D)" : "Hospital (General / Specialized)"}</option>
+              <option value="clinical-lab">{language === "ID" ? "Laboratorium Klinik Mandiri" : "Independent Clinical Laboratory"}</option>
+              <option value="pathology-center">{language === "ID" ? "Pusat Patologi Anatomi" : "Anatomical Pathology Center"}</option>
+              <option value="microbiology-center">{language === "ID" ? "Laboratorium Mikrobiologi" : "Microbiology Center"}</option>
+              <option value="blood-bank">{language === "ID" ? "Bank Darah / UTD PMI" : "Blood Bank / Transfusion Center"}</option>
+              <option value="other">{language === "ID" ? "Fasilitas Lainnya" : "Other Healthcare Facility"}</option>
+            </select>
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700 flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-slate-500" />
-                  {language === "ID" ? "Rencana Waktu Demo" : "Preferred Demo Time"}
-                </span>
-                <span className="text-xs text-slate-400 font-normal">({language === "ID" ? "Opsional" : "Optional"})</span>
-              </label>
-              <input
-                type="datetime-local"
-                name="demoDate"
-                value={formData.demoDate}
-                onChange={handleChange}
-                className="w-full h-11 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 transition-colors hover:border-slate-300 focus:border-[#2764B8] focus:outline-none focus:ring-4 focus:ring-[#2764B8]/10"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-slate-500" />
+                {language === "ID" ? "Rencana Waktu Demo" : "Preferred Demo Time"}
+              </span>
+              <span className="text-xs text-slate-400 font-normal">({language === "ID" ? "Opsional" : "Optional"})</span>
+            </label>
+            <input
+              type="datetime-local"
+              name="demoDate"
+              value={formData.demoDate}
+              onChange={handleChange}
+              className="w-full h-11 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 transition-colors hover:border-slate-300 focus:border-[#2764B8] focus:outline-none focus:ring-4 focus:ring-[#2764B8]/10"
+            />
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-slate-700 flex items-center justify-between">
-                <span>{language === "ID" ? "Instrumen / Catatan Integrasi" : "Instruments / Inquiries"}</span>
-                <span className="text-xs text-slate-400 font-normal">({language === "ID" ? "Opsional" : "Optional"})</span>
-              </label>
-              <input
-                type="text"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                placeholder={
-                  language === "ID"
-                    ? "Contoh: Sysmex XN-1000, Cobas c501..."
-                    : "e.g., Sysmex XN-1000, Cobas c501..."
-                }
-                className="w-full h-11 rounded-lg border border-slate-200 bg-white px-3.5 text-sm text-slate-900 transition-colors hover:border-slate-300 focus:border-[#2764B8] focus:outline-none focus:ring-4 focus:ring-[#2764B8]/10"
-              />
-              {errors.notes && <p className="text-xs text-rose-600">{errors.notes}</p>}
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-slate-700 flex items-center justify-between">
+              <span>{language === "ID" ? "Model Mesin Analyzer / Kebutuhan Integrasi" : "Active Analyzer Models / Inquiries"}</span>
+              <span className="text-xs text-slate-400 font-normal">({language === "ID" ? "Opsional" : "Optional"})</span>
+            </label>
+            <textarea
+              name="notes"
+              rows={2}
+              value={formData.notes}
+              onChange={handleChange}
+              placeholder={
+                language === "ID"
+                  ? "Contoh: Sysmex XN-1000, Cobas c501, kebutuhan bridging SIMRS internal..."
+                  : "e.g., Sysmex XN-1000, Cobas c501, internal HIS bridging..."
+              }
+              className="w-full rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-900 transition-colors hover:border-slate-300 focus:border-[#2764B8] focus:outline-none focus:ring-4 focus:ring-[#2764B8]/10 resize-none"
+            />
+            {errors.notes && <p className="text-xs text-rose-600">{errors.notes}</p>}
           </div>
         </div>
       </div>
 
       {/* Action Area & Enterprise Assurance */}
-      <div className="pt-4 flex flex-col lg:flex-row items-center justify-between gap-5 border-t border-slate-100">
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+      <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <button
             type="submit"
             disabled={isSubmitting}
@@ -441,12 +437,12 @@ export default function RequestDemoPage() {
   return (
     <main
       style={{
-        paddingTop: "calc(96px + var(--announcement-bar-height, 40px) + 32px)",
+        paddingTop: "calc(96px + var(--announcement-bar-height, 40px) + 28px)",
       }}
-      className="bg-[#F8FAFC] min-h-screen pb-16 sm:pb-24 px-4 sm:px-6 lg:px-10 transition-[padding-top] duration-300"
+      className="bg-[#F8FAFC] min-h-screen pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 transition-[padding-top] duration-300"
     >
-      <div className="mx-auto w-full max-w-[1560px]">
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] p-6 sm:p-10 lg:p-12 xl:p-14">
+      <div className="mx-auto w-full max-w-5xl">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] p-6 sm:p-10 lg:p-12">
           <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-slate-100" />}>
             <RequestDemoForm />
           </Suspense>
