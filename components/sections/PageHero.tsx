@@ -81,16 +81,19 @@ export function PageHero({
                 {primaryCta && (
                   <Link
                     href={primaryCta.href}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
+                    className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-md hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] overflow-hidden"
                   >
-                    <span>{primaryCta.text}</span>
-                    {primaryCta.icon || <ArrowRight className="h-4 w-4" />}
+                    <span className="animate-shine-continuous" />
+                    <span className="relative z-10">{primaryCta.text}</span>
+                    <span className="relative z-10 transition-transform duration-200 group-hover:translate-x-1">
+                      {primaryCta.icon || <ArrowRight className="h-4 w-4" />}
+                    </span>
                   </Link>
                 )}
                 {secondaryCta && (
                   <a
                     href={secondaryCta.href}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 transition-colors shadow-xs"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 sm:px-7 sm:py-3.5 text-sm sm:text-base font-semibold text-slate-700 hover:border-slate-300 transition-all shadow-xs active:scale-[0.98]"
                   >
                     <span>{secondaryCta.text}</span>
                   </a>
@@ -103,17 +106,17 @@ export function PageHero({
               {metrics.map((kpi, idx) => (
                 <div
                   key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors flex flex-col justify-between min-h-[105px] sm:min-h-[114px]"
+                  className="group rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 hover:border-blue-300 p-4 sm:p-5 text-left shadow-xs hover:shadow-[0_10px_25px_-5px_rgba(39,100,184,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[105px] sm:min-h-[114px]"
                 >
                   <div>
-                    <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#345DAB]">
+                    <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#345DAB] group-hover:text-[#2764B8] transition-colors">
                       {kpi.value}
                     </p>
                     <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1">
                       {kpi.label}
                     </p>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-tight">
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-tight font-light">
                     {kpi.sub}
                   </p>
                 </div>

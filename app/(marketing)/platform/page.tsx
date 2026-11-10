@@ -134,19 +134,33 @@ export default function PlatformPage() {
 
           {/* 3 Large Characteristic Cards (Matching Comparison/Infrastructure Cards) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 1: Cut TAT */}
+            <div className="group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 hover:border-blue-300 p-6 sm:p-8 shadow-xs hover:shadow-[0_14px_36px_-6px_rgba(40,90,165,0.14)] hover:-translate-y-1.5 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
-                  <Clock className="h-6 w-6" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] group-hover:bg-[#2A5EAA] group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs group-hover:scale-105">
+                    <Clock className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200/70 rounded-full px-2.5 py-0.5">
+                    {language === "ID" ? "Kecepatan Stat" : "Stat Velocity"}
+                  </span>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed font-light">
                   {language === "ID"
                     ? "Hasil uji hematologi, kimia darah, dan urin langsung terkirim begitu mesin selesai beroperasi tanpa antrean ketik manual oleh analis."
                     : "Hematology, biochemistry, and urinalysis results stream directly to physician screens upon analyzer completion with zero manual typing."}
                 </p>
+
+                {/* Simulated Clinical UI Metric */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span className="font-medium text-slate-600">Sample Cito IGD:</span>
+                  <span className="font-bold font-mono text-emerald-600 bg-emerald-100/60 px-2 py-0.5 rounded-md">
+                    18 Min (-70%)
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
@@ -161,19 +175,33 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 2: Auto-Verification */}
+            <div className="group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 hover:border-blue-300 p-6 sm:p-8 shadow-xs hover:shadow-[0_14px_36px_-6px_rgba(40,90,165,0.14)] hover:-translate-y-1.5 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
-                  <Zap className="h-6 w-6" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] group-hover:bg-[#2A5EAA] group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs group-hover:scale-105">
+                    <Zap className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200/70 rounded-full px-2.5 py-0.5">
+                    {language === "ID" ? "Otomatisasi LIS" : "LIS Automation"}
+                  </span>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed font-light">
                   {language === "ID"
                     ? "Rule engine fleksibel sesuai SOP RS. Spesimen dengan nilai normal dan lolos uji delta-check diverifikasi otomatis sehingga dokter fokus pada kasus darurat."
                     : "Flexible rule engine matching your hospital SOPs. Samples within normal limits and passing delta checks verify automatically, freeing doctors for complex cases."}
                 </p>
+
+                {/* Simulated Clinical UI Metric */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span className="font-medium text-slate-600">Delta-Check Filter:</span>
+                  <span className="font-bold font-mono text-blue-700 bg-blue-100/60 px-2 py-0.5 rounded-md">
+                    Auto-Passed (92%)
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
@@ -188,19 +216,33 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 3: Resilient Edge Buffer */}
+            <div className="group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 hover:border-blue-300 p-6 sm:p-8 shadow-xs hover:shadow-[0_14px_36px_-6px_rgba(40,90,165,0.14)] hover:-translate-y-1.5 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
-                  <Server className="h-6 w-6" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] group-hover:bg-[#2A5EAA] group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs group-hover:scale-105">
+                    <Server className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-200/70 rounded-full px-2.5 py-0.5">
+                    {language === "ID" ? "Keandalan Edge" : "Edge Resilience"}
+                  </span>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Resilient Edge Buffer" : "Resilient Edge Buffer"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed font-light">
                   {language === "ID"
                     ? "Koneksi jaringan terganggu? Diagnova Gateway menyimpan data analyzer di buffer edge lokal dan menyinkronkan seluruh paket data begitu jaringan pulih."
                     : "Network instability? Diagnova's edge gateway locally buffers analyzer transmissions and resyncs all data packets upon reconnection with zero data loss."}
                 </p>
+
+                {/* Simulated Clinical UI Metric */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span className="font-medium text-slate-600">Offline Tolerance:</span>
+                  <span className="font-bold font-mono text-emerald-600 bg-emerald-100/60 px-2 py-0.5 rounded-md">
+                    72h Zero Loss
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm text-slate-600">
@@ -406,66 +448,108 @@ export default function PlatformPage() {
 
           {/* 3 Intelligence Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 1: Bottleneck Heatmap */}
+            <div className="group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 hover:border-blue-300 p-6 sm:p-8 shadow-xs hover:shadow-[0_14px_36px_-6px_rgba(40,90,165,0.14)] hover:-translate-y-1.5 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
-                  <TrendingUp className="h-6 w-6" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] group-hover:bg-[#2A5EAA] group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs group-hover:scale-105">
+                    <TrendingUp className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200/70 rounded-full px-2.5 py-0.5">
+                    {language === "ID" ? "Analitik TAT" : "TAT Analytics"}
+                  </span>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "TAT Real-Time & Bottleneck Heatmap" : "TAT Real-Time & Bottleneck Heatmap"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed font-light">
                   {language === "ID"
                     ? "Pantau durasi sampel per departemen (IGD, Rawat Inap, Rawat Jalan). Kenali secara visual tahap yang menyebabkan penundaan sebelum mengganggu alur pelayanan pasien."
                     : "Monitor specimen turnaround across ER, Inpatient, and Clinics. Pinpoint bottlenecks before they impact patient care."}
                 </p>
+
+                {/* Simulated Clinical UI Metric */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span className="font-medium text-slate-600">IGD STAT Compliance:</span>
+                  <span className="font-bold font-mono text-emerald-600 bg-emerald-100/60 px-2 py-0.5 rounded-md">
+                    98.4% on Target
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
                 <span>{language === "ID" ? "Monitoring Live Per Shift" : "Live Shift Monitoring"}</span>
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 2: Reagent Tracking */}
+            <div className="group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 hover:border-blue-300 p-6 sm:p-8 shadow-xs hover:shadow-[0_14px_36px_-6px_rgba(40,90,165,0.14)] hover:-translate-y-1.5 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
-                  <BarChart3 className="h-6 w-6" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] group-hover:bg-[#2A5EAA] group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs group-hover:scale-105">
+                    <BarChart3 className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-200/70 rounded-full px-2.5 py-0.5">
+                    {language === "ID" ? "Inventori Lab" : "Lab Inventory"}
+                  </span>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Beban Instrumen & Utilisasi Reagen" : "Analyzer Load & Reagent Tracking"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed font-light">
                   {language === "ID"
                     ? "Kalkulasi otomatis jumlah tes per reagen, masa kadaluarsa, dan distribusi beban kerja antar mesin agar throughput laboratorium beroperasi maksimal tanpa reagen terbuang."
                     : "Automatic tracking of tests per reagent cartridge, expiry dates, and load distribution across machines to maximize throughput with zero wastage."}
                 </p>
+
+                {/* Simulated Clinical UI Metric */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span className="font-medium text-slate-600">Reagent Cartridge Load:</span>
+                  <span className="font-bold font-mono text-blue-700 bg-blue-100/60 px-2 py-0.5 rounded-md">
+                    84% Remaining
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
                 <span>{language === "ID" ? "Zero Reagent Wastage" : "Zero Reagent Wastage"}</span>
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.12)] hover:-translate-y-1 hover:border-blue-200/60 transition-all duration-300">
+            {/* Card 3: Nova AI Delta Check */}
+            <div className="group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-white border border-slate-200/90 hover:border-blue-300 p-6 sm:p-8 shadow-xs hover:shadow-[0_14px_36px_-6px_rgba(40,90,165,0.14)] hover:-translate-y-1.5 transition-all duration-300">
               <div>
-                <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] flex items-center justify-center mb-6">
-                  <Sparkles className="h-6 w-6" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2A5EAA] group-hover:bg-[#2A5EAA] group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-2xs group-hover:scale-105">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-600 bg-purple-50 border border-purple-200/70 rounded-full px-2.5 py-0.5">
+                    {language === "ID" ? "AI Asisten Medis" : "Medical AI Assist"}
+                  </span>
                 </div>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2.5 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Nova AI Clinical Delta Check" : "Nova AI Clinical Delta Check"}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed font-light">
                   {language === "ID"
                     ? "Nova AI mendeteksi lonjakan nilai abnormal terhadap riwayat lampau pasien, menyajikan peringatan dini, dan merangkum narasi medis. Keputusan akhir tetap 100% pada dokter."
                     : "Nova AI detects abnormal biomarker spikes against past patient history, offering early alerts while leaving 100% of clinical decisions with physicians."}
                 </p>
+
+                {/* Simulated Clinical UI Metric */}
+                <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span className="font-medium text-slate-600">Delta-Check Anomaly:</span>
+                  <span className="font-bold font-mono text-purple-700 bg-purple-100/60 px-2 py-0.5 rounded-md">
+                    Flagged for DPJP
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#2764B8]">
                 <span>{language === "ID" ? "AI Membantu, Dokter Memutuskan" : "AI Assists, Doctors Decide"}</span>
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </div>
           </div>

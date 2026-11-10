@@ -153,6 +153,32 @@ html.lenis, html.lenis body {
   }
 }
 
+/* LigoLab-inspired Reflective Glint Keyframes */
+@keyframes ligolabShine {
+  0% {
+    left: -120%;
+  }
+  35%, 100% {
+    left: 120%;
+  }
+}
+
+.animate-shine-continuous {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transform: skewX(-20deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  animation: ligolabShine 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
 .animate-dna-float {
   animation: dnaHelixFloat 22s ease-in-out infinite;
   will-change: transform;
