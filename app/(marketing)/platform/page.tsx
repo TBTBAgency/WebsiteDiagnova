@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Zap,
   Network,
@@ -373,253 +374,47 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right Column: LigoLab-Style Desktop Monitor Hardware Mockup with Pop-Out Card & Accessories */}
-            <div className="lg:col-span-6 relative mt-8 lg:mt-0">
+            {/* Right Column: LigoLab-Style Photorealistic Desktop Monitor Mockup with Pop-Out Card */}
+            <div className="lg:col-span-6 relative mt-10 lg:mt-0">
               {/* Monitor Hardware Housing Container */}
-              <div className="relative max-w-[560px] mx-auto lg:ml-auto">
-                {/* 1. Overlapping Pop-Out Blue Card (LigoLab Signature Style) */}
-                <div className="absolute -bottom-4 -left-3 sm:-bottom-6 sm:-left-6 z-30 max-w-[260px] sm:max-w-[290px] rounded-[22px] bg-[#0073FC] text-white p-5 sm:p-6 shadow-[0_16px_40px_-5px_rgba(0,115,252,0.45)] border border-blue-400/40 animate-fadeIn">
-                  <div className="flex items-center gap-2.5 mb-2.5">
-                    <div className="h-8 w-8 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white shrink-0">
+              <div className="relative max-w-[580px] mx-auto lg:ml-auto">
+                {/* 1. Overlapping Pop-Out Blue Card (Exact LigoLab Signature Style) */}
+                <div className="absolute bottom-6 -left-3 sm:bottom-10 sm:-left-8 z-30 max-w-[270px] sm:max-w-[310px] rounded-[24px] bg-[#0073FC] text-white p-5 sm:p-6 shadow-[0_20px_50px_-5px_rgba(0,115,252,0.48)] border border-blue-300/40 animate-fadeIn">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-9 w-9 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white shrink-0 shadow-2xs">
                       <ShieldCheck className="h-5 w-5" />
                     </div>
                     <div>
-                      <h5 className="font-bold text-sm leading-tight text-white">
+                      <h5 className="font-bold text-sm sm:text-base leading-tight text-white">
                         {language === "ID" ? "Jejak Audit Sah" : "Permanent Audit"}
                       </h5>
-                      <p className="text-[11px] text-blue-100">KARS &amp; ISO 15189 Ready</p>
+                      <p className="text-[11px] text-blue-100">KARS SKP 2.2 &amp; ISO 15189</p>
                     </div>
                   </div>
-                  <p className="text-xs text-blue-50 leading-relaxed font-normal mb-3">
+                  <p className="text-xs sm:text-[13px] text-blue-50 leading-relaxed font-normal mb-4">
                     {language === "ID"
                       ? "Seluruh riwayat spesimen dan otorisasi dokter terkunci kriptografi BSrE BSSN tanpa celah manipulasi."
                       : "Every specimen movement and doctor authorization is permanently locked with cryptographic proof."}
                   </p>
-                  <div className="inline-flex items-center gap-1 text-xs font-semibold text-white hover:text-blue-200 transition-colors cursor-pointer">
+                  <Link
+                    href="/request-demo"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:text-blue-100 transition-colors group/link"
+                  >
                     <span>{language === "ID" ? "Pelajari Sistem Kepatuhan" : "Learn More"}</span>
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </div>
+                    <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-0.5" />
+                  </Link>
                 </div>
 
-                {/* 2. Monitor Screen Housing (Ultra-Thin Bezel Frame) */}
-                <div className="rounded-[18px] sm:rounded-[22px] border-[6px] sm:border-[8px] border-slate-900 bg-slate-950 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.35)] overflow-hidden relative z-10">
-                  {/* Subtle Web Camera Lens Indicator */}
-                  <div className="absolute top-1 inset-x-0 flex justify-center z-20 pointer-events-none">
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-800 ring-1 ring-slate-700/60 inline-block" />
-                  </div>
-
-                  {/* Window Titlebar */}
-                  <div className="bg-slate-800/95 px-4 py-2 flex items-center justify-between border-b border-slate-700/60">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-rose-500/90 inline-block" />
-                      <span className="h-2 w-2 rounded-full bg-amber-500/90 inline-block" />
-                      <span className="h-2 w-2 rounded-full bg-emerald-500/90 inline-block" />
-                    </div>
-
-                    <div className="hidden sm:flex items-center gap-1.5 bg-slate-900/70 px-3 py-0.5 rounded-md text-[10px] font-mono text-slate-300 border border-slate-700/50">
-                      <Lock className="h-2.5 w-2.5 text-emerald-400" />
-                      <span>diagnova.local/lis/specimen/DX-98214</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-[9px] font-mono font-medium text-emerald-400">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>SYS-XN: LIVE</span>
-                    </div>
-                  </div>
-
-                  {/* Screen Viewport: Diagnova LIS Medical Software UI */}
-                  <div className="bg-[#FAFBFD] p-3.5 sm:p-5 space-y-3 font-sans min-h-[340px]">
-                    {/* Patient & Specimen Info Header Bar */}
-                    <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-2.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="h-8 w-8 rounded-lg bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center font-mono font-bold text-xs shrink-0">
-                          LIS
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs font-bold text-[#2764B8]">#DX-98214</span>
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-red-100 text-red-700 border border-red-200">
-                              CITO / IGD
-                            </span>
-                          </div>
-                          <span className="text-xs font-bold text-slate-900 block mt-0.5">
-                            Bpk. Suryadi (54 Th / L) • <span className="font-mono text-[11px] text-slate-500 font-normal">RM-44912</span>
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                          <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                          <span>TAT: 19 Min (Goal &lt; 60m)</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Clinical Laboratory Data Grid */}
-                    <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
-                      <div className="bg-slate-50/90 px-3.5 py-1.5 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider grid grid-cols-12">
-                        <span className="col-span-5">{language === "ID" ? "Parameter Analit" : "Analyte Parameter"}</span>
-                        <span className="col-span-3 text-right">{language === "ID" ? "Hasil Uji" : "Result"}</span>
-                        <span className="col-span-2 text-right hidden sm:block">{language === "ID" ? "Rujukan" : "Ref"}</span>
-                        <span className="col-span-4 sm:col-span-2 text-right">Status</span>
-                      </div>
-
-                      <div className="divide-y divide-slate-100 text-xs">
-                        <div className="px-3.5 py-2 grid grid-cols-12 items-center">
-                          <div className="col-span-5">
-                            <span className="font-bold text-slate-900 block">Hemoglobin (Hb)</span>
-                            <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000</span>
-                          </div>
-                          <div className="col-span-3 text-right font-mono font-bold text-slate-900">
-                            14.2 <span className="text-[10px] font-normal text-slate-500">g/dL</span>
-                          </div>
-                          <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
-                            13.5 - 17.5
-                          </div>
-                          <div className="col-span-4 sm:col-span-2 text-right">
-                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              NORMAL
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="px-3.5 py-2 grid grid-cols-12 items-center">
-                          <div className="col-span-5">
-                            <span className="font-bold text-slate-900 block">Leukosit (WBC)</span>
-                            <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000</span>
-                          </div>
-                          <div className="col-span-3 text-right font-mono font-bold text-slate-900">
-                            7.400 <span className="text-[10px] font-normal text-slate-500">/µL</span>
-                          </div>
-                          <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
-                            4.000 - 10k
-                          </div>
-                          <div className="col-span-4 sm:col-span-2 text-right">
-                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              NORMAL
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="px-3.5 py-2 grid grid-cols-12 items-center">
-                          <div className="col-span-5">
-                            <span className="font-bold text-slate-900 block">Trombosit (PLT)</span>
-                            <span className="text-[10px] text-slate-400 font-mono">Sysmex XN-1000</span>
-                          </div>
-                          <div className="col-span-3 text-right font-mono font-bold text-slate-900">
-                            245.000 <span className="text-[10px] font-normal text-slate-500">/µL</span>
-                          </div>
-                          <div className="col-span-2 text-right text-[11px] text-slate-500 font-mono hidden sm:block">
-                            150k - 450k
-                          </div>
-                          <div className="col-span-4 sm:col-span-2 text-right">
-                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              NORMAL
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Doctor E-Signature & SATUSEHAT Verification Strip */}
-                    <div className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-2.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="h-8 w-8 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
-                          <FileCheck2 className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-slate-900">Dr. dr. Handoko, Sp.PK</span>
-                            <span className="text-[10px] font-mono text-slate-400">08:14 WIB</span>
-                          </div>
-                          <span className="text-[11px] text-emerald-700 font-semibold block">
-                            Tanda Tangan Elektronik Sah (BSrE BSSN)
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-right">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#2764B8] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200/60">
-                          <QrCode className="h-3 w-3" />
-                          <span>SATUSEHAT</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 3. Realistic Curved Crescent Arc Stand (Ref: LigoLab LG Style Curved Base) */}
-                <div className="relative pointer-events-none mt-1">
-                  {/* Stand Cylindrical Neck */}
-                  <div className="w-14 sm:w-16 h-7 sm:h-9 bg-gradient-to-b from-slate-400 via-slate-300 to-slate-400 mx-auto shadow-inner relative z-0" />
-
-                  {/* Curved Crescent Arc Base SVG */}
-                  <div className="relative -mt-2 z-10 flex justify-center">
-                    <svg viewBox="0 0 340 45" className="w-64 sm:w-80 h-auto">
-                      {/* Drop Shadow on Desk */}
-                      <path
-                        d="M 20 38 C 90 20 250 20 320 38 C 260 44 80 44 20 38 Z"
-                        fill="rgba(15, 23, 42, 0.16)"
-                        filter="blur(4px)"
-                      />
-                      {/* Metallic Curved Arc Foot Base */}
-                      <path
-                        d="M 25 32 C 95 14 245 14 315 32 C 295 38 215 41 170 41 C 125 41 45 38 25 32 Z"
-                        fill="url(#metallicArc)"
-                        stroke="#94A3B8"
-                        strokeWidth="1"
-                      />
-                      {/* Chrome Highlight Edge */}
-                      <path
-                        d="M 30 32 C 98 15 242 15 310 32"
-                        stroke="#FFFFFF"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        fill="none"
-                        opacity="0.8"
-                      />
-                      <defs>
-                        <linearGradient id="metallicArc" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#94A3B8" />
-                          <stop offset="35%" stopColor="#E2E8F0" />
-                          <stop offset="50%" stopColor="#F8FAFC" />
-                          <stop offset="65%" stopColor="#E2E8F0" />
-                          <stop offset="100%" stopColor="#94A3B8" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                  </div>
-
-                  {/* 4. Realistic Minimalist White Keyboard & Mouse on Desk */}
-                  <div className="relative -mt-4 flex items-center justify-center gap-4 sm:gap-6 z-20">
-                    {/* Compact Low-Profile White Keyboard */}
-                    <div className="w-44 sm:w-56 h-10 sm:h-12 bg-gradient-to-b from-white to-slate-100 rounded-lg border border-slate-300/80 shadow-[0_4px_12px_rgba(0,0,0,0.06)] p-1 flex flex-col justify-between">
-                      {/* Top Row Keys */}
-                      <div className="flex gap-[2px]">
-                        {[...Array(14)].map((_, i) => (
-                          <span key={i} className="flex-1 h-1.5 sm:h-2 bg-slate-200/90 rounded-[2px]" />
-                        ))}
-                      </div>
-                      {/* Middle Rows */}
-                      <div className="flex gap-[2px]">
-                        {[...Array(12)].map((_, i) => (
-                          <span key={i} className="flex-1 h-1.5 sm:h-2 bg-white rounded-[2px] shadow-2xs border border-slate-200/60" />
-                        ))}
-                      </div>
-                      {/* Spacebar Row */}
-                      <div className="flex gap-[2px] items-center">
-                        <span className="w-5 h-1.5 sm:h-2 bg-white rounded-[2px] shadow-2xs border border-slate-200/60" />
-                        <span className="flex-1 h-1.5 sm:h-2 bg-white rounded-[2px] shadow-2xs border border-slate-200/60" />
-                        <span className="w-5 h-1.5 sm:h-2 bg-white rounded-[2px] shadow-2xs border border-slate-200/60" />
-                      </div>
-                    </div>
-
-                    {/* Sleek Low-Profile White Mouse */}
-                    <div className="w-6 sm:w-7 h-9 sm:h-11 bg-gradient-to-b from-white via-white to-slate-100 rounded-full border border-slate-300/80 shadow-[0_4px_10px_rgba(0,0,0,0.06)] relative flex justify-center pt-2">
-                      <span className="w-[1px] h-2 bg-slate-300 block" />
-                    </div>
-                  </div>
+                {/* 2. Photorealistic Studio Monitor Render (Full 3D Hardware Image) */}
+                <div className="relative z-10 w-full select-none">
+                  <Image
+                    src="/images/desktop-monitor-mockup.jpg"
+                    alt="Diagnova LIS Desktop Workstation on Curved Stand"
+                    width={1920}
+                    height={1080}
+                    className="w-full h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.18)]"
+                    priority
+                  />
                 </div>
               </div>
             </div>
