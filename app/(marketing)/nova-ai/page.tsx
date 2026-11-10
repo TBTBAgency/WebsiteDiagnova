@@ -714,24 +714,26 @@ export default function NovaAIPage() {
                   className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
-                    <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
-                      <IconComponent className="h-6 w-6" />
+                    <div className="flex items-center justify-between">
+                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
+                        <IconComponent className="h-6 w-6" />
+                      </div>
+                      <span className="text-xs font-semibold text-[#2764B8] bg-[#EBF3FB] px-3 py-1 rounded-full border border-blue-200/60">
+                        {language === "ID" ? `Tahap ${item.stepLabel}` : `Phase ${item.stepLabel}`}
+                      </span>
                     </div>
 
                     <div>
-                      <span className="text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full inline-block mb-2 font-mono">
-                        {language === "ID" ? `Tahap ${item.stepLabel}` : `Phase ${item.stepLabel}`}
-                      </span>
                       <h3 className="font-display text-lg font-bold text-slate-900 leading-snug">
                         {item.title}
                       </h3>
-                      <p className="text-xs text-slate-500 font-light leading-relaxed mt-2.5">
+                      <p className="text-xs text-slate-600 font-normal leading-relaxed mt-2.5">
                         {item.desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-600">
                     <span>{item.protocol}</span>
                     <Check className="h-3.5 w-3.5 text-[#2764B8]" />
                   </div>
