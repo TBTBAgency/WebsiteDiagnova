@@ -116,7 +116,7 @@ function RequestDemoForm() {
 
   if (submitSuccess) {
     return (
-      <div className="py-8 sm:py-12 max-w-lg mx-auto text-center space-y-5">
+      <div className="py-6 sm:py-10 max-w-lg mx-auto text-center space-y-5">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200">
           <CheckCircle2 className="h-8 w-8" />
         </div>
@@ -184,7 +184,7 @@ function RequestDemoForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
       {/* Header Form */}
       <div>
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
@@ -205,7 +205,7 @@ function RequestDemoForm() {
       )}
 
       {/* Inputs Grid: 2 Columns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 xl:gap-4 pt-0.5">
         {/* Name */}
         <div className="space-y-1">
           <label className="text-xs font-semibold text-slate-700">
@@ -372,7 +372,7 @@ function RequestDemoForm() {
       </div>
 
       {/* Submit Button & Security Note */}
-      <div className="pt-2 space-y-3">
+      <div className="pt-1.5 space-y-2.5">
         <button
           type="submit"
           disabled={isSubmitting}
@@ -402,7 +402,7 @@ function RequestDemoForm() {
       </div>
 
       {/* Direct Contact Links */}
-      <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
         <span className="font-light text-[11px]">
           {language === "ID" ? "Pertanyaan langsung? Hubungi kami:" : "Questions? Contact us directly:"}
         </span>
@@ -432,88 +432,90 @@ export default function RequestDemoPage() {
   return (
     <main
       style={{
-        paddingTop: "calc(96px + var(--announcement-bar-height, 40px) + 24px)",
+        paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
       }}
-      className="bg-[#F1F5F9] min-h-screen pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 transition-[padding-top] duration-300 flex items-center justify-center"
+      className="relative w-full lg:h-[100dvh] min-h-[660px] pb-3 sm:pb-4 lg:pb-6 px-4 sm:px-6 lg:px-10 bg-[#F4F6F9] flex flex-col justify-center transition-[padding-top] duration-300 ease-in-out"
     >
-      {/* Outer Card with Rounded Corners & Soft Shadow */}
-      <div className="mx-auto w-full max-w-[1140px] bg-white rounded-[28px] sm:rounded-[32px] p-4 sm:p-5 lg:p-6 shadow-[0_20px_50px_-15px_rgba(15,23,42,0.08)] border border-slate-200/80">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+      {/* Outer Card with Exact Standard Width max-w-[1560px] Matching All Site Content */}
+      <div className="mx-auto w-full max-w-[1560px] h-full flex flex-col justify-center">
+        <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_16px_45px_-12px_rgba(15,23,42,0.08)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 xl:gap-8 h-full items-stretch">
 
-          {/* LEFT: Vibrant Blue Feature Banner (Matching Screenshot) */}
-          <div className="lg:col-span-5 relative rounded-[22px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2467BA] via-[#1D5496] to-[#123168] text-white p-7 sm:p-9 lg:p-10 flex flex-col justify-between min-h-[420px] lg:min-h-[580px] shadow-inner">
-            {/* Ambient glowing orbs */}
-            <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-[#56ADE2]/30 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-[#1D3F82]/60 blur-3xl pointer-events-none" />
+            {/* LEFT: Vibrant Blue Feature Banner (Matching Screenshot) */}
+            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2467BA] via-[#1D5496] to-[#123168] text-white p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full shadow-inner">
+              {/* Ambient glowing orbs */}
+              <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-[#56ADE2]/30 blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-[#1D3F82]/60 blur-3xl pointer-events-none" />
 
-            {/* Top Content */}
-            <div className="relative z-10 space-y-3">
-              <p className="text-xs sm:text-sm text-blue-200/90 font-medium tracking-wide">
-                {language === "ID" ? "Platform Diagnostik Modern" : "Modern Diagnostic Platform"}
-              </p>
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] font-bold leading-tight text-white tracking-tight">
-                {language === "ID"
-                  ? "Percepat & Otomasi Alur Kerja Laboratorium Anda"
-                  : "Speed up your lab workflow with Diagnova LIS"}
-              </h2>
-              <p className="text-xs sm:text-sm text-blue-100/80 font-light leading-relaxed pt-1">
-                {language === "ID"
-                  ? "Satu platform terintegrasi untuk interfacing analyzer instan, verifikasi hasil berbasis AI, dan pelaporan nasional."
-                  : "An all-in-one platform for analyzer interfacing, AI auto-verification, and seamless healthcare integration."}
-              </p>
+              {/* Top Content */}
+              <div className="relative z-10 space-y-3">
+                <p className="text-xs sm:text-sm text-blue-200/90 font-medium tracking-wide">
+                  {language === "ID" ? "Platform Diagnostik Modern" : "Modern Diagnostic Platform"}
+                </p>
+                <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-bold leading-tight text-white tracking-tight">
+                  {language === "ID"
+                    ? "Percepat & Otomasi Alur Kerja Laboratorium Anda"
+                    : "Speed up your lab workflow with Diagnova LIS"}
+                </h2>
+                <p className="text-xs sm:text-sm text-blue-100/80 font-light leading-relaxed pt-0.5">
+                  {language === "ID"
+                    ? "Satu platform terintegrasi untuk interfacing analyzer instan, verifikasi hasil berbasis AI, dan pelaporan nasional."
+                    : "An all-in-one platform for analyzer interfacing, AI auto-verification, and seamless healthcare integration."}
+                </p>
 
-              {/* Value Highlight Pills */}
-              <div className="pt-4 space-y-2.5">
-                <div className="flex items-center gap-2.5 text-xs text-white/90">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  <span>{language === "ID" ? "100% Bridging SATUSEHAT & SIMRS" : "Full SATUSEHAT & HIS Bridging"}</span>
+                {/* Value Highlight Pills */}
+                <div className="pt-3 sm:pt-4 space-y-2.5">
+                  <div className="flex items-center gap-2.5 text-xs text-white/90">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
+                      <Check className="h-3 w-3" />
+                    </span>
+                    <span>{language === "ID" ? "100% Bridging SATUSEHAT & SIMRS" : "Full SATUSEHAT & HIS Bridging"}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs text-white/90">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
+                      <Check className="h-3 w-3" />
+                    </span>
+                    <span>{language === "ID" ? "Dukungan 500+ Model Analyzer Klinis" : "Supports 500+ Clinical Analyzers"}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs text-white/90">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
+                      <Check className="h-3 w-3" />
+                    </span>
+                    <span>{language === "ID" ? "Didampingi Spesialis Aplikasi Klinis" : "Dedicated Clinical Specialist Support"}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5 text-xs text-white/90">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
-                    <Check className="h-3 w-3" />
+              </div>
+
+              {/* Bottom Content: Our Partners / Compliance Badges */}
+              <div className="relative z-10 pt-6 mt-auto border-t border-white/15">
+                <p className="text-[11px] uppercase tracking-wider text-blue-200/80 font-semibold mb-2.5">
+                  {language === "ID" ? "Standar & Kepatuhan Medis" : "Standards & Compliance"}
+                </p>
+                <div className="flex flex-wrap items-center gap-2 text-[11px] text-white/90 font-medium">
+                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
+                    SATUSEHAT
                   </span>
-                  <span>{language === "ID" ? "Dukungan 500+ Model Analyzer Klinis" : "Supports 500+ Clinical Analyzers"}</span>
-                </div>
-                <div className="flex items-center gap-2.5 text-xs text-white/90">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-white shrink-0">
-                    <Check className="h-3 w-3" />
+                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
+                    Kemenkes RI
                   </span>
-                  <span>{language === "ID" ? "Didampingi Spesialis Aplikasi Klinis" : "Dedicated Clinical Specialist Support"}</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
+                    ISO 27001
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
+                    HL7 / FHIR
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Content: Our Partners / Compliance Badges */}
-            <div className="relative z-10 pt-8 mt-auto border-t border-white/15">
-              <p className="text-[11px] uppercase tracking-wider text-blue-200/80 font-semibold mb-3">
-                {language === "ID" ? "Standar & Kepatuhan Medis" : "Standards & Compliance"}
-              </p>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 text-[11px] text-white/90 font-medium">
-                <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                  SATUSEHAT
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                  Kemenkes RI
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                  ISO 27001
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15">
-                  HL7 / FHIR
-                </span>
-              </div>
+            {/* RIGHT: Clean Form Area (Matching Screenshot) */}
+            <div className="lg:col-span-7 flex flex-col justify-center p-2 sm:p-4 lg:p-6 xl:p-8 h-full">
+              <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-slate-100" />}>
+                <RequestDemoForm />
+              </Suspense>
             </div>
-          </div>
 
-          {/* RIGHT: Clean Form Area (Matching Screenshot) */}
-          <div className="lg:col-span-7 flex flex-col justify-center p-3 sm:p-5 lg:p-7">
-            <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-slate-100" />}>
-              <RequestDemoForm />
-            </Suspense>
           </div>
-
         </div>
       </div>
     </main>
