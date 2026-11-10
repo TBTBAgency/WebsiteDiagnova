@@ -531,10 +531,12 @@ export default function RequestDemoPage() {
               <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-[#1D3F82]/60 blur-3xl pointer-events-none" />
 
               {/* Top Content */}
-              <div className="relative z-10 space-y-3">
-                <p className="text-xs sm:text-sm text-blue-200/90 font-medium tracking-wide">
-                  {language === "ID" ? "Platform Diagnostik Modern" : "Modern Diagnostic Platform"}
-                </p>
+              <div className="relative z-10 space-y-3.5">
+                <div>
+                  <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 backdrop-blur-md px-3.5 py-1 text-xs font-medium text-white shadow-xs">
+                    {language === "ID" ? "Platform Diagnostik Modern" : "Modern Diagnostic Platform"}
+                  </span>
+                </div>
                 <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-bold leading-tight text-white tracking-tight">
                   {language === "ID"
                     ? "Percepat & Otomasi Alur Kerja Laboratorium Anda"
