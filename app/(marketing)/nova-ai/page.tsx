@@ -7,11 +7,6 @@ import {
   ShieldCheck,
   CheckCircle2,
   Check,
-  Eye,
-  BrainCircuit,
-  Zap,
-  UserCheck,
-  ShieldAlert,
   Activity,
   FileText,
   Stethoscope,
@@ -20,9 +15,14 @@ import {
   AlertTriangle,
   BadgeCheck,
   BellRing,
-  Sparkles,
-  ChevronRight,
-  Info,
+  RotateCcw,
+  Server,
+  Layers,
+  Lock,
+  FileCheck2,
+  Cpu,
+  Database,
+  CheckCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -30,333 +30,386 @@ import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-interface SampleCase {
+interface ClinicalProfile {
   id: string;
-  name: string;
-  nameEn: string;
-  category: string;
-  categoryEn: string;
-  value: string;
+  tabLabel: string;
+  tabLabelEn: string;
+  specimenNo: string;
+  patientName: string;
+  patientAgeGender: string;
+  patientAgeGenderEn: string;
+  ward: string;
+  wardEn: string;
+  attendingDoc: string;
+  parameterName: string;
+  parameterNameEn: string;
+  analyteCode: string;
+  currentValue: string;
   unit: string;
-  referenceRange: string;
-  status: "low" | "normal" | "high" | "critical";
-  statusText: string;
-  statusTextEn: string;
-  statusBadgeClass: string;
-  gaugePercent: number; // 0 to 100% position on the visual bar
-  // Delta check history
+  refInterval: string;
+  statusLabel: string;
+  statusLabelEn: string;
+  statusType: "warning" | "critical" | "normal";
+  gaugePercent: number; // 0 - 100% position on reference range bar
   prevValue: string;
-  prevTime: string;
-  prevTimeEn: string;
+  prevTimestamp: string;
+  prevTimestampEn: string;
   deltaText: string;
-  isDeltaAlert: boolean;
+  deltaPercent: string;
   isDeltaDrop: boolean;
-  // Nova AI Outputs
-  physicianNote: string;
-  physicianNoteEn: string;
-  patientExplanation: string;
-  patientExplanationEn: string;
-  recommendedAction: string;
-  recommendedActionEn: string;
+  clinicalImpression: string;
+  clinicalImpressionEn: string;
+  clinicalRecommendation: string;
+  clinicalRecommendationEn: string;
   isPanicValue: boolean;
 }
 
 export default function NovaAIPage() {
   const { language } = useLanguage();
-  const [selectedCaseIdx, setSelectedCaseIdx] = useState<number>(0);
+  const [selectedProfileIdx, setSelectedProfileIdx] = useState<number>(0);
+  const [authorizedProfiles, setAuthorizedProfiles] = useState<Record<string, boolean>>({});
+  const [alertDispatched, setAlertDispatched] = useState<Record<string, boolean>>({});
 
-  const sampleCases: SampleCase[] = [
+  const profiles: ClinicalProfile[] = [
     {
-      id: "hb",
-      name: "Hemoglobin (Hb)",
-      nameEn: "Hemoglobin (Hb)",
-      category: "Darah Lengkap",
-      categoryEn: "Complete Blood Count",
-      value: "8.4",
+      id: "hematology-hb",
+      tabLabel: "Hematologi: Hemoglobin (Hb)",
+      tabLabelEn: "Hematology: Hemoglobin (Hb)",
+      specimenNo: "LAB-261109-01",
+      patientName: "Tn. Hendra Wijaya",
+      patientAgeGender: "54 Th • Laki-laki • RM #0849201",
+      patientAgeGenderEn: "54 Y • Male • MRN #0849201",
+      ward: "Rawat Inap Bedah (Kamar 304)",
+      wardEn: "Inpatient Surgical Ward (Room 304)",
+      attendingDoc: "dr. Bambang Sp.B, Subsp.BD",
+      parameterName: "Hemoglobin (Hb)",
+      parameterNameEn: "Hemoglobin (Hb)",
+      analyteCode: "LOINC 718-7",
+      currentValue: "8.4",
       unit: "g/dL",
-      referenceRange: "12.0 - 16.0 g/dL",
-      status: "low",
-      statusText: "Rendah • Anemia",
-      statusTextEn: "Low • Anemia",
-      statusBadgeClass: "bg-amber-50 text-amber-800 border-amber-200",
-      gaugePercent: 22,
+      refInterval: "13.0 - 17.5 g/dL",
+      statusLabel: "Rendah • Delta Alert",
+      statusLabelEn: "Low • Delta Alert",
+      statusType: "warning",
+      gaugePercent: 20,
       prevValue: "10.5 g/dL",
-      prevTime: "3 hari lalu",
-      prevTimeEn: "3 days ago",
-      deltaText: "-2.1 g/dL (-20%)",
-      isDeltaAlert: true,
+      prevTimestamp: "3 hari lalu (12 Nov, 08:30)",
+      prevTimestampEn: "3 days ago (Nov 12, 08:30)",
+      deltaText: "-2.1 g/dL",
+      deltaPercent: "-20.0%",
       isDeltaDrop: true,
-      physicianNote:
-        "Penurunan akut Hb sebesar 20% dalam 72 jam terdeteksi (Delta Check Alert). Disarankan evaluasi kemungkinan perdarahan aktif tersembunyi atau defisiensi besi sebelum tindakan invasif.",
-      physicianNoteEn:
-        "Acute 20% Hb decline detected within 72 hours (Delta Check Alert). Suggest evaluating for occult blood loss or acute iron deficiency prior to invasive procedures.",
-      patientExplanation:
-        "Kadar sel darah merah pembawa oksigen berada di bawah batas normal. Tubuh mungkin merasa lebih cepat lemas, lelah, atau pusing.",
-      patientExplanationEn:
-        "Oxygen-carrying red blood cell levels are below normal. Patients may feel tired, fatigued, or lightheaded.",
-      recommendedAction:
-        "Konfirmasi feses darah samar & laporkan ke Dokter DPJP.",
-      recommendedActionEn:
-        "Confirm with occult stool blood check & notify attending physician.",
+      clinicalImpression:
+        "Anemia normositik normokromik derajat sedang dengan pergeseran delta akut sebesar -20.0% dalam 72 jam terakhir pasca-operasi.",
+      clinicalImpressionEn:
+        "Moderate normocytic normochromic anemia presenting with acute -20.0% longitudinal delta deviation over the past 72 hours post-surgery.",
+      clinicalRecommendation:
+        "Disarankan evaluasi kecurigaan perdarahan tersembunyi (occult bleeding) atau hemodilusi cairan. Siapkan konfirmasi feses darah samar sebelum intervensi lanjut.",
+      clinicalRecommendationEn:
+        "Recommend evaluating for occult blood loss or fluid hemodilution. Confirm with occult stool blood testing prior to secondary intervention.",
       isPanicValue: false,
     },
     {
-      id: "gdp",
-      name: language === "ID" ? "Glukosa Darah Puasa (GDP)" : "Fasting Blood Glucose",
-      nameEn: "Fasting Blood Glucose",
-      category: "Panel Diabetes",
-      categoryEn: "Diabetes Panel",
-      value: "186",
+      id: "chemistry-creatinine",
+      tabLabel: language === "ID" ? "Kimia Darah: Serum Kreatinin" : "Chemistry: Serum Creatinine",
+      tabLabelEn: "Chemistry: Serum Creatinine",
+      specimenNo: "LAB-261109-02",
+      patientName: "Ny. Ratna Suminar",
+      patientAgeGender: "62 Th • Perempuan • RM #0912443",
+      patientAgeGenderEn: "62 Y • Female • MRN #0912443",
+      ward: "ICU / Rawat Intensif (Bed 02)",
+      wardEn: "ICU / Intensive Care Unit (Bed 02)",
+      attendingDoc: "dr. Cynthia Sp.PD-KGH",
+      parameterName: language === "ID" ? "Serum Kreatinin (Enzimatik)" : "Serum Creatinine (Enzymatic)",
+      parameterNameEn: "Serum Creatinine (Enzymatic)",
+      analyteCode: "LOINC 2160-0",
+      currentValue: "2.85",
       unit: "mg/dL",
-      referenceRange: "70 - 100 mg/dL",
-      status: "high",
-      statusText: "Tinggi • Hiperglikemia",
-      statusTextEn: "High • Hyperglycemia",
-      statusBadgeClass: "bg-rose-50 text-rose-700 border-rose-200",
-      gaugePercent: 86,
-      prevValue: "178 mg/dL",
-      prevTime: "2 minggu lalu",
-      prevTimeEn: "2 weeks ago",
-      deltaText: "+8 mg/dL (+4.5%)",
-      isDeltaAlert: false,
-      isDeltaDrop: false,
-      physicianNote:
-        "Konsisten tinggi pada 2 kunjungan berturut-turut. Disarankan konfirmasi pemeriksaan HbA1c untuk evaluasi kontrol glikemik jangka panjang.",
-      physicianNoteEn:
-        "Consistently elevated across past 2 encounters. Confirmatory HbA1c testing advised for long-term glycemic management evaluation.",
-      patientExplanation:
-        "Kadar gula darah puasa berada di atas batas sehat, menandakan tubuh memerlukan penyesuaian pola makan dan konsultasi dokter berkala.",
-      patientExplanationEn:
-        "Fasting blood sugar level is above healthy boundaries, indicating that dietary adjustments and medical follow-up are warranted.",
-      recommendedAction:
-        "Jadwalkan tes HbA1c konfirmasi & evaluasi pola diet.",
-      recommendedActionEn:
-        "Schedule confirmatory HbA1c test & review dietary intake.",
-      isPanicValue: false,
-    },
-    {
-      id: "leuko",
-      name: language === "ID" ? "Leukosit (Sel Darah Putih)" : "White Blood Cells (WBC)",
-      nameEn: "White Blood Cells (WBC)",
-      category: "Deteksi Infeksi",
-      categoryEn: "Infection Screening",
-      value: "14.800",
-      unit: "/µL",
-      referenceRange: "4.000 - 10.000 /µL",
-      status: "high",
-      statusText: "Tinggi • Leukositosis",
-      statusTextEn: "High • Leukocytosis",
-      statusBadgeClass: "bg-amber-50 text-amber-800 border-amber-200",
+      refInterval: "0.50 - 1.10 mg/dL",
+      statusLabel: "Tinggi • Risiko AKI",
+      statusLabelEn: "Critical • AKI Risk",
+      statusType: "critical",
       gaugePercent: 88,
-      prevValue: "8.200 /µL",
-      prevTime: "Kemarin",
-      prevTimeEn: "Yesterday",
-      deltaText: "+6.600 /µL (+80.4%)",
-      isDeltaAlert: true,
+      prevValue: "1.10 mg/dL",
+      prevTimestamp: "2 hari lalu (13 Nov, 14:10)",
+      prevTimestampEn: "2 days ago (Nov 13, 14:10)",
+      deltaText: "+1.75 mg/dL",
+      deltaPercent: "+159.1%",
       isDeltaDrop: false,
-      physicianNote:
-        "Lonjakan signifikan sel darah putih dalam 24 jam dengan pergeseran ke kiri (shift to the left). Pertimbangkan evaluasi fokus infeksi bakteri atau peradangan aktif.",
-      physicianNoteEn:
-        "Significant white blood cell surge in 24 hours with left-shift. Suggest clinical workup for acute bacterial infection or active inflammation.",
-      patientExplanation:
-        "Jumlah sel darah putih meningkat, menandakan sistem imun tubuh sedang aktif bekerja merespons kemungkinan infeksi atau radang.",
-      patientExplanationEn:
-        "White blood cell count is elevated, showing the body's immune system is actively responding to potential infection or inflammation.",
-      recommendedAction:
-        "Evaluasi hitung jenis leukosit & tanda infeksi fisik.",
-      recommendedActionEn:
-        "Evaluate leukocyte differential & examine physical infection focus.",
+      clinicalImpression:
+        "Lonjakan serum kreatinin > 100% dari baseline dalam 48 jam memenuhi kriteria KDIGO Stage 2 Acute Kidney Injury (AKI) disertai penurunan eGFR tajam.",
+      clinicalImpressionEn:
+        "Serum creatinine elevation > 100% from baseline in 48 hours satisfies KDIGO Stage 2 Acute Kidney Injury (AKI) criteria with acute eGFR decline.",
+      clinicalRecommendation:
+        "Segera tinjau ulang dosis terapi antibiotik/obat nefrotoksik, evaluasi keseimbangan cairan pasien, dan pantau elektrolit kalium serial.",
+      clinicalRecommendationEn:
+        "Urgent review of nephrotoxic medication and antibiotic dosing, optimize fluid resuscitation, and monitor serial serum potassium.",
+      isPanicValue: true,
+    },
+    {
+      id: "metabolic-glucose",
+      tabLabel: language === "ID" ? "Metabolik: Glukosa Darah Puasa" : "Metabolic: Fasting Glucose",
+      tabLabelEn: "Metabolic: Fasting Glucose",
+      specimenNo: "LAB-261109-03",
+      patientName: "Tn. Agus Darmawan",
+      patientAgeGender: "48 Th • Laki-laki • RM #0771892",
+      patientAgeGenderEn: "48 Y • Male • MRN #0771892",
+      ward: "Poli Penyakit Dalam (Rawat Jalan)",
+      wardEn: "Internal Medicine Outpatient Clinic",
+      attendingDoc: "dr. Hendro Sp.PD-KEMD",
+      parameterName: language === "ID" ? "Glukosa Darah Puasa (GDP)" : "Fasting Blood Glucose",
+      parameterNameEn: "Fasting Blood Glucose",
+      analyteCode: "LOINC 1558-6",
+      currentValue: "248",
+      unit: "mg/dL",
+      refInterval: "70 - 100 mg/dL",
+      statusLabel: "Tinggi • Hiperglikemia",
+      statusLabelEn: "High • Hyperglycemia",
+      statusType: "warning",
+      gaugePercent: 86,
+      prevValue: "142 mg/dL",
+      prevTimestamp: "3 minggu lalu (24 Okt)",
+      prevTimestampEn: "3 weeks ago (Oct 24)",
+      deltaText: "+106 mg/dL",
+      deltaPercent: "+74.6%",
+      isDeltaDrop: false,
+      clinicalImpression:
+        "Hiperglikemia berat dengan lonjakan nilai +74.6% dari baseline kunjungan terakhir, mengindikasikan dekompensasi kontrol metabolik subakut.",
+      clinicalImpressionEn:
+        "Severe fasting hyperglycemia with +74.6% elevation from previous encounter baseline, pointing to subacute metabolic decompensation.",
+      clinicalRecommendation:
+        "Disarankan konfirmasi pemeriksaan HbA1c, skrining glukosuria/ketonuria, dan pertimbangkan intensifikasi regimen terapi antidiabetes.",
+      clinicalRecommendationEn:
+        "Confirmatory HbA1c testing and urine ketone screening advised; consider therapeutic intensification for glycemic stabilization.",
       isPanicValue: false,
     },
     {
-      id: "plt",
-      name: language === "ID" ? "Trombosit (Platelet)" : "Platelets (PLT)",
-      nameEn: "Platelets (PLT)",
-      category: "Nilai Kritis Darurat",
-      categoryEn: "Emergency Critical Alert",
-      value: "18.000",
+      id: "hemostasis-plt",
+      tabLabel: language === "ID" ? "Hemostasis: Trombosit (Kritis)" : "Hemostasis: Platelets (Panic)",
+      tabLabelEn: "Hemostasis: Platelets (Panic)",
+      specimenNo: "LAB-261109-04",
+      patientName: "An. Salsabila Putri",
+      patientAgeGender: "9 Th • Perempuan • RM #1002341",
+      patientAgeGenderEn: "9 Y • Female • MRN #1002341",
+      ward: "IGD & Resusitasi Pediatrik",
+      wardEn: "Pediatric Emergency & Resuscitation",
+      attendingDoc: "dr. Maya Sp.A, Subsp.Hem",
+      parameterName: language === "ID" ? "Hitung Trombosit (Platelet)" : "Platelet Count (PLT)",
+      parameterNameEn: "Platelet Count (PLT)",
+      analyteCode: "LOINC 777-3",
+      currentValue: "14.000",
       unit: "/µL",
-      referenceRange: "150.000 - 450.000 /µL",
-      status: "critical",
-      statusText: "NILAI KRITIS (Panic Value)",
-      statusTextEn: "CRITICAL PANIC VALUE",
-      statusBadgeClass: "bg-rose-100 text-rose-800 border-rose-300 font-bold",
-      gaugePercent: 8,
-      prevValue: "110.000 /µL",
-      prevTime: "Kemarin sore",
-      prevTimeEn: "Yesterday evening",
-      deltaText: "-92.000 /µL (-83.6%)",
-      isDeltaAlert: true,
+      refInterval: "150.000 - 450.000 /µL",
+      statusLabel: "NILAI KRITIS (PANIC)",
+      statusLabelEn: "CRITICAL PANIC VALUE",
+      statusType: "critical",
+      gaugePercent: 6,
+      prevValue: "88.000 /µL",
+      prevTimestamp: "Kemarin sore (14 Nov, 16:20)",
+      prevTimestampEn: "Yesterday evening (Nov 14, 16:20)",
+      deltaText: "-74.000 /µL",
+      deltaPercent: "-84.1%",
       isDeltaDrop: true,
-      physicianNote:
-        "NILAI KRITIS DARURAT (Trombosit < 20.000/µL). Risiko tinggi perdarahan spontan. Protokol KARS SKP 2.2: Wajib lapor ke DPJP/IGD dalam waktu < 15 menit.",
-      physicianNoteEn:
-        "EMERGENCY PANIC VALUE (Platelets < 20,000/µL). High spontaneous bleeding risk. Mandatory KARS SKP 2.2 protocol: alert attending/ER in < 15 minutes.",
-      patientExplanation:
-        "Kadar keping darah pembeku sangat rendah di bawah batas aman. Diperlukan perhatian dokter segera untuk mencegah komplikasi perdarahan.",
-      patientExplanationEn:
-        "Platelet count is critically low below safe limits. Immediate medical intervention is essential to prevent bleeding complications.",
-      recommendedAction:
-        "🚨 Kirim notifikasi darurat langsung ke dokter DPJP / IGD.",
-      recommendedActionEn:
-        "🚨 Dispatch immediate critical alert to attending physician / ER.",
+      clinicalImpression:
+        "NILAI KRITIS DARURAT (Trombosit < 20.000/µL): Penurunan drastis 84.1% dalam 18 jam dengan risiko tinggi perdarahan spontan intraserebral/mukosa.",
+      clinicalImpressionEn:
+        "EMERGENCY CRITICAL PANIC VALUE (PLT < 20,000/µL): Precipitous 84.1% plunge in 18 hours with severe risk of spontaneous internal hemorrhage.",
+      clinicalRecommendation:
+        "PROTOKOL KARS SKP 2.2: Wajib lapor ke DPJP/Dokter Jaga IGD < 15 menit. Siapkan transfusi konsentrat trombosit (TC) & verifikasi apusan darah tepi.",
+      clinicalRecommendationEn:
+        "MANDATORY KARS SKP 2.2 PROTOCOL: Critical reporting to ER physician < 15 mins. Crossmatch platelet concentrate (TC) & review peripheral blood smear.",
       isPanicValue: true,
     },
   ];
 
-  const currentCase = sampleCases[selectedCaseIdx];
+  const currentProfile = profiles[selectedProfileIdx];
+  const isAuthorized = authorizedProfiles[currentProfile.id];
+  const isAlertSent = alertDispatched[currentProfile.id];
 
-  const workflowSteps = [
+  const handleToggleAuthorize = () => {
+    setAuthorizedProfiles((prev) => ({
+      ...prev,
+      [currentProfile.id]: !prev[currentProfile.id],
+    }));
+  };
+
+  const handleDispatchAlert = () => {
+    setAlertDispatched((prev) => ({
+      ...prev,
+      [currentProfile.id]: true,
+    }));
+  };
+
+  const handleResetProfile = () => {
+    setAuthorizedProfiles((prev) => ({
+      ...prev,
+      [currentProfile.id]: false,
+    }));
+    setAlertDispatched((prev) => ({
+      ...prev,
+      [currentProfile.id]: false,
+    }));
+  };
+
+  const workflowPipeline = [
     {
-      phase: language === "ID" ? "Amati Pola" : "Observe Patterns",
-      title: language === "ID" ? "Membaca Riwayat Pasien" : "Read Patient History",
-      description:
+      stepLabel: "Tahap 01",
+      stepLabelEn: "Phase 01",
+      title: language === "ID" ? "Interfacing Dua Arah Analyzer" : "Bi-Directional Analyzer Interfacing",
+      protocol: "ASTM E1381 • HL7 v2 / FHIR",
+      desc:
         language === "ID"
-          ? "Nova AI membandingkan hasil tes terkini dengan rekam jejak pemeriksaan sebelumnya secara longitudinal, bukan sekadar melihat batas normal umum."
-          : "Nova AI compares current test results with historical patient data over time, rather than evaluating general population boundaries in isolation.",
-      icon: Eye,
+          ? "Data hasil uji dari 500+ instrumen hematologi, kimia klinis, dan imunologi ditransmisikan secara langsung tanpa entri data manual, meniadakan risiko salah ketik."
+          : "Direct telemetry ingestion from 500+ hematology, chemistry, and immunoassay instruments with zero manual entry, eliminating transcription errors.",
+      icon: Server,
     },
     {
-      phase: language === "ID" ? "Terjemahkan Data" : "Translate Data",
-      title: language === "ID" ? "Merangkum Narasi Klinis" : "Synthesize Clinical Narrative",
-      description:
+      stepLabel: "Tahap 02",
+      stepLabelEn: "Phase 02",
+      title: language === "ID" ? "Mesin Delta-Check Longitudinal" : "Longitudinal Delta-Check Engine",
+      protocol: "Statistical Z-Score • Patient Delta Rules",
+      desc:
         language === "ID"
-          ? "Mengubah deretan angka desimal rumit menjadi rangkuman bahasa medis yang ringkas untuk dokter dan penjelasan yang ramah untuk pasien."
-          : "Translates dense decimal series into structured summaries for clinicians and clear explanations for patients.",
-      icon: BrainCircuit,
+          ? "Sistem membandingkan nilai terkini dengan rekam jejak pemeriksaan pasien terdahulu secara serial, mendeteksi pergeseran anomali akut antar-kunjungan."
+          : "Compares current results against historical patient baselines sequentially, catching acute deviations that static reference ranges miss.",
+      icon: TrendingUp,
     },
     {
-      phase: language === "ID" ? "Peringatan Cepat" : "Early Warning",
-      title: language === "ID" ? "Deteksi Nilai Kritis Seketika" : "Instant Panic Value Alert",
-      description:
+      stepLabel: "Tahap 03",
+      stepLabelEn: "Phase 03",
+      title: language === "ID" ? "Draf Interpretasi & Triage Panic Value" : "Clinical Draft & Panic Value Triage",
+      protocol: "KARS SKP 2.2 • LOINC & SNOMED-CT",
+      desc:
         language === "ID"
-          ? "Secara otomatis memicu alarm notifikasi darurat atas nilai kritis (Panic Values) langsung ke dokter jaga agar pasien segera ditangani."
-          : "Automatically triggers emergency alerts for critical panic values directly to attending doctors for immediate clinical response.",
-      icon: Zap,
+          ? "Menyiapkan draf narasi klinis terstandar dan secara otomatis menyiarkan alert nilai kritis ke WhatsApp dan SIMRS dokter jaga dalam waktu < 15 menit."
+          : "Prepares standardized clinical summaries and automatically broadcasts critical panic alerts to attending teams in under 15 minutes.",
+      icon: BellRing,
     },
     {
-      phase: language === "ID" ? "Validasi Dokter" : "Physician Validation",
-      title: language === "ID" ? "100% Keputusan di Tangan Dokter" : "100% Physician Sovereignty",
-      description:
+      stepLabel: "Tahap 04",
+      stepLabelEn: "Phase 04",
+      title: language === "ID" ? "Otorisasi Dokter Sp.PK & E-Sign" : "Pathologist Sign-Off & E-Sign",
+      protocol: "BSrE Certified • 100% Human Sovereignty",
+      desc:
         language === "ID"
-          ? "Seluruh rangkuman diserahkan kepada dokter untuk diperiksa dan disahkan. Nova AI tidak pernah membuat diagnosis atau resep obat mandiri."
-          : "Every summary is submitted to attending physicians for review and e-signature. Nova AI never diagnoses or prescribes autonomously.",
-      icon: UserCheck,
+          ? "Dokter Spesialis Patologi Klinik meninjau, menyunting, dan membubuhkan tanda tangan digital resmi sebelum hasil dirilis ke SIMRS atau SATUSEHAT."
+          : "Certified pathologists review, edit, and digitally sign the finalized report before official dispatch to hospital EMR and SATUSEHAT.",
+      icon: FileCheck2,
     },
   ];
 
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
-          HERO SECTION: PageHero
+          HERO SECTION: PageHero (Enterprise Medical SaaS Aesthetic)
           ══════════════════════════════════════════════════════════════ */}
       <PageHero
-        badge={language === "ID" ? "Asisten Laboratorium Cerdas" : "Intelligent Laboratory Copilot"}
+        badge={language === "ID" ? "Clinical Decision Support System (CDSS)" : "Clinical Decision Support System (CDSS)"}
         title={
           language === "ID" ? (
             <>
-              AI Membantu Analisis.{" "}
+              Otomasi Delta-Check &{" "}
               <br className="hidden sm:inline" />
-              Dokter Menentukan Keputusan.
+              Validasi Cerdas Hasil Laboratorium
             </>
           ) : (
             <>
-              AI Assists Analysis.{" "}
+              Automated Delta-Check &{" "}
               <br className="hidden sm:inline" />
-              Doctors Make the Decisions.
+              Intelligent Laboratory Validation
             </>
           )
         }
         subtitle={
           language === "ID"
-            ? "Nova AI mengubah angka hasil laboratorium yang rumit menjadi narasi ringkas, mendeteksi pergeseran pola delta-check, dan mempercepat respon dokter tanpa menggantikan sentuhan medis manusia."
-            : "Nova AI translates complex laboratory data into concise narratives, spots longitudinal delta-check shifts, and speeds up doctor response without replacing human clinical oversight."
+            ? "Mempercepat waktu rilis hasil uji (TAT), mendeteksi deviasi biomarker longitudinal antar-kunjungan pasien, dan menyiapkan draf interpretasi klinis—dengan 100% kendali verifikasi di tangan dokter spesialis patologi."
+            : "Slashing turnaround time (TAT), flagging longitudinal biomarker deviations across patient visits, and preparing structured clinical drafts—with 100% verification authority retained by certified pathologists."
         }
         primaryCta={{
           text: language === "ID" ? "Jadwalkan Demo Nova AI" : "Schedule Nova AI Demo",
           href: "/request-demo",
         }}
         secondaryCta={{
-          text: language === "ID" ? "Lihat Contoh Terjemahan" : "See Translation Demo",
-          href: "#demo-translation",
+          text: language === "ID" ? "Lihat Meja Kerja Patologi" : "Explore Pathologist Desk",
+          href: "#workstation-demo",
         }}
         metrics={[
           {
-            value: "100%",
-            label: language === "ID" ? "Kendali di Dokter" : "Physician Control",
-            sub: language === "ID" ? "Human-in-the-loop mutlak" : "Absolute clinical sovereignty",
+            value: "-70%",
+            label: language === "ID" ? "Pangkas Waktu Validasi" : "Turnaround Time (TAT)",
+            sub: language === "ID" ? "Auto-verifikasi sampel normal" : "Auto-release normal routine",
           },
           {
             value: language === "ID" ? "< 3 Detik" : "< 3 Sec",
-            label: language === "ID" ? "Deteksi Anomali" : "Anomaly Detection",
-            sub: language === "ID" ? "Pengecekan riwayat otomatis" : "Automated historical delta check",
+            label: language === "ID" ? "Kalkulasi Delta-Check" : "Delta-Check Speed",
+            sub: language === "ID" ? "Komparasi riwayat serial" : "Serial trend comparison",
           },
           {
-            value: "Etis & Transparan",
-            label: language === "ID" ? "Standar Medis" : "Medical Ethics",
-            sub: language === "ID" ? "Bukan black-box mandiri" : "Explainable clinical logic",
+            value: "100%",
+            label: language === "ID" ? "Kendali Dokter Sp.PK" : "Physician Sovereignty",
+            sub: language === "ID" ? "Human-in-the-loop mutlak" : "Absolute clinical control",
           },
           {
-            value: "KARS & JCI",
-            label: language === "ID" ? "Kepatuhan Regulasi" : "Regulatory Compliance",
-            sub: language === "ID" ? "Standar pelaporan nilai kritis" : "Official panic value reporting",
+            value: "KARS & ISO",
+            label: language === "ID" ? "Kepatuhan Akreditasi" : "Audit Compliance",
+            sub: language === "ID" ? "Standar pelaporan nilai kritis" : "Accredited panic protocol",
           },
         ]}
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          NOTICE / REGULATORY ETHICS BANNER (Clean & Clear)
+          REGULATORY COMPLIANCE NOTICE BAR
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-amber-50/70 border-b border-amber-200/70 py-3.5 px-4 sm:px-6">
+      <section className="w-full bg-[#FEF9EE] border-b border-amber-200/80 py-3.5 px-4 sm:px-6">
         <div className="mx-auto max-w-[1560px] flex items-center justify-center gap-3 text-xs sm:text-sm text-amber-900 font-medium text-center">
-          <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-amber-700 shrink-0" />
+          <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-amber-700 shrink-0" />
           <span>
             <strong className="font-bold">
-              {language === "ID" ? "Prinsip Etika Medis Diagnova:" : "Diagnova Medical Ethics Principle:"}
+              {language === "ID" ? "Standar Tata Kelola Klinis:" : "Clinical Governance Standard:"}
             </strong>{" "}
             {language === "ID"
-              ? "Nova AI hanya bertugas membantu merangkum pola data dan mendeteksi anomali. Keputusan diagnosis definitif dan terapi pengobatan tetap 100% berada pada dokter yang merawat."
-              : "Nova AI solely assists in summarizing trends and detecting anomalies. Definitive diagnosis and treatment decisions remain 100% under attending physician authority."}
+              ? "Nova AI beroperasi sebagai Sistem Pendukung Keputusan Klinis (CDSS) sesuai UU Kesehatan No. 17/2023 dan Permenkes No. 24/2022. Seluruh penetapan diagnosis dan terapi berada pada kewenangan hukum dokter yang merawat."
+              : "Nova AI operates as a certified Clinical Decision Support System (CDSS) conforming to national health regulations. All definitive diagnostic and therapeutic decisions remain strictly under attending physician authority."}
           </span>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 1: INTERACTIVE BEFORE & AFTER SHOWCASE (#demo-translation)
-          (Desain Bersih, Elegan, dan Mudah Dipahami dalam 3 Detik)
+          SECTION 1: CLINICAL PATHOLOGY WORKSTATION (#workstation-demo)
+          (Tampilan Meja Kerja Dokter yang Otentik, Bersih, dan Presisi)
           ══════════════════════════════════════════════════════════════ */}
-      <section id="demo-translation" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24">
+      <section id="workstation-demo" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Header */}
           <div className="max-w-3xl mb-10 sm:mb-12">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Simulasi Terjemahan Cerdas" : "Intelligent Translation Demo"}
+                {language === "ID" ? "Simulasi Meja Kerja Patologi Klinik" : "Pathologist Workstation Simulation"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Cara Nova AI Mengubah Angka Menjadi Narasi Jelas</>
+                <>Bagaimana Nova AI Mendukung Otorisasi Dokter</>
               ) : (
-                <>How Nova AI Turns Complex Numbers Into Clear Narratives</>
+                <>How Nova AI Powers Pathologist Sign-Off Workflows</>
               )}
             </h2>
             <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
               {language === "ID"
-                ? "Pilih parameter pemeriksaan di bawah untuk melihat bagaimana data laboratorium mentah diterjemahkan secara otomatis menjadi catatan medis bagi dokter dan penjelasan mudah bagi pasien."
-                : "Select a test parameter below to see how raw lab results are automatically translated into clinical notes for doctors and clear explanations for patients."}
+                ? "Pilih profil spesimen klinis di bawah untuk melihat bagaimana Nova AI menghitung variasi delta-check longitudinal, menandai nilai kritis, dan menyiapkan draf narasi medis yang siap disahkan dokter."
+                : "Select a clinical specimen profile below to inspect how Nova AI calculates longitudinal delta-checks, flags panic values, and prepares clinical report impressions ready for pathologist authorization."}
             </p>
           </div>
 
-          {/* 4 Clean Selector Pills */}
+          {/* 4 Clean Clinical Specialty Tabs */}
           <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-3 mb-8">
-            {sampleCases.map((c, idx) => {
-              const isActive = selectedCaseIdx === idx;
+            {profiles.map((p, idx) => {
+              const isActive = selectedProfileIdx === idx;
+              const isDone = authorizedProfiles[p.id];
               return (
                 <button
-                  key={c.id}
+                  key={p.id}
                   type="button"
-                  onClick={() => setSelectedCaseIdx(idx)}
+                  onClick={() => setSelectedProfileIdx(idx)}
                   className={cn(
                     "inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border",
                     isActive
@@ -365,8 +418,8 @@ export default function NovaAIPage() {
                   )}
                 >
                   <Activity className={cn("h-4 w-4", isActive ? "text-white" : "text-[#2764B8]")} />
-                  <span>{language === "ID" ? c.name : c.nameEn}</span>
-                  {c.isPanicValue && (
+                  <span>{language === "ID" ? p.tabLabel : p.tabLabelEn}</span>
+                  {p.isPanicValue && (
                     <span
                       className={cn(
                         "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase",
@@ -376,176 +429,283 @@ export default function NovaAIPage() {
                       Panic
                     </span>
                   )}
+                  {isDone && (
+                    <CheckCheck className={cn("h-4 w-4", isActive ? "text-emerald-300" : "text-emerald-600")} />
+                  )}
                 </button>
               );
             })}
           </div>
 
-          {/* Clean Side-by-Side Comparison: Data Mentah vs Olahan Nova AI */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
-            {/* ─── KARTU KIRI: Data Laboratorium (Visual & Jelas) ─── */}
-            <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-[#F8FBFE] border border-slate-200/90 p-6 sm:p-8 flex flex-col justify-between space-y-6">
-              <div>
-                {/* Header Kartu */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-200/80">
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    {language === "ID" ? "Hasil Uji Laboratorium" : "Raw Laboratory Result"}
-                  </span>
-                  <span className="text-xs text-slate-400 font-medium">
-                    {language === "ID" ? currentCase.category : currentCase.categoryEn}
+          {/* Master Clinical Pathology Workstation Card */}
+          <div className="rounded-[28px] sm:rounded-[32px] border border-slate-200/90 bg-white shadow-xs overflow-hidden">
+            {/* Header: Patient & Specimen Medical Context */}
+            <div className="bg-[#F8FBFE] border-b border-slate-200/80 px-6 sm:px-8 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm">
+                <div>
+                  <span className="font-mono text-xs font-bold text-slate-400 block uppercase">No. Spesimen</span>
+                  <span className="font-mono font-bold text-[#2764B8]">{currentProfile.specimenNo}</span>
+                </div>
+                <div className="h-6 w-[1px] bg-slate-200 hidden sm:block" />
+                <div>
+                  <span className="font-bold text-slate-900 block">{currentProfile.patientName}</span>
+                  <span className="text-slate-500 text-xs font-light">
+                    {language === "ID" ? currentProfile.patientAgeGender : currentProfile.patientAgeGenderEn}
                   </span>
                 </div>
+                <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
+                <div className="hidden md:block">
+                  <span className="text-slate-400 text-xs block">{language === "ID" ? "Ruangan Rawat" : "Ward"}</span>
+                  <span className="text-slate-700 text-xs font-medium">
+                    {language === "ID" ? currentProfile.ward : currentProfile.wardEn}
+                  </span>
+                </div>
+                <div className="h-6 w-[1px] bg-slate-200 hidden lg:block" />
+                <div className="hidden lg:block">
+                  <span className="text-slate-400 text-xs block">{language === "ID" ? "Dokter Pengirim (DPJP)" : "Attending DPJP"}</span>
+                  <span className="text-slate-700 text-xs font-medium">{currentProfile.attendingDoc}</span>
+                </div>
+              </div>
 
-                {/* Nama Parameter & Nilai Utama */}
-                <div className="mt-5 space-y-2">
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
-                    {language === "ID" ? currentCase.name : currentCase.nameEn}
-                  </h3>
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-mono text-4xl sm:text-5xl font-extrabold text-[#345DAB] tracking-tight">
-                      {currentCase.value}
+              {/* Status Verification Badge */}
+              <div className="flex items-center gap-2">
+                {isAuthorized ? (
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
+                    <BadgeCheck className="h-4 w-4 text-emerald-600" />
+                    <span>{language === "ID" ? "Disahkan Dokter Sp.PK (E-Sign Valid)" : "Authorized by Pathologist (E-Sign)"}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold border border-amber-200/80">
+                    <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                    <span>{language === "ID" ? "Menunggu Review Dokter Sp.PK" : "Pending Pathologist Review"}</span>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Content Body: Split View (Data Analit vs Draf Catatan Patologi) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-200/80 items-stretch">
+              {/* Kolom Kiri: Parameter, Nilai & Visual Reference Gauge */}
+              <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white">
+                <div>
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">
+                      {currentProfile.analyteCode}
                     </span>
-                    <span className="text-sm sm:text-base font-semibold text-slate-500">
-                      {currentCase.unit}
-                    </span>
-                  </div>
-                  <div className="pt-1 flex items-center gap-2">
                     <span
                       className={cn(
-                        "inline-block text-xs font-semibold px-3 py-1 rounded-full border",
-                        currentCase.statusBadgeClass
+                        "text-xs font-bold px-3 py-0.5 rounded-full border uppercase tracking-wider",
+                        currentProfile.statusType === "critical"
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
+                          : "bg-amber-50 text-amber-800 border-amber-200"
                       )}
                     >
-                      {language === "ID" ? currentCase.statusText : currentCase.statusTextEn}
+                      {language === "ID" ? currentProfile.statusLabel : currentProfile.statusLabelEn}
                     </span>
-                    <span className="text-xs text-slate-400">
-                      (Ref: {currentCase.referenceRange})
-                    </span>
+                  </div>
+
+                  {/* Nilai Pengujian Utama */}
+                  <div className="mt-5 space-y-1">
+                    <h3 className="text-lg font-bold text-slate-900">
+                      {language === "ID" ? currentProfile.parameterName : currentProfile.parameterNameEn}
+                    </h3>
+                    <div className="flex items-baseline gap-2 pt-1">
+                      <span className="font-mono text-4xl sm:text-5xl font-extrabold text-[#345DAB] tracking-tight">
+                        {currentProfile.currentValue}
+                      </span>
+                      <span className="text-sm sm:text-base font-semibold text-slate-500 font-mono">
+                        {currentProfile.unit}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 font-mono pt-1">
+                      {language === "ID" ? "Rentang Rujukan:" : "Reference Interval:"} {currentProfile.refInterval}
+                    </p>
+                  </div>
+
+                  {/* Visual Reference Gauge Bar */}
+                  <div className="mt-6 pt-5 border-t border-slate-100 space-y-2">
+                    <div className="flex justify-between text-[11px] font-medium text-slate-400">
+                      <span>{language === "ID" ? "Bawah" : "Low"}</span>
+                      <span className="text-emerald-700 font-semibold">{language === "ID" ? "Rentang Rujukan Normal" : "Normal Reference Range"}</span>
+                      <span>{language === "ID" ? "Atas" : "High"}</span>
+                    </div>
+                    <div className="relative h-2.5 w-full rounded-full bg-slate-100 overflow-hidden flex border border-slate-200/60">
+                      <div className="w-1/4 bg-amber-200" />
+                      <div className="w-2/4 bg-emerald-200" />
+                      <div className="w-1/4 bg-rose-200" />
+                    </div>
+                    {/* Gauge Marker */}
+                    <div className="relative w-full h-4">
+                      <div
+                        className="absolute top-0 -translate-x-1/2 flex flex-col items-center transition-all duration-300"
+                        style={{ left: `${currentProfile.gaugePercent}%` }}
+                      >
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#2764B8] ring-2 ring-white shadow-xs" />
+                        <span className="text-[10px] font-bold text-[#2764B8] font-mono mt-0.5">
+                          {currentProfile.currentValue}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Visual Gauge Bar: Menunjukkan posisi nilai secara intuitif */}
-                <div className="mt-7 pt-5 border-t border-slate-200/80 space-y-2">
-                  <div className="flex justify-between text-[11px] font-medium text-slate-400">
-                    <span>{language === "ID" ? "Rendah" : "Low"}</span>
-                    <span className="text-emerald-700 font-semibold">{language === "ID" ? "Rentang Normal" : "Normal Range"}</span>
-                    <span>{language === "ID" ? "Tinggi" : "High"}</span>
+                {/* Komparasi Delta-Check Riwayat Serial */}
+                <div className="p-4 rounded-2xl bg-[#F8FBFE] border border-blue-100/90 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
+                    <span className="flex items-center gap-1.5 text-[#345DAB]">
+                      <TrendingUp className="h-4 w-4 text-[#2764B8]" />
+                      {language === "ID" ? "Kalkulasi Variasi Delta-Check:" : "Longitudinal Delta Variance:"}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      {language === "ID" ? currentProfile.prevTimestamp : currentProfile.prevTimestampEn}
+                    </span>
                   </div>
-                  <div className="relative h-2.5 w-full rounded-full bg-slate-200 overflow-hidden flex">
-                    <div className="w-1/4 bg-amber-200" />
-                    <div className="w-2/4 bg-emerald-200" />
-                    <div className="w-1/4 bg-rose-200" />
-                  </div>
-                  {/* Gauge Pointer Pin */}
-                  <div className="relative w-full h-4">
+
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="text-xs text-slate-600">
+                      {language === "ID" ? "Baseline Sebelumnya:" : "Prior Baseline:"}{" "}
+                      <strong className="font-mono text-slate-900">{currentProfile.prevValue}</strong>
+                    </div>
                     <div
-                      className="absolute top-0 -translate-x-1/2 flex flex-col items-center transition-all duration-300"
-                      style={{ left: `${currentCase.gaugePercent}%` }}
+                      className={cn(
+                        "inline-flex items-center gap-1 text-xs font-bold font-mono px-2.5 py-1 rounded-lg",
+                        currentProfile.isDeltaDrop
+                          ? "bg-rose-100 text-rose-700"
+                          : "bg-amber-100 text-amber-800"
+                      )}
                     >
-                      <span className="h-2 w-2 rounded-full bg-[#2764B8] ring-2 ring-white shadow-xs" />
-                      <span className="text-[10px] font-bold text-[#2764B8] font-mono mt-0.5">
-                        {currentCase.value}
-                      </span>
+                      {currentProfile.isDeltaDrop ? (
+                        <TrendingDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <TrendingUp className="h-3.5 w-3.5" />
+                      )}
+                      <span>{currentProfile.deltaText} ({currentProfile.deltaPercent})</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Komparasi Riwayat Pasien (Delta-Check) */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-2">
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-                  <span className="flex items-center gap-1.5">
-                    <Activity className="h-3.5 w-3.5 text-[#2764B8]" />
-                    {language === "ID" ? "Komparasi Riwayat Lampau (Delta Check):" : "Historical Delta Check:"}
-                  </span>
-                  <span className="text-[11px] text-slate-400 font-light">
-                    {language === "ID" ? currentCase.prevTime : currentCase.prevTimeEn}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-1">
-                  <div className="text-xs text-slate-500">
-                    {language === "ID" ? "Hasil Sebelumnya:" : "Previous:"}{" "}
-                    <strong className="text-slate-800 font-mono">{currentCase.prevValue}</strong>
+              {/* Kolom Kanan: Draf Interpretasi Patologi & Tombol Verifikasi Dokter */}
+              <div className="lg:col-span-7 p-6 sm:p-8 bg-[#FAFBFD] flex flex-col justify-between space-y-6">
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
+                    <div className="flex items-center gap-2 text-[#2764B8]">
+                      <Stethoscope className="h-4 w-4" />
+                      <span className="text-xs font-bold uppercase tracking-wider">
+                        {language === "ID" ? "Draf Hasil Verifikasi Patologi Klinik" : "Pathology Clinical Interpretation Draft"}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      CDSS ENGINE v2.4
+                    </span>
                   </div>
-                  <div className="inline-flex items-center gap-1 text-xs font-bold font-mono px-2.5 py-1 rounded-lg bg-blue-50 text-[#2764B8]">
-                    {currentCase.isDeltaDrop ? (
-                      <TrendingDown className="h-3.5 w-3.5 text-rose-500" />
-                    ) : (
-                      <TrendingUp className="h-3.5 w-3.5 text-amber-600" />
+
+                  {/* Kesan Klinis Patologi */}
+                  <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                      {language === "ID" ? "1. Kesan Patologi (Clinical Impression):" : "1. Clinical Impression:"}
+                    </span>
+                    <p className="text-sm text-slate-800 leading-relaxed font-normal">
+                      &ldquo;{language === "ID" ? currentProfile.clinicalImpression : currentProfile.clinicalImpressionEn}&rdquo;
+                    </p>
+                  </div>
+
+                  {/* Rekomendasi Korelasi Klinis */}
+                  <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                    <span className="text-xs font-bold text-[#345DAB] uppercase tracking-wider block">
+                      {language === "ID" ? "2. Rekomendasi Korelasi Tambahan:" : "2. Correlative Recommendation:"}
+                    </span>
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-light">
+                      {language === "ID" ? currentProfile.clinicalRecommendation : currentProfile.clinicalRecommendationEn}
+                    </p>
+                  </div>
+
+                  {/* Status Alert Terkirim (Jika dipicu) */}
+                  {isAlertSent && (
+                    <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-center gap-2.5 animate-fadeIn">
+                      <BellRing className="h-4 w-4 text-rose-600 shrink-0" />
+                      <span>
+                        {language === "ID"
+                          ? `Alert Nilai Kritis telah disiarkan ke WhatsApp & SIMRS ${currentProfile.attendingDoc} (Protokol KARS SKP 2.2).`
+                          : `Emergency critical alert dispatched to ${currentProfile.attendingDoc}'s EMR and mobile (KARS SKP 2.2 Compliant).`}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Status E-Sign Berhasil (Jika diverifikasi) */}
+                  {isAuthorized && (
+                    <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2.5 animate-fadeIn">
+                      <BadgeCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <div>
+                        <strong>{language === "ID" ? "Laporan Laboratorium Resmi Disahkan" : "Official Laboratory Report Authorized"}</strong>
+                        <div className="text-[11px] text-emerald-700">
+                          {language === "ID"
+                            ? "Ditandatangani secara elektronik oleh dr. Sp.PK • Tersertifikasi BSrE & Rilis ke SIMRS"
+                            : "Digitally signed by Attending Clinical Pathologist • BSrE Certified & Released to EMR"}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tombol Aksi Dokter (Tactile Enterprise Controls) */}
+                <div className="pt-4 border-t border-slate-200/80 space-y-2.5">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleToggleAuthorize}
+                      className={cn(
+                        "flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-[0.98]",
+                        isAuthorized
+                          ? "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                          : "bg-[#2764B8] hover:bg-[#1E5299] text-white"
+                      )}
+                    >
+                      <BadgeCheck className="h-4 w-4" />
+                      <span>
+                        {isAuthorized
+                          ? language === "ID" ? "Batalkan Pengesahan" : "Revoke Authorization"
+                          : language === "ID" ? "Sahkan Hasil & E-Sign" : "Authorize & Digital E-Sign"}
+                      </span>
+                    </button>
+
+                    {currentProfile.isPanicValue && (
+                      <button
+                        type="button"
+                        onClick={handleDispatchAlert}
+                        disabled={isAlertSent}
+                        className={cn(
+                          "inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border cursor-pointer active:scale-[0.98]",
+                          isAlertSent
+                            ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                            : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+                        )}
+                      >
+                        <BellRing className="h-4 w-4" />
+                        <span>
+                          {isAlertSent
+                            ? language === "ID" ? "Alert Terkirim" : "Alert Sent"
+                            : language === "ID" ? "Kirim Panic Alert" : "Send Panic Alert"}
+                        </span>
+                      </button>
                     )}
-                    <span>{currentCase.deltaText}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* ─── KARTU KANAN: Hasil Rangkuman Cerdas Nova AI ─── */}
-            <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-blue-200/80 p-6 sm:p-9 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-6">
-                {/* Header Kartu Kanan */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                  <div className="flex items-center gap-2 text-[#2764B8]">
-                    <Sparkles className="h-4 w-4" />
-                    <span className="text-xs font-bold uppercase tracking-wider">
-                      {language === "ID" ? "Interpretasi & Narasi Nova AI" : "Nova AI Structured Narrative"}
-                    </span>
+                    <button
+                      type="button"
+                      onClick={handleResetProfile}
+                      title={language === "ID" ? "Atur Ulang Status" : "Reset Status"}
+                      className="p-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                    </button>
                   </div>
-                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    {language === "ID" ? "✓ Siap Diverifikasi" : "✓ Ready for Doctor Review"}
-                  </span>
-                </div>
 
-                {/* 1. Catatan Medis untuk Dokter */}
-                <div className="p-5 rounded-2xl bg-blue-50/70 border border-blue-100/90 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#345DAB] uppercase tracking-wider">
-                    <Stethoscope className="h-4 w-4 text-[#2764B8]" />
-                    <span>{language === "ID" ? "Catatan untuk Dokter Penanggung Jawab:" : "Clinical Note for Attending Physician:"}</span>
-                  </div>
-                  <p className="text-sm sm:text-base text-slate-800 leading-relaxed font-normal">
-                    &ldquo;{language === "ID" ? currentCase.physicianNote : currentCase.physicianNoteEn}&rdquo;
+                  <p className="text-[11px] text-slate-400 text-center font-light">
+                    {language === "ID"
+                      ? "Interaksi simulasi: Klik tombol di atas untuk menguji pengesahan E-Sign dokter dan transmisi alert darurat."
+                      : "Simulation interactive: Click above to test pathologist e-sign authorization and critical panic alert dispatch."}
                   </p>
                 </div>
-
-                {/* 2. Penjelasan Bahasa Awam untuk Pasien */}
-                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    <FileText className="h-4 w-4 text-slate-500" />
-                    <span>{language === "ID" ? "Penjelasan Bahasa Jelas untuk Pasien:" : "Clear Plain-Language for Patients:"}</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
-                    {language === "ID" ? currentCase.patientExplanation : currentCase.patientExplanationEn}
-                  </p>
-                </div>
-
-                {/* 3. Rekomendasi Tindak Lanjut */}
-                <div className="flex items-start gap-2.5 text-xs text-slate-600 pt-1">
-                  <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-slate-800">
-                      {language === "ID" ? "Saran Tindak Lanjut: " : "Actionable Suggestion: "}
-                    </strong>
-                    <span>
-                      {language === "ID" ? currentCase.recommendedAction : currentCase.recommendedActionEn}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tombol Aksi Bawah */}
-              <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
-                <Link
-                  href="/request-demo"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white px-6 py-3 text-sm font-semibold shadow-xs transition-all active:scale-[0.98]"
-                >
-                  <span>{language === "ID" ? "Coba Demo dengan Data Laboratorium Anda" : "Test Demo with Your Lab Data"}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <a
-                  href="#how-it-works"
-                  className="text-xs font-semibold text-slate-600 hover:text-[#2764B8] transition-colors"
-                >
-                  {language === "ID" ? "Pelajari 4 Tahap Alur Kerja ↓" : "Explore 4-Stage Workflow ↓"}
-                </a>
               </div>
             </div>
           </div>
@@ -553,8 +713,8 @@ export default function NovaAIPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 2: 4 TAHAP CARA KERJA (#how-it-works)
-          (Bersih, Luas, Tanpa Angka yang Membingungkan)
+          SECTION 2: 4-STAGE LABORATORY PIPELINE (#how-it-works)
+          (Alur Nyata Laboratorium Medis, Bersih & Profesional)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="how-it-works"
@@ -565,30 +725,30 @@ export default function NovaAIPage() {
           <div className="max-w-3xl mb-12 sm:mb-16">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Alur 4 Tahap" : "4-Stage Workflow"}
+                {language === "ID" ? "Alur Kerja 4 Tahap" : "4-Stage Clinical Pipeline"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Alur Kerja Terstruktur yang Menjamin Keselamatan Pasien</>
+                <>Alur Kerja Terstruktur yang Menjamin Presisi & Keselamatan Pasien</>
               ) : (
-                <>Structured Pipeline Safeguarding Clinical Integrity</>
+                <>Structured Pipeline Safeguarding Clinical Integrity & Accuracy</>
               )}
             </h2>
             <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
               {language === "ID"
-                ? "Bagaimana Nova AI memproses data laboratorium dari instrumen analyzer hingga verifikasi dokter akhir secara transparan dan bertanggung jawab."
-                : "How Nova AI processes telemetry from raw analyzer outputs to final physician verification with transparency and accountability."}
+                ? "Dari pembacaan instrumen analitik hingga otorisasi digital dokter spesialis, setiap tahap didesain dengan ketertelusuran penuh dan kepatuhan akreditasi rumah sakit."
+                : "From direct analyzer telemetry to certified pathologist authorization, every phase is engineered with full audit traceability and hospital accreditation standards."}
             </p>
           </div>
 
-          {/* 4 Clean Step Cards */}
+          {/* 4 Connected Pipeline Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {workflowSteps.map((ws) => {
-              const IconComponent = ws.icon;
+            {workflowPipeline.map((item) => {
+              const IconComponent = item.icon;
               return (
                 <div
-                  key={ws.phase}
+                  key={item.title}
                   className="rounded-[28px] bg-white border border-slate-200/90 p-7 shadow-xs hover:border-blue-200/80 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
@@ -597,20 +757,20 @@ export default function NovaAIPage() {
                     </div>
 
                     <div>
-                      <span className="text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full inline-block mb-2">
-                        {ws.phase}
+                      <span className="text-[11px] font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full inline-block mb-2 font-mono">
+                        {language === "ID" ? item.stepLabel : item.stepLabelEn}
                       </span>
                       <h3 className="font-display text-lg font-bold text-slate-900 leading-snug">
-                        {ws.title}
+                        {item.title}
                       </h3>
                       <p className="text-xs text-slate-500 font-light leading-relaxed mt-2.5">
-                        {ws.description}
+                        {item.desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-slate-400">
-                    <span>{language === "ID" ? "Terintegrasi Penuh" : "Fully Integrated"}</span>
+                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span>{item.protocol}</span>
                     <Check className="h-3.5 w-3.5 text-[#2764B8]" />
                   </div>
                 </div>
@@ -621,8 +781,8 @@ export default function NovaAIPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 3: AI + DOKTER: ETIKA & KOLABORASI (#ai-doctor)
-          (Visual Bersih, Human-in-the-Loop, Jelas Pembagian Perannya)
+          SECTION 3: CLINICAL GOVERNANCE & RESPONSIBILITY MATRIX (#ai-doctor)
+          (Pembagian Peran Terstruktur & Akuntabilitas Hukum)
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="ai-doctor"
@@ -633,37 +793,37 @@ export default function NovaAIPage() {
           <div className="max-w-3xl">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Etika Medis & Kolaborasi" : "Medical Ethics & Collaboration"}
+                {language === "ID" ? "Tata Kelola Klinis & Akuntabilitas" : "Clinical Governance & Legal Accountability"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>Mengapa Dokter Tetap Menjadi Pengambil Keputusan Tertinggi?</>
+                <>Mengapa Dokter Tetap Menjadi Otoritas Klinis Tertinggi?</>
               ) : (
-                <>Why Physicians Retain Ultimate Medical Authority</>
+                <>Why Physicians Retain Absolute Medical Authority</>
               )}
             </h2>
             <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 font-light">
               {language === "ID"
-                ? "Algoritma AI memiliki keunggulan luar biasa dalam memproses jutaan titik data secara cepat. Namun, pertimbangan klinis holistik—termasuk kondisi fisik pasien, riwayat gejala, dan konteks medis—hanya dapat dievaluasi secara utuh oleh dokter manusia."
-                : "While AI excels at scanning longitudinal trends and spotting delta deviations instantly, holistic clinical judgment requires human medical expertise and direct patient context."}
+                ? "Dalam tata kelola klinis modern, sistem komputasi mempercepat pemrosesan data, sementara pertimbangan diagnosis holistik dan tanggung jawab hukum mutlak berada di tangan dokter spesialis teregistrasi."
+                : "In modern clinical governance, computational systems accelerate data processing, while holistic diagnostic judgment and full legal accountability remain with licensed medical practitioners."}
             </p>
           </div>
 
-          {/* Two Clean Distinct Role Cards */}
+          {/* Side-by-Side Responsibility Matrix */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Peran Nova AI */}
+            {/* Box A: Sistem Nova AI */}
             <div className="rounded-[28px] bg-[#F8FBFE] border border-blue-100/90 p-7 sm:p-9 space-y-6 shadow-2xs">
               <div className="flex items-center gap-3.5 pb-4 border-b border-blue-100/80">
                 <div className="h-12 w-12 rounded-2xl bg-white border border-blue-200/70 text-[#2764B8] flex items-center justify-center shadow-xs">
-                  <BrainCircuit className="h-6 w-6" />
+                  <Cpu className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="font-display text-xl font-bold text-slate-900">
-                    {language === "ID" ? "Peran Nova AI (Asisten Analitis)" : "Role of Nova AI (Analytical Copilot)"}
+                    {language === "ID" ? "Sistem Nova AI (Decision Support)" : "Nova AI System (Decision Support)"}
                   </h3>
                   <p className="text-xs text-slate-500 font-light">
-                    {language === "ID" ? "Kecepatan Komputasi & Deteksi Dini" : "High-Speed Computing & Pattern Detection"}
+                    {language === "ID" ? "Komputasi Presisi & Deteksi Deviasi" : "High-Speed Computing & Variance Detection"}
                   </p>
                 </div>
               </div>
@@ -673,24 +833,32 @@ export default function NovaAIPage() {
                   <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
-                      ? "Memindai data biomarker dan riwayat tes lampau dalam hitungan milidetik."
-                      : "Scans biomarker readings and longitudinal patient timelines in milliseconds."}
+                      ? "Memindai ribuan hasil lab serial pasien dalam hitungan milidetik secara konsisten."
+                      : "Scans thousands of serial patient laboratory results in milliseconds with zero fatigue."}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
-                      ? "Mendeteksi lonjakan anomali delta-check sebelum timbul komplikasi klinis."
-                      : "Detects acute delta-check deviations before complications escalate."}
+                      ? "Menghitung deviasi delta-check otomatis terhadap baseline individual pasien terdahulu."
+                      : "Automatically calculates longitudinal delta deviations against individual patient baselines."}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
-                      ? "Merangkum angka desimal rumit menjadi draf narasi siap baca untuk dokter."
-                      : "Synthesizes dense telemetry tables into concise executive summaries for physicians."}
+                      ? "Menyiapkan draf narasi interpretasi terstruktur untuk mempercepat review dokter."
+                      : "Drafts structured clinical interpretation notes to accelerate pathologist review time."}
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-[#2764B8] shrink-0 mt-0.5" />
+                  <span>
+                    {language === "ID"
+                      ? "Menyiarkan alarm nilai kritis (Panic Values) ke dokter jaga < 15 menit sesuai KARS."
+                      : "Dispatches critical panic value alerts to attending physicians in < 15 minutes per KARS."}
                   </span>
                 </div>
               </div>
@@ -698,17 +866,17 @@ export default function NovaAIPage() {
               {/* Batasan Mutlak */}
               <div className="pt-4 border-t border-blue-100/80 space-y-2 text-xs text-slate-600">
                 <span className="font-bold text-slate-400 uppercase tracking-wider block">
-                  {language === "ID" ? "Batasan Etis:" : "Strict Guardrails:"}
+                  {language === "ID" ? "Batasan Regulasi Mutlak:" : "Strict Regulatory Limits:"}
                 </span>
-                <p className="italic">
+                <p className="text-slate-600 font-light leading-relaxed">
                   {language === "ID"
-                    ? "Nova AI tidak pernah mendiagnosis secara mandiri atau meresepkan obat."
-                    : "Nova AI never issues autonomous diagnoses or writes prescriptions."}
+                    ? "Nova AI tidak memiliki wewenang hukum untuk menegakkan diagnosis definitif mandiri atau meresepkan terapi obat."
+                    : "Nova AI possesses zero legal authority to issue autonomous definitive diagnoses or prescribe therapeutic drugs."}
                 </p>
               </div>
             </div>
 
-            {/* Peran Dokter */}
+            {/* Box B: Dokter Spesialis Patologi Klinik & DPJP */}
             <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 space-y-6 shadow-xs">
               <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
                 <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-xs">
@@ -716,10 +884,10 @@ export default function NovaAIPage() {
                 </div>
                 <div>
                   <h3 className="font-display text-xl font-bold text-slate-900">
-                    {language === "ID" ? "Peran Dokter (Otoritas Mutlak)" : "Role of Physician (Clinical Authority)"}
+                    {language === "ID" ? "Dokter Sp.PK & DPJP (Otoritas Medis)" : "Pathologist & Attending Physician"}
                   </h3>
                   <p className="text-xs text-slate-500 font-light">
-                    {language === "ID" ? "Keputusan Medis, Diagnosis & Terapi" : "Clinical Judgment, Diagnosis & Therapy"}
+                    {language === "ID" ? "Pertimbangan Holistik & Akuntabilitas Hukum" : "Holistic Clinical Judgment & Legal Responsibility"}
                   </p>
                 </div>
               </div>
@@ -729,70 +897,78 @@ export default function NovaAIPage() {
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
-                      ? "Mengevaluasi keabsahan temuan AI dengan kondisi fisik riil pasien."
-                      : "Evaluates AI findings against direct patient examination and clinical history."}
+                      ? "Mengkorelasikan temuan laboratorium dengan anamnesis dan kondisi fisik riil pasien."
+                      : "Correlates laboratory telemetry against patient clinical history and direct physical exam."}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
-                      ? "Menentukan diagnosis definitif dan merumuskan rencana terapi pengobatan."
-                      : "Establishes definitive diagnoses and prescribes comprehensive treatment plans."}
+                      ? "Menilai, mengedit, atau menolak draf narasi interpretasi yang diajukan sistem."
+                      : "Evaluates, modifies, or overrides automated clinical narrative recommendations."}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>
                     {language === "ID"
-                      ? "Mengesahkan lembar hasil laboratorium dengan tanda tangan digital resmi."
-                      : "Authorizes final patient reports with legal digital signatures."}
+                      ? "Menetapkan diagnosis medis definitif dan merumuskan rencana terapi penanganan."
+                      : "Establishes definitive medical diagnoses and prescribes therapeutic treatment plans."}
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    {language === "ID"
+                      ? "Mengesahkan lembar hasil laboratorium dengan tanda tangan digital resmi (BSrE)."
+                      : "Authorizes finalized laboratory reports with accredited cryptographic digital signatures."}
                   </span>
                 </div>
               </div>
 
-              {/* Tanggung Jawab Hukum */}
+              {/* Landasan Hukum */}
               <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-600">
                 <span className="font-bold text-slate-400 uppercase tracking-wider block">
-                  {language === "ID" ? "Akuntabilitas Hukum:" : "Legal Accountability:"}
+                  {language === "ID" ? "Landasan Hukum Republik Indonesia:" : "Indonesian Statutory Foundation:"}
                 </span>
-                <p>
+                <p className="text-slate-600 font-light leading-relaxed">
                   {language === "ID"
-                    ? "Tanggung jawab hukum atas keputusan klinis tetap 100% berada pada dokter penanggung jawab."
-                    : "Legal responsibility for medical decisions rests 100% with attending clinical practitioners."}
+                    ? "Berdasarkan UU Kesehatan No. 17/2023, seluruh pertimbangan klinis dan tanggung jawab hukum medis melekat pada dokter yang memiliki STR dan SIP aktif."
+                    : "Under Healthcare Law No. 17/2023, all medical decisions and legal responsibilities rest exclusively with certified and registered physicians."}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* 3 Simple Regulatory Pills */}
+          {/* 3 Regulatory Standards Trust Strip */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
             <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 flex items-center gap-3">
               <ShieldCheck className="h-5 w-5 text-[#2764B8] shrink-0" />
               <div>
                 <span className="font-bold text-xs text-slate-900 block">UU Kesehatan No. 17/2023</span>
                 <span className="text-[11px] text-slate-500 font-light">
-                  {language === "ID" ? "Kepastian hukum tenaga medis" : "Medical practitioner accountability"}
+                  {language === "ID" ? "Kepastian hukum tanggung jawab medis" : "Legal medical accountability"}
                 </span>
               </div>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 flex items-center gap-3">
-              <ShieldCheck className="h-5 w-5 text-[#2764B8] shrink-0" />
+              <Lock className="h-5 w-5 text-[#2764B8] shrink-0" />
               <div>
                 <span className="font-bold text-xs text-slate-900 block">Permenkes No. 24/2022</span>
                 <span className="text-[11px] text-slate-500 font-light">
-                  {language === "ID" ? "Standar RME & SATUSEHAT" : "EMR & SATUSEHAT compliance"}
+                  {language === "ID" ? "Interoperabilitas RME & SATUSEHAT" : "EMR & SATUSEHAT interoperability"}
                 </span>
               </div>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 flex items-center gap-3">
-              <ShieldCheck className="h-5 w-5 text-[#2764B8] shrink-0" />
+              <Activity className="h-5 w-5 text-[#2764B8] shrink-0" />
               <div>
-                <span className="font-bold text-xs text-slate-900 block">KARS & JCI</span>
+                <span className="font-bold text-xs text-slate-900 block">KARS SKP 2.2 & ISO 15189</span>
                 <span className="text-[11px] text-slate-500 font-light">
-                  {language === "ID" ? "Pelaporan nilai kritis resmi" : "Accredited panic value protocol"}
+                  {language === "ID" ? "Prosedur baku pelaporan nilai kritis" : "Accredited panic value triage"}
                 </span>
               </div>
             </div>
@@ -801,7 +977,7 @@ export default function NovaAIPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          BOTTOM CTA SECTION
+          BOTTOM CTA SECTION: Standardized Enterprise Banner
           ══════════════════════════════════════════════════════════════ */}
       <CTABanner />
     </div>
