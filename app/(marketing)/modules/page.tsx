@@ -579,7 +579,12 @@ export default function ModulesPage() {
                       type="button"
                       onClick={() => {
                         setSelectedModule(idx);
-                        window.scrollTo({ top: 350, behavior: "smooth" });
+                        const lenis = typeof window !== "undefined" ? (window as unknown as { lenis?: { scrollTo: (y: number, opts: unknown) => void } }).lenis : null;
+                        if (lenis) {
+                          lenis.scrollTo(350, { duration: 1 });
+                        } else {
+                          window.scrollTo({ top: 350, behavior: "smooth" });
+                        }
                       }}
                       className="text-xs font-semibold text-[#2764B8] hover:text-[#1E5299] transition-colors cursor-pointer"
                     >

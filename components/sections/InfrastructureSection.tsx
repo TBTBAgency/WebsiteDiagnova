@@ -234,10 +234,15 @@ export function InfrastructureSection({ initialData }: InfrastructureSectionProp
     const targetProgress = index === 0 ? 0.16 : index === 1 ? 0.5 : 0.92;
     const targetY = containerTop + targetProgress * totalScrollable;
 
-    window.scrollTo({
-      top: targetY,
-      behavior: "smooth",
-    });
+    const lenis = typeof window !== "undefined" ? (window as unknown as { lenis?: { scrollTo: (y: number, opts: unknown) => void } }).lenis : null;
+    if (lenis) {
+      lenis.scrollTo(targetY, { duration: 1.2 });
+    } else {
+      window.scrollTo({
+        top: targetY,
+        behavior: "smooth",
+      });
+    }
     setActiveIndex(index);
   };
 
