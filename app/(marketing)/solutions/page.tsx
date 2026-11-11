@@ -582,83 +582,85 @@ export default function SolutionsPage() {
                 {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
               </div>
 
-              {/* Main Card Body */}
-              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-7 sm:p-8 h-full flex flex-col justify-between">
+              {/* Main Card Body (Compact & Matching HTML Spec) */}
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-[28px] h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
-                  <div className="flex items-center gap-2.5">
-                    <Zap className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                  <div className="flex items-center gap-2 text-[18px] font-semibold text-slate-900">
+                    <Zap className="h-[18px] w-[18px] text-[#2466CB] fill-[#2466CB]" />
+                    <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight m-0">
                       {language === "ID" ? "RS Sentral" : "Hospital Central"}
                     </h3>
                   </div>
 
                   {/* Subtitle */}
-                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
+                  <p className="mt-2.5 text-[13px] leading-[1.5] text-slate-500 max-w-[32ch]">
                     {language === "ID"
-                      ? "Integrasi penuh SIMRS dua arah, panel CITO IGD berkecepatan tinggi, dan bridging SatuSehat otomatis."
-                      : "Full bidirectional HIS bridging, rapid emergency ER CITO panel alerts, and instant patient EMR synchronization."}
+                      ? "Solusi lengkap SIMRS dua arah, panel CITO IGD, dan bridging SatuSehat."
+                      : "Full bidirectional HIS bridging, rapid ER CITO alerts, and EMR sync."}
                   </p>
 
-                  {/* Price / Scale Headline */}
-                  <div className="mt-6 mb-5">
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
-                        Tier 1
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium ml-1">
-                        / {language === "ID" ? "RS Tipe A, B, C" : "Type A, B, C"}
-                      </span>
-                      <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
-                    </div>
-                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
-                      {deploymentMode === "cloud"
-                        ? "Private Cloud LIS + HL7 Bridge"
-                        : "Internal Local Hospital Server"}
+                  {/* Divider 1 */}
+                  <hr className="border-0 border-t border-[#ECECEA] my-5" />
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1">
+                    <strong className="text-[44px] font-bold text-slate-900 tracking-tight leading-none">
+                      Tier 1
+                    </strong>
+                    <span className="text-[12px] text-slate-500 font-normal">
+                      / {language === "ID" ? "RS Sentral" : "Hospital Central"}
                     </span>
+                    <button
+                      type="button"
+                      aria-label="Informasi lisensi Tier 1"
+                      title={deploymentMode === "cloud" ? "Cloud Enterprise" : "On-Premise Server"}
+                      className="inline-flex cursor-help text-slate-400 hover:text-slate-600 transition-colors ml-0.5 translate-y-[1px]"
+                    >
+                      <HelpCircle className="h-[13px] w-[13px]" />
+                    </button>
                   </div>
 
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-5 w-full h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[14px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
                     <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
-                  {/* Divider Line */}
-                  <div className="border-t border-slate-100 mt-6 pt-5">
-                    <p className="text-xs font-bold text-slate-900 mb-3.5">
-                      {language === "ID" ? "Tier 1 mencakup:" : "Core includes:"}
-                    </p>
+                  {/* Divider 2 */}
+                  <hr className="border-0 border-t border-[#ECECEA] my-5" />
 
-                    {/* Feature List with Mockup Icons */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <ArrowLeftRight className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span className="font-semibold text-slate-900">
-                          {language === "ID" ? "Bridging SIMRS & SatuSehat Kemenkes" : "Bidirectional HIS & SatuSehat Kemenkes"}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Monitor className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Validasi Barcode Flebotomi Bedside" : "Bedside Phlebotomy Barcode Validation"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <MapPin className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Panel CITO Terpusat IGD & Rawat Inap" : "Centralized Inpatient & ER CITO Panel"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Mic className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Panic Value Alert IGD & ICU < 25m" : "Panic Value Alert to ER & ICU < 25m"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Phone className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer Otomatis" : "Automated Interfacing with 500+ Analyzers"}</span>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Feature List Header */}
+                  <p className="text-[12.5px] font-semibold text-slate-900 mb-3.5">
+                    {language === "ID" ? "Tier 1 mencakup:" : "Core includes:"}
+                  </p>
+
+                  {/* Feature List */}
+                  <ul className="list-none m-0 p-0 grid gap-3">
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <ArrowLeftRight className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Bridging SIMRS & SatuSehat" : "Bidirectional HIS & SatuSehat"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Monitor className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Validasi barcode flebotomi" : "Bedside phlebotomy barcodes"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <MapPin className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Panel CITO IGD & rawat inap" : "Centralized ER & inpatient CITO"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Mic className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Panic value alert IGD < 25m" : "Panic value alert to ER < 25m"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Phone className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Interfacing 500+ analyzer" : "Automated 500+ analyzers"}</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -670,83 +672,85 @@ export default function SolutionsPage() {
                 {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
               </div>
 
-              {/* Main Card Body */}
-              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-7 sm:p-8 h-full flex flex-col justify-between">
+              {/* Main Card Body (Compact & Matching HTML Spec) */}
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-[28px] h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
-                  <div className="flex items-center gap-2.5">
-                    <Flame className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                  <div className="flex items-center gap-2 text-[18px] font-semibold text-slate-900">
+                    <Flame className="h-[18px] w-[18px] text-[#2466CB] fill-[#2466CB]" />
+                    <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight m-0">
                       {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
                     </h3>
                   </div>
 
                   {/* Subtitle */}
-                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
+                  <p className="mt-2.5 text-[13px] leading-[1.5] text-slate-500 max-w-[32ch]">
                     {language === "ID"
-                      ? "Dioptimalkan untuk throughput spesimen massal harian, registrasi barcode cepat, dan kirim hasil WhatsApp."
-                      : "Optimized for high-volume daily check-in, 30s rapid barcode labeling, and instant WhatsApp delivery."}
+                      ? "Throughput spesimen massal, cetak barcode cepat, dan kirim hasil WhatsApp."
+                      : "High-volume check-in, rapid barcode printing, and WhatsApp delivery."}
                   </p>
 
-                  {/* Price / Scale Headline */}
-                  <div className="mt-6 mb-5">
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
-                        Tier 2
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium ml-1">
-                        / {language === "ID" ? "Lab Mandiri & MCU" : "Independent & MCU"}
-                      </span>
-                      <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
-                    </div>
-                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
-                      {deploymentMode === "cloud"
-                        ? "High-Throughput Cloud Engine"
-                        : "Outpatient Dedicated Server"}
+                  {/* Divider 1 */}
+                  <hr className="border-0 border-t border-[#ECECEA] my-5" />
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1">
+                    <strong className="text-[44px] font-bold text-slate-900 tracking-tight leading-none">
+                      Tier 2
+                    </strong>
+                    <span className="text-[12px] text-slate-500 font-normal">
+                      / {language === "ID" ? "Lab Mandiri & MCU" : "Independent & MCU"}
                     </span>
+                    <button
+                      type="button"
+                      aria-label="Informasi lisensi Tier 2"
+                      title={deploymentMode === "cloud" ? "High-Throughput Cloud Engine" : "Outpatient Dedicated Server"}
+                      className="inline-flex cursor-help text-slate-400 hover:text-slate-600 transition-colors ml-0.5 translate-y-[1px]"
+                    >
+                      <HelpCircle className="h-[13px] w-[13px]" />
+                    </button>
                   </div>
 
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-5 w-full h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[14px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
                     <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
-                  {/* Divider Line */}
-                  <div className="border-t border-slate-100 mt-6 pt-5">
-                    <p className="text-xs font-bold text-slate-900 mb-3.5">
-                      {language === "ID" ? "Semua fitur Tier 1, ditambah:" : "Everything in Core, plus:"}
-                    </p>
+                  {/* Divider 2 */}
+                  <hr className="border-0 border-t border-[#ECECEA] my-5" />
 
-                    {/* Feature List with Mockup Icons */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <BarChart3 className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span className="font-semibold text-slate-900">
-                          {language === "ID" ? "Mesin Batch MCU Korporat 1-Klik" : "1-Click Corporate MCU Batch Engine"}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <MessageSquare className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Kirim Hasil WhatsApp PDF Terenkripsi" : "Encrypted WhatsApp PDF Delivery"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Video className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Portal Hasil Pasien Paperless Mandiri" : "Self-Service Paperless Patient Portal"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Share2 className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Gateway Billing B2B Jejaring Rujukan" : "B2B Referral Billing Gateway"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <RefreshCw className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Cetak Barcode Tabung 0.4s / Label" : "0.4s / Tube Rapid Barcode Printing"}</span>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Feature List Header */}
+                  <p className="text-[12.5px] font-semibold text-slate-900 mb-3.5">
+                    {language === "ID" ? "Semua fitur Tier 1, ditambah:" : "Everything in Core, plus:"}
+                  </p>
+
+                  {/* Feature List */}
+                  <ul className="list-none m-0 p-0 grid gap-3">
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <BarChart3 className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Batch MCU korporat 1-klik" : "1-Click corporate MCU batch"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <MessageSquare className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Kirim hasil WhatsApp otomatis" : "Automated WhatsApp delivery"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Video className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Portal hasil pasien paperless" : "Paperless patient portal"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Share2 className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Gateway billing B2B rujukan" : "B2B referral billing gateway"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <RefreshCw className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Cetak barcode tabung 0.4s" : "0.4s / tube barcode printing"}</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -758,81 +762,85 @@ export default function SolutionsPage() {
                 {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
               </div>
 
-              {/* Main Card Body */}
-              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-7 sm:p-8 h-full flex flex-col justify-between">
+              {/* Main Card Body (Compact & Matching HTML Spec) */}
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-[28px] h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
-                  <div className="flex items-center gap-2.5">
-                    <Microscope className="h-5 w-5 text-[#2466CB]" />
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                  <div className="flex items-center gap-2 text-[18px] font-semibold text-slate-900">
+                    <Microscope className="h-[18px] w-[18px] text-[#2466CB]" />
+                    <h3 className="text-[18px] font-semibold text-slate-900 tracking-tight m-0">
                       {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
                     </h3>
                   </div>
 
                   {/* Subtitle */}
-                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
+                  <p className="mt-2.5 text-[13px] leading-[1.5] text-slate-500 max-w-[32ch]">
                     {language === "ID"
-                      ? "Dirancang mendalam untuk instalasi patologi anatomi jaringan, mikrobiologi kultur CLSI, dan BDRS."
-                      : "Engineered for anatomical pathology tissue tracking, CLSI microbiology cultures, and hospital blood banks."}
+                      ? "Dirancang mendalam untuk instalasi patologi anatomi, mikrobiologi & BDRS."
+                      : "Specialized suite for pathology, microbiology cultures, and blood banks."}
                   </p>
 
-                  {/* Price / Scale Headline */}
-                  <div className="mt-6 mb-5">
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
-                        Tier 3
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium ml-1">
-                        / {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro"}
-                      </span>
-                      <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
-                    </div>
-                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
-                      {deploymentMode === "cloud"
-                        ? "Accredited Subspecialty Suite"
-                        : "Standalone Specimen Workstation"}
+                  {/* Divider 1 */}
+                  <hr className="border-0 border-t border-[#ECECEA] my-5" />
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1">
+                    <strong className="text-[44px] font-bold text-slate-900 tracking-tight leading-none">
+                      Tier 3
+                    </strong>
+                    <span className="text-[12px] text-slate-500 font-normal">
+                      / {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro"}
                     </span>
+                    <button
+                      type="button"
+                      aria-label="Informasi lisensi Tier 3"
+                      title={deploymentMode === "cloud" ? "Accredited Subspecialty Suite" : "Standalone Workstation"}
+                      className="inline-flex cursor-help text-slate-400 hover:text-slate-600 transition-colors ml-0.5 translate-y-[1px]"
+                    >
+                      <HelpCircle className="h-[13px] w-[13px]" />
+                    </button>
                   </div>
 
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-5 w-full h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[14px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
                     <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
-                  {/* Divider Line */}
-                  <div className="border-t border-slate-100 mt-6 pt-5">
-                    <p className="text-xs font-bold text-slate-900 mb-3.5">
-                      {language === "ID" ? "Solusi Spesialis mencakup:" : "Specialist suite includes:"}
-                    </p>
+                  {/* Divider 2 */}
+                  <hr className="border-0 border-t border-[#ECECEA] my-5" />
 
-                    {/* Feature List with Mockup Icons */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <QrCode className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Pelacakan 2D Kaset Jaringan & Slide PA" : "2D Tracking for Tissue Cassettes & Slides"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <FileText className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Template Baku ICD-O-3 & Bethesda Format" : "Standardized ICD-O-3 & Bethesda Templates"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Activity className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Pembangkit Peta Antibiogram CLSI Otomatis" : "Automated CLSI Antibiogram Generator"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <HeartPulse className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Uji Silang Serasi Digital ISBT-128 BDRS" : "Digital ISBT-128 Cross-Match Engine"}</span>
-                      </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
-                        <Thermometer className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
-                        <span>{language === "ID" ? "Telemetri Rantai Dingin 24/7 (2°C-6°C)" : "24/7 Cold Chain Telemetry (2°C-6°C)"}</span>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Feature List Header */}
+                  <p className="text-[12.5px] font-semibold text-slate-900 mb-3.5">
+                    {language === "ID" ? "Solusi Spesialis mencakup:" : "Specialist suite includes:"}
+                  </p>
+
+                  {/* Feature List */}
+                  <ul className="list-none m-0 p-0 grid gap-3">
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <QrCode className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Pelacakan 2D kaset & slide PA" : "2D tracking for tissue cassettes"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <FileText className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Template ICD-O-3 & Bethesda" : "ICD-O-3 & Bethesda templates"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Activity className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Antibiogram mikrobiologi CLSI" : "Automated CLSI antibiogram"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <HeartPulse className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Uji silang serasi digital BDRS" : "Digital ISBT-128 cross-match"}</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 text-[13px] text-slate-600">
+                      <Thermometer className="h-[15px] w-[15px] text-slate-400 shrink-0" />
+                      <span className="truncate">{language === "ID" ? "Telemetri cold chain 2°C-6°C" : "24/7 cold chain telemetry"}</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
