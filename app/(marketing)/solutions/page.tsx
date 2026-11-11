@@ -30,6 +30,15 @@ import {
   HeartPulse,
   MessageSquare,
   HelpCircle,
+  ArrowLeftRight,
+  Monitor,
+  MapPin,
+  Mic,
+  Phone,
+  BarChart3,
+  Video,
+  Share2,
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -41,6 +50,7 @@ export default function SolutionsPage() {
   const { language } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState<"micro" | "blood">("micro");
   const [deploymentMode, setDeploymentMode] = useState<"cloud" | "onprem">("cloud");
+  const [hoveredButton, setHoveredButton] = useState<number | null>(null);
 
   return (
     <div className="w-full bg-[#FAFBFD] text-slate-800">
@@ -562,95 +572,138 @@ export default function SolutionsPage() {
             </div>
           </div>
 
-          {/* 3 Floating White Cards (Matching SaaS Mockup Architecture) */}
-          <div className="relative z-20 -mt-28 sm:-mt-36 lg:-mt-44 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
-            {/* Card 1: Tier 1 - Hospital Systems (Core) */}
-            <div className="rounded-[28px] bg-white border border-slate-200/80 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
-              <div>
-                {/* Top Icon & Title */}
-                <div className="flex items-center gap-2.5">
-                  <Zap className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
-                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                    {language === "ID" ? "RS Sentral" : "Hospital Central"}
-                  </h3>
-                </div>
+          {/* 3 Floating White Cards (Matching SaaS Mockup Architecture - Clean & Balanced) */}
+          <div className="relative z-20 -mt-24 sm:-mt-32 lg:-mt-40 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
+            {/* Card 1: Tier 1 - Hospital Systems */}
+            <div className="relative flex flex-col pt-8">
+              {/* Top Tab (Slides out above card on button hover) */}
+              <div
+                className={cn(
+                  "absolute top-0 left-0 right-0 h-9 rounded-t-[22px] bg-[#EEF4FF] border-t border-x border-blue-200/90 flex items-center justify-center transition-all duration-300 ease-out z-0 pointer-events-none",
+                  hoveredButton === 1 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                )}
+              >
+                <span className="text-[11px] font-bold text-[#1E54A8] tracking-wide">
+                  {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
+                </span>
+              </div>
 
-                {/* Subtitle */}
-                <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
-                  {language === "ID"
-                    ? "Integrasi penuh SIMRS dua arah, panel CITO IGD berkecepatan tinggi, dan bridging SatuSehat otomatis."
-                    : "Full bidirectional HIS bridging, rapid emergency ER CITO panel alerts, and instant patient EMR synchronization."}
-                </p>
-
-                {/* Price / Scale Headline */}
-                <div className="mt-6 mb-5">
-                  <div className="flex items-baseline gap-1">
-                    <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
-                      Tier 1
-                    </span>
-                    <span className="text-xs text-slate-400 font-medium ml-1">
-                      / {language === "ID" ? "RS Tipe A, B, C" : "Type A, B, C"}
-                    </span>
-                    <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
+              {/* Main Card Body */}
+              <div
+                className={cn(
+                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-300",
+                  hoveredButton === 1 && "border-blue-300 shadow-[0_20px_45px_rgba(36,102,203,0.14)] -translate-y-1"
+                )}
+              >
+                <div>
+                  {/* Top Icon & Title */}
+                  <div className="flex items-center gap-2.5">
+                    <Zap className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
+                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                      {language === "ID" ? "RS Sentral" : "Hospital Central"}
+                    </h3>
                   </div>
-                  <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
-                    {deploymentMode === "cloud"
-                      ? "Private Cloud LIS + HL7 Bridge"
-                      : "Internal Local Hospital Server"}
-                  </span>
-                </div>
 
-                {/* CTA Button (Directly under price / headline) */}
-                <Link
-                  href="/request-demo"
-                  className="block w-full py-3.5 rounded-full border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold text-center transition-all shadow-2xs"
-                >
-                  {language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}
-                </Link>
-
-                {/* Divider Line */}
-                <div className="border-t border-slate-100 mt-6 pt-5">
-                  <p className="text-xs font-bold text-slate-900 mb-3.5">
-                    {language === "ID" ? "Tier 1 mencakup:" : "Core includes:"}
+                  {/* Subtitle */}
+                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
+                    {language === "ID"
+                      ? "Integrasi penuh SIMRS dua arah, panel CITO IGD berkecepatan tinggi, dan bridging SatuSehat otomatis."
+                      : "Full bidirectional HIS bridging, rapid emergency ER CITO panel alerts, and instant patient EMR synchronization."}
                   </p>
 
-                  {/* Feature List with Individual Muted Icons */}
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <Network className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span className="font-semibold text-slate-900">
-                        {language === "ID" ? "Bridging SIMRS & SatuSehat Kemenkes" : "Bidirectional HIS & SatuSehat Kemenkes"}
+                  {/* Price / Scale Headline */}
+                  <div className="mt-6 mb-5">
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
+                        Tier 1
                       </span>
+                      <span className="text-xs text-slate-400 font-medium ml-1">
+                        / {language === "ID" ? "RS Tipe A, B, C" : "Type A, B, C"}
+                      </span>
+                      <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <AlertCircle className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Panic Value Alert IGD & ICU < 25m" : "Panic Value Alert to ER & ICU < 25m"}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <ScanLine className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Validasi Barcode Flebotomi Bedside" : "Bedside Phlebotomy Barcode Validation"}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <ShieldCheck className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Kepatuhan Akreditasi KARS & JCI" : "Full KARS & JCI Audit Compliance"}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <Layers className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer Otomatis" : "Automated Interfacing with 500+ Analyzers"}</span>
+                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
+                      {deploymentMode === "cloud"
+                        ? "Private Cloud LIS + HL7 Bridge"
+                        : "Internal Local Hospital Server"}
+                    </span>
+                  </div>
+
+                  {/* CTA Button (Directly under price / headline) */}
+                  <Link
+                    href="/request-demo"
+                    onMouseEnter={() => setHoveredButton(1)}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onFocus={() => setHoveredButton(1)}
+                    onBlur={() => setHoveredButton(null)}
+                    className={cn(
+                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-200 shadow-2xs active:scale-[0.99]",
+                      hoveredButton === 1
+                        ? "bg-[#183494] text-white shadow-md border-transparent"
+                        : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
+                    )}
+                  >
+                    <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
+                    {hoveredButton === 1 && <MessageSquare className="h-3.5 w-3.5 fill-white" />}
+                  </Link>
+
+                  {/* Divider Line */}
+                  <div className="border-t border-slate-100 mt-6 pt-5">
+                    <p className="text-xs font-bold text-slate-900 mb-3.5">
+                      {language === "ID" ? "Tier 1 mencakup:" : "Core includes:"}
+                    </p>
+
+                    {/* Feature List with Mockup Icons */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <ArrowLeftRight className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span className="font-semibold text-slate-900">
+                          {language === "ID" ? "Bridging SIMRS & SatuSehat Kemenkes" : "Bidirectional HIS & SatuSehat Kemenkes"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Monitor className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Validasi Barcode Flebotomi Bedside" : "Bedside Phlebotomy Barcode Validation"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <MapPin className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Panel CITO Terpusat IGD & Rawat Inap" : "Centralized Inpatient & ER CITO Panel"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Mic className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Panic Value Alert IGD & ICU < 25m" : "Panic Value Alert to ER & ICU < 25m"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Phone className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer Otomatis" : "Automated Interfacing with 500+ Analyzers"}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Card 2: Tier 2 - Clinical & MCU Labs (Advanced / Featured) */}
-            <div className="rounded-[28px] bg-white border-2 border-blue-400/50 shadow-[0_22px_55px_rgba(36,102,203,0.20)] flex flex-col justify-between overflow-hidden relative z-20 hover:-translate-y-1.5 transition-all duration-300">
-              {/* Top Accent Banner from Mockup */}
-              <div className="bg-[#EEF4FF] text-[#1E54A8] text-center py-2.5 px-4 text-[11px] font-bold tracking-wide uppercase border-b border-blue-100">
-                {language === "ID" ? "Rekomendasi Utama Lab & MCU" : "Ideal for High-Volume Labs & MCU"}
+            {/* Card 2: Tier 2 - Clinical & MCU Labs */}
+            <div className="relative flex flex-col pt-8">
+              {/* Top Tab (Slides out above card on button hover) */}
+              <div
+                className={cn(
+                  "absolute top-0 left-0 right-0 h-9 rounded-t-[22px] bg-[#EEF4FF] border-t border-x border-blue-200/90 flex items-center justify-center transition-all duration-300 ease-out z-0 pointer-events-none",
+                  hoveredButton === 2 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                )}
+              >
+                <span className="text-[11px] font-bold text-[#1E54A8] tracking-wide">
+                  {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
+                </span>
               </div>
 
-              <div className="p-7 sm:p-8 flex-1 flex flex-col justify-between">
+              {/* Main Card Body */}
+              <div
+                className={cn(
+                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-300",
+                  hoveredButton === 2 && "border-blue-300 shadow-[0_20px_45px_rgba(36,102,203,0.14)] -translate-y-1"
+                )}
+              >
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
@@ -685,44 +738,53 @@ export default function SolutionsPage() {
                     </span>
                   </div>
 
-                  {/* CTA Button: Solid Navy Pill with MessageSquare Icon */}
+                  {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-[#183494] hover:bg-[#122874] text-white text-xs font-bold text-center transition-all shadow-[0_4px_16px_rgba(24,52,148,0.28)] active:scale-[0.98]"
+                    onMouseEnter={() => setHoveredButton(2)}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onFocus={() => setHoveredButton(2)}
+                    onBlur={() => setHoveredButton(null)}
+                    className={cn(
+                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-200 shadow-2xs active:scale-[0.99]",
+                      hoveredButton === 2
+                        ? "bg-[#183494] text-white shadow-md border-transparent"
+                        : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
+                    )}
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
-                    <MessageSquare className="h-3.5 w-3.5 fill-white/20" />
+                    {hoveredButton === 2 && <MessageSquare className="h-3.5 w-3.5 fill-white" />}
                   </Link>
 
                   {/* Divider Line */}
                   <div className="border-t border-slate-100 mt-6 pt-5">
                     <p className="text-xs font-bold text-slate-900 mb-3.5">
-                      {language === "ID" ? "Semua fitur Tier 1, ditambah:" : "Everything in Tier 1, plus:"}
+                      {language === "ID" ? "Semua fitur Tier 1, ditambah:" : "Everything in Core, plus:"}
                     </p>
 
-                    {/* Feature List with Individual Muted Icons */}
+                    {/* Feature List with Mockup Icons */}
                     <div className="space-y-3">
-                      <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                        <Users className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <BarChart3 className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
                         <span className="font-semibold text-slate-900">
                           {language === "ID" ? "Mesin Batch MCU Korporat 1-Klik" : "1-Click Corporate MCU Batch Engine"}
                         </span>
                       </div>
-                      <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                        <Printer className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                        <span>{language === "ID" ? "Cetak Barcode Tabung 0.4s / Label" : "0.4s / Tube Rapid Barcode Printing"}</span>
-                      </div>
-                      <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                        <Send className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <MessageSquare className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
                         <span>{language === "ID" ? "Kirim Hasil WhatsApp PDF Terenkripsi" : "Encrypted WhatsApp PDF Delivery"}</span>
                       </div>
-                      <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                        <CreditCard className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Video className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Portal Hasil Pasien Paperless Mandiri" : "Self-Service Paperless Patient Portal"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Share2 className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
                         <span>{language === "ID" ? "Gateway Billing B2B Jejaring Rujukan" : "B2B Referral Billing Gateway"}</span>
                       </div>
-                      <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                        <Laptop className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                        <span>{language === "ID" ? "Portal Hasil Pasien Paperless Mandiri" : "Self-Service Paperless Patient Portal"}</span>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <RefreshCw className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Cetak Barcode Tabung 0.4s / Label" : "0.4s / Tube Rapid Barcode Printing"}</span>
                       </div>
                     </div>
                   </div>
@@ -730,77 +792,107 @@ export default function SolutionsPage() {
               </div>
             </div>
 
-            {/* Card 3: Tier 3 - Specialist Diagnostics (Enterprise) */}
-            <div className="rounded-[28px] bg-white border border-slate-200/80 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
-              <div>
-                {/* Top Icon & Title */}
-                <div className="flex items-center gap-2.5">
-                  <Microscope className="h-5 w-5 text-[#2466CB]" />
-                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                    {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
-                  </h3>
-                </div>
+            {/* Card 3: Tier 3 - Specialist Diagnostics */}
+            <div className="relative flex flex-col pt-8">
+              {/* Top Tab (Slides out above card on button hover) */}
+              <div
+                className={cn(
+                  "absolute top-0 left-0 right-0 h-9 rounded-t-[22px] bg-[#EEF4FF] border-t border-x border-blue-200/90 flex items-center justify-center transition-all duration-300 ease-out z-0 pointer-events-none",
+                  hoveredButton === 3 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                )}
+              >
+                <span className="text-[11px] font-bold text-[#1E54A8] tracking-wide">
+                  {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
+                </span>
+              </div>
 
-                {/* Subtitle */}
-                <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
-                  {language === "ID"
-                    ? "Dirancang mendalam untuk instalasi patologi anatomi jaringan, mikrobiologi kultur CLSI, dan BDRS."
-                    : "Engineered for anatomical pathology tissue tracking, CLSI microbiology cultures, and hospital blood banks."}
-                </p>
-
-                {/* Price / Scale Headline */}
-                <div className="mt-6 mb-5">
-                  <div className="flex items-baseline gap-1">
-                    <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
-                      Tier 3
-                    </span>
-                    <span className="text-xs text-slate-400 font-medium ml-1">
-                      / {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro"}
-                    </span>
-                    <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
+              {/* Main Card Body */}
+              <div
+                className={cn(
+                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-300",
+                  hoveredButton === 3 && "border-blue-300 shadow-[0_20px_45px_rgba(36,102,203,0.14)] -translate-y-1"
+                )}
+              >
+                <div>
+                  {/* Top Icon & Title */}
+                  <div className="flex items-center gap-2.5">
+                    <Microscope className="h-5 w-5 text-[#2466CB]" />
+                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                      {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
+                    </h3>
                   </div>
-                  <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
-                    {deploymentMode === "cloud"
-                      ? "Accredited Subspecialty Suite"
-                      : "Standalone Specimen Workstation"}
-                  </span>
-                </div>
 
-                {/* CTA Button (Directly under price / headline) */}
-                <Link
-                  href="/request-demo"
-                  className="block w-full py-3.5 rounded-full border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold text-center transition-all shadow-2xs"
-                >
-                  {language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}
-                </Link>
-
-                {/* Divider Line */}
-                <div className="border-t border-slate-100 mt-6 pt-5">
-                  <p className="text-xs font-bold text-slate-900 mb-3.5">
-                    {language === "ID" ? "Solusi Spesialis mencakup:" : "Specialist suite includes:"}
+                  {/* Subtitle */}
+                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2.5 leading-relaxed min-h-[38px]">
+                    {language === "ID"
+                      ? "Dirancang mendalam untuk instalasi patologi anatomi jaringan, mikrobiologi kultur CLSI, dan BDRS."
+                      : "Engineered for anatomical pathology tissue tracking, CLSI microbiology cultures, and hospital blood banks."}
                   </p>
 
-                  {/* Feature List with Individual Muted Icons */}
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <QrCode className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Pelacakan 2D Kaset Jaringan & Slide" : "2D Tracking for Tissue Cassettes & Slides"}</span>
+                  {/* Price / Scale Headline */}
+                  <div className="mt-6 mb-5">
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
+                        Tier 3
+                      </span>
+                      <span className="text-xs text-slate-400 font-medium ml-1">
+                        / {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro"}
+                      </span>
+                      <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <FileText className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Template Baku ICD-O-3 & Bethesda" : "Standardized ICD-O-3 & Bethesda Templates"}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <Activity className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Pembangkit Peta Antibiogram CLSI" : "Automated CLSI Antibiogram Generator"}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <HeartPulse className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Uji Silang Serasi Digital ISBT-128" : "Digital ISBT-128 Cross-Match Engine"}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5 text-xs text-slate-700">
-                      <Thermometer className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0 mt-0.5" />
-                      <span>{language === "ID" ? "Telemetri Rantai Dingin 24/7 (2°C-6°C)" : "24/7 Cold Chain Telemetry (2°C-6°C)"}</span>
+                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
+                      {deploymentMode === "cloud"
+                        ? "Accredited Subspecialty Suite"
+                        : "Standalone Specimen Workstation"}
+                    </span>
+                  </div>
+
+                  {/* CTA Button */}
+                  <Link
+                    href="/request-demo"
+                    onMouseEnter={() => setHoveredButton(3)}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onFocus={() => setHoveredButton(3)}
+                    onBlur={() => setHoveredButton(null)}
+                    className={cn(
+                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-200 shadow-2xs active:scale-[0.99]",
+                      hoveredButton === 3
+                        ? "bg-[#183494] text-white shadow-md border-transparent"
+                        : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
+                    )}
+                  >
+                    <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
+                    {hoveredButton === 3 && <MessageSquare className="h-3.5 w-3.5 fill-white" />}
+                  </Link>
+
+                  {/* Divider Line */}
+                  <div className="border-t border-slate-100 mt-6 pt-5">
+                    <p className="text-xs font-bold text-slate-900 mb-3.5">
+                      {language === "ID" ? "Solusi Spesialis mencakup:" : "Specialist suite includes:"}
+                    </p>
+
+                    {/* Feature List with Mockup Icons */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <QrCode className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Pelacakan 2D Kaset Jaringan & Slide PA" : "2D Tracking for Tissue Cassettes & Slides"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <FileText className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Template Baku ICD-O-3 & Bethesda Format" : "Standardized ICD-O-3 & Bethesda Templates"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Activity className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Pembangkit Peta Antibiogram CLSI Otomatis" : "Automated CLSI Antibiogram Generator"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <HeartPulse className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Uji Silang Serasi Digital ISBT-128 BDRS" : "Digital ISBT-128 Cross-Match Engine"}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Thermometer className="h-4 w-4 text-slate-400 stroke-[1.75] shrink-0" />
+                        <span>{language === "ID" ? "Telemetri Rantai Dingin 24/7 (2°C-6°C)" : "24/7 Cold Chain Telemetry (2°C-6°C)"}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
