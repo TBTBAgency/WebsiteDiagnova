@@ -499,7 +499,7 @@ export default function SolutionsPage() {
       <section className="w-full bg-[#FAFBFD] pt-14 pb-28 sm:pb-36 border-t border-slate-200/60 overflow-visible">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative">
           {/* Blue Framed Container Pod with Request-Demo Gradient & Orbs */}
-          <div className="relative rounded-[32px] sm:rounded-[40px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-14 sm:pt-16 pb-36 sm:pb-44 lg:pb-52 px-6 sm:px-10 lg:px-14 shadow-[0_25px_60px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
+          <div className="relative rounded-[32px] sm:rounded-[40px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-20 sm:pt-28 lg:pt-36 pb-60 sm:pb-72 lg:pb-88 xl:pb-96 px-6 sm:px-10 lg:px-14 shadow-[0_25px_60px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
             {/* Ambient Glowing Orbs (Exact Request-Demo Luminous Aesthetics) */}
             <div className="absolute -top-16 -left-16 w-96 h-96 rounded-full bg-[#60A5FA]/35 blur-3xl pointer-events-none" />
             <div className="absolute top-1/2 -right-16 w-96 h-96 rounded-full bg-[#38BDF8]/25 blur-3xl pointer-events-none" />
@@ -537,14 +537,14 @@ export default function SolutionsPage() {
                   ? "Solusi Tepat untuk Setiap Skala Faskes"
                   : "Tailored Architectures for Every Facility Scale"}
               </h2>
-              <p className="mt-3 text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed max-w-2xl mx-auto">
+              <p className="mt-3.5 text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed max-w-2xl mx-auto">
                 {language === "ID"
                   ? "Pilih konfigurasi yang dirancang khusus untuk kebutuhan dan kapasitas instansi Anda. Tanpa biaya tersembunyi, fokus pada efisiensi kerja klinis."
                   : "Choose an architecture engineered for your institution's specific tier. No bloatware, focused purely on clinical speed and compliance."}
               </p>
 
               {/* Galileo-style White Pill Switcher with Active Blue Button */}
-              <div className="inline-flex items-center p-1 rounded-full bg-white shadow-md mt-7">
+              <div className="inline-flex items-center p-1 rounded-full bg-white shadow-md mt-8 sm:mt-9">
                 <button
                   type="button"
                   onClick={() => setDeploymentMode("cloud")}
@@ -574,7 +574,7 @@ export default function SolutionsPage() {
           </div>
 
           {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture - Diagnova Blue Palette) */}
-          <div className="relative z-20 -mt-24 sm:-mt-32 lg:-mt-40 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
+          <div className="relative z-20 -mt-28 sm:-mt-36 lg:-mt-48 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
             <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
