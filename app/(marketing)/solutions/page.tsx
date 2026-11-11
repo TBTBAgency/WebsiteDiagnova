@@ -151,28 +151,21 @@ export default function SolutionsPage() {
         />
 
         <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Section Header (Centered like Mockup) */}
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-200/90 shadow-2xs text-xs font-semibold text-slate-700 mb-4">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              <span>{language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?"}</span>
+          {/* Section Header (Left-aligned with SectionBadge like other sections) */}
+          <div className="max-w-3xl mb-10 sm:mb-12">
+            <div className="mb-3.5">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?"}
+              </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-[#111827] tracking-tight leading-[1.14]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
               {language === "ID" ? (
-                <>
-                  Dirancang untuk Membuat Kerja
-                  <br />
-                  Laboratorium Lebih Mudah
-                </>
+                <>Dirancang untuk Membuat Kerja Laboratorium Lebih Mudah</>
               ) : (
-                <>
-                  Designed to Make Laboratory
-                  <br />
-                  Work Effortless
-                </>
+                <>Designed to Make Laboratory Work Effortless</>
               )}
             </h2>
-            <p className="mt-3.5 text-sm sm:text-base text-slate-500 font-normal leading-relaxed max-w-2xl mx-auto">
+            <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Pengalaman diagnostik yang lebih lancar dan cerdas, mulai dari bridging SIMRS dua arah hingga rangkuman klinis Nova AI."
                 : "Experience a smoother, smarter way to run clinical workflows from HIS bridging to Nova AI summaries."}
