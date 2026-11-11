@@ -551,12 +551,17 @@ export default function SolutionsPage() {
           {/* 3 Floating White Cards (Overlapping bottom boundary of blue pod) */}
           <div className="relative z-20 -mt-28 sm:-mt-36 lg:-mt-44 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
-            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_20px_45px_rgba(15,23,42,0.14)] flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300">
+            <div className="rounded-[26px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_15px_40px_rgba(0,0,0,0.12)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
               <div className="space-y-4">
-                {/* Plan Header */}
-                <span className="text-sm font-bold text-slate-800 block">
-                  {language === "ID" ? "Rumah Sakit Sentral" : "Hospital Central"}
-                </span>
+                {/* Top Circular Badge & Plan Name (Mockup Style) */}
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-[#2466CB] text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Building2 className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-900">
+                    {language === "ID" ? "Rumah Sakit Sentral" : "Hospital Central"}
+                  </span>
+                </div>
 
                 {/* Price / Scale Headline */}
                 <div>
@@ -568,7 +573,7 @@ export default function SolutionsPage() {
                       {language === "ID" ? "RS Tipe A / B / C" : "Type A / B / C"}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-medium text-[#2764B8] block mt-1">
+                  <span className="text-[11px] font-mono font-medium text-[#2466CB] block mt-1">
                     {deploymentMode === "cloud"
                       ? "Private Cloud LIS + HL7 Bridge"
                       : "Internal Local Hospital Server"}
@@ -581,26 +586,26 @@ export default function SolutionsPage() {
                     : "Full bidirectional HIS bridging, rapid emergency ER CITO panel alerts, and instant patient EMR synchronization."}
                 </p>
 
-                {/* Feature List with Galileo-style Green Checks */}
-                <div className="pt-3 border-t border-slate-100 space-y-3">
+                {/* Feature List with Mockup Blue Checks */}
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span className="font-semibold text-slate-900">{language === "ID" ? "Bridging SIMRS & SatuSehat Kemenkes" : "Bidirectional HIS & SatuSehat Kemenkes"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Panic Value Alert IGD & ICU < 25m" : "Panic Value Alert to ER & ICU < 25m"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Validasi Barcode Flebotomi Bedside" : "Bedside Phlebotomy Barcode Validation"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Kepatuhan Akreditasi KARS & JCI" : "Full KARS & JCI Audit Compliance"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer Otomatis" : "Automated Interfacing with 500+ Analyzers"}</span>
                   </div>
                 </div>
@@ -610,7 +615,7 @@ export default function SolutionsPage() {
               <div className="pt-6 mt-6 border-t border-slate-100">
                 <Link
                   href="/request-demo"
-                  className="block w-full py-3 rounded-full border-2 border-[#2764B8] hover:bg-[#2764B8]/5 text-[#2764B8] text-xs font-bold text-center transition-all shadow-2xs"
+                  className="block w-full py-3 rounded-full border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold text-center transition-all shadow-2xs"
                 >
                   {language === "ID" ? "Konsultasi Solusi RS" : "Consult Hospital Setup"}
                 </Link>
@@ -618,13 +623,18 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 2: Tier 2 - Clinical & Reference Labs (FEATURED CENTER HIGHLIGHT) */}
-            <div className="rounded-[24px] sm:rounded-[28px] bg-white border-2 border-blue-200 p-7 sm:p-8 shadow-[0_25px_55px_rgba(15,23,42,0.18)] flex flex-col justify-between hover:-translate-y-2 transition-all duration-300 relative z-20">
+            <div className="rounded-[26px] bg-white border-2 border-blue-200/90 p-7 sm:p-8 shadow-[0_25px_60px_rgba(36,102,203,0.22)] flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 relative z-20">
               <div className="space-y-4">
-                {/* Plan Header */}
+                {/* Top Circular Badge & Plan Name */}
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-slate-800">
-                    {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-[#2466CB] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <FlaskConical className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-900">
+                      {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
+                    </span>
+                  </div>
                   <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     POPULAR
                   </span>
@@ -636,11 +646,11 @@ export default function SolutionsPage() {
                     <span className="font-display text-3xl sm:text-[34px] font-extrabold text-slate-900 tracking-tight">
                       Tier 2
                     </span>
-                    <span className="text-xs text-[#2764B8] font-bold ml-2">
+                    <span className="text-xs text-[#2466CB] font-bold ml-2">
                       {language === "ID" ? "Lab Mandiri & MCU" : "Independent & MCU"}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-medium text-[#2764B8] block mt-1">
+                  <span className="text-[11px] font-mono font-medium text-[#2466CB] block mt-1">
                     {deploymentMode === "cloud"
                       ? "High-Throughput Cloud Engine"
                       : "Outpatient Dedicated Server"}
@@ -653,36 +663,36 @@ export default function SolutionsPage() {
                     : "Optimized for high-volume daily check-in, 30s rapid barcode labeling, and instant encrypted WhatsApp delivery."}
                 </p>
 
-                {/* Feature List with Galileo-style Green Checks */}
-                <div className="pt-3 border-t border-slate-100 space-y-3">
+                {/* Feature List with Mockup Blue Checks */}
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span className="font-semibold text-slate-900">{language === "ID" ? "Mesin Batch MCU Korporat 1-Klik" : "1-Click Corporate MCU Batch Engine"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Cetak Barcode Tabung 0.4s / Label" : "0.4s / Tube Rapid Barcode Printing"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Kirim Hasil WhatsApp PDF Terenkripsi" : "Encrypted WhatsApp PDF Delivery"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Gateway Billing B2B Jejaring Rujukan" : "B2B Referral Billing Gateway"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Portal Hasil Pasien Paperless Mandiri" : "Self-Service Paperless Patient Portal"}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Filled Blue Button (Highlight like Galileo) */}
+              {/* Bottom Filled Blue Button (Highlight like Mockup) */}
               <div className="pt-6 mt-6 border-t border-slate-100">
                 <Link
                   href="/request-demo"
-                  className="block w-full py-3.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white text-xs font-bold text-center shadow-[0_4px_16px_rgba(39,100,184,0.35)] transition-all active:scale-[0.98]"
+                  className="block w-full py-3.5 rounded-full bg-[#2466CB] hover:bg-[#1E54A8] text-white text-xs font-bold text-center shadow-[0_4px_16px_rgba(36,102,203,0.35)] transition-all active:scale-[0.98]"
                 >
                   {language === "ID" ? "Pilih Solusi Lab Klinik" : "Choose Clinical Lab Setup"}
                 </Link>
@@ -690,12 +700,17 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
-            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_20px_45px_rgba(15,23,42,0.14)] flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300">
+            <div className="rounded-[26px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_15px_40px_rgba(0,0,0,0.12)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
               <div className="space-y-4">
-                {/* Plan Header */}
-                <span className="text-sm font-bold text-slate-800 block">
-                  {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
-                </span>
+                {/* Top Circular Badge & Plan Name */}
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-[#2466CB] text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Microscope className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-900">
+                    {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
+                  </span>
+                </div>
 
                 {/* Price / Scale Headline */}
                 <div>
@@ -707,7 +722,7 @@ export default function SolutionsPage() {
                       {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro Suite"}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-medium text-[#2764B8] block mt-1">
+                  <span className="text-[11px] font-mono font-medium text-[#2466CB] block mt-1">
                     {deploymentMode === "cloud"
                       ? "Accredited Subspecialty Suite"
                       : "Standalone Specimen Workstation"}
@@ -720,26 +735,26 @@ export default function SolutionsPage() {
                     : "Engineered for anatomical pathology tissue tracking, CLSI microbiology cultures, and hospital blood banks."}
                 </p>
 
-                {/* Feature List with Galileo-style Green Checks */}
-                <div className="pt-3 border-t border-slate-100 space-y-3">
+                {/* Feature List with Mockup Blue Checks */}
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Pelacakan 2D Kaset Jaringan & Slide" : "2D Tracking for Tissue Cassettes & Slides"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Template Baku ICD-O-3 & Bethesda" : "Standardized ICD-O-3 & Bethesda Templates"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Pembangkit Peta Antibiogram CLSI" : "Automated CLSI Antibiogram Generator"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Uji Silang Serasi Digital ISBT-128" : "Digital ISBT-128 Cross-Match Engine"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                    <Check className="h-4 w-4 text-[#2466CB] stroke-[2.5] shrink-0" />
                     <span>{language === "ID" ? "Telemetri Rantai Dingin 24/7 (2°C-6°C)" : "24/7 Cold Chain Telemetry (2°C-6°C)"}</span>
                   </div>
                 </div>
@@ -749,7 +764,7 @@ export default function SolutionsPage() {
               <div className="pt-6 mt-6 border-t border-slate-100">
                 <Link
                   href="/request-demo"
-                  className="block w-full py-3 rounded-full border-2 border-[#2764B8] hover:bg-[#2764B8]/5 text-[#2764B8] text-xs font-bold text-center transition-all shadow-2xs"
+                  className="block w-full py-3 rounded-full border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold text-center transition-all shadow-2xs"
                 >
                   {language === "ID" ? "Konsultasi Solusi Spesialis" : "Consult Specialist Setup"}
                 </Link>
