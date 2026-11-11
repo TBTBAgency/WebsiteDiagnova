@@ -489,11 +489,29 @@ export default function SolutionsPage() {
               }}
             />
 
-            {/* Layered Stepped Glass Pillars Architectural Silhouette */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:flex justify-center items-end gap-6 lg:gap-8 max-w-[1240px] mx-auto px-6">
-              <div className="w-1/3 h-[78%] rounded-t-[32px] sm:rounded-t-[38px] bg-gradient-to-t from-white/10 via-white/15 to-white/20 border-t border-x border-white/20 backdrop-blur-xs" />
-              <div className="w-1/3 h-[90%] rounded-t-[36px] sm:rounded-t-[44px] bg-gradient-to-t from-white/15 via-white/20 to-white/25 border-t border-x border-white/25 backdrop-blur-xs" />
-              <div className="w-1/3 h-[78%] rounded-t-[32px] sm:rounded-t-[38px] bg-gradient-to-t from-white/10 via-white/15 to-white/20 border-t border-x border-white/20 backdrop-blur-xs" />
+            {/* Stepped Glass Pillars Cascading on Left & Right Wings (Leaving Center Text Completely Unobstructed as in Mockup) */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:flex justify-between items-end px-2 sm:px-6">
+              {/* Left Wing Cascading Stepped Pillars */}
+              <div className="flex items-end gap-2.5 lg:gap-4 h-full">
+                {/* Outermost Tall Pillar */}
+                <div className="w-16 lg:w-28 xl:w-36 h-[76%] rounded-t-[32px] lg:rounded-t-[38px] bg-gradient-to-t from-white/5 via-white/12 to-white/20 border-t border-r border-white/20 backdrop-blur-xs" />
+                {/* Middle Stepped Pillar */}
+                <div className="w-16 lg:w-24 xl:w-32 h-[58%] rounded-t-[28px] lg:rounded-t-[34px] bg-gradient-to-t from-white/8 via-white/15 to-white/22 border-t border-x border-white/20 backdrop-blur-xs" />
+                {/* Inner Lower Pillar */}
+                <div className="w-14 lg:w-20 xl:w-28 h-[42%] rounded-t-[24px] lg:rounded-t-[28px] bg-gradient-to-t from-white/10 via-white/18 to-white/25 border-t border-x border-white/25 backdrop-blur-xs" />
+              </div>
+
+              {/* Center Area: Intentionally completely clear so title, subtitle, and toggle have 100% unobstructed contrast */}
+
+              {/* Right Wing Cascading Stepped Pillars */}
+              <div className="flex items-end gap-2.5 lg:gap-4 h-full">
+                {/* Inner Lower Pillar */}
+                <div className="w-14 lg:w-20 xl:w-28 h-[42%] rounded-t-[24px] lg:rounded-t-[28px] bg-gradient-to-t from-white/10 via-white/18 to-white/25 border-t border-x border-white/25 backdrop-blur-xs" />
+                {/* Middle Stepped Pillar */}
+                <div className="w-16 lg:w-24 xl:w-32 h-[58%] rounded-t-[28px] lg:rounded-t-[34px] bg-gradient-to-t from-white/8 via-white/15 to-white/22 border-t border-x border-white/20 backdrop-blur-xs" />
+                {/* Outermost Tall Pillar */}
+                <div className="w-16 lg:w-28 xl:w-36 h-[76%] rounded-t-[32px] lg:rounded-t-[38px] bg-gradient-to-t from-white/5 via-white/12 to-white/20 border-t border-l border-white/20 backdrop-blur-xs" />
+              </div>
             </div>
 
             {/* Header: Centered White Title, Subtitle, and Galileo White Capsule Switcher */}
