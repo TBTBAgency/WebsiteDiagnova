@@ -574,11 +574,11 @@ export default function SolutionsPage() {
                 <div className="pt-3 border-t border-slate-100 space-y-3">
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
-                    <span>{language === "ID" ? "Bridging Dua Arah SIMRS & RME" : "Bidirectional HIS & EMR Bridging"}</span>
+                    <span className="font-semibold text-slate-900">{language === "ID" ? "Bridging SIMRS & SatuSehat Kemenkes" : "Bidirectional HIS & SatuSehat Kemenkes"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
-                    <span>{language === "ID" ? "Panic Value Broadcast IGD < 25m" : "Panic Value Broadcast to ER < 25m"}</span>
+                    <span>{language === "ID" ? "Panic Value Alert IGD & ICU < 25m" : "Panic Value Alert to ER & ICU < 25m"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
@@ -590,7 +590,7 @@ export default function SolutionsPage() {
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
-                    <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer" : "Interfacing with 500+ Analyzers"}</span>
+                    <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer Otomatis" : "Automated Interfacing with 500+ Analyzers"}</span>
                   </div>
                 </div>
               </div>
@@ -601,7 +601,7 @@ export default function SolutionsPage() {
                   href="/request-demo"
                   className="block w-full py-3 rounded-full border-2 border-[#2764B8] hover:bg-[#2764B8]/5 text-[#2764B8] text-xs font-bold text-center transition-all shadow-2xs"
                 >
-                  {language === "ID" ? "Konsultasi Tier RS" : "Consult Hospital Setup"}
+                  {language === "ID" ? "Konsultasi Solusi RS" : "Consult Hospital Setup"}
                 </Link>
               </div>
             </div>
@@ -654,7 +654,7 @@ export default function SolutionsPage() {
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
-                    <span>{language === "ID" ? "Pengiriman WhatsApp PDF Terenkripsi" : "Encrypted WhatsApp PDF Delivery"}</span>
+                    <span>{language === "ID" ? "Kirim Hasil WhatsApp PDF Terenkripsi" : "Encrypted WhatsApp PDF Delivery"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
@@ -721,7 +721,7 @@ export default function SolutionsPage() {
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
-                    <span>{language === "ID" ? "Pembangkit Antibiogram Otomatis CLSI" : "Automated CLSI Antibiogram Generator"}</span>
+                    <span>{language === "ID" ? "Pembangkit Peta Antibiogram CLSI" : "Automated CLSI Antibiogram Generator"}</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
                     <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
@@ -740,7 +740,7 @@ export default function SolutionsPage() {
                   href="/request-demo"
                   className="block w-full py-3 rounded-full border-2 border-[#2764B8] hover:bg-[#2764B8]/5 text-[#2764B8] text-xs font-bold text-center transition-all shadow-2xs"
                 >
-                  {language === "ID" ? "Konsultasi Tier Spesialis" : "Consult Specialist Setup"}
+                  {language === "ID" ? "Konsultasi Solusi Spesialis" : "Consult Specialist Setup"}
                 </Link>
               </div>
             </div>
