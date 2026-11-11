@@ -551,56 +551,84 @@ export default function SolutionsPage() {
           {/* 3 Floating White Cards (Overlapping bottom boundary of blue pod) */}
           <div className="relative z-20 -mt-28 sm:-mt-36 lg:-mt-44 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
-            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_20px_45px_rgba(15,23,42,0.14)] flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-7 sm:p-8 lg:p-9 shadow-[0_20px_50px_-15px_rgba(15,23,42,0.12)] flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_30px_65px_-15px_rgba(15,23,42,0.18)] transition-all duration-300 relative group">
               <div className="space-y-4">
-                {/* Plan Header */}
-                <span className="text-sm font-bold text-slate-800 block">
-                  {language === "ID" ? "Rumah Sakit Sentral" : "Hospital Central"}
-                </span>
+                {/* Header: Icon + Category Badge */}
+                <div className="flex items-center gap-3">
+                  <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center shrink-0 shadow-2xs border border-blue-100">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block leading-tight">
+                      {language === "ID" ? "Fasilitas Sentral" : "Central Facility"}
+                    </span>
+                    <span className="text-sm font-bold text-slate-900 leading-tight">
+                      {language === "ID" ? "Rumah Sakit Sentral" : "Hospital Central"}
+                    </span>
+                  </div>
+                </div>
 
                 {/* Price / Scale Headline */}
-                <div>
-                  <div className="flex items-baseline">
-                    <span className="font-display text-3xl sm:text-[34px] font-extrabold text-slate-900 tracking-tight">
+                <div className="pt-1">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-display text-3xl sm:text-[36px] font-extrabold text-slate-900 tracking-tight">
                       Tier 1
                     </span>
-                    <span className="text-xs text-slate-400 font-medium ml-2">
+                    <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/60">
                       {language === "ID" ? "RS Tipe A / B / C" : "Type A / B / C"}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-medium text-[#2764B8] block mt-1">
-                    {deploymentMode === "cloud"
-                      ? "Private Cloud LIS + HL7 Bridge"
-                      : "Internal Local Hospital Server"}
-                  </span>
+
+                  {/* Micro Telemetry Live Pill */}
+                  <div className="mt-2.5 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/70 text-[11px] font-medium text-slate-600">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2466CB] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2466CB]" />
+                    </span>
+                    <span>
+                      {deploymentMode === "cloud"
+                        ? "Private Cloud LIS + SatuSehat Bridge"
+                        : "Internal Local Hospital Server"}
+                    </span>
+                  </div>
                 </div>
 
-                <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-600 font-normal leading-relaxed pt-0.5">
                   {language === "ID"
                     ? "Integrasi penuh SIMRS dua arah, panel CITO IGD berkecepatan tinggi, dan bridging otomatis ke rekam medis pasien."
                     : "Full bidirectional HIS bridging, rapid emergency ER CITO panel alerts, and instant patient EMR synchronization."}
                 </p>
 
-                {/* Feature List with Galileo-style Green Checks */}
-                <div className="pt-3 border-t border-slate-100 space-y-3">
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                {/* Feature List with Galileo-style Pill Checks */}
+                <div className="pt-4 border-t border-slate-100/90 space-y-3">
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span className="font-semibold text-slate-900">{language === "ID" ? "Bridging SIMRS & SatuSehat Kemenkes" : "Bidirectional HIS & SatuSehat Kemenkes"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Panic Value Alert IGD & ICU < 25m" : "Panic Value Alert to ER & ICU < 25m"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Validasi Barcode Flebotomi Bedside" : "Bedside Phlebotomy Barcode Validation"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Kepatuhan Akreditasi KARS & JCI" : "Full KARS & JCI Audit Compliance"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Interfacing 500+ Mesin Analyzer Otomatis" : "Automated Interfacing with 500+ Analyzers"}</span>
                   </div>
                 </div>
@@ -610,136 +638,198 @@ export default function SolutionsPage() {
               <div className="pt-6 mt-6 border-t border-slate-100">
                 <Link
                   href="/request-demo"
-                  className="block w-full py-3 rounded-full border-2 border-[#2764B8] hover:bg-[#2764B8]/5 text-[#2764B8] text-xs font-bold text-center transition-all shadow-2xs"
+                  className="group flex items-center justify-center gap-2 w-full py-3.5 rounded-full border-2 border-slate-200 hover:border-[#2466CB] bg-white hover:bg-blue-50/40 text-slate-800 hover:text-[#2466CB] text-xs font-bold text-center transition-all duration-200 shadow-2xs"
                 >
-                  {language === "ID" ? "Konsultasi Solusi RS" : "Consult Hospital Setup"}
+                  <span>{language === "ID" ? "Konsultasi Solusi RS" : "Consult Hospital Setup"}</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
 
             {/* Card 2: Tier 2 - Clinical & Reference Labs (FEATURED CENTER HIGHLIGHT) */}
-            <div className="rounded-[24px] sm:rounded-[28px] bg-white border-2 border-blue-200 p-7 sm:p-8 shadow-[0_25px_55px_rgba(15,23,42,0.18)] flex flex-col justify-between hover:-translate-y-2 transition-all duration-300 relative z-20">
-              <div className="space-y-4">
-                {/* Plan Header */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border-2 border-[#2466CB]/40 ring-4 ring-[#2466CB]/10 p-7 sm:p-8 lg:p-9 shadow-[0_30px_70px_-15px_rgba(36,102,203,0.28)] flex flex-col justify-between md:-translate-y-3 hover:md:-translate-y-4.5 transition-all duration-300 relative group z-20 overflow-hidden">
+              {/* Soft ambient blue top aura */}
+              <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-blue-50/70 to-transparent pointer-events-none" />
+
+              <div className="space-y-4 relative z-10">
+                {/* Header: Icon + Category Badge + Popular Tag */}
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-slate-800">
-                    {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
-                  </span>
-                  <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    POPULAR
+                  <div className="flex items-center gap-3">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-[#2F77E3] to-[#1A54B0] text-white flex items-center justify-center shrink-0 shadow-md">
+                      <FlaskConical className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#2466CB] block leading-tight">
+                        {language === "ID" ? "Volume Tinggi" : "High Volume"}
+                      </span>
+                      <span className="text-sm font-bold text-slate-900 leading-tight">
+                        {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/90 uppercase tracking-wider shadow-2xs">
+                    <Sparkles className="h-3 w-3 fill-emerald-500 text-emerald-500" />
+                    {language === "ID" ? "Populer" : "Popular"}
                   </span>
                 </div>
 
                 {/* Price / Scale Headline */}
-                <div>
-                  <div className="flex items-baseline">
-                    <span className="font-display text-3xl sm:text-[34px] font-extrabold text-slate-900 tracking-tight">
+                <div className="pt-1">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-display text-3xl sm:text-[36px] font-extrabold text-slate-900 tracking-tight">
                       Tier 2
                     </span>
-                    <span className="text-xs text-[#2764B8] font-bold ml-2">
-                      {language === "ID" ? "Lab Mandiri & MCU" : "Independent & MCU"}
+                    <span className="text-xs font-bold text-[#2466CB] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
+                      {language === "ID" ? "Lab Mandiri & Jejaring" : "Independent & Network"}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-medium text-[#2764B8] block mt-1">
-                    {deploymentMode === "cloud"
-                      ? "High-Throughput Cloud Engine"
-                      : "Outpatient Dedicated Server"}
-                  </span>
+
+                  {/* Micro Telemetry Live Pill */}
+                  <div className="mt-2.5 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-blue-50/80 border border-blue-100 text-[11px] font-medium text-[#2466CB]">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2466CB] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2466CB]" />
+                    </span>
+                    <span>
+                      {deploymentMode === "cloud"
+                        ? "High-Throughput Cloud Engine"
+                        : "Outpatient Dedicated Server"}
+                    </span>
+                  </div>
                 </div>
 
-                <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-600 font-normal leading-relaxed pt-0.5">
                   {language === "ID"
                     ? "Dioptimalkan untuk throughput spesimen massal harian, registrasi barcode 30 detik, dan pengiriman otomatis WhatsApp PDF."
                     : "Optimized for high-volume daily check-in, 30s rapid barcode labeling, and instant encrypted WhatsApp delivery."}
                 </p>
 
-                {/* Feature List with Galileo-style Green Checks */}
-                <div className="pt-3 border-t border-slate-100 space-y-3">
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                {/* Feature List with Galileo-style Pill Checks */}
+                <div className="pt-4 border-t border-slate-100/90 space-y-3">
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span className="font-semibold text-slate-900">{language === "ID" ? "Mesin Batch MCU Korporat 1-Klik" : "1-Click Corporate MCU Batch Engine"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Cetak Barcode Tabung 0.4s / Label" : "0.4s / Tube Rapid Barcode Printing"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Kirim Hasil WhatsApp PDF Terenkripsi" : "Encrypted WhatsApp PDF Delivery"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Gateway Billing B2B Jejaring Rujukan" : "B2B Referral Billing Gateway"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Portal Hasil Pasien Paperless Mandiri" : "Self-Service Paperless Patient Portal"}</span>
                   </div>
                 </div>
               </div>
 
               {/* Bottom Filled Blue Button (Highlight like Galileo) */}
-              <div className="pt-6 mt-6 border-t border-slate-100">
+              <div className="pt-6 mt-6 border-t border-slate-100 relative z-10">
                 <Link
                   href="/request-demo"
-                  className="block w-full py-3.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white text-xs font-bold text-center shadow-[0_4px_16px_rgba(39,100,184,0.35)] transition-all active:scale-[0.98]"
+                  className="group relative overflow-hidden flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-gradient-to-r from-[#2466CB] via-[#2F77E3] to-[#2466CB] hover:opacity-95 text-white text-xs font-bold text-center shadow-[0_6px_22px_rgba(36,102,203,0.38)] transition-all duration-200 active:scale-[0.98]"
                 >
-                  {language === "ID" ? "Pilih Solusi Lab Klinik" : "Choose Clinical Lab Setup"}
+                  <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Choose Clinical Lab Setup"}</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
-            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_20px_45px_rgba(15,23,42,0.14)] flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-7 sm:p-8 lg:p-9 shadow-[0_20px_50px_-15px_rgba(15,23,42,0.12)] flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_30px_65px_-15px_rgba(15,23,42,0.18)] transition-all duration-300 relative group">
               <div className="space-y-4">
-                {/* Plan Header */}
-                <span className="text-sm font-bold text-slate-800 block">
-                  {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
-                </span>
+                {/* Header: Icon + Category Badge */}
+                <div className="flex items-center gap-3">
+                  <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center shrink-0 shadow-2xs border border-blue-100">
+                    <Microscope className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block leading-tight">
+                      {language === "ID" ? "Subspesialisasi" : "Subspecialty"}
+                    </span>
+                    <span className="text-sm font-bold text-slate-900 leading-tight">
+                      {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
+                    </span>
+                  </div>
+                </div>
 
                 {/* Price / Scale Headline */}
-                <div>
-                  <div className="flex items-baseline">
-                    <span className="font-display text-3xl sm:text-[34px] font-extrabold text-slate-900 tracking-tight">
+                <div className="pt-1">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-display text-3xl sm:text-[36px] font-extrabold text-slate-900 tracking-tight">
                       Tier 3
                     </span>
-                    <span className="text-xs text-slate-400 font-medium ml-2">
+                    <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/60">
                       {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro Suite"}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-medium text-[#2764B8] block mt-1">
-                    {deploymentMode === "cloud"
-                      ? "Accredited Subspecialty Suite"
-                      : "Standalone Specimen Workstation"}
-                  </span>
+
+                  {/* Micro Telemetry Live Pill */}
+                  <div className="mt-2.5 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/70 text-[11px] font-medium text-slate-600">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2466CB] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2466CB]" />
+                    </span>
+                    <span>
+                      {deploymentMode === "cloud"
+                        ? "Accredited Subspecialty Suite"
+                        : "Standalone Specimen Workstation"}
+                    </span>
+                  </div>
                 </div>
 
-                <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-600 font-normal leading-relaxed pt-0.5">
                   {language === "ID"
                     ? "Dirancang mendalam untuk instalasi patologi anatomi jaringan, mikrobiologi kultur CLSI, dan bank darah rumah sakit (BDRS)."
                     : "Engineered for anatomical pathology tissue tracking, CLSI microbiology cultures, and hospital blood banks."}
                 </p>
 
-                {/* Feature List with Galileo-style Green Checks */}
-                <div className="pt-3 border-t border-slate-100 space-y-3">
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                {/* Feature List with Galileo-style Pill Checks */}
+                <div className="pt-4 border-t border-slate-100/90 space-y-3">
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Pelacakan 2D Kaset Jaringan & Slide" : "2D Tracking for Tissue Cassettes & Slides"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Template Baku ICD-O-3 & Bethesda" : "Standardized ICD-O-3 & Bethesda Templates"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Pembangkit Peta Antibiogram CLSI" : "Automated CLSI Antibiogram Generator"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Uji Silang Serasi Digital ISBT-128" : "Digital ISBT-128 Cross-Match Engine"}</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <Check className="h-4 w-4 text-emerald-500 stroke-[2.5] shrink-0" />
+                  <div className="flex items-center gap-3 text-xs text-slate-700">
+                    <div className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </div>
                     <span>{language === "ID" ? "Telemetri Rantai Dingin 24/7 (2°C-6°C)" : "24/7 Cold Chain Telemetry (2°C-6°C)"}</span>
                   </div>
                 </div>
@@ -749,9 +839,10 @@ export default function SolutionsPage() {
               <div className="pt-6 mt-6 border-t border-slate-100">
                 <Link
                   href="/request-demo"
-                  className="block w-full py-3 rounded-full border-2 border-[#2764B8] hover:bg-[#2764B8]/5 text-[#2764B8] text-xs font-bold text-center transition-all shadow-2xs"
+                  className="group flex items-center justify-center gap-2 w-full py-3.5 rounded-full border-2 border-slate-200 hover:border-[#2466CB] bg-white hover:bg-blue-50/40 text-slate-800 hover:text-[#2466CB] text-xs font-bold text-center transition-all duration-200 shadow-2xs"
                 >
-                  {language === "ID" ? "Konsultasi Solusi Spesialis" : "Consult Specialist Setup"}
+                  <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Consult Specialist Setup"}</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
