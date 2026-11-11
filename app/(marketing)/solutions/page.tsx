@@ -480,15 +480,6 @@ export default function SolutionsPage() {
             <div className="absolute top-1/2 -right-16 w-96 h-96 rounded-full bg-[#38BDF8]/25 blur-3xl pointer-events-none" />
             <div className="absolute -bottom-16 left-1/4 w-80 h-80 rounded-full bg-[#56ADE2]/30 blur-3xl pointer-events-none" />
 
-            {/* Background Subtle Dot Matrix Pattern (Galileo Style) */}
-            <div
-              className="absolute inset-0 pointer-events-none opacity-20"
-              style={{
-                backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.45) 1px, transparent 1px)",
-                backgroundSize: "18px 18px",
-              }}
-            />
-
             {/* Stepped Glass Pillars Cascading on Left & Right Wings (Leaving Center Text Completely Unobstructed as in Mockup) */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:flex justify-between items-end px-2 sm:px-6">
               {/* Left Wing Cascading Stepped Pillars */}
