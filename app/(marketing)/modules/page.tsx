@@ -559,7 +559,7 @@ export default function ModulesPage() {
             {/* ROW 1: Smart Workflow Automation (7-col) & Cold-Chain Telemetry (5-col) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
               {/* Card 1: Routine & Hematology - Node Workflow Tree (7 cols) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8]/90 backdrop-blur-xs border border-slate-200/80 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.07)]">
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
                 <div>
                   <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
                     {language === "ID" ? "Otomasi Alur Kerja Hematologi & Rutin" : "Smart Workflow Automation"}
@@ -572,7 +572,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Node Workflow Connector (matching Kresna Card 1) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl px-2">
+                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-3 sm:p-4">
                   <div className="flex items-center justify-between w-full max-w-xl gap-2 sm:gap-4 relative z-10">
                     {/* Left Node: Brand Logo/Instrument Box */}
                     <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-[#2764B8] text-white flex items-center justify-center shadow-md shrink-0">
@@ -614,7 +614,7 @@ export default function ModulesPage() {
               </div>
 
               {/* Card 2: Blood Bank - Cold-Chain Telemetry Peek (5 cols) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8]/90 backdrop-blur-xs border border-slate-200/80 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.07)]">
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
                 <div>
                   <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
                     {language === "ID" ? "Telemetri Rantai Dingin & BDRS" : "Cold-Chain & Transfusion Safety"}
@@ -627,7 +627,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Forecast-Style App Window Peek (matching Kresna Card 2) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-white/70 border border-slate-200/70 p-4">
+                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-4">
                   {/* Floating White Stat Card */}
                   <div className="relative z-10 w-full max-w-[260px] p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-1.5 text-center">
                     <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
@@ -662,7 +662,7 @@ export default function ModulesPage() {
             {/* ROW 2: Reagents Intelligence (5-col) & 2D Specimen Tracking (7-col) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
               {/* Card 3: Inventory & Reagents - Dashboard Usage Bars (5 cols) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8]/90 backdrop-blur-xs border border-slate-200/80 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.07)]">
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
                 <div>
                   <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
                     {language === "ID" ? "Telemetri Reagen & Biaya Tes" : "Reagent & Supply Intelligence"}
@@ -675,13 +675,13 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Dashboard Window Peek with Bar Chart (matching Kresna Card 3) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex flex-col justify-between rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.05)] p-4 sm:p-5">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="h-[210px] sm:h-[230px] w-full flex flex-col justify-between rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 shadow-[0_4px_16px_rgba(0,0,0,0.03)] p-4 sm:p-5">
+                  <div className="flex items-center justify-between border-b border-blue-100/80 pb-2">
                     <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                       <PackageCheck className="h-4 w-4 text-[#2764B8]" />
                       Reagent Inventory
                     </span>
-                    <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-100/80 px-2 py-0.5 rounded-full">
                       Stok On-Board: 82%
                     </span>
                   </div>
@@ -713,7 +713,7 @@ export default function ModulesPage() {
               </div>
 
               {/* Card 4: Anatomical Pathology - Member Nodes & Custody Chain (7 cols) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8]/90 backdrop-blur-xs border border-slate-200/80 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.07)]">
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
                 <div>
                   <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
                     {language === "ID" ? "Pelacakan Spesimen Jaringan 2D" : "2D Specimen Chain of Custody"}
@@ -726,7 +726,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Member Nodes & Staging Card (matching Kresna Card 4) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl px-2">
+                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-3 sm:p-4">
                   <div className="flex items-center justify-between w-full max-w-xl gap-3 sm:gap-6">
                     {/* Left Stack of Specimen Stage Cards */}
                     <div className="space-y-2.5 flex-1 max-w-[210px]">
@@ -774,7 +774,7 @@ export default function ModulesPage() {
             </div>
 
             {/* ROW 3: Microbiology & PPRA Antibiogram - Full 12-col Panoramic Workstation */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8]/90 backdrop-blur-xs border border-slate-200/80 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.07)]">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
               <div>
                 <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
                   {language === "ID" ? "Mikrobiologi Klinik & Peta Antibiogram PPRA" : "Microbiology & Cumulative Antibiogram"}
@@ -789,7 +789,7 @@ export default function ModulesPage() {
               {/* Bottom Visual Stage: 3-Pillar Clean Workstation Console */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 w-full">
                 {/* Pillar 1: Incubation */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
                   <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider">
                     Inkubasi Kultur Darah
                   </span>
@@ -802,7 +802,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Pillar 2: AST Panel */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
                   <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider">
                     Sensitivitas AST CLSI
                   </span>
