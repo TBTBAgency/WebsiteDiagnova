@@ -496,10 +496,10 @@ export default function SolutionsPage() {
       {/* ══════════════════════════════════════════════════════════════
           FACILITY FIT MATRIX (ONE-SCREEN VIEWPORT SCALE - ZERO OVERFLOW)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FAFBFD] border-t border-slate-200/60 min-h-screen lg:h-screen lg:max-h-[960px] flex flex-col justify-center py-2 sm:py-3 lg:py-4 overflow-hidden">
+      <section className="w-full bg-[#FAFBFD] border-t border-slate-200/60 min-h-screen lg:h-screen lg:max-h-[960px] flex flex-col justify-center py-4 sm:py-5 lg:py-6 overflow-hidden">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative">
           {/* Blue Framed Container Pod with Request-Demo Gradient & Orbs */}
-          <div className="relative rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-12 sm:pt-16 lg:pt-20 pb-28 sm:pb-36 lg:pb-44 px-5 sm:px-8 lg:px-12 shadow-[0_20px_50px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
+          <div className="relative rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-10 sm:pt-12 lg:pt-14 pb-16 sm:pb-20 lg:pb-[104px] px-5 sm:px-8 lg:px-12 shadow-[0_20px_50px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
             {/* Ambient Glowing Orbs */}
             <div className="absolute -top-16 -left-16 w-80 h-80 rounded-full bg-[#60A5FA]/35 blur-3xl pointer-events-none" />
             <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#38BDF8]/25 blur-3xl pointer-events-none" />
@@ -526,24 +526,24 @@ export default function SolutionsPage() {
 
             {/* Header: Centered White Title, Subtitle, and Galileo White Capsule Switcher */}
             <div className="relative z-10 text-center max-w-2xl mx-auto">
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.15]">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-white tracking-tight leading-tight">
                 {language === "ID"
                   ? "Solusi Tepat untuk Setiap Skala Faskes"
                   : "Tailored Architectures for Every Facility Scale"}
               </h2>
-              <p className="mt-2.5 text-xs sm:text-[14px] text-blue-100/90 font-normal leading-relaxed max-w-xl mx-auto">
+              <p className="mt-2 text-xs sm:text-[13px] text-blue-100/90 font-normal leading-normal max-w-xl mx-auto">
                 {language === "ID"
                   ? "Pilih konfigurasi yang dirancang khusus untuk kebutuhan dan kapasitas instansi Anda. Tanpa biaya tersembunyi, fokus pada efisiensi kerja klinis."
                   : "Choose an architecture engineered for your institution's specific tier. No bloatware, focused purely on clinical speed and compliance."}
               </p>
 
               {/* Galileo-style White Pill Switcher with Active Blue Button */}
-              <div className="inline-flex items-center p-1 rounded-full bg-white shadow-md mt-5 sm:mt-6">
+              <div className="inline-flex items-center p-0.5 sm:p-1 rounded-full bg-white shadow-xs mt-4 sm:mt-5">
                 <button
                   type="button"
                   onClick={() => setDeploymentMode("cloud")}
                   className={cn(
-                    "px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer",
+                    "px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 cursor-pointer",
                     deploymentMode === "cloud"
                       ? "bg-[#2764B8] text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -555,7 +555,7 @@ export default function SolutionsPage() {
                   type="button"
                   onClick={() => setDeploymentMode("onprem")}
                   className={cn(
-                    "px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer",
+                    "px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 cursor-pointer",
                     deploymentMode === "onprem"
                       ? "bg-[#2764B8] text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -568,7 +568,7 @@ export default function SolutionsPage() {
           </div>
 
           {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture - Fits 100% On Screen) */}
-          <div className="relative z-20 -mt-18 sm:-mt-22 lg:-mt-26 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1200px] mx-auto items-stretch px-4 sm:px-6">
+          <div className="relative z-20 -mt-14 sm:-mt-16 lg:-mt-20 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1200px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
             <div className="relative p-[32px_5px_5px] rounded-[26px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
