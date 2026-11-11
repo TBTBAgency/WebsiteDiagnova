@@ -24,6 +24,7 @@ import {
   Thermometer,
   Zap,
   Building2,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -559,12 +560,16 @@ export default function ModulesPage() {
             {/* ROW 1: Smart Workflow Automation (7-col) & Cold-Chain Telemetry (5-col) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
               {/* Card 1: Routine & Hematology - Node Workflow Tree (7 cols) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
                 <div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-50/90 border border-blue-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
+                    <Activity className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <span>{language === "ID" ? "MODUL 01 • HEMATOLOGI & RUTIN" : "MODULE 01 • HEMATOLOGY & CLINICAL"}</span>
+                  </div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
                     {language === "ID" ? "Otomasi Alur Kerja Hematologi & Rutin" : "Smart Workflow Automation"}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
                     {language === "ID"
                       ? "Interfacing analyzer ASTM/HL7 langsung, validasi otomatis aturan Westgard, dan penarikan hasil tanpa perantara."
                       : "Direct ASTM/HL7 analyzer links, automated Westgard rule verification, and instant zero-middleware capture."}
@@ -572,40 +577,75 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Node Workflow Connector (matching Kresna Card 1) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-3 sm:p-4">
+                <div className="relative h-[250px] sm:h-[270px] w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-6 overflow-hidden flex items-center justify-between shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)]">
+                  {/* Subtle Grid Dot Canvas */}
+                  <div
+                    className="absolute inset-0 opacity-[0.08] pointer-events-none"
+                    style={{
+                      backgroundImage: "radial-gradient(#2764B8 1px, transparent 1px)",
+                      backgroundSize: "16px 16px",
+                    }}
+                  />
+
+                  {/* SVG Connecting Branching Curves */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden sm:block" preserveAspectRatio="none">
+                    {/* Branch Left -> Top Pill */}
+                    <path d="M 64 135 C 110 135, 120 78, 175 78" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
+                    {/* Branch Left -> Bottom Pill */}
+                    <path d="M 64 135 C 110 135, 120 192, 175 192" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
+                    {/* Branch Top Pill -> Task Card */}
+                    <path d="M 320 78 C 350 78, 355 110, 380 110" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
+                    {/* Branch Bottom Pill -> Task Card */}
+                    <path d="M 320 192 C 350 192, 355 160, 380 160" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
+                  </svg>
+
                   <div className="flex items-center justify-between w-full max-w-xl gap-2 sm:gap-4 relative z-10">
-                    {/* Left Node: Brand Logo/Instrument Box */}
-                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-[#2764B8] text-white flex items-center justify-center shadow-md shrink-0">
+                    {/* Left Node: Branded Analyzer Hub Box */}
+                    <div className="h-13 w-13 sm:h-15 sm:w-15 rounded-2xl bg-gradient-to-br from-[#2764B8] to-[#1E3A8A] text-white flex flex-col items-center justify-center shadow-[0_8px_20px_rgba(39,100,184,0.24)] shrink-0 ring-4 ring-white">
                       <Activity className="h-6 w-6 sm:h-7 sm:w-7" />
+                      <span className="text-[9px] font-mono font-bold mt-0.5 tracking-wider">ASTM</span>
                     </div>
 
                     {/* Connecting Branching Middle Nodes */}
-                    <div className="flex-1 flex flex-col justify-between gap-3 relative">
+                    <div className="flex-1 flex flex-col justify-between gap-3 sm:gap-4 relative max-w-[210px]">
                       {/* Sub-Node 1: ASTM Direct Link */}
-                      <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
-                        <span className="truncate text-[11px] sm:text-xs">Sysmex &amp; Cobas Direct</span>
+                      <div className="flex items-center justify-between gap-2 p-2.5 sm:px-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.06)] text-xs font-semibold text-slate-800">
+                        <div className="flex items-center gap-2 truncate">
+                          <span className="relative flex h-2 w-2 shrink-0">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                          <span className="truncate text-[11px] sm:text-xs">Sysmex &amp; Cobas</span>
+                        </div>
+                        <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-semibold shrink-0">Live</span>
                       </div>
 
                       {/* Sub-Node 2: Delta Check Flag */}
-                      <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
-                        <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-                        <span className="truncate text-[11px] sm:text-xs">Delta-Check (+115% Shift)</span>
+                      <div className="flex items-center justify-between gap-2 p-2.5 sm:px-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.06)] text-xs font-semibold text-slate-800">
+                        <div className="flex items-center gap-2 truncate">
+                          <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                          <span className="truncate text-[11px] sm:text-xs">Westgard &amp; Delta</span>
+                        </div>
+                        <span className="text-[9px] font-mono text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded font-semibold shrink-0">+115%</span>
                       </div>
                     </div>
 
                     {/* Right Re-converging Task Card */}
-                    <div className="w-[185px] sm:w-[220px] rounded-2xl bg-white border border-slate-200/90 p-3 sm:p-4 shadow-[0_6px_20px_rgba(0,0,0,0.06)] space-y-2 text-[11px] font-mono shrink-0">
+                    <div className="w-[190px] sm:w-[225px] rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 shadow-[0_8px_24px_rgba(31,45,93,0.07)] space-y-2 text-[11px] font-mono shrink-0">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 border-b border-slate-100 pb-1.5 uppercase tracking-wider">
+                        <span>Workflow LIS</span>
+                        <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-semibold">100% OK</span>
+                      </div>
                       <div className="border-l-2 border-[#2764B8] pl-2.5 py-0.5">
                         <span className="font-bold text-slate-900 block truncate">Tarik Hasil ASTM</span>
                         <span className="text-slate-400 text-[10px]">07:50 WIB • 14 Parameter</span>
                       </div>
-                      <div className="border-l-2 border-slate-200 pl-2.5 py-0.5">
+                      <div className="border-l-2 border-slate-300 pl-2.5 py-0.5">
                         <span className="font-bold text-slate-700 block truncate">Validasi Westgard QC</span>
                         <span className="text-slate-400 text-[10px]">07:54 WIB • L-J Chart Normal</span>
                       </div>
                       <div className="border-l-2 border-emerald-500 pl-2.5 py-0.5">
-                        <span className="font-bold text-emerald-700 block truncate">Otomatis Masuk SIMRS</span>
+                        <span className="font-bold text-emerald-700 block truncate">Auto-Masuk SIMRS</span>
                         <span className="text-emerald-600 text-[10px]">07:58 WIB • Terverifikasi</span>
                       </div>
                     </div>
@@ -614,12 +654,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Card 2: Blood Bank - Cold-Chain Telemetry Peek (5 cols) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
                 <div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sky-50/90 border border-sky-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
+                    <HeartPulse className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <span>{language === "ID" ? "MODUL 02 • BANK DARAH & BDRS" : "MODULE 02 • BLOOD BANK"}</span>
+                  </div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
                     {language === "ID" ? "Telemetri Rantai Dingin & BDRS" : "Cold-Chain & Transfusion Safety"}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
                     {language === "ID"
                       ? "Monitoring suhu kulkas darah 24/7 dan uji silang serasi digital Mayor/Minor ISBT-128."
                       : "24/7 blood storage telemetry and digital dual-verification electronic crossmatching."}
@@ -627,32 +671,50 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Forecast-Style App Window Peek (matching Kresna Card 2) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-4">
+                <div className="relative h-[250px] sm:h-[270px] w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-5 overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)]">
+                  {/* Window Bar Header */}
+                  <div className="flex items-center justify-between text-[11px] font-mono border-b border-blue-100/80 pb-2 relative z-10">
+                    <span className="flex items-center gap-1.5 font-bold text-slate-800">
+                      <Thermometer className="h-3.5 w-3.5 text-[#2764B8]" />
+                      BDRS Chiller 01 (PRC)
+                    </span>
+                    <span className="flex items-center gap-1.5 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full font-semibold">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      IoT Connected
+                    </span>
+                  </div>
+
                   {/* Floating White Stat Card */}
-                  <div className="relative z-10 w-full max-w-[260px] p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-1.5 text-center">
-                    <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
+                  <div className="relative z-10 mx-auto w-full max-w-[270px] p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_10px_28px_rgba(31,45,93,0.08)] space-y-1.5 text-center my-auto">
+                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block font-semibold">
                       Suhu Kulkas BDRS 24/7
                     </span>
-                    <div className="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-                      3.8°C
+                    <div className="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight flex items-center justify-center gap-1">
+                      3.8<span className="text-xl sm:text-2xl text-[#2764B8]">°C</span>
                     </div>
                     <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Rentang Aman (2°C - 6°C)
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      Rentang Aman (2.0°C – 6.0°C)
                     </span>
                   </div>
 
                   {/* Soft Background Wave Chart (matching Kresna Card 2's blue wave) */}
-                  <div className="absolute inset-x-0 bottom-0 h-28 pointer-events-none opacity-40">
+                  <div className="absolute inset-x-0 bottom-0 h-28 pointer-events-none opacity-50 z-0">
                     <svg viewBox="0 0 400 120" preserveAspectRatio="none" className="w-full h-full">
                       <defs>
                         <linearGradient id="coldWaveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stopColor="#2764B8" stopOpacity="0.4" />
-                          <stop offset="100%" stopColor="#2764B8" stopOpacity="0" />
+                          <stop offset="0%" stopColor="#2764B8" stopOpacity="0.45" />
+                          <stop offset="100%" stopColor="#2764B8" stopOpacity="0.02" />
                         </linearGradient>
                       </defs>
-                      <path d="M0,80 Q100,60 200,65 T400,62 L400,120 L0,120 Z" fill="url(#coldWaveGrad)" />
-                      <path d="M0,80 Q100,60 200,65 T400,62" fill="none" stroke="#2764B8" strokeWidth="2" />
+                      {/* Guide Threshold Lines */}
+                      <line x1="0" y1="35" x2="400" y2="35" stroke="#93C5FD" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
+                      <line x1="0" y1="95" x2="400" y2="95" stroke="#93C5FD" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
+                      <path d="M0,75 Q100,55 200,60 T400,58 L400,120 L0,120 Z" fill="url(#coldWaveGrad)" />
+                      <path d="M0,75 Q100,55 200,60 T400,58" fill="none" stroke="#2764B8" strokeWidth="2.5" />
+                      {/* Live Data Point */}
+                      <circle cx="340" cy="58" r="4.5" fill="#2764B8" stroke="#FFFFFF" strokeWidth="2" />
+                      <circle cx="340" cy="58" r="9" fill="#2764B8" opacity="0.25" className="animate-ping" />
                     </svg>
                   </div>
                 </div>
@@ -662,12 +724,16 @@ export default function ModulesPage() {
             {/* ROW 2: Reagents Intelligence (5-col) & 2D Specimen Tracking (7-col) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
               {/* Card 3: Inventory & Reagents - Dashboard Usage Bars (5 cols) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
                 <div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-50/90 border border-indigo-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
+                    <PackageCheck className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <span>{language === "ID" ? "MODUL 03 • MANAJEMEN REAGEN" : "MODULE 03 • INVENTORY"}</span>
+                  </div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
                     {language === "ID" ? "Telemetri Reagen & Biaya Tes" : "Reagent & Supply Intelligence"}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
                     {language === "ID"
                       ? "Pengurangan stok otomatis berbasis jumlah tes dan peringatan dini sebelum stok menipis."
                       : "Test-driven auto-depletion tracking and proactive safety threshold warnings."}
@@ -675,50 +741,85 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Dashboard Window Peek with Bar Chart (matching Kresna Card 3) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex flex-col justify-between rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 shadow-[0_4px_16px_rgba(0,0,0,0.03)] p-4 sm:p-5">
-                  <div className="flex items-center justify-between border-b border-blue-100/80 pb-2">
-                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                      <PackageCheck className="h-4 w-4 text-[#2764B8]" />
-                      Reagent Inventory
-                    </span>
-                    <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-100/80 px-2 py-0.5 rounded-full">
-                      Stok On-Board: 82%
+                <div className="relative h-[250px] sm:h-[270px] w-full flex flex-col justify-between rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-5 shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)] overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-blue-100/80 pb-2 relative z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <span className="h-2 w-2 rounded-full bg-slate-300" />
+                        <span className="h-2 w-2 rounded-full bg-slate-300" />
+                        <span className="h-2 w-2 rounded-full bg-slate-300" />
+                      </div>
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 ml-1">
+                        Reagent On-Board
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-100/90 px-2 py-0.5 rounded-full">
+                      Rata-Rata: 82%
                     </span>
                   </div>
 
-                  {/* 5 Reagent Usage / Depletion Bars */}
-                  <div className="flex items-end justify-between gap-3 h-24 pt-2">
-                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[82%]" />
-                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Diluent</span>
+                  {/* Warning Threshold Line */}
+                  <div className="relative my-auto pt-2 pb-1">
+                    <div className="absolute top-[42%] left-0 right-0 border-b border-dashed border-amber-300/90 z-0 flex items-center justify-between">
+                      <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50/95 px-1.5 py-0.2 rounded border border-amber-200/80 -translate-y-1/2">
+                        Batas Minimum (50%)
+                      </span>
+                      <span className="text-[9px] font-mono text-amber-600 bg-amber-50/95 px-1.5 py-0.2 rounded -translate-y-1/2">
+                        Auto-Alert
+                      </span>
                     </div>
-                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[65%]" />
-                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Lyse</span>
+
+                    {/* 5 Reagent Usage / Depletion Bars */}
+                    <div className="flex items-end justify-between gap-2.5 sm:gap-3 h-28 pt-4 relative z-10">
+                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">84%</span>
+                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[84%] shadow-xs" />
+                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Diluent</span>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">68%</span>
+                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[68%] shadow-xs" />
+                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Lyse</span>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">92%</span>
+                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[92%] shadow-xs" />
+                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Stain</span>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                        <span className="text-[9px] font-mono font-bold text-amber-600 flex items-center justify-center">
+                          42%
+                        </span>
+                        <div className="w-full bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-lg h-[42%] shadow-xs ring-1 ring-amber-300" />
+                        <span className="text-[9px] font-mono text-amber-700 font-bold truncate w-full text-center">Clean</span>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">95%</span>
+                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[95%] shadow-xs" />
+                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Ctrl</span>
+                      </div>
                     </div>
-                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[90%]" />
-                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Stain</span>
-                    </div>
-                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-amber-400 rounded-t-lg h-[48%]" />
-                      <span className="text-[9px] font-mono text-amber-700 font-bold truncate w-full text-center">Clean</span>
-                    </div>
-                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[94%]" />
-                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Ctrl</span>
-                    </div>
+                  </div>
+
+                  {/* Bottom Stats Footer */}
+                  <div className="pt-2 border-t border-blue-100/70 flex items-center justify-between text-[10px] font-mono text-slate-500">
+                    <span>18 Katrid Terhubung</span>
+                    <span className="text-[#2764B8] font-semibold">Estimasi 420 Tes Lagi</span>
                   </div>
                 </div>
               </div>
 
               {/* Card 4: Anatomical Pathology - Member Nodes & Custody Chain (7 cols) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
                 <div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-teal-50/90 border border-teal-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
+                    <Microscope className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <span>{language === "ID" ? "MODUL 04 • PATOLOGI ANATOMI & SITOLOGI" : "MODULE 04 • ANATOMICAL PATHOLOGY"}</span>
+                  </div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
                     {language === "ID" ? "Pelacakan Spesimen Jaringan 2D" : "2D Specimen Chain of Custody"}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
                     {language === "ID"
                       ? "Pelacakan kaset dan slide kaca ber-barcode mikro 2D untuk eliminasi risiko spesimen tertukar."
                       : "2D micro-barcode tracking across cassettes and glass slides for zero specimen mix-ups."}
@@ -726,46 +827,64 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Bottom Visual Stage: Member Nodes & Staging Card (matching Kresna Card 4) */}
-                <div className="h-[210px] sm:h-[230px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 p-3 sm:p-4">
-                  <div className="flex items-center justify-between w-full max-w-xl gap-3 sm:gap-6">
+                <div className="relative h-[250px] sm:h-[270px] w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-6 overflow-hidden flex items-center justify-between shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)]">
+                  {/* Subtle Grid Dot Canvas */}
+                  <div
+                    className="absolute inset-0 opacity-[0.08] pointer-events-none"
+                    style={{
+                      backgroundImage: "radial-gradient(#2764B8 1px, transparent 1px)",
+                      backgroundSize: "16px 16px",
+                    }}
+                  />
+
+                  {/* SVG Connector Line */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden sm:block" preserveAspectRatio="none">
+                    <path d="M 230 100 C 270 100, 275 130, 310 130" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
+                    <path d="M 230 170 C 270 170, 275 140, 310 140" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
+                  </svg>
+
+                  <div className="flex items-center justify-between w-full max-w-xl gap-3 sm:gap-6 relative z-10">
                     {/* Left Stack of Specimen Stage Cards */}
-                    <div className="space-y-2.5 flex-1 max-w-[210px]">
-                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.04)] text-xs">
-                        <div className="h-6 w-6 rounded-lg bg-blue-50 text-[#2764B8] flex items-center justify-center shrink-0">
-                          <Microscope className="h-3.5 w-3.5" />
+                    <div className="space-y-3 flex-1 max-w-[215px]">
+                      <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.05)] text-xs">
+                        <div className="h-7 w-7 rounded-lg bg-blue-50 text-[#2764B8] flex items-center justify-center shrink-0">
+                          <QrCode className="h-4 w-4" />
                         </div>
-                        <div>
-                          <span className="font-bold text-slate-900 block text-[11px]">Grossing Kaset A1</span>
-                          <span className="text-[10px] font-mono text-slate-400">Barcode 2D Valid</span>
+                        <div className="truncate">
+                          <span className="font-bold text-slate-900 block text-[11px] truncate">Kaset Grossing A1</span>
+                          <span className="text-[10px] font-mono text-slate-400">#PA-24-9102 • 2D OK</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-[0_2px_10px_rgba(0,0,0,0.04)] text-xs">
-                        <div className="h-6 w-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.05)] text-xs">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="h-4 w-4" />
                         </div>
-                        <div>
-                          <span className="font-bold text-slate-900 block text-[11px]">Microtomy 4 Slide</span>
-                          <span className="text-[10px] font-mono text-slate-400">Pewarnaan H&amp;E OK</span>
+                        <div className="truncate">
+                          <span className="font-bold text-slate-900 block text-[11px] truncate">Microtomy 4 Slide</span>
+                          <span className="text-[10px] font-mono text-slate-400">Pewarnaan H&amp;E Valid</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Right Target Synoptic Report Card */}
-                    <div className="w-[195px] sm:w-[240px] rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 shadow-[0_6px_20px_rgba(0,0,0,0.06)] space-y-2 shrink-0">
+                    <div className="w-[210px] sm:w-[255px] rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 shadow-[0_8px_24px_rgba(31,45,93,0.07)] space-y-2.5 shrink-0">
                       <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                        <span className="text-[10px] font-bold text-slate-400 font-mono">ICD-O-3 TEMPLATE</span>
-                        <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold">
-                          Terverifikasi
+                        <span className="text-[9px] font-bold text-slate-400 font-mono tracking-wider">SYNOPTIC PA REPORT</span>
+                        <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200/80">
+                          ICD-O-3
                         </span>
                       </div>
                       <div className="text-xs font-mono">
                         <span className="font-bold text-slate-800 block truncate">Karsinoma Ductal</span>
                         <span className="text-[10px] text-slate-500">WSI 40x Scan Digital OK</span>
                       </div>
-                      <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-600">
-                        <span>Otorisasi Sp.PA:</span>
-                        <span className="font-bold text-[#2764B8]">dr. Hendra, Sp.PA</span>
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-600">
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                          <span className="font-bold text-slate-800">dr. Hendra, Sp.PA</span>
+                        </div>
+                        <span className="text-[9px] text-[#2764B8] font-bold">TERVERIFIKASI</span>
                       </div>
                     </div>
                   </div>
@@ -774,12 +893,16 @@ export default function ModulesPage() {
             </div>
 
             {/* ROW 3: Microbiology & PPRA Antibiogram - Full 12-col Panoramic Workstation */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_12px_36px_rgba(39,100,184,0.08)]">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
               <div>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50/90 border border-emerald-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
+                  <FlaskConical className="h-3.5 w-3.5 text-[#2764B8]" />
+                  <span>{language === "ID" ? "MODUL 05 • MIKROBIOLOGI KLINIK & PPRA" : "MODULE 05 • MICROBIOLOGY & STEWARDSHIP"}</span>
+                </div>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
                   {language === "ID" ? "Mikrobiologi Klinik & Peta Antibiogram PPRA" : "Microbiology & Cumulative Antibiogram"}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8 max-w-4xl">
                   {language === "ID"
                     ? "Manajemen biakan kultur multi-hari, integrasi analyzer otomatis VITEK-2, dan pelaporan pola resistensi kumulatif sesuai pedoman CLSI / EUCAST."
                     : "Multi-day culture incubation tracking, automated VITEK-2 AST integration, and automated cumulative antibiograms under CLSI guidelines."}
@@ -787,45 +910,96 @@ export default function ModulesPage() {
               </div>
 
               {/* Bottom Visual Stage: 3-Pillar Clean Workstation Console */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 w-full">
-                {/* Pillar 1: Incubation */}
-                <div className="p-4 rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
-                  <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider">
-                    Inkubasi Kultur Darah
-                  </span>
-                  <div className="font-bold text-xs sm:text-sm text-slate-900 font-mono">
-                    BD BACTEC • Hari ke-2 / 5
+              <div className="relative rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-6 shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)] overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 w-full relative z-10">
+                  {/* Pillar 1: Incubation Vials Monitor */}
+                  <div className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(31,45,93,0.05)] space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider font-semibold">
+                        Inkubasi Kultur Darah
+                      </span>
+                      <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200">
+                        BD BACTEC
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs font-mono p-2 rounded-lg bg-emerald-50/70 border border-emerald-100">
+                        <span className="text-slate-800 font-bold">Botol Aerob #01</span>
+                        <span className="text-emerald-700 font-semibold text-[11px]">(+) Tumbuh @ 18.4 Jam</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs font-mono p-2 rounded-lg bg-slate-50 border border-slate-200/80">
+                        <span className="text-slate-700">Botol Anaerob #02</span>
+                        <span className="text-slate-500 text-[11px]">Observasi (Hari 2/5)</span>
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-slate-700 font-mono pt-1 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-slate-400">Isolat Terkonfirmasi:</span>
+                      <span className="font-bold text-[#2764B8]">S. aureus</span>
+                    </div>
                   </div>
-                  <div className="text-[11px] text-slate-500 font-mono">
-                    Isolat: S. aureus (Blood)
-                  </div>
-                </div>
 
-                {/* Pillar 2: AST Panel */}
-                <div className="p-4 rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
-                  <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider">
-                    Sensitivitas AST CLSI
-                  </span>
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-slate-700">Vancomycin (MIC &le; 0.5)</span>
-                    <span className="font-bold text-emerald-700">SENSITIVE</span>
+                  {/* Pillar 2: AST Antibiogram Susceptibility Table */}
+                  <div className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(31,45,93,0.05)] space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider font-semibold">
+                        Uji Sensitivitas AST (CLSI)
+                      </span>
+                      <span className="text-[9px] font-mono text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded font-bold border border-blue-100">
+                        VITEK-2
+                      </span>
+                    </div>
+                    <div className="space-y-1.5 pt-0.5">
+                      <div className="flex items-center justify-between text-xs font-mono p-1.5 rounded hover:bg-slate-50 transition-colors">
+                        <span className="text-slate-800 font-medium">Vancomycin</span>
+                        <span className="text-slate-400 text-[10px]">MIC &le; 0.5</span>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          SENSITIF
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs font-mono p-1.5 rounded hover:bg-slate-50 transition-colors">
+                        <span className="text-slate-800 font-medium">Cefoxitin Screen</span>
+                        <span className="text-slate-400 text-[10px]">MIC &ge; 8</span>
+                        <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                          RESISTEN (MRSA)
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs font-mono p-1.5 rounded hover:bg-slate-50 transition-colors">
+                        <span className="text-slate-800 font-medium">Linezolid</span>
+                        <span className="text-slate-400 text-[10px]">MIC &le; 1</span>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          SENSITIF
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-slate-700">Cefoxitin / MRSA</span>
-                    <span className="font-bold text-red-600">RESISTANT</span>
-                  </div>
-                </div>
 
-                {/* Pillar 3: Stewardship Alert */}
-                <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-1.5">
-                  <span className="text-[10px] font-mono text-amber-700 font-bold block uppercase tracking-wider">
-                    Alert MDRO Terdeteksi
-                  </span>
-                  <div className="font-bold text-xs sm:text-sm text-amber-900 font-mono">
-                    MRSA Flagged &rarr; Tim PPRA
-                  </div>
-                  <div className="text-[11px] text-amber-800 font-mono">
-                    Peta Antibiogram Terupdate Otomatis
+                  {/* Pillar 3: Stewardship Alert & Cumulative Map Sync */}
+                  <div className="p-4 sm:p-5 rounded-xl bg-amber-50/80 border border-amber-200/90 shadow-[0_4px_16px_rgba(217,119,6,0.06)] space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between border-b border-amber-200/70 pb-2">
+                        <span className="text-[10px] font-mono text-amber-800 font-bold block uppercase tracking-wider flex items-center gap-1.5">
+                          <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                          Alert PPRA Aktif
+                        </span>
+                        <span className="text-[9px] font-mono font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded">
+                          MDRO
+                        </span>
+                      </div>
+                      <div className="mt-2.5 space-y-1">
+                        <div className="font-bold text-xs sm:text-sm text-amber-950 font-mono">
+                          MRSA Positif Kultur Darah
+                        </div>
+                        <p className="text-[11px] text-amber-800 leading-relaxed font-sans">
+                          Notifikasi instan dikirim ke Tim PPRA &amp; DPJP untuk de-eskalasi antibiotik tepat sasaran.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="pt-2 border-t border-amber-200/70 flex items-center justify-between text-[10px] font-mono">
+                      <span className="text-amber-800 font-semibold flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                        Peta Kuman 2026 Terupdate
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
