@@ -31,6 +31,7 @@ import {
   MessageSquare,
   HelpCircle,
   ArrowLeftRight,
+  ArrowUpRight,
   Monitor,
   MapPin,
   Mic,
@@ -572,35 +573,21 @@ export default function SolutionsPage() {
             </div>
           </div>
 
-          {/* 3 Floating White Cards (Matching SaaS Mockup Architecture - Clean & Balanced) */}
-          <div className="relative z-20 -mt-24 sm:-mt-32 lg:-mt-40 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
+          {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture) */}
+          <div className="relative z-20 -mt-24 sm:-mt-32 lg:-mt-40 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
-            <div className="relative flex flex-col pt-8">
-              {/* Top Tab (Silky Smooth Spring Reveal on Button Hover) */}
-              <div
-                className={cn(
-                  "absolute top-0 left-0 right-0 h-[38px] rounded-t-[26px] bg-gradient-to-b from-[#EFF5FF] to-[#E4EFFF] border-t border-x border-[#BED6FF] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none shadow-2xs",
-                  hoveredButton === 1
-                    ? "translate-y-0 opacity-100 scale-100"
-                    : "translate-y-5 opacity-0 scale-[0.97]"
-                )}
-              >
-                <span className="text-[11.5px] font-bold text-[#1E54A8] tracking-wide">
-                  {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
-                </span>
+            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#E4E7FB] focus-within:bg-[#E4E7FB] group/plan">
+              {/* Top Tag */}
+              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E2A8A] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+                {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
               </div>
 
               {/* Main Card Body */}
-              <div
-                className={cn(
-                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  hoveredButton === 1 && "border-[#93B8F8] shadow-[0_22px_50px_rgba(36,102,203,0.13)] -translate-y-1.5"
-                )}
-              >
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-7 sm:p-8 h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
-                    <Zap className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
+                    <Zap className="h-5 w-5 text-[#2F4BDB] fill-[#2F4BDB]" />
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {language === "ID" ? "RS Sentral" : "Hospital Central"}
                     </h3>
@@ -624,23 +611,20 @@ export default function SolutionsPage() {
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
+                    <span className="text-[11px] font-medium text-[#2F4BDB] block mt-1">
                       {deploymentMode === "cloud"
                         ? "Private Cloud LIS + HL7 Bridge"
                         : "Internal Local Hospital Server"}
                     </span>
                   </div>
 
-                  {/* CTA Button (Outline Style from Mockup) */}
+                  {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    onMouseEnter={() => setHoveredButton(1)}
-                    onMouseLeave={() => setHoveredButton(null)}
-                    onFocus={() => setHoveredButton(1)}
-                    onBlur={() => setHoveredButton(null)}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border border-slate-300 hover:border-[#122697] bg-white hover:bg-blue-50/50 text-slate-800 hover:text-[#122697] shadow-2xs active:scale-[0.99]"
+                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#1E2A8A] group-hover/plan:border-[#1E2A8A] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#1E2A8A] group-focus-within/plan:border-[#1E2A8A] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
+                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
                   {/* Divider Line */}
@@ -680,32 +664,18 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 2: Tier 2 - Clinical & MCU Labs */}
-            <div className="relative flex flex-col pt-8">
-              {/* Top Tab (Silky Smooth Spring Reveal on Button Hover) */}
-              <div
-                className={cn(
-                  "absolute top-0 left-0 right-0 h-[38px] rounded-t-[26px] bg-gradient-to-b from-[#EFF5FF] to-[#E4EFFF] border-t border-x border-[#BED6FF] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none shadow-2xs",
-                  hoveredButton === 2
-                    ? "translate-y-0 opacity-100 scale-100"
-                    : "translate-y-5 opacity-0 scale-[0.97]"
-                )}
-              >
-                <span className="text-[11.5px] font-bold text-[#1E54A8] tracking-wide">
-                  {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
-                </span>
+            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#EDE3FB] focus-within:bg-[#EDE3FB] group/plan">
+              {/* Top Tag */}
+              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#5B21B6] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+                {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
               </div>
 
               {/* Main Card Body */}
-              <div
-                className={cn(
-                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  hoveredButton === 2 && "border-[#93B8F8] shadow-[0_22px_50px_rgba(36,102,203,0.13)] -translate-y-1.5"
-                )}
-              >
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-7 sm:p-8 h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
-                    <Flame className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
+                    <Flame className="h-5 w-5 text-[#7C3AED] fill-[#7C3AED]" />
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
                     </h3>
@@ -729,23 +699,20 @@ export default function SolutionsPage() {
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
+                    <span className="text-[11px] font-medium text-[#7C3AED] block mt-1">
                       {deploymentMode === "cloud"
                         ? "High-Throughput Cloud Engine"
                         : "Outpatient Dedicated Server"}
                     </span>
                   </div>
 
-                  {/* CTA Button: Identical Outline Style to other cards */}
+                  {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    onMouseEnter={() => setHoveredButton(2)}
-                    onMouseLeave={() => setHoveredButton(null)}
-                    onFocus={() => setHoveredButton(2)}
-                    onBlur={() => setHoveredButton(null)}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border border-slate-300 hover:border-[#122697] bg-white hover:bg-blue-50/50 text-slate-800 hover:text-[#122697] shadow-2xs active:scale-[0.99]"
+                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#1E2A8A] group-hover/plan:border-[#1E2A8A] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#1E2A8A] group-focus-within/plan:border-[#1E2A8A] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
+                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
                   {/* Divider Line */}
@@ -785,32 +752,18 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
-            <div className="relative flex flex-col pt-8">
-              {/* Top Tab (Silky Smooth Spring Reveal on Button Hover) */}
-              <div
-                className={cn(
-                  "absolute top-0 left-0 right-0 h-[38px] rounded-t-[26px] bg-gradient-to-b from-[#EFF5FF] to-[#E4EFFF] border-t border-x border-[#BED6FF] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none shadow-2xs",
-                  hoveredButton === 3
-                    ? "translate-y-0 opacity-100 scale-100"
-                    : "translate-y-5 opacity-0 scale-[0.97]"
-                )}
-              >
-                <span className="text-[11.5px] font-bold text-[#1E54A8] tracking-wide">
-                  {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
-                </span>
+            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#E4E7FB] focus-within:bg-[#E4E7FB] group/plan">
+              {/* Top Tag */}
+              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E2A8A] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+                {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
               </div>
 
               {/* Main Card Body */}
-              <div
-                className={cn(
-                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                  hoveredButton === 3 && "border-[#93B8F8] shadow-[0_22px_50px_rgba(36,102,203,0.13)] -translate-y-1.5"
-                )}
-              >
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-7 sm:p-8 h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
-                    <Microscope className="h-5 w-5 text-[#2466CB]" />
+                    <Microscope className="h-5 w-5 text-[#2F4BDB]" />
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
                     </h3>
@@ -834,23 +787,20 @@ export default function SolutionsPage() {
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
+                    <span className="text-[11px] font-medium text-[#2F4BDB] block mt-1">
                       {deploymentMode === "cloud"
                         ? "Accredited Subspecialty Suite"
                         : "Standalone Specimen Workstation"}
                     </span>
                   </div>
 
-                  {/* CTA Button (Outline Style from Mockup) */}
+                  {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    onMouseEnter={() => setHoveredButton(3)}
-                    onMouseLeave={() => setHoveredButton(null)}
-                    onFocus={() => setHoveredButton(3)}
-                    onBlur={() => setHoveredButton(null)}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border border-slate-300 hover:border-[#122697] bg-white hover:bg-blue-50/50 text-slate-800 hover:text-[#122697] shadow-2xs active:scale-[0.99]"
+                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#1E2A8A] group-hover/plan:border-[#1E2A8A] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#1E2A8A] group-focus-within/plan:border-[#1E2A8A] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
+                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
                   {/* Divider Line */}
