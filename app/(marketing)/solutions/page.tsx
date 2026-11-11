@@ -538,14 +538,14 @@ export default function SolutionsPage() {
               </p>
 
               {/* Galileo-style White Pill Switcher with Active Blue Button */}
-              <div className="inline-flex items-center p-1 rounded-full bg-white shadow-xs mt-5">
+              <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white shadow-sm mt-5">
                 <button
                   type="button"
                   onClick={() => setDeploymentMode("cloud")}
                   className={cn(
-                    "px-4.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer",
+                    "px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer whitespace-nowrap",
                     deploymentMode === "cloud"
-                      ? "bg-[#2764B8] text-white shadow-xs"
+                      ? "bg-[#2466CB] text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   )}
                 >
@@ -555,9 +555,9 @@ export default function SolutionsPage() {
                   type="button"
                   onClick={() => setDeploymentMode("onprem")}
                   className={cn(
-                    "px-4.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer",
+                    "px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer whitespace-nowrap",
                     deploymentMode === "onprem"
-                      ? "bg-[#2764B8] text-white shadow-xs"
+                      ? "bg-[#2466CB] text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   )}
                 >
