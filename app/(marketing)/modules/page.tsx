@@ -22,6 +22,8 @@ import {
   Network,
   QrCode,
   Thermometer,
+  Zap,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -32,7 +34,6 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function ModulesPage() {
   const { language } = useLanguage();
   const [selectedModule, setSelectedModule] = useState<number>(0);
-  const [activeDirectoryIndex, setActiveDirectoryIndex] = useState<number>(0);
 
   // Sync tab with URL hash if present
   useEffect(() => {
@@ -276,8 +277,6 @@ export default function ModulesPage() {
 
   const current = modules[selectedModule];
   const CurrentIcon = current.icon;
-  const activeDirectoryModule = modules[activeDirectoryIndex];
-  const ActiveDirectoryIcon = activeDirectoryModule.icon;
 
   return (
     <div className="w-full bg-white text-slate-800">
@@ -509,254 +508,321 @@ export default function ModulesPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          MODULE DIRECTORY: IN-PAGE INFRASTRUCTURE ARCHITECTURE
-          (2-Column Layout with Vertical Timeline & Signature Chamfered Cards)
+          MODULE DIRECTORY: KRESNA-STYLE HIGH-IMPACT WORKFLOW SHOWCASE
+          Text on Top, Floating Micro-UI on Bottom, Asymmetric Grid
           ══════════════════════════════════════════════════════════════ */}
-      <section
-        id="module-directory"
-        className="w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 scroll-mt-24"
-      >
+      <section id="modules-directory" className="w-full bg-[#FBFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
-            {/* ═══ LEFT COLUMN: Sticky / Clean Overview + Active Details ═══ */}
-            <div className="lg:col-span-5 lg:sticky lg:top-28 space-y-6">
-              <div>
-                <div className="mb-3.5 sm:mb-4">
-                  <SectionBadge variant="blue">
-                    {language === "ID" ? "Direktori Modul" : "Module Directory"}
-                  </SectionBadge>
-                </div>
-                <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] xl:text-[42px] font-bold leading-[1.18] tracking-tight text-[#2A5298]">
-                  {language === "ID"
-                    ? "Daftar Lengkap 5 Modul Spesialisasi Laboratorium"
-                    : "Complete Suite of 5 Laboratory Modules"}
-                </h2>
-                <p className="mt-3.5 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-                  {language === "ID"
-                    ? "Pilih modul di samping untuk melihat kapabilitas teknis, standar interfacing alat, dan jaminan kepatuhan akreditasi rumah sakit."
-                    : "Select any module to review technical capabilities, direct instrument interfacing, and accreditation readiness."}
-                </p>
-              </div>
+          {/* 2-Column Header (Matching Kresna Reference Layout) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end mb-12 sm:mb-16">
+            <div className="lg:col-span-7 space-y-2">
+              <span className="font-serif italic text-base sm:text-lg text-slate-500 block">
+                {language === "ID" ? "Spesialisasi Laboratorium Klinis" : "Clinical Specialty Architecture"}
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.14]">
+                {language === "ID" ? (
+                  <>
+                    Modul Spesialisasi Tanpa Hambatan.
+                    <br />
+                    Untuk Seluruh Instalasi Lab.
+                  </>
+                ) : (
+                  <>
+                    Specialized Modules.
+                    <br />
+                    Across Every Laboratory Dept.
+                  </>
+                )}
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-normal leading-relaxed">
+                {language === "ID"
+                  ? "Diagnova mengotomasi setiap alur kerja diagnostik dari pre-analitik hingga pasca-analitik — interfacing instrumen langsung, pelacakan spesimen ber-barcode 2D, kontrol rantai dingin darah, hingga deteksi pola kuman kumulatif."
+                  : "Diagnova automates repetitive, high-stakes diagnostic workflows from pre-analytical intake to final delivery — direct instrument links, 2D specimen tracking, cold-chain blood banking, and automated cumulative antibiograms."}
+              </p>
+            </div>
+          </div>
 
-              {/* Active Module Live Info Box */}
-              <div className="p-5 sm:p-6 rounded-[24px] bg-white border border-slate-200/90 shadow-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-mono font-bold text-slate-800">
-                      {activeDirectoryModule.targetDept}
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-50 text-[#2764B8] font-bold border border-blue-200/60">
-                    MOD-0{activeDirectoryIndex + 1}
-                  </span>
-                </div>
-
+          {/* ══════════════════════════════════════════════════════════════
+              ASYMMETRIC CARD GRID (KRESNA DESIGN ARCHITECTURE)
+              Row 1: 7-col + 5-col
+              Row 2: 5-col + 7-col
+              Row 3: 12-col Full Panoramic
+              ══════════════════════════════════════════════════════════════ */}
+          <div className="space-y-6 sm:space-y-8">
+            {/* ROW 1: Smart Workflow Automation (7-col) & Cold-Chain Telemetry (5-col) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+              {/* Card 1: Routine & Hematology - Node Workflow Tree (7 cols) */}
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8] border border-slate-200/70 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-slate-300">
                 <div>
-                  <h4 className="font-display text-lg sm:text-xl font-bold text-slate-900">
-                    {activeDirectoryModule.name}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-[#2764B8] font-medium mt-1">
-                    {activeDirectoryModule.tagline}
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                    {language === "ID" ? "Otomasi Alur Kerja Hematologi & Rutin" : "Smart Workflow Automation"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                    {language === "ID"
+                      ? "Interfacing analyzer ASTM/HL7 langsung, validasi otomatis aturan Westgard, dan penarikan hasil tanpa perantara."
+                      : "Direct ASTM/HL7 analyzer links, automated Westgard rule verification, and instant zero-middleware capture."}
                   </p>
                 </div>
 
-                {/* 2 Key Metrics */}
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  {activeDirectoryModule.metrics.map((m, i) => (
-                    <div key={i} className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-                      <span className="font-display text-lg font-bold text-[#345DAB] block">
-                        {m.val}
-                      </span>
-                      <span className="text-[10px] text-slate-500 block truncate">
-                        {m.label}
-                      </span>
+                {/* Bottom Visual Stage: Node Workflow Connector (matching Kresna Card 1) */}
+                <div className="h-[210px] sm:h-[225px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl px-2">
+                  <div className="flex items-center justify-between w-full max-w-xl gap-3 sm:gap-4">
+                    {/* Left Node: Brand Logo/Instrument Box */}
+                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-[#2764B8] text-white flex items-center justify-center shadow-md shrink-0">
+                      <Activity className="h-6 w-6 sm:h-7 sm:w-7" />
                     </div>
-                  ))}
+
+                    {/* Connecting Branching Graphic & Middle Nodes */}
+                    <div className="flex-1 flex flex-col justify-between gap-3 relative">
+                      {/* Sub-Node 1: ASTM Direct Link */}
+                      <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                        <span className="truncate text-[11px] sm:text-xs">Sysmex &amp; Cobas Direct</span>
+                      </div>
+
+                      {/* Sub-Node 2: Delta Check Flag */}
+                      <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                        <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                        <span className="truncate text-[11px] sm:text-xs">Delta-Check (+115% Shift)</span>
+                      </div>
+                    </div>
+
+                    {/* Right Re-converging Task Card */}
+                    <div className="w-[180px] sm:w-[220px] rounded-2xl bg-white border border-slate-200/90 p-3 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.05)] space-y-2 text-[11px] font-mono shrink-0">
+                      <div className="border-l-2 border-[#2764B8] pl-2">
+                        <span className="font-bold text-slate-900 block truncate">Tarik Hasil ASTM</span>
+                        <span className="text-slate-400 text-[10px]">07:50 WIB • 14 Parameter</span>
+                      </div>
+                      <div className="border-l-2 border-slate-200 pl-2">
+                        <span className="font-bold text-slate-700 block truncate">Validasi Westgard QC</span>
+                        <span className="text-slate-400 text-[10px]">07:54 WIB • L-J Chart Normal</span>
+                      </div>
+                      <div className="border-l-2 border-emerald-500 pl-2">
+                        <span className="font-bold text-emerald-700 block truncate">Otomatis Masuk SIMRS</span>
+                        <span className="text-emerald-600 text-[10px]">07:58 WIB • Terverifikasi</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Blood Bank - Cold-Chain Telemetry Peek (5 cols) */}
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8] border border-slate-200/70 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-slate-300">
+                <div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                    {language === "ID" ? "Telemetri Rantai Dingin & BDRS" : "Cold-Chain & Transfusion Safety"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                    {language === "ID"
+                      ? "Monitoring suhu kulkas darah 24/7 dan uji silang serasi digital Mayor/Minor ISBT-128."
+                      : "24/7 blood storage telemetry and digital dual-verification electronic crossmatching."}
+                  </p>
                 </div>
 
-                {/* Direct Action Link to Slug Page */}
-                <div className="pt-2">
-                  <Link
-                    href={`/modules/${activeDirectoryModule.id}`}
-                    className="group w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white py-2.5 px-4 text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
-                  >
-                    <span>{language === "ID" ? "Buka Dokumentasi Lengkap" : "View Full Specifications"}</span>
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                  </Link>
+                {/* Bottom Visual Stage: Forecast-Style App Window Peek (matching Kresna Card 2) */}
+                <div className="h-[210px] sm:h-[225px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl bg-white/60 border border-slate-200/60 p-4">
+                  {/* Floating White Stat Card */}
+                  <div className="relative z-10 w-full max-w-[260px] p-4 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-1.5 text-center">
+                    <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
+                      Suhu Kulkas BDRS 24/7
+                    </span>
+                    <div className="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+                      3.8°C
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Rentang Aman (2°C - 6°C)
+                    </span>
+                  </div>
+
+                  {/* Soft Background Wave Chart (matching Kresna Card 2's blue wave) */}
+                  <div className="absolute inset-x-0 bottom-0 h-28 pointer-events-none opacity-40">
+                    <svg viewBox="0 0 400 120" preserveAspectRatio="none" className="w-full h-full">
+                      <defs>
+                        <linearGradient id="coldWaveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#2764B8" stopOpacity="0.4" />
+                          <stop offset="100%" stopColor="#2764B8" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M0,80 Q100,60 200,65 T400,62 L400,120 L0,120 Z" fill="url(#coldWaveGrad)" />
+                      <path d="M0,80 Q100,60 200,65 T400,62" fill="none" stroke="#2764B8" strokeWidth="2" />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* ═══ RIGHT COLUMN: Vertical Timeline + 5 Signature Chamfered Cards ═══ */}
-            <div className="lg:col-span-7 relative flex items-stretch gap-4 sm:gap-6 lg:gap-7">
-              {/* Vertical Timeline Track */}
-              <div className="relative w-6 sm:w-8 flex justify-center flex-shrink-0 self-stretch">
-                <div className="absolute top-4 bottom-4 w-[2px] bg-slate-200/90 rounded-full overflow-hidden">
-                  <div
-                    className="w-full bg-gradient-to-b from-[#2A66CC] to-[#4EA1F0] rounded-full transition-all duration-500"
-                    style={{
-                      height: `${((activeDirectoryIndex + 1) / modules.length) * 100}%`,
-                    }}
-                  />
+            {/* ROW 2: Reagents Intelligence (5-col) & 2D Specimen Tracking (7-col) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+              {/* Card 3: Inventory & Reagents - Dashboard Usage Bars (5 cols) */}
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8] border border-slate-200/70 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-slate-300">
+                <div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                    {language === "ID" ? "Telemetri Reagen & Biaya Tes" : "Reagent & Supply Intelligence"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                    {language === "ID"
+                      ? "Pengurangan stok otomatis berbasis jumlah tes dan peringatan dini sebelum stok menipis."
+                      : "Test-driven auto-depletion tracking and proactive safety threshold warnings."}
+                  </p>
                 </div>
 
-                {/* 5 Timeline Dots */}
-                {modules.map((m, idx) => {
-                  const isActive = activeDirectoryIndex === idx;
-                  const isPassed = activeDirectoryIndex >= idx;
+                {/* Bottom Visual Stage: Dashboard Window Peek with Bar Chart (matching Kresna Card 3) */}
+                <div className="h-[210px] sm:h-[225px] w-full flex flex-col justify-between rounded-2xl bg-white border border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.04)] p-4 sm:p-5">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <PackageCheck className="h-4 w-4 text-[#2764B8]" />
+                      Reagent Inventory
+                    </span>
+                    <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full">
+                      Stok On-Board: 82%
+                    </span>
+                  </div>
 
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setActiveDirectoryIndex(idx)}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center focus:outline-none cursor-pointer group"
-                      style={{
-                        left: "50%",
-                        top: `${(idx / (modules.length - 1)) * 92 + 4}%`,
-                      }}
-                      aria-label={`Pilih ${m.name}`}
-                    >
-                      {/* Glowing Halo on Active */}
-                      <span
-                        className={`absolute inset-0 rounded-full transition-all duration-500 pointer-events-none ${
-                          isActive
-                            ? "ring-4 ring-[#93C5FD]/70 shadow-[0_0_16px_rgba(42,102,204,0.6)] scale-125 animate-pulse"
-                            : "ring-0 scale-100"
-                        }`}
-                      />
-                      <span
-                        className={`relative rounded-full transition-all duration-500 ${
-                          isActive
-                            ? "h-4 w-4 bg-[#2A66CC] z-20"
-                            : isPassed
-                            ? "h-3 w-3 bg-[#2A66CC] z-10"
-                            : "h-2.5 w-2.5 bg-[#CBD5E1] z-10 group-hover:bg-slate-400"
-                        }`}
-                      />
-                    </button>
-                  );
-                })}
+                  {/* 5 Reagent Usage / Depletion Bars */}
+                  <div className="flex items-end justify-between gap-3 h-24 pt-2">
+                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[82%]" />
+                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Diluent</span>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[65%]" />
+                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Lyse</span>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[90%]" />
+                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Stain</span>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full bg-amber-400 rounded-t-lg h-[48%]" />
+                      <span className="text-[9px] font-mono text-amber-700 font-bold truncate w-full text-center">Clean</span>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full bg-[#2764B8] rounded-t-lg h-[94%]" />
+                      <span className="text-[9px] font-mono text-slate-500 truncate w-full text-center">Ctrl</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* 5 Stacked Chamfered Cards */}
-              <div className="flex-1 flex flex-col gap-3.5 sm:gap-4 lg:gap-5">
-                {modules.map((card, idx) => {
-                  const Icon = card.icon;
-                  const isActive = activeDirectoryIndex === idx;
+              {/* Card 4: Anatomical Pathology - Member Nodes & Custody Chain (7 cols) */}
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8] border border-slate-200/70 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-slate-300">
+                <div>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                    {language === "ID" ? "Pelacakan Spesimen Jaringan 2D" : "2D Specimen Chain of Custody"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                    {language === "ID"
+                      ? "Pelacakan kaset dan slide kaca ber-barcode mikro 2D untuk eliminasi risiko spesimen tertukar."
+                      : "2D micro-barcode tracking across cassettes and glass slides for zero specimen mix-ups."}
+                  </p>
+                </div>
 
-                  return (
-                    <div
-                      key={card.id}
-                      id={card.id}
-                      onClick={() => setActiveDirectoryIndex(idx)}
-                      className={`relative cursor-pointer transition-all duration-500 ease-in-out select-text gpu-layer ${
-                        isActive
-                          ? "drop-shadow-[0_18px_32px_rgba(46,104,180,0.26)] -translate-y-1"
-                          : "drop-shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:-translate-y-0.5 hover:drop-shadow-[0_8px_16px_rgba(0,0,0,0.06)]"
-                      }`}
-                    >
-                      <div
-                        className="relative overflow-hidden rounded-tl-[24px] sm:rounded-tl-[32px] rounded-br-[24px] sm:rounded-br-[32px]"
-                        style={{
-                          clipPath:
-                            "polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px))",
-                        }}
-                      >
-                        {/* Layer 1: Inactive Base Card Background */}
-                        <div className="absolute inset-0 bg-white border border-slate-200/90 shadow-sm" />
-
-                        {/* Layer 2: Active Card Blue Gradient Overlay */}
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-br from-[#275EA8] via-[#2E68B4] to-[#1C478B] transition-opacity duration-500 ease-in-out pointer-events-none ${
-                            isActive ? "opacity-100" : "opacity-0"
-                          }`}
-                        >
-                          <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#56ADE2]/25 blur-[50px]" />
-                          <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#1C478B]/40 blur-[50px]" />
+                {/* Bottom Visual Stage: Member Nodes & Staging Card (matching Kresna Card 4) */}
+                <div className="h-[210px] sm:h-[225px] w-full flex items-center justify-center relative overflow-hidden rounded-2xl px-2">
+                  <div className="flex items-center justify-between w-full max-w-xl gap-3 sm:gap-6">
+                    {/* Left Stack of Specimen Stage Cards */}
+                    <div className="space-y-2.5 flex-1 max-w-[210px]">
+                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs">
+                        <div className="h-6 w-6 rounded-lg bg-blue-50 text-[#2764B8] flex items-center justify-center shrink-0">
+                          <Microscope className="h-3.5 w-3.5" />
                         </div>
+                        <div>
+                          <span className="font-bold text-slate-900 block text-[11px]">Grossing Kaset A1</span>
+                          <span className="text-[10px] font-mono text-slate-400">Barcode 2D Valid</span>
+                        </div>
+                      </div>
 
-                        {/* Layer 3: Unified Text Content */}
-                        <div className="relative z-10 p-5 sm:p-6 lg:p-7">
-                          <div className="flex items-center justify-between gap-3 mb-2.5">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`flex items-center justify-center rounded-xl p-2 sm:p-2.5 transition-all duration-500 shrink-0 ${
-                                  isActive
-                                    ? "bg-white/20 text-white shadow-inner"
-                                    : "bg-[#275EA8]/10 text-[#275EA8]"
-                                }`}
-                              >
-                                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                              </div>
-                              <div>
-                                <span
-                                  className={`text-[10px] font-mono uppercase tracking-wider block transition-colors duration-500 ${
-                                    isActive ? "text-blue-200" : "text-slate-400 font-semibold"
-                                  }`}
-                                >
-                                  MOD-0{idx + 1} • {card.targetDept}
-                                </span>
-                                <h3
-                                  className={`font-semibold text-base sm:text-lg leading-snug tracking-tight transition-colors duration-500 ${
-                                    isActive ? "text-white" : "text-slate-800"
-                                  }`}
-                                >
-                                  {card.name}
-                                </h3>
-                              </div>
-                            </div>
-
-                            <span
-                              className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full transition-colors duration-500 shrink-0 ${
-                                isActive
-                                  ? "bg-white/20 text-white border border-white/20"
-                                  : "bg-blue-50 text-[#2764B8] border border-blue-200/60"
-                              }`}
-                            >
-                              {card.metrics[0]?.val}
-                            </span>
-                          </div>
-
-                          <p
-                            className={`text-xs sm:text-sm leading-relaxed transition-colors duration-500 mb-3 ${
-                              isActive ? "text-white/90" : "text-slate-600 font-normal"
-                            }`}
-                          >
-                            {card.description}
-                          </p>
-
-                          {/* Quick Highlight Pills */}
-                          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100/30">
-                            {card.highlights.slice(0, 2).map((h, hIdx) => (
-                              <span
-                                key={hIdx}
-                                className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full transition-colors duration-500 ${
-                                  isActive
-                                    ? "bg-white/15 text-white/95"
-                                    : "bg-slate-50 text-slate-700 border border-slate-200/60"
-                                }`}
-                              >
-                                ✓ {h.title}
-                              </span>
-                            ))}
-                            <Link
-                              href={`/modules/${card.id}`}
-                              className={`ml-auto text-xs font-semibold inline-flex items-center gap-1 transition-colors duration-500 ${
-                                isActive ? "text-blue-100 hover:text-white" : "text-[#2764B8] hover:text-[#1E5299]"
-                              }`}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <span>{language === "ID" ? "Spesifikasi" : "Specs"}</span>
-                              <ChevronRight className="h-3.5 w-3.5" />
-                            </Link>
-                          </div>
+                      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs">
+                        <div className="h-6 w-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        </div>
+                        <div>
+                          <span className="font-bold text-slate-900 block text-[11px]">Microtomy 4 Slide</span>
+                          <span className="text-[10px] font-mono text-slate-400">Pewarnaan H&amp;E OK</span>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+
+                    {/* Right Target Synoptic Report Card */}
+                    <div className="w-[200px] sm:w-[240px] rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.05)] space-y-2 shrink-0">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 font-mono">ICD-O-3 TEMPLATE</span>
+                        <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold">
+                          Terverifikasi
+                        </span>
+                      </div>
+                      <div className="text-xs font-mono">
+                        <span className="font-bold text-slate-800 block">Karsinoma Ductal (8500/3)</span>
+                        <span className="text-[10px] text-slate-500">WSI 40x Scan Digital Terlampir</span>
+                      </div>
+                      <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-600">
+                        <span>Otorisasi Sp.PA:</span>
+                        <span className="font-bold text-[#2764B8]">dr. Hendra, Sp.PA</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ROW 3: Microbiology & PPRA Antibiogram - Full 12-col Panoramic Workstation */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#F4F5F8] border border-slate-200/70 p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-slate-300">
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-1.5">
+                  {language === "ID" ? "Mikrobiologi Klinik & Peta Antibiogram PPRA" : "Microbiology & Cumulative Antibiogram"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6">
+                  {language === "ID"
+                    ? "Manajemen biakan kultur multi-hari, integrasi analyzer otomatis VITEK-2, dan pelaporan pola resistensi kumulatif sesuai pedoman CLSI / EUCAST."
+                    : "Multi-day culture incubation tracking, automated VITEK-2 AST integration, and automated cumulative antibiograms under CLSI guidelines."}
+                </p>
+              </div>
+
+              {/* Bottom Visual Stage: 3-Pillar Clean Workstation Console */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 w-full">
+                {/* Pillar 1: Incubation */}
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] space-y-1.5">
+                  <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider">
+                    Inkubasi Kultur Darah
+                  </span>
+                  <div className="font-bold text-xs sm:text-sm text-slate-900 font-mono">
+                    BD BACTEC • Hari ke-2 / 5
+                  </div>
+                  <div className="text-[11px] text-slate-500 font-mono">
+                    Isolat: S. aureus (Blood)
+                  </div>
+                </div>
+
+                {/* Pillar 2: AST Panel */}
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] space-y-1.5">
+                  <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider">
+                    Sensitivitas AST CLSI
+                  </span>
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-700">Vancomycin (MIC &le; 0.5)</span>
+                    <span className="font-bold text-emerald-700">SENSITIVE</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-700">Cefoxitin / MRSA</span>
+                    <span className="font-bold text-red-600">RESISTANT</span>
+                  </div>
+                </div>
+
+                {/* Pillar 3: Stewardship Alert */}
+                <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1.5">
+                  <span className="text-[10px] font-mono text-amber-700 font-bold block uppercase tracking-wider">
+                    Alert MDRO Terdeteksi
+                  </span>
+                  <div className="font-bold text-xs sm:text-sm text-amber-900 font-mono">
+                    MRSA Flagged &rarr; Tim PPRA
+                  </div>
+                  <div className="text-[11px] text-amber-800 font-mono">
+                    Peta Antibiogram Terupdate Otomatis
+                  </div>
+                </div>
               </div>
             </div>
           </div>
