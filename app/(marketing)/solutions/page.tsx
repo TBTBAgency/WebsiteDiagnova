@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Layers,
   Thermometer,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -24,54 +25,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function SolutionsPage() {
   const { language } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState<"micro" | "blood">("micro");
-
-  const facilityTiers = [
-    {
-      id: "hospital",
-      title: language === "ID" ? "Rumah Sakit Umum & Khusus" : "General & Specialty Hospitals",
-      desc:
-        language === "ID"
-          ? "Dirancang untuk instalasi lab sentral, IGD, ICU, dan bangsal rawat inap dengan bridging dua arah ke SIMRS/RME."
-          : "Engineered for central laboratories, ER, ICU, and inpatient wards with seamless two-way HIS/EMR bridging.",
-      solutionsRecommended: [
-        language === "ID" ? "Hospital Laboratory (Core LIS)" : "Hospital Laboratory (Core LIS)",
-        language === "ID" ? "Bank Darah & Transfusi (BDRS)" : "Blood Bank & Transfusion Safety",
-        language === "ID" ? "Patologi Anatomi & Sitologi" : "Anatomical Pathology & Cytology",
-        language === "ID" ? "Mikrobiologi Klinis & PPRA" : "Microbiology & Antibiotic Stewardship",
-      ],
-      kpi: language === "ID" ? "TAT IGD < 25 Menit • Bridging Dua Arah SIMRS" : "ER TAT < 25 Mins • 100% HIS Bridging",
-    },
-    {
-      id: "clinic",
-      title: language === "ID" ? "Laboratorium Klinik & Rujukan" : "Clinical & Reference Labs",
-      desc:
-        language === "ID"
-          ? "Dioptimalkan untuk volume spesimen tinggi, medical check-up (MCU) korporasi, registrasi barcode cepat, dan portal pasien online."
-          : "Optimized for high specimen throughput, corporate check-ups (MCU), fast barcode dispatch, and online patient results.",
-      solutionsRecommended: [
-        language === "ID" ? "Laboratorium Klinik Mandiri" : "Independent Clinical Laboratory",
-        language === "ID" ? "Modul Pemeriksaan MCU Massal" : "Mass Corporate MCU Engine",
-        language === "ID" ? "Portal Hasil Online & WhatsApp PDF" : "Online Patient Portal & Encrypted PDF",
-        language === "ID" ? "Manajemen Billing & B2B Rujukan" : "B2B Outreach & Billing Gateway",
-      ],
-      kpi: language === "ID" ? "Registrasi 30 Detik • 100% Pengiriman Digital" : "30s Registration • 100% Digital Delivery",
-    },
-    {
-      id: "specialist",
-      title: language === "ID" ? "Pusat Diagnostik Spesialis" : "Specialized Diagnostic Centers",
-      desc:
-        language === "ID"
-          ? "Solusi khusus untuk laboratorium patologi anatomi jaringan, kultur mikrobiologi sensitivitas tinggi, dan bank darah mandiri."
-          : "Tailored systems for histological tissue tracking, high-sensitivity microbial cultures, and dedicated blood banking.",
-      solutionsRecommended: [
-        language === "ID" ? "Patologi Anatomi & Slide Tracking" : "Anatomical Pathology & Slide Tracking",
-        language === "ID" ? "Mikrobiologi & Antibiogram PPRA" : "Microbiology & Antibiogram Matrix",
-        language === "ID" ? "Bank Darah & Cold-Chain Guard" : "Blood Bank & Cold-Chain Guard",
-        language === "ID" ? "Nova AI Clinical Copilot" : "Nova AI Clinical Copilot",
-      ],
-      kpi: language === "ID" ? "Pelacakan 2D Micro-Barcode • Antibiogram CLSI" : "2D Micro-Barcode • Automated Antibiogram",
-    },
-  ];
+  const [deploymentMode, setDeploymentMode] = useState<"cloud" | "onprem">("cloud");
 
   return (
     <div className="w-full bg-[#FAFBFD] text-slate-800">
@@ -514,76 +468,299 @@ export default function SolutionsPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          FACILITY FIT MATRIX (TIER 1, 2, 3 MATCHING)
+          FACILITY FIT MATRIX (RAMPAY-STYLE BLUE FRAMED POD & FLOATING CARDS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
+      <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Header */}
-          <div className="max-w-3xl mb-12 sm:mb-16">
-            <div className="mb-4">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Kesesuaian Institusi" : "Institution Matrix"}
-              </SectionBadge>
+          {/* Blue Framed Container Pod */}
+          <div className="relative rounded-[32px] sm:rounded-[40px] bg-gradient-to-b from-[#1855B4] via-[#1E60CA] to-[#2563EB] overflow-hidden px-6 py-12 sm:px-10 sm:py-16 lg:px-14 lg:py-20 shadow-[0_25px_60px_-15px_rgba(24,85,180,0.28)]">
+            {/* Background Stepped Pillars Architectural Silhouette (mimicking Rampay design) */}
+            <div className="absolute inset-0 pointer-events-none opacity-20 flex justify-center gap-6 sm:gap-10 px-8">
+              <div className="w-1/3 h-full rounded-t-[36px] bg-gradient-to-b from-white/35 via-white/10 to-transparent" />
+              <div className="w-1/3 h-full rounded-t-[36px] bg-gradient-to-b from-white/45 via-white/15 to-transparent" />
+              <div className="w-1/3 h-full rounded-t-[36px] bg-gradient-to-b from-white/35 via-white/10 to-transparent" />
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
-              {language === "ID" ? (
-                <>Pilih Paket Solusi Sesuai Skala Faskes Anda</>
-              ) : (
-                <>Match Solutions to Your Operational Tier</>
-              )}
-            </h2>
-            <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
-                ? "Diagnova beradaptasi dengan kapasitas Anda. Lihat paket solusi dan modul yang direkomendasikan berdasarkan tipe fasilitas kesehatan Anda."
-                : "Diagnova scales to your institution. Review recommended architectures and modules tailored to your operational tier."}
-            </p>
-          </div>
 
-          {/* 3 Clean Tier Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {facilityTiers.map((tier, idx) => (
-              <div
-                key={tier.id}
-                className="rounded-[28px] bg-[#F8FBFE] border border-blue-100/80 p-7 sm:p-8 flex flex-col justify-between space-y-6"
-              >
+            {/* Header: Centered White Title & Subtitle */}
+            <div className="relative z-10 text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-[1.15]">
+                {language === "ID"
+                  ? "Solusi Tepat untuk Setiap Skala Faskes"
+                  : "Tailored Architectures for Every Facility Scale"}
+              </h2>
+              <p className="mt-3.5 text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed max-w-2xl mx-auto">
+                {language === "ID"
+                  ? "Pilih konfigurasi yang dirancang khusus untuk kebutuhan dan kapasitas instansi Anda. Tanpa biaya tersembunyi, fokus pada efisiensi kerja klinis."
+                  : "Choose an architecture engineered for your institution's specific tier. No bloatware, focused purely on clinical speed and compliance."}
+              </p>
+
+              {/* Deployment Switcher Pill (mimicking Rampay Monthly / Yearly switcher) */}
+              <div className="inline-flex items-center p-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 mt-6 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setDeploymentMode("cloud")}
+                  className={cn(
+                    "px-4 sm:px-5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer",
+                    deploymentMode === "cloud"
+                      ? "bg-white text-[#1855B4] shadow-xs"
+                      : "text-white/80 hover:text-white"
+                  )}
+                >
+                  {language === "ID" ? "Cloud Enterprise" : "Cloud Enterprise"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeploymentMode("onprem")}
+                  className={cn(
+                    "px-4 sm:px-5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer",
+                    deploymentMode === "onprem"
+                      ? "bg-white text-[#1855B4] shadow-xs"
+                      : "text-white/80 hover:text-white"
+                  )}
+                >
+                  {language === "ID" ? "On-Premise Server" : "On-Premise Server"}
+                </button>
+              </div>
+            </div>
+
+            {/* 3 Floating White Plan Cards (Rampay Style) */}
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch">
+              {/* Card 1: Tier 1 - Hospital Systems */}
+              <div className="rounded-[26px] sm:rounded-[30px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_15px_40px_rgba(0,0,0,0.14)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-blue-200 text-xs font-semibold text-[#2764B8]">
-                    Tier {idx + 1}
+                  {/* Top Circular Star Badge & Plan Name */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-[#1855B4] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Star className="h-4 w-4 fill-white" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-900">
+                      {language === "ID" ? "Rumah Sakit Sentral" : "Hospital Central"}
+                    </span>
                   </div>
-                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
-                    {tier.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
-                    {tier.desc}
+
+                  {/* Headline Scale */}
+                  <div>
+                    <h3 className="font-display text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight">
+                      Tier 1 • RS A/B/C
+                    </h3>
+                    <span className="text-[11px] font-mono font-medium text-slate-400 block mt-0.5">
+                      {deploymentMode === "cloud"
+                        ? "Private Cloud LIS + HL7 Bridge"
+                        : "Internal Local Hospital Server"}
+                    </span>
+                  </div>
+
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
+                    {language === "ID"
+                      ? "Integrasi penuh SIMRS dua arah, panel CITO IGD berkecepatan tinggi, dan bridging otomatis ke rekam medis pasien."
+                      : "Full bidirectional HIS bridging, rapid emergency ER CITO panel alerts, and instant patient EMR synchronization."}
                   </p>
 
-                  <div className="pt-2 border-t border-blue-100/80 space-y-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-                      {language === "ID" ? "Paket Rekomendasi:" : "Recommended Package:"}
-                    </span>
-                    {tier.solutionsRecommended.map((sol, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs font-medium text-slate-700">
-                        <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                        <span>{sol}</span>
+                  {/* Feature List with Checkmarks */}
+                  <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
                       </div>
-                    ))}
+                      <span>Bridging Dua Arah SIMRS &amp; RME</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Panic Value Broadcast IGD &lt; 25m</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Validasi Barcode Flebotomi Bedside</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Kepatuhan Akreditasi KARS &amp; JCI</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Interfacing 500+ Mesin Analyzer</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-blue-100/80">
-                  <span className="text-xs font-bold text-[#345DAB] block mb-3">
-                    {tier.kpi}
-                  </span>
+                {/* Bottom Outline Button */}
+                <div className="pt-6 mt-6 border-t border-slate-100">
                   <Link
                     href="/request-demo"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 py-2.5 text-xs font-semibold transition-colors shadow-2xs"
+                    className="block w-full py-3 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold text-center transition-all shadow-2xs"
                   >
-                    <span>{language === "ID" ? "Konsultasi Tier Ini" : "Consult This Tier"}</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    {language === "ID" ? "Konsultasi Tier RS" : "Consult Hospital Setup"}
                   </Link>
                 </div>
               </div>
-            ))}
+
+              {/* Card 2: Tier 2 - Clinical & Reference Labs (FEATURED CENTER HIGHLIGHT) */}
+              <div className="rounded-[26px] sm:rounded-[30px] bg-white border-2 border-blue-200/90 p-7 sm:p-8 shadow-[0_25px_60px_rgba(24,85,180,0.22)] flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 relative z-20">
+                <div className="space-y-4">
+                  {/* Top Circular Star Badge & Plan Name */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-[#0060E6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <Star className="h-4 w-4 fill-white" />
+                      </div>
+                      <span className="text-sm font-bold text-[#1855B4]">
+                        {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      POPULAR
+                    </span>
+                  </div>
+
+                  {/* Headline Scale */}
+                  <div>
+                    <h3 className="font-display text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight">
+                      Tier 2 • Lab Mandiri
+                    </h3>
+                    <span className="text-[11px] font-mono font-medium text-slate-400 block mt-0.5">
+                      {deploymentMode === "cloud"
+                        ? "High-Throughput Cloud Engine"
+                        : "Outpatient Dedicated Server"}
+                    </span>
+                  </div>
+
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
+                    {language === "ID"
+                      ? "Dioptimalkan untuk throughput spesimen massal harian, registrasi barcode 30 detik, dan pengiriman otomatis WhatsApp PDF."
+                      : "Optimized for high-volume daily check-in, 30s rapid barcode labeling, and instant encrypted WhatsApp delivery."}
+                  </p>
+
+                  {/* Feature List with Checkmarks */}
+                  <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#0060E6] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span className="font-semibold text-slate-900">Mesin Batch MCU Korporat 1-Klik</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#0060E6] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Cetak Barcode Tabung 0.4s / Label</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#0060E6] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Pengiriman WhatsApp PDF Terenkripsi</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#0060E6] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Gateway Billing B2B Jejaring Rujukan</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#0060E6] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Portal Hasil Pasien Paperless Mandiri</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Filled Blue Button (Highlight like Rampay) */}
+                <div className="pt-6 mt-6 border-t border-slate-100">
+                  <Link
+                    href="/request-demo"
+                    className="block w-full py-3.5 rounded-full bg-[#0060E6] hover:bg-[#0050D8] text-white text-xs font-bold text-center shadow-[0_4px_16px_rgba(0,96,230,0.35)] transition-all active:scale-[0.98]"
+                  >
+                    {language === "ID" ? "Pilih Solusi Lab Klinik" : "Choose Clinical Lab Setup"}
+                  </Link>
+                </div>
+              </div>
+
+              {/* Card 3: Tier 3 - Specialist Diagnostics */}
+              <div className="rounded-[26px] sm:rounded-[30px] bg-white border border-slate-100 p-7 sm:p-8 shadow-[0_15px_40px_rgba(0,0,0,0.14)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
+                <div className="space-y-4">
+                  {/* Top Circular Star Badge & Plan Name */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-[#1855B4] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Star className="h-4 w-4 fill-white" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-900">
+                      {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
+                    </span>
+                  </div>
+
+                  {/* Headline Scale */}
+                  <div>
+                    <h3 className="font-display text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight">
+                      Tier 3 • Spesialis PA/Mikro
+                    </h3>
+                    <span className="text-[11px] font-mono font-medium text-slate-400 block mt-0.5">
+                      {deploymentMode === "cloud"
+                        ? "Accredited Subspecialty Suite"
+                        : "Standalone Specimen Workstation"}
+                    </span>
+                  </div>
+
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
+                    {language === "ID"
+                      ? "Dirancang mendalam untuk instalasi patologi anatomi jaringan, mikrobiologi kultur CLSI, dan bank darah rumah sakit (BDRS)."
+                      : "Engineered for anatomical pathology tissue tracking, CLSI microbiology cultures, and hospital blood banks."}
+                  </p>
+
+                  {/* Feature List with Checkmarks */}
+                  <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Pelacakan 2D Kaset Jaringan &amp; Slide</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Template Baku ICD-O-3 &amp; Bethesda</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Pembangkit Antibiogram Otomatis CLSI</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Uji Silang Serasi Digital ISBT-128</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                      <div className="h-4 w-4 rounded-full bg-blue-50 text-[#1855B4] flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 stroke-[3]" />
+                      </div>
+                      <span>Telemetri Rantai Dingin 24/7 (2&deg;C-6&deg;C)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Outline Button */}
+                <div className="pt-6 mt-6 border-t border-slate-100">
+                  <Link
+                    href="/request-demo"
+                    className="block w-full py-3 rounded-full border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold text-center transition-all shadow-2xs"
+                  >
+                    {language === "ID" ? "Konsultasi Tier Spesialis" : "Consult Specialist Setup"}
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
