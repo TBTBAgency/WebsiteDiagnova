@@ -528,35 +528,25 @@ export default function ModulesPage() {
         <div className="absolute -bottom-20 left-10 w-[500px] h-[300px] bg-sky-100/30 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* 2-Column Header (Matching Kresna Reference Layout) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end mb-12 sm:mb-16">
-            <div className="lg:col-span-7 space-y-2.5">
-              <span className="font-serif italic text-base sm:text-lg text-slate-500 block">
-                {language === "ID" ? "Spesialisasi Laboratorium Klinis" : "Clinical Specialty Architecture"}
-              </span>
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.14]">
-                {language === "ID" ? (
-                  <>
-                    Modul Spesialisasi Tanpa Hambatan.
-                    <br />
-                    Untuk Seluruh Instalasi Lab.
-                  </>
-                ) : (
-                  <>
-                    Specialized Modules.
-                    <br />
-                    Across Every Laboratory Dept.
-                  </>
-                )}
-              </h2>
+          {/* Header */}
+          <div className="max-w-3xl mb-12 sm:mb-16">
+            <div className="mb-4">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Direktori Modul" : "Module Directory"}
+              </SectionBadge>
             </div>
-            <div className="lg:col-span-5">
-              <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-normal leading-relaxed">
-                {language === "ID"
-                  ? "Diagnova mengotomasi setiap alur kerja diagnostik dari pre-analitik hingga pasca-analitik — interfacing instrumen langsung, pelacakan spesimen ber-barcode 2D, kontrol rantai dingin darah, hingga deteksi pola kuman kumulatif."
-                  : "Diagnova automates repetitive, high-stakes diagnostic workflows from pre-analytical intake to final delivery — direct instrument links, 2D specimen tracking, cold-chain blood banking, and automated cumulative antibiograms."}
-              </p>
-            </div>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+              {language === "ID" ? (
+                <>Daftar Lengkap 5 Modul Laboratorium</>
+              ) : (
+                <>Complete Suite of 5 Laboratory Modules</>
+              )}
+            </h2>
+            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+              {language === "ID"
+                ? "Daftar spesifikasi ringkas untuk memudahkan peninjauan tim medis dan manajemen rumah sakit."
+                : "A concise specifications catalog for streamlined medical and administrative evaluation."}
+            </p>
           </div>
 
           {/* ══════════════════════════════════════════════════════════════
