@@ -576,14 +576,16 @@ export default function SolutionsPage() {
           <div className="relative z-20 -mt-24 sm:-mt-32 lg:-mt-40 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
             <div className="relative flex flex-col pt-8">
-              {/* Top Tab (Slides out above card on button hover) */}
+              {/* Top Tab (Silky Smooth Spring Reveal on Button Hover) */}
               <div
                 className={cn(
-                  "absolute top-0 left-0 right-0 h-9 rounded-t-[22px] bg-[#EEF4FF] border-t border-x border-blue-200/90 flex items-center justify-center transition-all duration-300 ease-out z-0 pointer-events-none",
-                  hoveredButton === 1 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                  "absolute top-0 left-0 right-0 h-[38px] rounded-t-[26px] bg-gradient-to-b from-[#EFF5FF] to-[#E4EFFF] border-t border-x border-[#BED6FF] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none shadow-2xs",
+                  hoveredButton === 1
+                    ? "translate-y-0 opacity-100 scale-100"
+                    : "translate-y-5 opacity-0 scale-[0.97]"
                 )}
               >
-                <span className="text-[11px] font-bold text-[#1E54A8] tracking-wide">
+                <span className="text-[11.5px] font-bold text-[#1E54A8] tracking-wide">
                   {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
                 </span>
               </div>
@@ -591,8 +593,8 @@ export default function SolutionsPage() {
               {/* Main Card Body */}
               <div
                 className={cn(
-                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-300",
-                  hoveredButton === 1 && "border-blue-300 shadow-[0_20px_45px_rgba(36,102,203,0.14)] -translate-y-1"
+                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  hoveredButton === 1 && "border-[#93B8F8] shadow-[0_22px_50px_rgba(36,102,203,0.13)] -translate-y-1.5"
                 )}
               >
                 <div>
@@ -637,14 +639,14 @@ export default function SolutionsPage() {
                     onFocus={() => setHoveredButton(1)}
                     onBlur={() => setHoveredButton(null)}
                     className={cn(
-                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-200 shadow-2xs active:scale-[0.99]",
+                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs active:scale-[0.99]",
                       hoveredButton === 1
-                        ? "bg-[#183494] text-white shadow-md border-transparent"
+                        ? "bg-[#183494] text-white shadow-md border-transparent scale-[1.01]"
                         : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
                     )}
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
-                    {hoveredButton === 1 && <MessageSquare className="h-3.5 w-3.5 fill-white" />}
+                    {hoveredButton === 1 && <MessageSquare className="h-3.5 w-3.5 fill-white animate-in fade-in zoom-in-75 duration-200" />}
                   </Link>
 
                   {/* Divider Line */}
@@ -685,14 +687,16 @@ export default function SolutionsPage() {
 
             {/* Card 2: Tier 2 - Clinical & MCU Labs */}
             <div className="relative flex flex-col pt-8">
-              {/* Top Tab (Slides out above card on button hover) */}
+              {/* Top Tab (Silky Smooth Spring Reveal on Button Hover) */}
               <div
                 className={cn(
-                  "absolute top-0 left-0 right-0 h-9 rounded-t-[22px] bg-[#EEF4FF] border-t border-x border-blue-200/90 flex items-center justify-center transition-all duration-300 ease-out z-0 pointer-events-none",
-                  hoveredButton === 2 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                  "absolute top-0 left-0 right-0 h-[38px] rounded-t-[26px] bg-gradient-to-b from-[#EFF5FF] to-[#E4EFFF] border-t border-x border-[#BED6FF] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none shadow-2xs",
+                  hoveredButton === 2
+                    ? "translate-y-0 opacity-100 scale-100"
+                    : "translate-y-5 opacity-0 scale-[0.97]"
                 )}
               >
-                <span className="text-[11px] font-bold text-[#1E54A8] tracking-wide">
+                <span className="text-[11.5px] font-bold text-[#1E54A8] tracking-wide">
                   {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
                 </span>
               </div>
@@ -700,8 +704,8 @@ export default function SolutionsPage() {
               {/* Main Card Body */}
               <div
                 className={cn(
-                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-300",
-                  hoveredButton === 2 && "border-blue-300 shadow-[0_20px_45px_rgba(36,102,203,0.14)] -translate-y-1"
+                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  hoveredButton === 2 && "border-[#93B8F8] shadow-[0_22px_50px_rgba(36,102,203,0.13)] -translate-y-1.5"
                 )}
               >
                 <div>
@@ -746,14 +750,14 @@ export default function SolutionsPage() {
                     onFocus={() => setHoveredButton(2)}
                     onBlur={() => setHoveredButton(null)}
                     className={cn(
-                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-200 shadow-2xs active:scale-[0.99]",
+                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs active:scale-[0.99]",
                       hoveredButton === 2
-                        ? "bg-[#183494] text-white shadow-md border-transparent"
+                        ? "bg-[#183494] text-white shadow-md border-transparent scale-[1.01]"
                         : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
                     )}
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
-                    {hoveredButton === 2 && <MessageSquare className="h-3.5 w-3.5 fill-white" />}
+                    {hoveredButton === 2 && <MessageSquare className="h-3.5 w-3.5 fill-white animate-in fade-in zoom-in-75 duration-200" />}
                   </Link>
 
                   {/* Divider Line */}
@@ -794,14 +798,16 @@ export default function SolutionsPage() {
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
             <div className="relative flex flex-col pt-8">
-              {/* Top Tab (Slides out above card on button hover) */}
+              {/* Top Tab (Silky Smooth Spring Reveal on Button Hover) */}
               <div
                 className={cn(
-                  "absolute top-0 left-0 right-0 h-9 rounded-t-[22px] bg-[#EEF4FF] border-t border-x border-blue-200/90 flex items-center justify-center transition-all duration-300 ease-out z-0 pointer-events-none",
-                  hoveredButton === 3 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                  "absolute top-0 left-0 right-0 h-[38px] rounded-t-[26px] bg-gradient-to-b from-[#EFF5FF] to-[#E4EFFF] border-t border-x border-[#BED6FF] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none shadow-2xs",
+                  hoveredButton === 3
+                    ? "translate-y-0 opacity-100 scale-100"
+                    : "translate-y-5 opacity-0 scale-[0.97]"
                 )}
               >
-                <span className="text-[11px] font-bold text-[#1E54A8] tracking-wide">
+                <span className="text-[11.5px] font-bold text-[#1E54A8] tracking-wide">
                   {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
                 </span>
               </div>
@@ -809,8 +815,8 @@ export default function SolutionsPage() {
               {/* Main Card Body */}
               <div
                 className={cn(
-                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-300",
-                  hoveredButton === 3 && "border-blue-300 shadow-[0_20px_45px_rgba(36,102,203,0.14)] -translate-y-1"
+                  "relative z-10 rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_15px_35px_rgba(0,0,0,0.06)] flex-1 flex flex-col justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                  hoveredButton === 3 && "border-[#93B8F8] shadow-[0_22px_50px_rgba(36,102,203,0.13)] -translate-y-1.5"
                 )}
               >
                 <div>
@@ -855,14 +861,14 @@ export default function SolutionsPage() {
                     onFocus={() => setHoveredButton(3)}
                     onBlur={() => setHoveredButton(null)}
                     className={cn(
-                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-200 shadow-2xs active:scale-[0.99]",
+                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs active:scale-[0.99]",
                       hoveredButton === 3
-                        ? "bg-[#183494] text-white shadow-md border-transparent"
+                        ? "bg-[#183494] text-white shadow-md border-transparent scale-[1.01]"
                         : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
                     )}
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
-                    {hoveredButton === 3 && <MessageSquare className="h-3.5 w-3.5 fill-white" />}
+                    {hoveredButton === 3 && <MessageSquare className="h-3.5 w-3.5 fill-white animate-in fade-in zoom-in-75 duration-200" />}
                   </Link>
 
                   {/* Divider Line */}
