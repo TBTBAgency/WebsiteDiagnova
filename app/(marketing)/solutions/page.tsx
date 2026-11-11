@@ -496,10 +496,10 @@ export default function SolutionsPage() {
       {/* ══════════════════════════════════════════════════════════════
           FACILITY FIT MATRIX (ONE-SCREEN VIEWPORT SCALE - ZERO OVERFLOW)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FAFBFD] border-t border-slate-200/60 min-h-screen lg:h-screen lg:max-h-[960px] flex flex-col justify-center py-4 sm:py-5 lg:py-6 overflow-hidden">
+      <section className="w-full bg-[#FAFBFD] border-t border-slate-200/60 min-h-screen lg:h-screen lg:max-h-[1020px] flex flex-col justify-center py-2 sm:py-3 lg:py-4 overflow-hidden">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative">
           {/* Blue Framed Container Pod with Request-Demo Gradient & Orbs */}
-          <div className="relative rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-10 sm:pt-12 lg:pt-14 pb-16 sm:pb-20 lg:pb-[104px] px-5 sm:px-8 lg:px-12 shadow-[0_20px_50px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
+          <div className="relative rounded-[30px] sm:rounded-[38px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-12 sm:pt-16 lg:pt-20 pb-32 sm:pb-36 lg:pb-40 px-6 sm:px-10 lg:px-14 shadow-[0_20px_50px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
             {/* Ambient Glowing Orbs */}
             <div className="absolute -top-16 -left-16 w-80 h-80 rounded-full bg-[#60A5FA]/35 blur-3xl pointer-events-none" />
             <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#38BDF8]/25 blur-3xl pointer-events-none" />
@@ -508,7 +508,7 @@ export default function SolutionsPage() {
             {/* Stepped Glass Pillars Cascading on Left & Right Wings */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:flex justify-between items-end px-2 sm:px-6">
               {/* Left Wing Cascading Stepped Pillars */}
-              <div className="flex items-end gap-2 lg:gap-3 h-full">
+              <div className="flex items-end gap-2 lg:gap-3.5 h-full">
                 <div className="w-14 lg:w-24 xl:w-32 h-[76%] rounded-t-[28px] lg:rounded-t-[34px] bg-gradient-to-t from-white/5 via-white/12 to-white/20 border-t border-r border-white/20 backdrop-blur-xs" />
                 <div className="w-14 lg:w-20 xl:w-28 h-[58%] rounded-t-[24px] lg:rounded-t-[30px] bg-gradient-to-t from-white/8 via-white/15 to-white/22 border-t border-x border-white/20 backdrop-blur-xs" />
                 <div className="w-12 lg:w-16 xl:w-24 h-[42%] rounded-t-[20px] lg:rounded-t-[24px] bg-gradient-to-t from-white/10 via-white/18 to-white/25 border-t border-x border-white/25 backdrop-blur-xs" />
@@ -517,7 +517,7 @@ export default function SolutionsPage() {
               {/* Center Area: Completely clear */}
 
               {/* Right Wing Cascading Stepped Pillars */}
-              <div className="flex items-end gap-2 lg:gap-3 h-full">
+              <div className="flex items-end gap-2 lg:gap-3.5 h-full">
                 <div className="w-12 lg:w-16 xl:w-24 h-[42%] rounded-t-[20px] lg:rounded-t-[24px] bg-gradient-to-t from-white/10 via-white/18 to-white/25 border-t border-x border-white/25 backdrop-blur-xs" />
                 <div className="w-14 lg:w-20 xl:w-28 h-[58%] rounded-t-[24px] lg:rounded-t-[30px] bg-gradient-to-t from-white/8 via-white/15 to-white/22 border-t border-x border-white/20 backdrop-blur-xs" />
                 <div className="w-14 lg:w-24 xl:w-32 h-[76%] rounded-t-[28px] lg:rounded-t-[34px] bg-gradient-to-t from-white/5 via-white/12 to-white/20 border-t border-l border-white/20 backdrop-blur-xs" />
@@ -526,24 +526,24 @@ export default function SolutionsPage() {
 
             {/* Header: Centered White Title, Subtitle, and Galileo White Capsule Switcher */}
             <div className="relative z-10 text-center max-w-2xl mx-auto">
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-white tracking-tight leading-tight">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.16]">
                 {language === "ID"
                   ? "Solusi Tepat untuk Setiap Skala Faskes"
                   : "Tailored Architectures for Every Facility Scale"}
               </h2>
-              <p className="mt-2 text-xs sm:text-[13px] text-blue-100/90 font-normal leading-normal max-w-xl mx-auto">
+              <p className="mt-2.5 text-xs sm:text-[14px] text-blue-100/90 font-normal leading-relaxed max-w-xl mx-auto">
                 {language === "ID"
                   ? "Pilih konfigurasi yang dirancang khusus untuk kebutuhan dan kapasitas instansi Anda. Tanpa biaya tersembunyi, fokus pada efisiensi kerja klinis."
                   : "Choose an architecture engineered for your institution's specific tier. No bloatware, focused purely on clinical speed and compliance."}
               </p>
 
               {/* Galileo-style White Pill Switcher with Active Blue Button */}
-              <div className="inline-flex items-center p-0.5 sm:p-1 rounded-full bg-white shadow-xs mt-4 sm:mt-5">
+              <div className="inline-flex items-center p-1 rounded-full bg-white shadow-xs mt-5">
                 <button
                   type="button"
                   onClick={() => setDeploymentMode("cloud")}
                   className={cn(
-                    "px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 cursor-pointer",
+                    "px-4.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer",
                     deploymentMode === "cloud"
                       ? "bg-[#2764B8] text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -555,7 +555,7 @@ export default function SolutionsPage() {
                   type="button"
                   onClick={() => setDeploymentMode("onprem")}
                   className={cn(
-                    "px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 cursor-pointer",
+                    "px-4.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer",
                     deploymentMode === "onprem"
                       ? "bg-[#2764B8] text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -568,41 +568,41 @@ export default function SolutionsPage() {
           </div>
 
           {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture - Fits 100% On Screen) */}
-          <div className="relative z-20 -mt-14 sm:-mt-16 lg:-mt-20 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1200px] mx-auto items-stretch px-4 sm:px-6">
+          <div className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-28 grid grid-cols-1 md:grid-cols-3 gap-3.5 lg:gap-4.5 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
-            <div className="relative p-[32px_5px_5px] rounded-[26px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
+            <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
-              <div className="absolute top-0 left-0 right-0 h-[32px] flex items-center justify-center text-[12px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-[36px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
               </div>
 
               {/* Main Card Body */}
-              <div className="bg-white border border-[#ECECEA] rounded-[22px] p-5 sm:p-6 h-full flex flex-col justify-between">
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-6 sm:p-7 h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
-                  <div className="flex items-center gap-2 text-[16px] sm:text-[17px] font-semibold text-slate-900">
-                    <Zap className="h-4 w-4 text-[#2466CB] fill-[#2466CB] shrink-0" />
-                    <h3 className="text-[16px] sm:text-[17px] font-semibold text-slate-900 tracking-tight m-0">
+                  <div className="flex items-center gap-2 text-[17px] sm:text-[18px] font-semibold text-slate-900">
+                    <Zap className="h-[18px] w-[18px] text-[#2466CB] fill-[#2466CB] shrink-0" />
+                    <h3 className="text-[17px] sm:text-[18px] font-semibold text-slate-900 tracking-tight m-0">
                       {language === "ID" ? "RS Sentral" : "Hospital Central"}
                     </h3>
                   </div>
 
                   {/* Subtitle */}
-                  <p className="mt-1.5 text-[12px] leading-snug text-slate-500 max-w-[32ch] line-clamp-2">
+                  <p className="mt-2 text-[12.5px] sm:text-[13px] leading-relaxed text-slate-500 max-w-[32ch] line-clamp-2">
                     {language === "ID"
                       ? "Solusi lengkap SIMRS dua arah, panel CITO IGD, dan bridging SatuSehat."
                       : "Full bidirectional HIS bridging, rapid ER CITO alerts, and EMR sync."}
                   </p>
 
                   {/* Divider 1 */}
-                  <hr className="border-0 border-t border-[#ECECEA] my-3" />
+                  <hr className="border-0 border-t border-[#ECECEA] my-4" />
 
                   {/* Price */}
                   <div className="flex items-baseline gap-1">
-                    <strong className="text-3xl sm:text-[34px] font-bold text-slate-900 tracking-tight leading-none">
+                    <strong className="text-4xl sm:text-[40px] font-bold text-slate-900 tracking-tight leading-none">
                       Tier 1
                     </strong>
-                    <span className="text-[11px] sm:text-[12px] text-slate-500 font-normal">
+                    <span className="text-[12px] text-slate-500 font-normal">
                       / {language === "ID" ? "RS Sentral" : "Hospital Central"}
                     </span>
                     <button
@@ -611,46 +611,46 @@ export default function SolutionsPage() {
                       title={deploymentMode === "cloud" ? "Cloud Enterprise" : "On-Premise Server"}
                       className="inline-flex cursor-help text-slate-400 hover:text-slate-600 transition-colors ml-0.5"
                     >
-                      <HelpCircle className="h-3 w-3" />
+                      <HelpCircle className="h-3.5 w-3.5" />
                     </button>
                   </div>
 
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="mt-3 w-full h-10 sm:h-10.5 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13.5px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
-                    <ArrowUpRight className="w-0 h-3 opacity-0 group-hover/plan:w-3 group-hover/plan:opacity-100 group-focus-within/plan:w-3 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
+                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
                   {/* Divider 2 */}
-                  <hr className="border-0 border-t border-[#ECECEA] my-3" />
+                  <hr className="border-0 border-t border-[#ECECEA] my-4" />
 
                   {/* Feature List Header */}
-                  <p className="text-[11.5px] sm:text-[12px] font-semibold text-slate-900 mb-2">
+                  <p className="text-[12px] sm:text-[12.5px] font-semibold text-slate-900 mb-2.5">
                     {language === "ID" ? "Tier 1 mencakup:" : "Core includes:"}
                   </p>
 
                   {/* Feature List */}
-                  <ul className="list-none m-0 p-0 grid gap-2">
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                  <ul className="list-none m-0 p-0 grid gap-2.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <ArrowLeftRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Bridging SIMRS & SatuSehat" : "Bidirectional HIS & SatuSehat"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Monitor className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Validasi barcode flebotomi" : "Bedside phlebotomy barcodes"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Panel CITO IGD & rawat inap" : "Centralized ER & inpatient CITO"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Mic className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Panic value alert IGD < 25m" : "Panic value alert to ER < 25m"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Phone className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Interfacing 500+ analyzer" : "Automated 500+ analyzers"}</span>
                     </li>
@@ -660,39 +660,39 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 2: Tier 2 - Clinical & MCU Labs */}
-            <div className="relative p-[32px_5px_5px] rounded-[26px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
+            <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
-              <div className="absolute top-0 left-0 right-0 h-[32px] flex items-center justify-center text-[12px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-[36px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
               </div>
 
               {/* Main Card Body */}
-              <div className="bg-white border border-[#ECECEA] rounded-[22px] p-5 sm:p-6 h-full flex flex-col justify-between">
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-6 sm:p-7 h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
-                  <div className="flex items-center gap-2 text-[16px] sm:text-[17px] font-semibold text-slate-900">
-                    <Flame className="h-4 w-4 text-[#2466CB] fill-[#2466CB] shrink-0" />
-                    <h3 className="text-[16px] sm:text-[17px] font-semibold text-slate-900 tracking-tight m-0">
+                  <div className="flex items-center gap-2 text-[17px] sm:text-[18px] font-semibold text-slate-900">
+                    <Flame className="h-[18px] w-[18px] text-[#2466CB] fill-[#2466CB] shrink-0" />
+                    <h3 className="text-[17px] sm:text-[18px] font-semibold text-slate-900 tracking-tight m-0">
                       {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
                     </h3>
                   </div>
 
                   {/* Subtitle */}
-                  <p className="mt-1.5 text-[12px] leading-snug text-slate-500 max-w-[32ch] line-clamp-2">
+                  <p className="mt-2 text-[12.5px] sm:text-[13px] leading-relaxed text-slate-500 max-w-[32ch] line-clamp-2">
                     {language === "ID"
                       ? "Throughput spesimen massal, cetak barcode cepat, dan kirim hasil WhatsApp."
                       : "High-volume check-in, rapid barcode printing, and WhatsApp delivery."}
                   </p>
 
                   {/* Divider 1 */}
-                  <hr className="border-0 border-t border-[#ECECEA] my-3" />
+                  <hr className="border-0 border-t border-[#ECECEA] my-4" />
 
                   {/* Price */}
                   <div className="flex items-baseline gap-1">
-                    <strong className="text-3xl sm:text-[34px] font-bold text-slate-900 tracking-tight leading-none">
+                    <strong className="text-4xl sm:text-[40px] font-bold text-slate-900 tracking-tight leading-none">
                       Tier 2
                     </strong>
-                    <span className="text-[11px] sm:text-[12px] text-slate-500 font-normal">
+                    <span className="text-[12px] text-slate-500 font-normal">
                       / {language === "ID" ? "Lab Mandiri & MCU" : "Independent & MCU"}
                     </span>
                     <button
@@ -701,46 +701,46 @@ export default function SolutionsPage() {
                       title={deploymentMode === "cloud" ? "High-Throughput Cloud Engine" : "Outpatient Dedicated Server"}
                       className="inline-flex cursor-help text-slate-400 hover:text-slate-600 transition-colors ml-0.5"
                     >
-                      <HelpCircle className="h-3 w-3" />
+                      <HelpCircle className="h-3.5 w-3.5" />
                     </button>
                   </div>
 
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="mt-3 w-full h-10 sm:h-10.5 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13.5px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
-                    <ArrowUpRight className="w-0 h-3 opacity-0 group-hover/plan:w-3 group-hover/plan:opacity-100 group-focus-within/plan:w-3 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
+                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
                   {/* Divider 2 */}
-                  <hr className="border-0 border-t border-[#ECECEA] my-3" />
+                  <hr className="border-0 border-t border-[#ECECEA] my-4" />
 
                   {/* Feature List Header */}
-                  <p className="text-[11.5px] sm:text-[12px] font-semibold text-slate-900 mb-2">
+                  <p className="text-[12px] sm:text-[12.5px] font-semibold text-slate-900 mb-2.5">
                     {language === "ID" ? "Semua fitur Tier 1, ditambah:" : "Everything in Core, plus:"}
                   </p>
 
                   {/* Feature List */}
-                  <ul className="list-none m-0 p-0 grid gap-2">
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                  <ul className="list-none m-0 p-0 grid gap-2.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <BarChart3 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Batch MCU korporat 1-klik" : "1-Click corporate MCU batch"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <MessageSquare className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Kirim hasil WhatsApp otomatis" : "Automated WhatsApp delivery"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Video className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Portal hasil pasien paperless" : "Paperless patient portal"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Share2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Gateway billing B2B rujukan" : "B2B referral billing gateway"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <RefreshCw className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Cetak barcode tabung 0.4s" : "0.4s / tube barcode printing"}</span>
                     </li>
@@ -750,39 +750,39 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
-            <div className="relative p-[32px_5px_5px] rounded-[26px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
+            <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
-              <div className="absolute top-0 left-0 right-0 h-[32px] flex items-center justify-center text-[12px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-[36px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
               </div>
 
               {/* Main Card Body */}
-              <div className="bg-white border border-[#ECECEA] rounded-[22px] p-5 sm:p-6 h-full flex flex-col justify-between">
+              <div className="bg-white border border-[#ECECEA] rounded-[24px] p-6 sm:p-7 h-full flex flex-col justify-between">
                 <div>
                   {/* Top Icon & Title */}
-                  <div className="flex items-center gap-2 text-[16px] sm:text-[17px] font-semibold text-slate-900">
-                    <Microscope className="h-4 w-4 text-[#2466CB] shrink-0" />
-                    <h3 className="text-[16px] sm:text-[17px] font-semibold text-slate-900 tracking-tight m-0">
+                  <div className="flex items-center gap-2 text-[17px] sm:text-[18px] font-semibold text-slate-900">
+                    <Microscope className="h-[18px] w-[18px] text-[#2466CB] shrink-0" />
+                    <h3 className="text-[17px] sm:text-[18px] font-semibold text-slate-900 tracking-tight m-0">
                       {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
                     </h3>
                   </div>
 
                   {/* Subtitle */}
-                  <p className="mt-1.5 text-[12px] leading-snug text-slate-500 max-w-[32ch] line-clamp-2">
+                  <p className="mt-2 text-[12.5px] sm:text-[13px] leading-relaxed text-slate-500 max-w-[32ch] line-clamp-2">
                     {language === "ID"
                       ? "Dirancang mendalam untuk instalasi patologi anatomi, mikrobiologi & BDRS."
                       : "Specialized suite for pathology, microbiology cultures, and blood banks."}
                   </p>
 
                   {/* Divider 1 */}
-                  <hr className="border-0 border-t border-[#ECECEA] my-3" />
+                  <hr className="border-0 border-t border-[#ECECEA] my-4" />
 
                   {/* Price */}
                   <div className="flex items-baseline gap-1">
-                    <strong className="text-3xl sm:text-[34px] font-bold text-slate-900 tracking-tight leading-none">
+                    <strong className="text-4xl sm:text-[40px] font-bold text-slate-900 tracking-tight leading-none">
                       Tier 3
                     </strong>
-                    <span className="text-[11px] sm:text-[12px] text-slate-500 font-normal">
+                    <span className="text-[12px] text-slate-500 font-normal">
                       / {language === "ID" ? "Spesialis PA & Mikro" : "Pathology & Micro"}
                     </span>
                     <button
@@ -791,46 +791,46 @@ export default function SolutionsPage() {
                       title={deploymentMode === "cloud" ? "Accredited Subspecialty Suite" : "Standalone Workstation"}
                       className="inline-flex cursor-help text-slate-400 hover:text-slate-600 transition-colors ml-0.5"
                     >
-                      <HelpCircle className="h-3 w-3" />
+                      <HelpCircle className="h-3.5 w-3.5" />
                     </button>
                   </div>
 
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="mt-3 w-full h-10 sm:h-10.5 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13.5px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
-                    <ArrowUpRight className="w-0 h-3 opacity-0 group-hover/plan:w-3 group-hover/plan:opacity-100 group-focus-within/plan:w-3 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
+                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
                   </Link>
 
                   {/* Divider 2 */}
-                  <hr className="border-0 border-t border-[#ECECEA] my-3" />
+                  <hr className="border-0 border-t border-[#ECECEA] my-4" />
 
                   {/* Feature List Header */}
-                  <p className="text-[11.5px] sm:text-[12px] font-semibold text-slate-900 mb-2">
+                  <p className="text-[12px] sm:text-[12.5px] font-semibold text-slate-900 mb-2.5">
                     {language === "ID" ? "Solusi Spesialis mencakup:" : "Specialist suite includes:"}
                   </p>
 
                   {/* Feature List */}
-                  <ul className="list-none m-0 p-0 grid gap-2">
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                  <ul className="list-none m-0 p-0 grid gap-2.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <QrCode className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Pelacakan 2D kaset & slide PA" : "2D tracking for tissue cassettes"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <FileText className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Template ICD-O-3 & Bethesda" : "ICD-O-3 & Bethesda templates"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Activity className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Antibiogram mikrobiologi CLSI" : "Automated CLSI antibiogram"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <HeartPulse className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Uji silang serasi digital BDRS" : "Digital ISBT-128 cross-match"}</span>
                     </li>
-                    <li className="flex items-center gap-2 text-[12px] text-slate-600 truncate py-0.5">
+                    <li className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-slate-600 truncate py-0.5">
                       <Thermometer className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{language === "ID" ? "Telemetri cold chain 2°C-6°C" : "24/7 cold chain telemetry"}</span>
                     </li>
