@@ -557,54 +557,38 @@ export default function ModulesPage() {
               Row 2: 2 Balanced Cards (Microbiology 7-col + Blood Bank 5-col)
               ══════════════════════════════════════════════════════════════ */}
           <div className="space-y-6 sm:space-y-7">
-            {/* ROW 1: 3 EQUAL VERTICAL CARDS */}
+            {/* ROW 1: 3 EQUAL VERTICAL CARDS (Hematology, Reagents, Pathology) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
               {/* Card 1: Routine Hematology & Chemistry */}
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
                 <div>
-                  {/* Top Visual Stage: Soft Blue Canvas with ASTM Interfacing Process Pills */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#EFF6FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-between mb-6 shadow-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                        <Activity className="h-4 w-4 text-[#2764B8]" />
-                        ASTM / HL7 Interfacing
-                      </span>
-                      <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold flex items-center gap-1">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Bidirectional
+                  {/* Top Visual Stage: Soft Blue Canvas with 3 Floating Status Pills */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#EFF6FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-6">
+                    {/* Floating Pill 1: Analyzer Interfacing */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <Zap className="h-4 w-4 text-[#2764B8] shrink-0" />
+                      <span className="truncate">Sysmex &amp; Cobas Interfacing</span>
+                      <span className="ml-auto text-[10px] font-mono text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full font-bold shrink-0">
+                        ASTM / HL7
                       </span>
                     </div>
 
-                    {/* Middle Floating Process Pills */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
-                        <div className="flex items-center gap-2 truncate">
-                          <Cpu className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
-                          <span className="truncate">Sysmex &amp; Cobas Direct</span>
-                        </div>
-                        <span className="text-[10px] font-mono font-bold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full shrink-0">
-                          14 Param
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
-                        <div className="flex items-center gap-2 truncate">
-                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                          <span className="truncate">Aturan Westgard QC</span>
-                        </div>
-                        <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">
-                          L-J Normal
-                        </span>
-                      </div>
+                    {/* Floating Pill 2: Westgard QC */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">Validasi Aturan Westgard QC</span>
+                      <span className="ml-auto text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold shrink-0">
+                        L-J Normal
+                      </span>
                     </div>
 
-                    {/* Bottom Status Pill */}
-                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-blue-50/70 border border-blue-100 text-[10px] font-mono text-[#2764B8]">
-                      <span className="font-semibold flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                        Auto-Rilis SIMRS Terverifikasi
+                    {/* Floating Pill 3: Auto-Release */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <CheckCircle2 className="h-4 w-4 text-sky-600 shrink-0" />
+                      <span className="truncate">Auto-Rilis Hasil ke SIMRS</span>
+                      <span className="ml-auto text-[10px] font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded-full font-medium shrink-0">
+                        Zero Middleware
                       </span>
-                      <span className="font-bold">0.3s TAT</span>
                     </div>
                   </div>
 
@@ -634,61 +618,43 @@ export default function ModulesPage() {
               {/* Card 2: Reagents & Supplies Telemetry */}
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
                 <div>
-                  {/* Top Visual Stage: Soft Amber Canvas with Reagent Bars & Telemetry */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#FFFDF5] via-[#FFF9EB] to-white border border-amber-100/80 h-[215px] flex flex-col justify-between mb-6 shadow-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                        <PackageCheck className="h-4 w-4 text-amber-600" />
-                        Status Katrid Reagen
-                      </span>
-                      <span className="text-[10px] font-mono font-bold text-slate-700 bg-amber-100/80 px-2 py-0.5 rounded-full border border-amber-200">
-                        18 Katrid Aktif
+                  {/* Top Visual Stage: Soft Amber Canvas with 3 Floating Status Pills */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#FFFDF5] via-[#FFF9EB] to-white border border-amber-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-6">
+                    {/* Floating Pill 1: Auto Depletion */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <PackageCheck className="h-4 w-4 text-amber-600 shrink-0" />
+                      <span className="truncate">Auto-Depletion per Tes</span>
+                      <span className="ml-auto text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold shrink-0">
+                        Real-time
                       </span>
                     </div>
 
-                    {/* Reagent Usage Miniature Bars Container */}
-                    <div className="p-3 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-1.5">
-                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
-                        <span>Rata-Rata On-Board: 82%</span>
-                        <span className="text-amber-700 font-semibold">1 Alert Batas Min</span>
-                      </div>
-                      <div className="flex items-end justify-between gap-2.5 h-12 pt-1">
-                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
-                          <div className="w-full bg-[#2764B8] rounded-t h-[84%]" />
-                          <span className="text-[8px] font-mono text-slate-500 truncate">Diluent</span>
-                        </div>
-                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
-                          <div className="w-full bg-[#2764B8] rounded-t h-[68%]" />
-                          <span className="text-[8px] font-mono text-slate-500 truncate">Lyse</span>
-                        </div>
-                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
-                          <div className="w-full bg-[#2764B8] rounded-t h-[92%]" />
-                          <span className="text-[8px] font-mono text-slate-500 truncate">Stain</span>
-                        </div>
-                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
-                          <div className="w-full bg-amber-500 rounded-t h-[42%] ring-1 ring-amber-300" />
-                          <span className="text-[8px] font-mono text-amber-700 font-bold truncate">Rinse</span>
-                        </div>
-                      </div>
+                    {/* Floating Pill 2: Warning Threshold */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+                      <span className="truncate">Peringatan Batas Stok</span>
+                      <span className="ml-auto text-[10px] font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-bold shrink-0">
+                        Batas 50%
+                      </span>
                     </div>
 
-                    {/* Bottom Status Pill */}
-                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-amber-50/70 border border-amber-100 text-[10px] font-mono text-amber-800">
-                      <span className="font-semibold flex items-center gap-1.5">
-                        <AlertTriangle className="h-3 w-3 text-amber-600" />
-                        Peringatan Dini Stok
+                    {/* Floating Pill 3: Expiry Tracking */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">Pelacakan Lot &amp; Expiry</span>
+                      <span className="ml-auto text-[10px] font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded-full font-medium shrink-0">
+                        FIFO Valid
                       </span>
-                      <span className="font-bold">Estimasi 420 Tes</span>
                     </div>
                   </div>
 
                   {/* Bottom Content */}
                   <h3 className="font-display text-xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Telemetri Reagen & Inventaris" : "Reagent & Supply Intelligence"}
+                    {language === "ID" ? "Manajemen Reagen & Stok" : "Reagent & Supply Intelligence"}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
                     {language === "ID"
-                      ? "Pengurangan stok reagen otomatis berbasis jumlah tes aktual analyzer, pelacakan lot/kedaluwarsa, dan kalkulasi unit cost per pemeriksaan."
+                      ? "Pengurangan stok otomatis berbasis jumlah tes aktual analyzer, pemantauan masa kedaluwarsa, dan pencegahan reagen habis."
                       : "Test-driven auto-depletion tracking, expiration and lot traceability, and precise real-time cost-per-test margin calculation."}
                   </p>
                 </div>
@@ -697,10 +663,10 @@ export default function ModulesPage() {
                 <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
                   <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
                     <PackageCheck className="h-3.5 w-3.5 text-[#2764B8]" />
-                    Manajemen Logistik
+                    Logistik Lab
                   </span>
                   <span className="text-slate-800 font-bold bg-slate-100 px-2 py-0.5 rounded">
-                    Auto-Depletion Tracking
+                    Auto-Depletion
                   </span>
                 </div>
               </div>
@@ -708,39 +674,31 @@ export default function ModulesPage() {
               {/* Card 3: Anatomical Pathology & Cytology */}
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
                 <div>
-                  {/* Top Visual Stage: Soft Mint Canvas with Specimen Workflow Stages */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-6 shadow-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                        <QrCode className="h-3.5 w-3.5 text-emerald-600" />
-                        #PA-24-0982 (Biopsi)
-                      </span>
-                      <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
+                  {/* Top Visual Stage: Soft Mint Canvas with 3 Floating Status Pills */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-6">
+                    {/* Floating Pill 1: 2D Barcode */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <QrCode className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">Barcode 2D Kaset Grossing</span>
+                      <span className="ml-auto text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold shrink-0">
                         Zero Mix-Up
                       </span>
                     </div>
 
-                    {/* Stage Progress Pills */}
-                    <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
-                      <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
-                        <span className="block font-bold text-slate-800">Grossing</span>
-                        <span className="text-slate-400 text-[9px]">Kaset 2D</span>
-                      </div>
-                      <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
-                        <span className="block font-bold text-slate-800">Microtomy</span>
-                        <span className="text-slate-400 text-[9px]">4 Slide</span>
-                      </div>
-                      <div className="bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-emerald-800 font-bold">
-                        <span className="block">H&amp;E Stain</span>
-                        <span className="text-emerald-600 text-[9px]">Slide OK</span>
-                      </div>
+                    {/* Floating Pill 2: Microtomy */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <Microscope className="h-4 w-4 text-[#2764B8] shrink-0" />
+                      <span className="truncate">Pelacakan Slide Microtomy</span>
+                      <span className="ml-auto text-[10px] font-mono text-slate-700 bg-slate-50 px-2 py-0.5 rounded-full font-medium shrink-0">
+                        4 Slide H&amp;E
+                      </span>
                     </div>
 
-                    {/* Synoptic ICD-O & Digital Authorization Pill */}
-                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-white border border-slate-100 text-[10px] font-mono shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
-                      <span className="text-slate-500 font-medium">ICD-O-3: 8500/3</span>
-                      <span className="text-emerald-700 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                    {/* Floating Pill 3: Synoptic Report */}
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">Laporan Sinoptik ICD-O-3</span>
+                      <span className="ml-auto text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold shrink-0">
                         dr. Hendra, Sp.PA
                       </span>
                     </div>
@@ -817,18 +775,18 @@ export default function ModulesPage() {
                       </div>
                     </div>
 
-                    {/* Search / PPRA Antibiogram Matrix Strip */}
+                    {/* PPRA Strip */}
                     <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs text-xs">
-                      <div className="flex items-center gap-2 text-slate-400 font-normal">
-                        <Search className="h-3.5 w-3.5 text-slate-400" />
-                        <span className="text-[11px] sm:text-xs">
+                      <div className="flex items-center gap-2 text-slate-500 font-normal truncate">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span className="text-[11px] sm:text-xs truncate">
                           {language === "ID"
-                            ? "Peta pola resistensi kuman kumulatif komite PPRA..."
-                            : "Generate hospital cumulative antibiogram matrix..."}
+                            ? "Tersinkronisasi otomatis ke Peta Resistensi Kuman PPRA"
+                            : "Auto-synced to hospital cumulative antibiogram"}
                         </span>
                       </div>
-                      <span className="px-3 py-1 rounded-lg bg-[#2764B8] text-white font-semibold text-[10px] shadow-2xs">
-                        {language === "ID" ? "Buka PPRA" : "View Matrix"}
+                      <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#2764B8] font-semibold text-[10px] border border-blue-200 shrink-0">
+                        PPRA 2026
                       </span>
                     </div>
                   </div>
