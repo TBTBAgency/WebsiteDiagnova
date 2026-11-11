@@ -943,7 +943,7 @@ export default function NovaAIPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Standardized Enterprise Banner
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner />
+      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
     </div>
   );
 }

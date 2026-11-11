@@ -5,17 +5,39 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { cn } from "@/lib/utils";
+
+function hexToRgb(hex: string): string {
+  const cleanHex = hex.replace("#", "");
+  if (cleanHex.length === 3) {
+    const r = parseInt(cleanHex[0] + cleanHex[0], 16);
+    const g = parseInt(cleanHex[1] + cleanHex[1], 16);
+    const b = parseInt(cleanHex[2] + cleanHex[2], 16);
+    return `${r}, ${g}, ${b}`;
+  }
+  const r = parseInt(cleanHex.substring(0, 2), 16) || 250;
+  const g = parseInt(cleanHex.substring(2, 4), 16) || 251;
+  const b = parseInt(cleanHex.substring(4, 6), 16) || 253;
+  return `${r}, ${g}, ${b}`;
+}
 
 export interface CTABannerProps {
   initialData?: {
     section?: any;
   } | null;
+  bgClassName?: string;
+  topColor?: string;
 }
 
-export function CTABanner({ initialData }: CTABannerProps = {}) {
+export function CTABanner({
+  initialData,
+  bgClassName = "bg-[#FAFBFD]",
+  topColor = "#FAFBFD",
+}: CTABannerProps = {}) {
   const { language } = useLanguage();
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const rgb = hexToRgb(topColor);
 
   const titleText =
     (language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn) ||
@@ -51,14 +73,13 @@ export function CTABanner({ initialData }: CTABannerProps = {}) {
   return (
     <section
       id="cta-banner"
-      className="relative w-full bg-[#F9F9F9] pt-12 sm:pt-16 lg:pt-20 pb-0 overflow-hidden content-auto"
+      className={cn("relative w-full pt-12 sm:pt-16 lg:pt-20 pb-0 overflow-hidden content-auto", bgClassName)}
     >
-      {/* Gradient fade background: #F9F9F9 at the top seamlessly blending to #3880DB at the bottom */}
+      {/* Gradient fade background: topColor seamlessly blending to #3880DB at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(to bottom, #F9F9F9 0%, #F9F9F9 20%, rgba(249, 249, 249, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)",
+          background: `linear-gradient(to bottom, ${topColor} 0%, ${topColor} 20%, rgba(${rgb}, 0.85) 40%, rgba(56, 128, 219, 0.12) 70%, rgba(56, 128, 219, 0.28) 100%)`,
         }}
       />
 

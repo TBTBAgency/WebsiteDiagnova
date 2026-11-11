@@ -957,7 +957,7 @@ export default function IntegrationPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA BANNER
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner />
+      <CTABanner bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />
     </div>
   );
 }

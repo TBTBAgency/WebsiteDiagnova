@@ -845,7 +845,7 @@ export default function SolutionsPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner />
+      <CTABanner bgClassName="bg-[#FAFBFD]" topColor="#FAFBFD" />
     </div>
   );
 }

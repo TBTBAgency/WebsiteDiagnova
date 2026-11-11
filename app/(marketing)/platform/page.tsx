@@ -938,7 +938,7 @@ export default function PlatformPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner />
+      <CTABanner bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />
     </div>
   );
 }

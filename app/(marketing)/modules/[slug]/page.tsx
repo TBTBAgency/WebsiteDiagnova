@@ -157,7 +157,7 @@ export default function ModuleDetailPage({ params }: Props) {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner />
+      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
     </div>
   );
 }

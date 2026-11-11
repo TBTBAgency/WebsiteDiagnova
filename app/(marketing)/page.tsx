@@ -55,7 +55,7 @@ export default async function HomePage() {
       <FAQSection />
 
       {/* 9. Bottom CTA Banner */}
-      <CTABanner initialData={cmsData?.cta} />
+      <CTABanner initialData={cmsData?.cta} bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />
     </>
   );
 }

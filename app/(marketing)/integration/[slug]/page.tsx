@@ -144,7 +144,7 @@ export default function IntegrationDetailPage({ params }: Props) {
         </div>
       </section>
 
-      <CTABanner />
+      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
     </div>
   );
 }

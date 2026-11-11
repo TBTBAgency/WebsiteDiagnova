@@ -673,7 +673,7 @@ export default function ModulesPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner />
+      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
     </div>
   );
 }
