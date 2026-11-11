@@ -573,12 +573,12 @@ export default function SolutionsPage() {
             </div>
           </div>
 
-          {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture) */}
+          {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture - Diagnova Blue Palette) */}
           <div className="relative z-20 -mt-24 sm:-mt-32 lg:-mt-40 grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
-            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#E4E7FB] focus-within:bg-[#E4E7FB] group/plan">
+            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
-              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E2A8A] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
               </div>
 
@@ -587,7 +587,7 @@ export default function SolutionsPage() {
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
-                    <Zap className="h-5 w-5 text-[#2F4BDB] fill-[#2F4BDB]" />
+                    <Zap className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {language === "ID" ? "RS Sentral" : "Hospital Central"}
                     </h3>
@@ -611,7 +611,7 @@ export default function SolutionsPage() {
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <span className="text-[11px] font-medium text-[#2F4BDB] block mt-1">
+                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
                       {deploymentMode === "cloud"
                         ? "Private Cloud LIS + HL7 Bridge"
                         : "Internal Local Hospital Server"}
@@ -621,7 +621,7 @@ export default function SolutionsPage() {
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#1E2A8A] group-hover/plan:border-[#1E2A8A] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#1E2A8A] group-focus-within/plan:border-[#1E2A8A] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
                     <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
@@ -664,9 +664,9 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 2: Tier 2 - Clinical & MCU Labs */}
-            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#EDE3FB] focus-within:bg-[#EDE3FB] group/plan">
+            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
-              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#5B21B6] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
               </div>
 
@@ -675,7 +675,7 @@ export default function SolutionsPage() {
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
-                    <Flame className="h-5 w-5 text-[#7C3AED] fill-[#7C3AED]" />
+                    <Flame className="h-5 w-5 text-[#2466CB] fill-[#2466CB]" />
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {language === "ID" ? "Lab Klinik & MCU" : "Clinical & MCU Labs"}
                     </h3>
@@ -699,7 +699,7 @@ export default function SolutionsPage() {
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <span className="text-[11px] font-medium text-[#7C3AED] block mt-1">
+                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
                       {deploymentMode === "cloud"
                         ? "High-Throughput Cloud Engine"
                         : "Outpatient Dedicated Server"}
@@ -709,7 +709,7 @@ export default function SolutionsPage() {
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#1E2A8A] group-hover/plan:border-[#1E2A8A] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#1E2A8A] group-focus-within/plan:border-[#1E2A8A] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
                     <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
@@ -752,9 +752,9 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
-            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#E4E7FB] focus-within:bg-[#E4E7FB] group/plan">
+            <div className="relative p-[38px_6px_6px] rounded-[30px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
-              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E2A8A] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-[38px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1.5 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}
               </div>
 
@@ -763,7 +763,7 @@ export default function SolutionsPage() {
                 <div>
                   {/* Top Icon & Title */}
                   <div className="flex items-center gap-2.5">
-                    <Microscope className="h-5 w-5 text-[#2F4BDB]" />
+                    <Microscope className="h-5 w-5 text-[#2466CB]" />
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {language === "ID" ? "Diagnostik Spesialis" : "Specialist Diagnostics"}
                     </h3>
@@ -787,7 +787,7 @@ export default function SolutionsPage() {
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
                     </div>
-                    <span className="text-[11px] font-medium text-[#2F4BDB] block mt-1">
+                    <span className="text-[11px] font-medium text-[#2466CB] block mt-1">
                       {deploymentMode === "cloud"
                         ? "Accredited Subspecialty Suite"
                         : "Standalone Specimen Workstation"}
@@ -797,7 +797,7 @@ export default function SolutionsPage() {
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#1E2A8A] group-hover/plan:border-[#1E2A8A] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#1E2A8A] group-focus-within/plan:border-[#1E2A8A] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="w-full h-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
                     <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />

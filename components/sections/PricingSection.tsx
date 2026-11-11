@@ -193,14 +193,14 @@ export default function PricingSection() {
           --text: #111827;
           --muted: #6B7280;
           --icon: #8A909B;
-          --cta: #1E2A8A;
+          --cta: #2466CB;
           --cta-text: #FFFFFF;
-          --core: #2F4BDB;
-          --core-tint: #E4E7FB;
-          --core-ink: #1E2A8A;
-          --adv: #7C3AED;
-          --adv-tint: #EDE3FB;
-          --adv-ink: #5B21B6;
+          --core: #2466CB;
+          --core-tint: #EBF3FB;
+          --core-ink: #1E54A8;
+          --adv: #2466CB;
+          --adv-tint: #EBF3FB;
+          --adv-ink: #1E54A8;
 
           width: 100%;
           min-height: 100vh;
@@ -222,13 +222,13 @@ export default function PricingSection() {
             --text: #F3F4F6;
             --muted: #A1A7B3;
             --icon: #8B91A0;
-            --cta: #4C5BE0;
-            --core: #7C8CFF;
-            --core-tint: #23274D;
-            --core-ink: #C9D0FF;
-            --adv: #B28CFF;
-            --adv-tint: #2E2248;
-            --adv-ink: #DCC9FF;
+            --cta: #2466CB;
+            --core: #3B82F6;
+            --core-tint: #14233D;
+            --core-ink: #93C5FD;
+            --adv: #3B82F6;
+            --adv-tint: #14233D;
+            --adv-ink: #93C5FD;
           }
         }
 
