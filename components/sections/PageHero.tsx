@@ -43,8 +43,8 @@ export function PageHero({
   return (
     <section
       className={cn(
-        // Generous, elevated hero height matching premium SaaS viewport scale
-        "relative w-full h-[100dvh] min-h-[740px] lg:min-h-[820px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
+        // Exact same outer dimensions as Home Hero: full viewport 100dvh, flex flex-col, same padding
+        "relative w-full h-[100dvh] min-h-[700px] lg:min-h-[760px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
         className
       )}
       style={{
