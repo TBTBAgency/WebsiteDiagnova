@@ -17,11 +17,7 @@ import {
   Users,
   Search,
   ExternalLink,
-  FileText,
-  QrCode,
-  Sparkles,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
@@ -33,78 +29,48 @@ export default function SolutionsPage() {
   const facilityTiers = [
     {
       id: "hospital",
-      tier: "Tier 1",
-      tag: language === "ID" ? "Rumah Sakit & Jaringan" : "Hospital Enterprise",
-      icon: Building2,
-      iconBg: "bg-blue-50 text-[#2764B8] border border-blue-100",
-      isPopular: false,
       title: language === "ID" ? "Rumah Sakit Umum & Khusus" : "General & Specialty Hospitals",
       desc:
         language === "ID"
-          ? "Dioptimalkan untuk laboratorium sentral, IGD, ICU, dan bangsal rawat inap dengan bridging dua arah ke SIMRS/RME."
+          ? "Dirancang untuk instalasi lab sentral, IGD, ICU, dan bangsal rawat inap dengan bridging dua arah ke SIMRS/RME."
           : "Engineered for central laboratories, ER, ICU, and inpatient wards with seamless two-way HIS/EMR bridging.",
-      targetScale: language === "ID" ? "RS Tipe A, B, C & Khusus" : "Tier A, B, C & Specialty Hospitals",
-      modules: [
-        { name: language === "ID" ? "Bridging Dua Arah SIMRS & RME" : "Bidirectional HIS & EMR Sync", icon: Zap },
-        { name: language === "ID" ? "Broadcast Panic Values IGD < 25m" : "ER Stat Panic Alert Broadcast", icon: AlertTriangle },
-        { name: language === "ID" ? "Bank Darah BDRS & Cold-Chain 24/7" : "BDRS Cold-Chain & Transfusion", icon: HeartPulse },
-        { name: language === "ID" ? "Patologi & Mikrobiologi Terintegrasi" : "Integrated PA & Microbiology", icon: Microscope },
+      solutionsRecommended: [
+        language === "ID" ? "Hospital Laboratory (Core LIS)" : "Hospital Laboratory (Core LIS)",
+        language === "ID" ? "Bank Darah & Transfusi (BDRS)" : "Blood Bank & Transfusion Safety",
+        language === "ID" ? "Patologi Anatomi & Sitologi" : "Anatomical Pathology & Cytology",
+        language === "ID" ? "Mikrobiologi Klinis & PPRA" : "Microbiology & Antibiotic Stewardship",
       ],
-      kpis: [
-        { val: "< 25m", label: language === "ID" ? "TAT Cito IGD" : "Stat ER TAT" },
-        { val: "100%", label: language === "ID" ? "Bridging SIMRS" : "HIS Bridged" },
-      ],
-      cta: language === "ID" ? "Konsultasi Tier RS" : "Consult Hospital Tier",
+      kpi: language === "ID" ? "TAT IGD < 25 Menit • Bridging Dua Arah SIMRS" : "ER TAT < 25 Mins • 100% HIS Bridging",
     },
     {
       id: "clinic",
-      tier: "Tier 2",
-      tag: language === "ID" ? "Paling Diminati" : "High Volume Choice",
-      icon: Stethoscope,
-      iconBg: "bg-[#2764B8] text-white shadow-xs",
-      isPopular: true,
       title: language === "ID" ? "Laboratorium Klinik & Rujukan" : "Clinical & Reference Labs",
       desc:
         language === "ID"
-          ? "Throughput spesimen tinggi, medical check-up (MCU) korporasi, pencetakan barcode kilat, dan portal pasien online."
-          : "Optimized for high specimen throughput, corporate check-ups (MCU), fast barcode dispatch, and online patient delivery.",
-      targetScale: language === "ID" ? "Lab Mandiri & Jejaring MCU" : "Outpatient Labs & MCU Centers",
-      modules: [
-        { name: language === "ID" ? "Batch Import MCU 450+ Karyawan" : "Batch MCU Engine (450+ Pax)", icon: Users },
-        { name: language === "ID" ? "Label Barcode Tabung 0.4 Detik" : "Tube Barcode Labeling (0.4s)", icon: Zap },
-        { name: language === "ID" ? "Kirim Hasil WhatsApp PDF Otomatis" : "Instant WhatsApp PDF Delivery", icon: Send },
-        { name: language === "ID" ? "Gateway Billing & Rujukan B2B" : "B2B Reference & Billing Portal", icon: FileText },
+          ? "Dioptimalkan untuk volume spesimen tinggi, medical check-up (MCU) korporasi, registrasi barcode cepat, dan portal pasien online."
+          : "Optimized for high specimen throughput, corporate check-ups (MCU), fast barcode dispatch, and online patient results.",
+      solutionsRecommended: [
+        language === "ID" ? "Laboratorium Klinik Mandiri" : "Independent Clinical Laboratory",
+        language === "ID" ? "Modul Pemeriksaan MCU Massal" : "Mass Corporate MCU Engine",
+        language === "ID" ? "Portal Hasil Online & WhatsApp PDF" : "Online Patient Portal & Encrypted PDF",
+        language === "ID" ? "Manajemen Billing & B2B Rujukan" : "B2B Outreach & Billing Gateway",
       ],
-      kpis: [
-        { val: "30 Detik", label: language === "ID" ? "Registrasi Pasien" : "Patient Intake" },
-        { val: "100%", label: language === "ID" ? "Digital Paperless" : "Digital Delivery" },
-      ],
-      cta: language === "ID" ? "Konsultasi Tier Lab & MCU" : "Consult Clinical Tier",
+      kpi: language === "ID" ? "Registrasi 30 Detik • 100% Pengiriman Digital" : "30s Registration • 100% Digital Delivery",
     },
     {
       id: "specialist",
-      tier: "Tier 3",
-      tag: language === "ID" ? "Diagnostik Spesialis" : "Precision Diagnostics",
-      icon: Microscope,
-      iconBg: "bg-blue-50 text-[#2764B8] border border-blue-100",
-      isPopular: false,
       title: language === "ID" ? "Pusat Diagnostik Spesialis" : "Specialized Diagnostic Centers",
       desc:
         language === "ID"
-          ? "Pelacakan kaset biopsi jaringan 2D, kultur kuman mikrobiologi sensitivitas tinggi, dan bank darah mandiri."
+          ? "Solusi khusus untuk laboratorium patologi anatomi jaringan, kultur mikrobiologi sensitivitas tinggi, dan bank darah mandiri."
           : "Tailored systems for histological tissue tracking, high-sensitivity microbial cultures, and dedicated blood banking.",
-      targetScale: language === "ID" ? "Patologi, PPRA & Bank Darah" : "Pathology, PPRA & Blood Banks",
-      modules: [
-        { name: language === "ID" ? "Pelacakan 2D Kaset & Slide Biopsi" : "2D Micro-Barcode Cassette & Slide", icon: QrCode },
-        { name: language === "ID" ? "Kultur Kuman & Antibiogram CLSI" : "Automated CLSI Antibiogram", icon: FlaskConical },
-        { name: language === "ID" ? "Uji Silang Serasi Darah Mayor/Minor" : "Dual-Check Crossmatching", icon: ShieldCheck },
-        { name: language === "ID" ? "Deteksi Anomali Nova AI Copilot" : "Nova AI Longitudinal Anomaly", icon: Sparkles },
+      solutionsRecommended: [
+        language === "ID" ? "Patologi Anatomi & Slide Tracking" : "Anatomical Pathology & Slide Tracking",
+        language === "ID" ? "Mikrobiologi & Antibiogram PPRA" : "Microbiology & Antibiogram Matrix",
+        language === "ID" ? "Bank Darah & Cold-Chain Guard" : "Blood Bank & Cold-Chain Guard",
+        language === "ID" ? "Nova AI Clinical Copilot" : "Nova AI Clinical Copilot",
       ],
-      kpis: [
-        { val: "Zero Error", label: language === "ID" ? "Sampel Tertukar" : "Mix-Up Errors" },
-        { val: "CLSI / ISO", label: language === "ID" ? "Standar Baku" : "Clinical Standard" },
-      ],
-      cta: language === "ID" ? "Konsultasi Tier Spesialis" : "Consult Specialist Tier",
+      kpi: language === "ID" ? "Pelacakan 2D Micro-Barcode • Antibiogram CLSI" : "2D Micro-Barcode • Automated Antibiogram",
     },
   ];
 
@@ -547,104 +513,51 @@ export default function SolutionsPage() {
             </p>
           </div>
 
-          {/* 3 Elevated Tier Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch pt-2">
-            {facilityTiers.map((tier) => {
-              const Icon = tier.icon;
-              return (
-                <div
-                  key={tier.id}
-                  className={cn(
-                    "relative rounded-[28px] sm:rounded-[32px] p-7 sm:p-8 flex flex-col justify-between group transition-all duration-300",
-                    tier.isPopular
-                      ? "bg-white border-2 border-[#2764B8] shadow-[0_12px_40px_rgba(39,100,184,0.14)] hover:shadow-2xl"
-                      : "bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-xl hover:border-blue-200/90"
-                  )}
-                >
-                  {/* Floating Pill on Most Popular Tier */}
-                  {tier.isPopular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#2764B8] text-white text-[10px] font-bold uppercase tracking-wider shadow-xs whitespace-nowrap">
-                      {language === "ID" ? "Paling Diminati • Volume Tinggi" : "Most Popular • High Throughput"}
-                    </div>
-                  )}
-
-                  {/* Top Header & Content */}
-                  <div>
-                    {/* Icon + Tier Tag */}
-                    <div className="flex items-center justify-between mb-5">
-                      <div className={cn("h-11 w-11 rounded-2xl flex items-center justify-center shrink-0", tier.iconBg)}>
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/70 font-mono">
-                        {tier.tier}
-                      </span>
-                    </div>
-
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-[#2764B8] transition-colors leading-snug">
-                      {tier.title}
-                    </h3>
-                    <p className="text-xs font-semibold text-[#2764B8] mt-1 mb-2.5 font-mono">
-                      {tier.targetScale}
-                    </p>
-                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal mb-6">
-                      {tier.desc}
-                    </p>
-
-                    {/* Architecture Feature Cards (replacing boring checkmarks) */}
-                    <div className="space-y-2 mb-6 pt-4 border-t border-slate-100">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">
-                        {language === "ID" ? "Arsitektur & Modul Terpilih:" : "Architectural Inclusions:"}
-                      </span>
-                      {tier.modules.map((m, i) => {
-                        const MIcon = m.icon;
-                        return (
-                          <div
-                            key={i}
-                            className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50/80 border border-slate-100 text-xs font-medium text-slate-700 hover:bg-white hover:border-blue-100 transition-colors"
-                          >
-                            <div className="h-5 w-5 rounded-md bg-white text-[#2764B8] flex items-center justify-center shrink-0 shadow-2xs border border-slate-100">
-                              <MIcon className="h-3 w-3" />
-                            </div>
-                            <span className="truncate">{m.name}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
+          {/* 3 Clean Tier Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {facilityTiers.map((tier, idx) => (
+              <div
+                key={tier.id}
+                className="rounded-[28px] bg-[#F8FBFE] border border-blue-100/80 p-7 sm:p-8 flex flex-col justify-between space-y-6"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-blue-200 text-xs font-semibold text-[#2764B8]">
+                    Tier {idx + 1}
                   </div>
+                  <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
+                    {tier.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+                    {tier.desc}
+                  </p>
 
-                  {/* Bottom Telemetry & CTA */}
-                  <div className="pt-4 border-t border-slate-100 space-y-4">
-                    {/* 2 KPI Metrics Box */}
-                    <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-[#F8FBFE] border border-blue-100/70 text-center">
-                      {tier.kpis.map((kpi, kIdx) => (
-                        <div key={kIdx} className={kIdx === 0 ? "border-r border-blue-100/80 pr-2" : "pl-2"}>
-                          <span className="font-display text-base sm:text-lg font-bold text-[#345DAB] block tracking-tight">
-                            {kpi.val}
-                          </span>
-                          <span className="text-[10px] font-mono font-medium text-slate-500 block truncate">
-                            {kpi.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* CTA Button */}
-                    <Link
-                      href="/request-demo"
-                      className={cn(
-                        "group/btn w-full inline-flex items-center justify-center gap-2 rounded-full py-3 px-5 text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-[0.98]",
-                        tier.isPopular
-                          ? "bg-[#2764B8] hover:bg-[#1E5299] text-white shadow-xs hover:shadow-md"
-                          : "bg-slate-100 hover:bg-slate-200/90 text-slate-800 border border-slate-200/80 hover:text-slate-900"
-                      )}
-                    >
-                      <span>{tier.cta}</span>
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                    </Link>
+                  <div className="pt-2 border-t border-blue-100/80 space-y-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
+                      {language === "ID" ? "Paket Rekomendasi:" : "Recommended Package:"}
+                    </span>
+                    {tier.solutionsRecommended.map((sol, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs font-medium text-slate-700">
+                        <Check className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
+                        <span>{sol}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              );
-            })}
+
+                <div className="pt-4 border-t border-blue-100/80">
+                  <span className="text-xs font-bold text-[#345DAB] block mb-3">
+                    {tier.kpi}
+                  </span>
+                  <Link
+                    href="/request-demo"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 py-2.5 text-xs font-semibold transition-colors shadow-2xs"
+                  >
+                    <span>{language === "ID" ? "Konsultasi Tier Ini" : "Consult This Tier"}</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
