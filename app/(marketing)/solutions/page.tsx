@@ -473,8 +473,13 @@ export default function SolutionsPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] pt-14 pb-28 sm:pb-36 border-t border-slate-200/60 overflow-visible">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative">
-          {/* Blue Framed Container Pod */}
-          <div className="relative rounded-[32px] sm:rounded-[40px] bg-gradient-to-b from-[#1C4382] via-[#245DAA] to-[#2B6EC6] pt-14 sm:pt-16 pb-36 sm:pb-44 lg:pb-52 px-6 sm:px-10 lg:px-14 shadow-[0_20px_50px_rgba(28,67,130,0.28)] overflow-hidden">
+          {/* Blue Framed Container Pod with Request-Demo Gradient & Orbs */}
+          <div className="relative rounded-[32px] sm:rounded-[40px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-14 sm:pt-16 pb-36 sm:pb-44 lg:pb-52 px-6 sm:px-10 lg:px-14 shadow-[0_25px_60px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
+            {/* Ambient Glowing Orbs (Exact Request-Demo Luminous Aesthetics) */}
+            <div className="absolute -top-16 -left-16 w-96 h-96 rounded-full bg-[#60A5FA]/35 blur-3xl pointer-events-none" />
+            <div className="absolute top-1/2 -right-16 w-96 h-96 rounded-full bg-[#38BDF8]/25 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 left-1/4 w-80 h-80 rounded-full bg-[#56ADE2]/30 blur-3xl pointer-events-none" />
+
             {/* Background Subtle Dot Matrix Pattern (Galileo Style) */}
             <div
               className="absolute inset-0 pointer-events-none opacity-20"
@@ -483,9 +488,6 @@ export default function SolutionsPage() {
                 backgroundSize: "18px 18px",
               }}
             />
-
-            {/* Ambient Radial Luminous Glow */}
-            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_75%_55%_at_50%_35%,rgba(255,255,255,0.18),transparent)]" />
 
             {/* Layered Stepped Glass Pillars Architectural Silhouette */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:flex justify-center items-end gap-6 lg:gap-8 max-w-[1240px] mx-auto px-6">
