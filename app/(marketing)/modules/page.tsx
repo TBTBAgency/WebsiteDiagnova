@@ -25,6 +25,7 @@ import {
   Zap,
   Building2,
   AlertTriangle,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -551,456 +552,377 @@ export default function ModulesPage() {
           </div>
 
           {/* ══════════════════════════════════════════════════════════════
-              ASYMMETRIC CARD GRID (KRESNA DESIGN ARCHITECTURE)
-              Row 1: 7-col + 5-col
-              Row 2: 5-col + 7-col
-              Row 3: 12-col Full Panoramic
+              5-CARD ARCHITECTURE (MATCHING SOLUTIONS PAGE SAASET DESIGN)
+              Row 1: 3 Equal Vertical Cards (Hematology, Reagent, Pathology)
+              Row 2: 2 Balanced Cards (Microbiology 7-col + Blood Bank 5-col)
               ══════════════════════════════════════════════════════════════ */}
-          <div className="space-y-6 sm:space-y-8">
-            {/* ROW 1: Smart Workflow Automation (7-col) & Cold-Chain Telemetry (5-col) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
-              {/* Card 1: Routine & Hematology - Node Workflow Tree (7 cols) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
+          <div className="space-y-6 sm:space-y-7">
+            {/* ROW 1: 3 EQUAL VERTICAL CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
+              {/* Card 1: Routine Hematology & Chemistry */}
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-50/90 border border-blue-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
-                    <Activity className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span>{language === "ID" ? "MODUL 01 • HEMATOLOGI & RUTIN" : "MODULE 01 • HEMATOLOGY & CLINICAL"}</span>
-                  </div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
-                    {language === "ID" ? "Otomasi Alur Kerja Hematologi & Rutin" : "Smart Workflow Automation"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
-                    {language === "ID"
-                      ? "Interfacing analyzer ASTM/HL7 langsung, validasi otomatis aturan Westgard, dan penarikan hasil tanpa perantara."
-                      : "Direct ASTM/HL7 analyzer links, automated Westgard rule verification, and instant zero-middleware capture."}
-                  </p>
-                </div>
-
-                {/* Bottom Visual Stage: Node Workflow Connector (matching Kresna Card 1) */}
-                <div className="relative h-[250px] sm:h-[270px] w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-6 overflow-hidden flex items-center justify-between shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)]">
-                  {/* Subtle Grid Dot Canvas */}
-                  <div
-                    className="absolute inset-0 opacity-[0.08] pointer-events-none"
-                    style={{
-                      backgroundImage: "radial-gradient(#2764B8 1px, transparent 1px)",
-                      backgroundSize: "16px 16px",
-                    }}
-                  />
-
-                  {/* SVG Connecting Branching Curves */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden sm:block" preserveAspectRatio="none">
-                    {/* Branch Left -> Top Pill */}
-                    <path d="M 64 135 C 110 135, 120 78, 175 78" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
-                    {/* Branch Left -> Bottom Pill */}
-                    <path d="M 64 135 C 110 135, 120 192, 175 192" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
-                    {/* Branch Top Pill -> Task Card */}
-                    <path d="M 320 78 C 350 78, 355 110, 380 110" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
-                    {/* Branch Bottom Pill -> Task Card */}
-                    <path d="M 320 192 C 350 192, 355 160, 380 160" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
-                  </svg>
-
-                  <div className="flex items-center justify-between w-full max-w-xl gap-2 sm:gap-4 relative z-10">
-                    {/* Left Node: Branded Analyzer Hub Box */}
-                    <div className="h-13 w-13 sm:h-15 sm:w-15 rounded-2xl bg-gradient-to-br from-[#2764B8] to-[#1E3A8A] text-white flex flex-col items-center justify-center shadow-[0_8px_20px_rgba(39,100,184,0.24)] shrink-0 ring-4 ring-white">
-                      <Activity className="h-6 w-6 sm:h-7 sm:w-7" />
-                      <span className="text-[9px] font-mono font-bold mt-0.5 tracking-wider">ASTM</span>
-                    </div>
-
-                    {/* Connecting Branching Middle Nodes */}
-                    <div className="flex-1 flex flex-col justify-between gap-3 sm:gap-4 relative max-w-[210px]">
-                      {/* Sub-Node 1: ASTM Direct Link */}
-                      <div className="flex items-center justify-between gap-2 p-2.5 sm:px-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.06)] text-xs font-semibold text-slate-800">
-                        <div className="flex items-center gap-2 truncate">
-                          <span className="relative flex h-2 w-2 shrink-0">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                          </span>
-                          <span className="truncate text-[11px] sm:text-xs">Sysmex &amp; Cobas</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-semibold shrink-0">Live</span>
-                      </div>
-
-                      {/* Sub-Node 2: Delta Check Flag */}
-                      <div className="flex items-center justify-between gap-2 p-2.5 sm:px-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.06)] text-xs font-semibold text-slate-800">
-                        <div className="flex items-center gap-2 truncate">
-                          <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-                          <span className="truncate text-[11px] sm:text-xs">Westgard &amp; Delta</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded font-semibold shrink-0">+115%</span>
-                      </div>
-                    </div>
-
-                    {/* Right Re-converging Task Card */}
-                    <div className="w-[190px] sm:w-[225px] rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 shadow-[0_8px_24px_rgba(31,45,93,0.07)] space-y-2 text-[11px] font-mono shrink-0">
-                      <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 border-b border-slate-100 pb-1.5 uppercase tracking-wider">
-                        <span>Workflow LIS</span>
-                        <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-semibold">100% OK</span>
-                      </div>
-                      <div className="border-l-2 border-[#2764B8] pl-2.5 py-0.5">
-                        <span className="font-bold text-slate-900 block truncate">Tarik Hasil ASTM</span>
-                        <span className="text-slate-400 text-[10px]">07:50 WIB • 14 Parameter</span>
-                      </div>
-                      <div className="border-l-2 border-slate-300 pl-2.5 py-0.5">
-                        <span className="font-bold text-slate-700 block truncate">Validasi Westgard QC</span>
-                        <span className="text-slate-400 text-[10px]">07:54 WIB • L-J Chart Normal</span>
-                      </div>
-                      <div className="border-l-2 border-emerald-500 pl-2.5 py-0.5">
-                        <span className="font-bold text-emerald-700 block truncate">Auto-Masuk SIMRS</span>
-                        <span className="text-emerald-600 text-[10px]">07:58 WIB • Terverifikasi</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2: Blood Bank - Cold-Chain Telemetry Peek (5 cols) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sky-50/90 border border-sky-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
-                    <HeartPulse className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span>{language === "ID" ? "MODUL 02 • BANK DARAH & BDRS" : "MODULE 02 • BLOOD BANK"}</span>
-                  </div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
-                    {language === "ID" ? "Telemetri Rantai Dingin & BDRS" : "Cold-Chain & Transfusion Safety"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
-                    {language === "ID"
-                      ? "Monitoring suhu kulkas darah 24/7 dan uji silang serasi digital Mayor/Minor ISBT-128."
-                      : "24/7 blood storage telemetry and digital dual-verification electronic crossmatching."}
-                  </p>
-                </div>
-
-                {/* Bottom Visual Stage: Forecast-Style App Window Peek (matching Kresna Card 2) */}
-                <div className="relative h-[250px] sm:h-[270px] w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-5 overflow-hidden flex flex-col justify-between shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)]">
-                  {/* Window Bar Header */}
-                  <div className="flex items-center justify-between text-[11px] font-mono border-b border-blue-100/80 pb-2 relative z-10">
-                    <span className="flex items-center gap-1.5 font-bold text-slate-800">
-                      <Thermometer className="h-3.5 w-3.5 text-[#2764B8]" />
-                      BDRS Chiller 01 (PRC)
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full font-semibold">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      IoT Connected
-                    </span>
-                  </div>
-
-                  {/* Floating White Stat Card */}
-                  <div className="relative z-10 mx-auto w-full max-w-[270px] p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_10px_28px_rgba(31,45,93,0.08)] space-y-1.5 text-center my-auto">
-                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block font-semibold">
-                      Suhu Kulkas BDRS 24/7
-                    </span>
-                    <div className="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight flex items-center justify-center gap-1">
-                      3.8<span className="text-xl sm:text-2xl text-[#2764B8]">°C</span>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      Rentang Aman (2.0°C – 6.0°C)
-                    </span>
-                  </div>
-
-                  {/* Soft Background Wave Chart (matching Kresna Card 2's blue wave) */}
-                  <div className="absolute inset-x-0 bottom-0 h-28 pointer-events-none opacity-50 z-0">
-                    <svg viewBox="0 0 400 120" preserveAspectRatio="none" className="w-full h-full">
-                      <defs>
-                        <linearGradient id="coldWaveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stopColor="#2764B8" stopOpacity="0.45" />
-                          <stop offset="100%" stopColor="#2764B8" stopOpacity="0.02" />
-                        </linearGradient>
-                      </defs>
-                      {/* Guide Threshold Lines */}
-                      <line x1="0" y1="35" x2="400" y2="35" stroke="#93C5FD" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
-                      <line x1="0" y1="95" x2="400" y2="95" stroke="#93C5FD" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
-                      <path d="M0,75 Q100,55 200,60 T400,58 L400,120 L0,120 Z" fill="url(#coldWaveGrad)" />
-                      <path d="M0,75 Q100,55 200,60 T400,58" fill="none" stroke="#2764B8" strokeWidth="2.5" />
-                      {/* Live Data Point */}
-                      <circle cx="340" cy="58" r="4.5" fill="#2764B8" stroke="#FFFFFF" strokeWidth="2" />
-                      <circle cx="340" cy="58" r="9" fill="#2764B8" opacity="0.25" className="animate-ping" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ROW 2: Reagents Intelligence (5-col) & 2D Specimen Tracking (7-col) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
-              {/* Card 3: Inventory & Reagents - Dashboard Usage Bars (5 cols) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-50/90 border border-indigo-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
-                    <PackageCheck className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span>{language === "ID" ? "MODUL 03 • MANAJEMEN REAGEN" : "MODULE 03 • INVENTORY"}</span>
-                  </div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
-                    {language === "ID" ? "Telemetri Reagen & Biaya Tes" : "Reagent & Supply Intelligence"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
-                    {language === "ID"
-                      ? "Pengurangan stok otomatis berbasis jumlah tes dan peringatan dini sebelum stok menipis."
-                      : "Test-driven auto-depletion tracking and proactive safety threshold warnings."}
-                  </p>
-                </div>
-
-                {/* Bottom Visual Stage: Dashboard Window Peek with Bar Chart (matching Kresna Card 3) */}
-                <div className="relative h-[250px] sm:h-[270px] w-full flex flex-col justify-between rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-5 shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)] overflow-hidden">
-                  <div className="flex items-center justify-between border-b border-blue-100/80 pb-2 relative z-10">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <span className="h-2 w-2 rounded-full bg-slate-300" />
-                        <span className="h-2 w-2 rounded-full bg-slate-300" />
-                        <span className="h-2 w-2 rounded-full bg-slate-300" />
-                      </div>
-                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 ml-1">
-                        Reagent On-Board
+                  {/* Top Visual Stage: Soft Blue Canvas with ASTM Interfacing Process Pills */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#EFF6FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-between mb-6 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <Activity className="h-4 w-4 text-[#2764B8]" />
+                        ASTM / HL7 Interfacing
                       </span>
-                    </div>
-                    <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-100/90 px-2 py-0.5 rounded-full">
-                      Rata-Rata: 82%
-                    </span>
-                  </div>
-
-                  {/* Warning Threshold Line */}
-                  <div className="relative my-auto pt-2 pb-1">
-                    <div className="absolute top-[42%] left-0 right-0 border-b border-dashed border-amber-300/90 z-0 flex items-center justify-between">
-                      <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50/95 px-1.5 py-0.2 rounded border border-amber-200/80 -translate-y-1/2">
-                        Batas Minimum (50%)
-                      </span>
-                      <span className="text-[9px] font-mono text-amber-600 bg-amber-50/95 px-1.5 py-0.2 rounded -translate-y-1/2">
-                        Auto-Alert
+                      <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold flex items-center gap-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Bidirectional
                       </span>
                     </div>
 
-                    {/* 5 Reagent Usage / Depletion Bars */}
-                    <div className="flex items-end justify-between gap-2.5 sm:gap-3 h-28 pt-4 relative z-10">
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">84%</span>
-                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[84%] shadow-xs" />
-                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Diluent</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">68%</span>
-                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[68%] shadow-xs" />
-                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Lyse</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">92%</span>
-                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[92%] shadow-xs" />
-                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Stain</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <span className="text-[9px] font-mono font-bold text-amber-600 flex items-center justify-center">
-                          42%
-                        </span>
-                        <div className="w-full bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-lg h-[42%] shadow-xs ring-1 ring-amber-300" />
-                        <span className="text-[9px] font-mono text-amber-700 font-bold truncate w-full text-center">Clean</span>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                        <span className="text-[9px] font-mono font-bold text-[#2764B8]">95%</span>
-                        <div className="w-full bg-gradient-to-t from-[#1F4C8F] to-[#2764B8] rounded-t-lg h-[95%] shadow-xs" />
-                        <span className="text-[9px] font-mono text-slate-600 truncate w-full text-center">Ctrl</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Stats Footer */}
-                  <div className="pt-2 border-t border-blue-100/70 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                    <span>18 Katrid Terhubung</span>
-                    <span className="text-[#2764B8] font-semibold">Estimasi 420 Tes Lagi</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 4: Anatomical Pathology - Member Nodes & Custody Chain (7 cols) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-teal-50/90 border border-teal-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
-                    <Microscope className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span>{language === "ID" ? "MODUL 04 • PATOLOGI ANATOMI & SITOLOGI" : "MODULE 04 • ANATOMICAL PATHOLOGY"}</span>
-                  </div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
-                    {language === "ID" ? "Pelacakan Spesimen Jaringan 2D" : "2D Specimen Chain of Custody"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8">
-                    {language === "ID"
-                      ? "Pelacakan kaset dan slide kaca ber-barcode mikro 2D untuk eliminasi risiko spesimen tertukar."
-                      : "2D micro-barcode tracking across cassettes and glass slides for zero specimen mix-ups."}
-                  </p>
-                </div>
-
-                {/* Bottom Visual Stage: Member Nodes & Staging Card (matching Kresna Card 4) */}
-                <div className="relative h-[250px] sm:h-[270px] w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-6 overflow-hidden flex items-center justify-between shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)]">
-                  {/* Subtle Grid Dot Canvas */}
-                  <div
-                    className="absolute inset-0 opacity-[0.08] pointer-events-none"
-                    style={{
-                      backgroundImage: "radial-gradient(#2764B8 1px, transparent 1px)",
-                      backgroundSize: "16px 16px",
-                    }}
-                  />
-
-                  {/* SVG Connector Line */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 hidden sm:block" preserveAspectRatio="none">
-                    <path d="M 230 100 C 270 100, 275 130, 310 130" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
-                    <path d="M 230 170 C 270 170, 275 140, 310 140" fill="none" stroke="#93C5FD" strokeWidth="2" strokeDasharray="5 4" opacity="0.85" />
-                  </svg>
-
-                  <div className="flex items-center justify-between w-full max-w-xl gap-3 sm:gap-6 relative z-10">
-                    {/* Left Stack of Specimen Stage Cards */}
-                    <div className="space-y-3 flex-1 max-w-[215px]">
-                      <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.05)] text-xs">
-                        <div className="h-7 w-7 rounded-lg bg-blue-50 text-[#2764B8] flex items-center justify-center shrink-0">
-                          <QrCode className="h-4 w-4" />
-                        </div>
-                        <div className="truncate">
-                          <span className="font-bold text-slate-900 block text-[11px] truncate">Kaset Grossing A1</span>
-                          <span className="text-[10px] font-mono text-slate-400">#PA-24-9102 • 2D OK</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_14px_rgba(31,45,93,0.05)] text-xs">
-                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="h-4 w-4" />
-                        </div>
-                        <div className="truncate">
-                          <span className="font-bold text-slate-900 block text-[11px] truncate">Microtomy 4 Slide</span>
-                          <span className="text-[10px] font-mono text-slate-400">Pewarnaan H&amp;E Valid</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Target Synoptic Report Card */}
-                    <div className="w-[210px] sm:w-[255px] rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 shadow-[0_8px_24px_rgba(31,45,93,0.07)] space-y-2.5 shrink-0">
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                        <span className="text-[9px] font-bold text-slate-400 font-mono tracking-wider">SYNOPTIC PA REPORT</span>
-                        <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200/80">
-                          ICD-O-3
-                        </span>
-                      </div>
-                      <div className="text-xs font-mono">
-                        <span className="font-bold text-slate-800 block truncate">Karsinoma Ductal</span>
-                        <span className="text-[10px] text-slate-500">WSI 40x Scan Digital OK</span>
-                      </div>
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-600">
-                        <div className="flex items-center gap-1.5">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                          <span className="font-bold text-slate-800">dr. Hendra, Sp.PA</span>
-                        </div>
-                        <span className="text-[9px] text-[#2764B8] font-bold">TERVERIFIKASI</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ROW 3: Microbiology & PPRA Antibiogram - Full 12-col Panoramic Workstation */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(31,45,93,0.04)] p-7 sm:p-9 flex flex-col justify-between group transition-all duration-300 hover:border-blue-200/90 hover:shadow-[0_14px_40px_rgba(39,100,184,0.08)]">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50/90 border border-emerald-100/90 text-[11px] font-mono font-semibold text-[#2764B8] mb-3.5">
-                  <FlaskConical className="h-3.5 w-3.5 text-[#2764B8]" />
-                  <span>{language === "ID" ? "MODUL 05 • MIKROBIOLOGI KLINIK & PPRA" : "MODULE 05 • MICROBIOLOGY & STEWARDSHIP"}</span>
-                </div>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2">
-                  {language === "ID" ? "Mikrobiologi Klinik & Peta Antibiogram PPRA" : "Microbiology & Cumulative Antibiogram"}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mb-6 sm:mb-8 max-w-4xl">
-                  {language === "ID"
-                    ? "Manajemen biakan kultur multi-hari, integrasi analyzer otomatis VITEK-2, dan pelaporan pola resistensi kumulatif sesuai pedoman CLSI / EUCAST."
-                    : "Multi-day culture incubation tracking, automated VITEK-2 AST integration, and automated cumulative antibiograms under CLSI guidelines."}
-                </p>
-              </div>
-
-              {/* Bottom Visual Stage: 3-Pillar Clean Workstation Console */}
-              <div className="relative rounded-2xl bg-gradient-to-b from-[#F8FBFE] via-[#F4F8FD] to-[#EDF4FC] border border-blue-100/80 p-4 sm:p-6 shadow-[inset_0_1px_3px_rgba(39,100,184,0.03)] overflow-hidden">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 w-full relative z-10">
-                  {/* Pillar 1: Incubation Vials Monitor */}
-                  <div className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(31,45,93,0.05)] space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider font-semibold">
-                        Inkubasi Kultur Darah
-                      </span>
-                      <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold border border-emerald-200">
-                        BD BACTEC
-                      </span>
-                    </div>
+                    {/* Middle Floating Process Pills */}
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs font-mono p-2 rounded-lg bg-emerald-50/70 border border-emerald-100">
-                        <span className="text-slate-800 font-bold">Botol Aerob #01</span>
-                        <span className="text-emerald-700 font-semibold text-[11px]">(+) Tumbuh @ 18.4 Jam</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs font-mono p-2 rounded-lg bg-slate-50 border border-slate-200/80">
-                        <span className="text-slate-700">Botol Anaerob #02</span>
-                        <span className="text-slate-500 text-[11px]">Observasi (Hari 2/5)</span>
-                      </div>
-                    </div>
-                    <div className="text-[11px] text-slate-700 font-mono pt-1 border-t border-slate-100 flex items-center justify-between">
-                      <span className="text-slate-400">Isolat Terkonfirmasi:</span>
-                      <span className="font-bold text-[#2764B8]">S. aureus</span>
-                    </div>
-                  </div>
-
-                  {/* Pillar 2: AST Antibiogram Susceptibility Table */}
-                  <div className="p-4 sm:p-5 rounded-xl bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(31,45,93,0.05)] space-y-2.5">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider font-semibold">
-                        Uji Sensitivitas AST (CLSI)
-                      </span>
-                      <span className="text-[9px] font-mono text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded font-bold border border-blue-100">
-                        VITEK-2
-                      </span>
-                    </div>
-                    <div className="space-y-1.5 pt-0.5">
-                      <div className="flex items-center justify-between text-xs font-mono p-1.5 rounded hover:bg-slate-50 transition-colors">
-                        <span className="text-slate-800 font-medium">Vancomycin</span>
-                        <span className="text-slate-400 text-[10px]">MIC &le; 0.5</span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                          SENSITIF
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs font-mono p-1.5 rounded hover:bg-slate-50 transition-colors">
-                        <span className="text-slate-800 font-medium">Cefoxitin Screen</span>
-                        <span className="text-slate-400 text-[10px]">MIC &ge; 8</span>
-                        <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
-                          RESISTEN (MRSA)
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs font-mono p-1.5 rounded hover:bg-slate-50 transition-colors">
-                        <span className="text-slate-800 font-medium">Linezolid</span>
-                        <span className="text-slate-400 text-[10px]">MIC &le; 1</span>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                          SENSITIF
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Pillar 3: Stewardship Alert & Cumulative Map Sync */}
-                  <div className="p-4 sm:p-5 rounded-xl bg-amber-50/80 border border-amber-200/90 shadow-[0_4px_16px_rgba(217,119,6,0.06)] space-y-3 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between border-b border-amber-200/70 pb-2">
-                        <span className="text-[10px] font-mono text-amber-800 font-bold block uppercase tracking-wider flex items-center gap-1.5">
-                          <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-                          Alert PPRA Aktif
-                        </span>
-                        <span className="text-[9px] font-mono font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded">
-                          MDRO
-                        </span>
-                      </div>
-                      <div className="mt-2.5 space-y-1">
-                        <div className="font-bold text-xs sm:text-sm text-amber-950 font-mono">
-                          MRSA Positif Kultur Darah
+                      <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                        <div className="flex items-center gap-2 truncate">
+                          <Cpu className="h-3.5 w-3.5 text-[#2764B8] shrink-0" />
+                          <span className="truncate">Sysmex &amp; Cobas Direct</span>
                         </div>
-                        <p className="text-[11px] text-amber-800 leading-relaxed font-sans">
-                          Notifikasi instan dikirim ke Tim PPRA &amp; DPJP untuk de-eskalasi antibiotik tepat sasaran.
-                        </p>
+                        <span className="text-[10px] font-mono font-bold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full shrink-0">
+                          14 Param
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                        <div className="flex items-center gap-2 truncate">
+                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span className="truncate">Aturan Westgard QC</span>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">
+                          L-J Normal
+                        </span>
                       </div>
                     </div>
-                    <div className="pt-2 border-t border-amber-200/70 flex items-center justify-between text-[10px] font-mono">
-                      <span className="text-amber-800 font-semibold flex items-center gap-1">
+
+                    {/* Bottom Status Pill */}
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-blue-50/70 border border-blue-100 text-[10px] font-mono text-[#2764B8]">
+                      <span className="font-semibold flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        Auto-Rilis SIMRS Terverifikasi
+                      </span>
+                      <span className="font-bold">0.3s TAT</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Content: Clean Title + Subtitle */}
+                  <h3 className="font-display text-xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Hematologi & Kimia Klinik" : "Routine Hematology & Chemistry"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Interfacing dua arah ASTM/HL7 langsung dengan analyzer otomatis, validasi Westgard QC real-time, dan penarikan hasil tanpa perantara middleware."
+                      : "Direct bidirectional ASTM/HL7 analyzer links, real-time Westgard QC verification, and instant middleware-free result dispatch."}
+                  </p>
+                </div>
+
+                {/* Tag Pill Footer */}
+                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
+                    <Activity className="h-3.5 w-3.5 text-[#2764B8]" />
+                    Core LIS
+                  </span>
+                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+                    ASTM &amp; HL7 v2.5
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 2: Reagents & Supplies Telemetry */}
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                  {/* Top Visual Stage: Soft Amber Canvas with Reagent Bars & Telemetry */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#FFFDF5] via-[#FFF9EB] to-white border border-amber-100/80 h-[215px] flex flex-col justify-between mb-6 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <PackageCheck className="h-4 w-4 text-amber-600" />
+                        Status Katrid Reagen
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-slate-700 bg-amber-100/80 px-2 py-0.5 rounded-full border border-amber-200">
+                        18 Katrid Aktif
+                      </span>
+                    </div>
+
+                    {/* Reagent Usage Miniature Bars Container */}
+                    <div className="p-3 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-1.5">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
+                        <span>Rata-Rata On-Board: 82%</span>
+                        <span className="text-amber-700 font-semibold">1 Alert Batas Min</span>
+                      </div>
+                      <div className="flex items-end justify-between gap-2.5 h-12 pt-1">
+                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                          <div className="w-full bg-[#2764B8] rounded-t h-[84%]" />
+                          <span className="text-[8px] font-mono text-slate-500 truncate">Diluent</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                          <div className="w-full bg-[#2764B8] rounded-t h-[68%]" />
+                          <span className="text-[8px] font-mono text-slate-500 truncate">Lyse</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                          <div className="w-full bg-[#2764B8] rounded-t h-[92%]" />
+                          <span className="text-[8px] font-mono text-slate-500 truncate">Stain</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                          <div className="w-full bg-amber-500 rounded-t h-[42%] ring-1 ring-amber-300" />
+                          <span className="text-[8px] font-mono text-amber-700 font-bold truncate">Rinse</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Status Pill */}
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-amber-50/70 border border-amber-100 text-[10px] font-mono text-amber-800">
+                      <span className="font-semibold flex items-center gap-1.5">
+                        <AlertTriangle className="h-3 w-3 text-amber-600" />
+                        Peringatan Dini Stok
+                      </span>
+                      <span className="font-bold">Estimasi 420 Tes</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Content */}
+                  <h3 className="font-display text-xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Telemetri Reagen & Inventaris" : "Reagent & Supply Intelligence"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Pengurangan stok reagen otomatis berbasis jumlah tes aktual analyzer, pelacakan lot/kedaluwarsa, dan kalkulasi unit cost per pemeriksaan."
+                      : "Test-driven auto-depletion tracking, expiration and lot traceability, and precise real-time cost-per-test margin calculation."}
+                  </p>
+                </div>
+
+                {/* Tag Pill Footer */}
+                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
+                    <PackageCheck className="h-3.5 w-3.5 text-[#2764B8]" />
+                    Manajemen Logistik
+                  </span>
+                  <span className="text-slate-800 font-bold bg-slate-100 px-2 py-0.5 rounded">
+                    Auto-Depletion Tracking
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 3: Anatomical Pathology & Cytology */}
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                  {/* Top Visual Stage: Soft Mint Canvas with Specimen Workflow Stages */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-6 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <QrCode className="h-3.5 w-3.5 text-emerald-600" />
+                        #PA-24-0982 (Biopsi)
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
+                        Zero Mix-Up
+                      </span>
+                    </div>
+
+                    {/* Stage Progress Pills */}
+                    <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
+                      <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
+                        <span className="block font-bold text-slate-800">Grossing</span>
+                        <span className="text-slate-400 text-[9px]">Kaset 2D</span>
+                      </div>
+                      <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
+                        <span className="block font-bold text-slate-800">Microtomy</span>
+                        <span className="text-slate-400 text-[9px]">4 Slide</span>
+                      </div>
+                      <div className="bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-emerald-800 font-bold">
+                        <span className="block">H&amp;E Stain</span>
+                        <span className="text-emerald-600 text-[9px]">Slide OK</span>
+                      </div>
+                    </div>
+
+                    {/* Synoptic ICD-O & Digital Authorization Pill */}
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-white border border-slate-100 text-[10px] font-mono shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
+                      <span className="text-slate-500 font-medium">ICD-O-3: 8500/3</span>
+                      <span className="text-emerald-700 font-bold flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                        Peta Kuman 2026 Terupdate
+                        dr. Hendra, Sp.PA
                       </span>
                     </div>
                   </div>
+
+                  {/* Bottom Content */}
+                  <h3 className="font-display text-xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Patologi Anatomi & Sitologi" : "Anatomical Pathology & Cytology"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Pelacakan spesimen jaringan dari grossing hingga blok parafin dengan barcode 2D anti-tertukar dan standar pelaporan sinoptik ICD-O."
+                      : "End-to-end tissue tracking from grossing to paraffin blocks using 2D micro-barcodes and synoptic ICD-O staging."}
+                  </p>
+                </div>
+
+                {/* Tag Pill Footer */}
+                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
+                    <Microscope className="h-3.5 w-3.5 text-[#2764B8]" />
+                    Spesialis PA
+                  </span>
+                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+                    2D Micro-Barcode
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ROW 2: 2 BALANCED CARDS (Microbiology Wide 7-col + Blood Bank 5-col) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7">
+              {/* Card 4: Clinical Microbiology & PPRA Stewardship (Wide 7-col) */}
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                  {/* Top Visual Stage: Workstation Telemetry & AST Sensitivity Table */}
+                  <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-b from-[#F6F9FD] via-[#FAFBFD] to-white border border-slate-200/80 mb-6 space-y-3.5 shadow-xs">
+                    {/* Top Bar with Status and Quick Pills */}
+                    <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-200/60">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <span className="text-xs font-bold text-slate-800">
+                          {language === "ID" ? "Kultur Kuman & Telemetri AST" : "Culture & AST Telemetry"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-semibold text-[#2764B8] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                          VITEK-2 Connected
+                        </span>
+                        <span className="text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                          BACTEC Active
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 3 Metric Summary Boxes */}
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div className="p-3 rounded-xl bg-white border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.02)]">
+                        <span className="text-[10px] text-slate-400 font-mono block">Isolat Kuman</span>
+                        <span className="font-bold text-slate-900 text-xs sm:text-sm font-mono truncate block">
+                          S. aureus (Blood)
+                        </span>
+                      </div>
+                      <div className="p-3 rounded-xl bg-white border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.02)]">
+                        <span className="text-[10px] text-slate-400 font-mono block">Vancomycin MIC</span>
+                        <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono block">
+                          &le; 0.5 (Sensitive)
+                        </span>
+                      </div>
+                      <div className="p-3 rounded-xl bg-red-50/70 border border-red-200/70">
+                        <span className="text-[10px] text-red-600 font-mono block font-bold">Alert MDRO</span>
+                        <span className="font-bold text-red-800 text-xs sm:text-sm font-mono block">
+                          MRSA Terdeteksi
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Search / PPRA Antibiogram Matrix Strip */}
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs text-xs">
+                      <div className="flex items-center gap-2 text-slate-400 font-normal">
+                        <Search className="h-3.5 w-3.5 text-slate-400" />
+                        <span className="text-[11px] sm:text-xs">
+                          {language === "ID"
+                            ? "Peta pola resistensi kuman kumulatif komite PPRA..."
+                            : "Generate hospital cumulative antibiogram matrix..."}
+                        </span>
+                      </div>
+                      <span className="px-3 py-1 rounded-lg bg-[#2764B8] text-white font-semibold text-[10px] shadow-2xs">
+                        {language === "ID" ? "Buka PPRA" : "View Matrix"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Content */}
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID"
+                      ? "Mikrobiologi Klinik & Komite PPRA"
+                      : "Clinical Microbiology & PPRA Stewardship"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Manajemen biakan kultur multi-hari, integrasi analyzer otomatis VITEK-2/BACTEC, deteksi dini MDRO, dan pelaporan peta antibiogram kumulatif berkala sesuai pedoman CLSI / EUCAST."
+                      : "Multi-day culture incubation tracking, automated VITEK-2/BACTEC integration, automated MDRO flags, and cumulative antibiogram generation compliant with CLSI standards."}
+                  </p>
+                </div>
+
+                {/* Tag Pill Footer */}
+                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
+                    <FlaskConical className="h-3.5 w-3.5 text-[#2764B8]" />
+                    Mikrobiologi &amp; PPRA
+                  </span>
+                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+                    Standar CLSI / EUCAST
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 5: Blood Bank & Transfusion Safety BDRS (Compact 5-col) */}
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                  {/* Top Visual Stage: Bulleted Transfusion Safety Protocol */}
+                  <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-b from-[#FAFBFD] to-white border border-slate-200/80 mb-6 space-y-3 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-slate-200/70 pb-2">
+                      <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <HeartPulse className="h-3.5 w-3.5 text-rose-600" />
+                        {language === "ID" ? "Protokol Bank Darah (BDRS)" : "Blood Bank Protocol"}
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
+                        Kompatibel
+                      </span>
+                    </div>
+
+                    {/* 2 Protocol Status Boxes */}
+                    <div className="space-y-2">
+                      <div className="p-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center justify-between text-xs font-mono">
+                        <div className="flex items-center gap-2">
+                          <Thermometer className="h-3.5 w-3.5 text-[#2764B8]" />
+                          <span className="text-slate-800 font-semibold">Suhu Chiller 24/7</span>
+                        </div>
+                        <span className="text-slate-900 font-bold bg-blue-50 px-2 py-0.5 rounded text-[11px]">
+                          3.8°C (Aman)
+                        </span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center justify-between text-xs font-mono">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                          <span className="text-slate-800 font-semibold">Uji Silang Serasi</span>
+                        </div>
+                        <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded text-[11px]">
+                          Mayor/Minor OK
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bottom ISBT-128 Indicator */}
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-[10px] font-mono text-slate-500">
+                      <span>Standar ISBT-128</span>
+                      <span className="text-emerald-700 font-bold">Zero Reaksi Transfusi</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Content */}
+                  <h3 className="font-display text-xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Bank Darah & Transfusi (BDRS)" : "Blood Bank & Transfusion Safety"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                    {language === "ID"
+                      ? "Uji silang serasi digital (crossmatching) Mayor/Minor otomatis, telemetri pemantauan suhu kulkas penyimpanan darah 24/7, dan pelacakan donor ISBT-128."
+                      : "Automated digital electronic crossmatching, 24/7 continuous cold-chain blood refrigeration telemetry, and ISBT-128 transfusion compliance."}
+                  </p>
+                </div>
+
+                {/* Tag Pill Footer */}
+                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center gap-1.5 text-slate-600 font-semibold">
+                    <HeartPulse className="h-3.5 w-3.5 text-[#2764B8]" />
+                    BDRS Terpadu
+                  </span>
+                  <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+                    ISBT-128 Ready
+                  </span>
                 </div>
               </div>
             </div>
