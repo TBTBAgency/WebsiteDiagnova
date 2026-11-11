@@ -724,7 +724,7 @@ export default function SolutionsPage() {
                       <span className="font-display text-4xl sm:text-[42px] font-extrabold text-slate-900 tracking-tight">
                         Tier 2
                       </span>
-                      <span className="text-xs text-[#2466CB] font-bold ml-1">
+                      <span className="text-xs text-slate-400 font-medium ml-1">
                         / {language === "ID" ? "Lab Mandiri & MCU" : "Independent & MCU"}
                       </span>
                       <HelpCircle className="h-3.5 w-3.5 text-slate-400 inline ml-1 cursor-help shrink-0" />
@@ -736,17 +736,16 @@ export default function SolutionsPage() {
                     </span>
                   </div>
 
-                  {/* CTA Button: Solid Royal Cobalt matching screenshot (#122697) */}
+                  {/* CTA Button: Identical Outline Style to other cards */}
                   <Link
                     href="/request-demo"
                     onMouseEnter={() => setHoveredButton(2)}
                     onMouseLeave={() => setHoveredButton(null)}
                     onFocus={() => setHoveredButton(2)}
                     onBlur={() => setHoveredButton(null)}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-bold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] bg-[#122697] hover:bg-[#0D1D75] text-white shadow-[0_4px_18px_rgba(18,38,151,0.28)] hover:shadow-[0_6px_22px_rgba(18,38,151,0.38)] active:scale-[0.99]"
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border border-slate-300 hover:border-[#122697] bg-white hover:bg-blue-50/50 text-slate-800 hover:text-[#122697] shadow-2xs active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
-                    <MessageSquare className="h-4 w-4 fill-white" />
                   </Link>
 
                   {/* Divider Line */}
