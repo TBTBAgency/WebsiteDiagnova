@@ -631,22 +631,16 @@ export default function SolutionsPage() {
                     </span>
                   </div>
 
-                  {/* CTA Button (Directly under price / headline) */}
+                  {/* CTA Button (Outline Style from Mockup) */}
                   <Link
                     href="/request-demo"
                     onMouseEnter={() => setHoveredButton(1)}
                     onMouseLeave={() => setHoveredButton(null)}
                     onFocus={() => setHoveredButton(1)}
                     onBlur={() => setHoveredButton(null)}
-                    className={cn(
-                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs active:scale-[0.99]",
-                      hoveredButton === 1
-                        ? "bg-[#183494] text-white shadow-md border-transparent scale-[1.01]"
-                        : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
-                    )}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border border-slate-300 hover:border-[#122697] bg-white hover:bg-blue-50/50 text-slate-800 hover:text-[#122697] shadow-2xs active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
-                    {hoveredButton === 1 && <MessageSquare className="h-3.5 w-3.5 fill-white animate-in fade-in zoom-in-75 duration-200" />}
                   </Link>
 
                   {/* Divider Line */}
@@ -742,22 +736,17 @@ export default function SolutionsPage() {
                     </span>
                   </div>
 
-                  {/* CTA Button */}
+                  {/* CTA Button: Solid Royal Cobalt matching screenshot (#122697) */}
                   <Link
                     href="/request-demo"
                     onMouseEnter={() => setHoveredButton(2)}
                     onMouseLeave={() => setHoveredButton(null)}
                     onFocus={() => setHoveredButton(2)}
                     onBlur={() => setHoveredButton(null)}
-                    className={cn(
-                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs active:scale-[0.99]",
-                      hoveredButton === 2
-                        ? "bg-[#183494] text-white shadow-md border-transparent scale-[1.01]"
-                        : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
-                    )}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-bold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] bg-[#122697] hover:bg-[#0D1D75] text-white shadow-[0_4px_18px_rgba(18,38,151,0.28)] hover:shadow-[0_6px_22px_rgba(18,38,151,0.38)] active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
-                    {hoveredButton === 2 && <MessageSquare className="h-3.5 w-3.5 fill-white animate-in fade-in zoom-in-75 duration-200" />}
+                    <MessageSquare className="h-4 w-4 fill-white" />
                   </Link>
 
                   {/* Divider Line */}
@@ -853,22 +842,16 @@ export default function SolutionsPage() {
                     </span>
                   </div>
 
-                  {/* CTA Button */}
+                  {/* CTA Button (Outline Style from Mockup) */}
                   <Link
                     href="/request-demo"
                     onMouseEnter={() => setHoveredButton(3)}
                     onMouseLeave={() => setHoveredButton(null)}
                     onFocus={() => setHoveredButton(3)}
                     onBlur={() => setHoveredButton(null)}
-                    className={cn(
-                      "flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs active:scale-[0.99]",
-                      hoveredButton === 3
-                        ? "bg-[#183494] text-white shadow-md border-transparent scale-[1.01]"
-                        : "border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800"
-                    )}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-xs sm:text-sm font-semibold text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] border border-slate-300 hover:border-[#122697] bg-white hover:bg-blue-50/50 text-slate-800 hover:text-[#122697] shadow-2xs active:scale-[0.99]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
-                    {hoveredButton === 3 && <MessageSquare className="h-3.5 w-3.5 fill-white animate-in fade-in zoom-in-75 duration-200" />}
                   </Link>
 
                   {/* Divider Line */}
