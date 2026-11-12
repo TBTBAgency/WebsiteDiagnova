@@ -579,16 +579,29 @@ export default function PlatformPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="analytics"
-        className="relative scroll-mt-28 w-full bg-gradient-to-b from-[#F4F8FD] via-[#EBF3FB] to-[#F5F8FC] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
+        className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* Ambient Soft Glow Orbs */}
-        <div className="absolute -top-32 left-1/4 w-[500px] h-[500px] rounded-full bg-blue-100/40 blur-[130px] pointer-events-none" />
-        <div className="absolute -bottom-32 right-1/4 w-[480px] h-[480px] rounded-full bg-[#56ADE2]/15 blur-[120px] pointer-events-none" />
-
-        {/* Subtle Ambient Dot Grid Pattern */}
+        {/* 1. Large Smooth Circular Ambient Gradient Glow (Center Spotlight) */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-45 [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[760px] sm:w-[980px] lg:w-[1200px] h-[640px] sm:h-[800px] lg:h-[920px] rounded-full pointer-events-none opacity-85"
+          style={{
+            background:
+              "radial-gradient(circle at center, rgba(86, 173, 226, 0.22) 0%, rgba(52, 93, 171, 0.12) 38%, rgba(202, 226, 241, 0.05) 65%, transparent 80%)",
+            filter: "blur(60px)",
+          }}
+        />
+
+        {/* 2. Secondary Inner Radial Core Orb (Extra Soft Glow Depth) */}
+        <div
+          aria-hidden="true"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] sm:w-[600px] h-[380px] sm:h-[480px] rounded-full bg-[#56ADE2]/16 blur-[90px] pointer-events-none"
+        />
+
+        {/* 3. Subtle Ambient Dot Grid Pattern (Seamless Radial Mask Fading at Edges) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_85%)]"
           style={{
             backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
             backgroundSize: "24px 24px",
@@ -952,7 +965,7 @@ export default function PlatformPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#F5F8FC]" topColor="#F5F8FC" />
+      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
     </div>
   );
 }
