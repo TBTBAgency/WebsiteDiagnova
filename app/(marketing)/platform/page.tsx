@@ -581,29 +581,25 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* 1. Large Smooth Circular Ambient Gradient Glow (Center Spotlight) */}
+        {/* Dual-Color Ambient Flanks (Left: Clinical Royal Blue, Right: Nova Cyan) */}
+        {/* Left Side Glow - Color 1: Diagnova Deep Blue */}
         <div
           aria-hidden="true"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[760px] sm:w-[980px] lg:w-[1200px] h-[640px] sm:h-[800px] lg:h-[920px] rounded-full pointer-events-none opacity-85"
-          style={{
-            background:
-              "radial-gradient(circle at center, rgba(86, 173, 226, 0.22) 0%, rgba(52, 93, 171, 0.12) 38%, rgba(202, 226, 241, 0.05) 65%, transparent 80%)",
-            filter: "blur(60px)",
-          }}
+          className="absolute -left-40 sm:-left-56 lg:-left-64 top-1/2 -translate-y-1/2 w-[480px] sm:w-[600px] lg:w-[700px] h-[480px] sm:h-[600px] lg:h-[700px] rounded-full bg-gradient-to-r from-[#2466CB]/22 via-[#345DAB]/14 to-transparent blur-[120px] sm:blur-[140px] pointer-events-none"
         />
 
-        {/* 2. Secondary Inner Radial Core Orb (Extra Soft Glow Depth) */}
+        {/* Right Side Glow - Color 2: Nova Electric Cyan */}
         <div
           aria-hidden="true"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] sm:w-[600px] h-[380px] sm:h-[480px] rounded-full bg-[#56ADE2]/16 blur-[90px] pointer-events-none"
+          className="absolute -right-40 sm:-right-56 lg:-right-64 top-1/2 -translate-y-1/2 w-[480px] sm:w-[600px] lg:w-[700px] h-[480px] sm:h-[600px] lg:h-[700px] rounded-full bg-gradient-to-l from-[#56ADE2]/25 via-[#38BDF8]/16 to-transparent blur-[120px] sm:blur-[140px] pointer-events-none"
         />
 
-        {/* 3. Subtle Ambient Dot Grid Pattern (Seamless Radial Mask Fading at Edges) */}
+        {/* Subtle Ambient Dot Grid Pattern */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_85%)]"
+          className="absolute inset-0 pointer-events-none opacity-35 [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_85%)]"
           style={{
-            backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
+            backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.20) 1.25px, transparent 1.25px)",
             backgroundSize: "24px 24px",
           }}
         />
