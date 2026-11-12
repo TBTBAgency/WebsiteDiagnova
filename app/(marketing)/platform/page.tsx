@@ -581,38 +581,47 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* Diagnova Official 135-deg Brand Gradient Flanks: Diagnova Blue (#345DAB) on Top-Left & Nova Blue (#56ADE2) on Bottom-Right */}
-        {/* Top-Left Ambient Glow - #345DAB (Diagnova Blue) - Compact & Subtle */}
+        {/* Ambient Gradient & Texture Container with Smooth Edge Masking
+            Prevents hard horizontal clipping/cutoffs at section borders by smoothly feathering to transparent at top and bottom */}
         <div
           aria-hidden="true"
-          className="absolute -top-16 sm:-top-20 lg:-top-24 -left-16 sm:-left-20 lg:-left-24 w-[300px] sm:w-[380px] lg:w-[450px] h-[300px] sm:h-[380px] lg:h-[450px] rounded-full pointer-events-none"
+          className="absolute inset-0 pointer-events-none overflow-hidden"
           style={{
-            background:
-              "radial-gradient(circle at center, rgba(52, 93, 171, 0.24) 0%, rgba(52, 93, 171, 0.12) 35%, rgba(202, 226, 241, 0.04) 65%, transparent 75%)",
-            filter: "blur(50px)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
           }}
-        />
+        >
+          {/* Top-Left Ambient Glow - #345DAB (Diagnova Blue) - Compact & Subtle */}
+          <div
+            className="absolute -top-6 sm:-top-8 lg:-top-10 -left-12 sm:-left-16 lg:-left-20 w-[320px] sm:w-[400px] lg:w-[460px] h-[320px] sm:h-[400px] lg:h-[460px] rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle at center, rgba(52, 93, 171, 0.24) 0%, rgba(52, 93, 171, 0.12) 40%, rgba(202, 226, 241, 0.04) 65%, transparent 75%)",
+              filter: "blur(50px)",
+            }}
+          />
 
-        {/* Bottom-Right Ambient Glow - #56ADE2 (Nova Blue) */}
-        <div
-          aria-hidden="true"
-          className="absolute -bottom-32 sm:-bottom-40 -right-32 sm:-right-44 lg:-right-52 w-[520px] sm:w-[660px] lg:w-[760px] h-[520px] sm:h-[660px] lg:h-[760px] rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle at center, rgba(86, 173, 226, 0.28) 0%, rgba(86, 173, 226, 0.16) 35%, rgba(202, 226, 241, 0.05) 65%, transparent 75%)",
-            filter: "blur(60px)",
-          }}
-        />
+          {/* Bottom-Right Ambient Glow - #56ADE2 (Nova Blue) */}
+          <div
+            className="absolute -bottom-10 sm:-bottom-14 lg:-bottom-20 -right-16 sm:-right-24 lg:-right-32 w-[500px] sm:w-[620px] lg:w-[720px] h-[500px] sm:h-[620px] lg:h-[720px] rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle at center, rgba(86, 173, 226, 0.28) 0%, rgba(86, 173, 226, 0.14) 40%, rgba(202, 226, 241, 0.05) 65%, transparent 75%)",
+              filter: "blur(60px)",
+            }}
+          />
 
-        {/* Subtle Ambient Dot Grid Pattern */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]"
-          style={{
-            backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
-            backgroundSize: "24px 24px",
-          }}
-        />
+          {/* Subtle Ambient Dot Grid Pattern */}
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
+              backgroundSize: "24px 24px",
+            }}
+          />
+        </div>
 
         <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
