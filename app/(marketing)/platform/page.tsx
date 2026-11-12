@@ -579,9 +579,19 @@ export default function PlatformPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="analytics"
-        className="scroll-mt-28 w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
+        className="relative scroll-mt-28 w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        {/* Subtle Ambient Dot Grid Pattern */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]"
+          style={{
+            backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+
+        <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
           <div className="mb-10 sm:mb-14">
             <div className="mb-4">
