@@ -582,14 +582,14 @@ export default function PlatformPage() {
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
         {/* Diagnova Official 135-deg Brand Gradient Flanks: Diagnova Blue (#345DAB) on Top-Left & Nova Blue (#56ADE2) on Bottom-Right */}
-        {/* Top-Left Ambient Glow - #345DAB (Diagnova Blue) */}
+        {/* Top-Left Ambient Glow - #345DAB (Diagnova Blue) - Compact & Subtle */}
         <div
           aria-hidden="true"
-          className="absolute -top-32 sm:-top-40 -left-32 sm:-left-44 lg:-left-52 w-[520px] sm:w-[660px] lg:w-[760px] h-[520px] sm:h-[660px] lg:h-[760px] rounded-full pointer-events-none"
+          className="absolute -top-16 sm:-top-20 lg:-top-24 -left-16 sm:-left-20 lg:-left-24 w-[300px] sm:w-[380px] lg:w-[450px] h-[300px] sm:h-[380px] lg:h-[450px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle at center, rgba(52, 93, 171, 0.26) 0%, rgba(52, 93, 171, 0.15) 35%, rgba(202, 226, 241, 0.05) 65%, transparent 75%)",
-            filter: "blur(60px)",
+              "radial-gradient(circle at center, rgba(52, 93, 171, 0.24) 0%, rgba(52, 93, 171, 0.12) 35%, rgba(202, 226, 241, 0.04) 65%, transparent 75%)",
+            filter: "blur(50px)",
           }}
         />
 
