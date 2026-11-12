@@ -579,12 +579,16 @@ export default function PlatformPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="analytics"
-        className="relative scroll-mt-28 w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
+        className="relative scroll-mt-28 w-full bg-gradient-to-b from-[#F4F8FD] via-[#EBF3FB] to-[#F5F8FC] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
+        {/* Ambient Soft Glow Orbs */}
+        <div className="absolute -top-32 left-1/4 w-[500px] h-[500px] rounded-full bg-blue-100/40 blur-[130px] pointer-events-none" />
+        <div className="absolute -bottom-32 right-1/4 w-[480px] h-[480px] rounded-full bg-[#56ADE2]/15 blur-[120px] pointer-events-none" />
+
         {/* Subtle Ambient Dot Grid Pattern */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]"
+          className="absolute inset-0 pointer-events-none opacity-45 [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]"
           style={{
             backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
             backgroundSize: "24px 24px",
@@ -948,7 +952,7 @@ export default function PlatformPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />
+      <CTABanner bgClassName="bg-[#F5F8FC]" topColor="#F5F8FC" />
     </div>
   );
 }
