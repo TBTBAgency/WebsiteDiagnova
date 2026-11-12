@@ -581,25 +581,25 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* Dual-Color Ambient Flanks (Vibrant High-End Palette: Electric Indigo-Violet on Left, Luminous Cyan-Azure on Right) */}
-        {/* Left Side Glow - Color 1: Deep Electric Indigo / AI Intelligence Aura */}
+        {/* Diagnova Official 135-deg Brand Gradient Flanks: Diagnova Blue (#345DAB) on Top-Left & Nova Blue (#56ADE2) on Bottom-Right */}
+        {/* Top-Left Ambient Glow - #345DAB (Diagnova Blue) */}
         <div
           aria-hidden="true"
-          className="absolute -left-36 sm:-left-48 lg:-left-56 top-1/2 -translate-y-1/2 w-[550px] sm:w-[680px] lg:w-[780px] h-[550px] sm:h-[680px] lg:h-[780px] rounded-full pointer-events-none"
+          className="absolute -top-32 sm:-top-40 -left-32 sm:-left-44 lg:-left-52 w-[520px] sm:w-[660px] lg:w-[760px] h-[520px] sm:h-[660px] lg:h-[760px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle at center, rgba(99, 102, 241, 0.28) 0%, rgba(79, 70, 229, 0.18) 32%, rgba(59, 130, 246, 0.08) 58%, transparent 75%)",
+              "radial-gradient(circle at center, rgba(52, 93, 171, 0.26) 0%, rgba(52, 93, 171, 0.15) 35%, rgba(202, 226, 241, 0.05) 65%, transparent 75%)",
             filter: "blur(60px)",
           }}
         />
 
-        {/* Right Side Glow - Color 2: Luminous Cyan-Azure / Clinical Diagnostic Aura */}
+        {/* Bottom-Right Ambient Glow - #56ADE2 (Nova Blue) */}
         <div
           aria-hidden="true"
-          className="absolute -right-36 sm:-right-48 lg:-right-56 top-1/2 -translate-y-1/2 w-[550px] sm:w-[680px] lg:w-[780px] h-[550px] sm:h-[680px] lg:h-[780px] rounded-full pointer-events-none"
+          className="absolute -bottom-32 sm:-bottom-40 -right-32 sm:-right-44 lg:-right-52 w-[520px] sm:w-[660px] lg:w-[760px] h-[520px] sm:h-[660px] lg:h-[760px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle at center, rgba(6, 182, 212, 0.28) 0%, rgba(14, 165, 233, 0.18) 32%, rgba(56, 189, 248, 0.08) 58%, transparent 75%)",
+              "radial-gradient(circle at center, rgba(86, 173, 226, 0.28) 0%, rgba(86, 173, 226, 0.16) 35%, rgba(202, 226, 241, 0.05) 65%, transparent 75%)",
             filter: "blur(60px)",
           }}
         />
