@@ -581,25 +581,35 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* Dual-Color Ambient Flanks (Left: Clinical Royal Blue, Right: Nova Cyan) */}
-        {/* Left Side Glow - Color 1: Diagnova Deep Blue */}
+        {/* Dual-Color Ambient Flanks (Vibrant High-End Palette: Electric Indigo-Violet on Left, Luminous Cyan-Azure on Right) */}
+        {/* Left Side Glow - Color 1: Deep Electric Indigo / AI Intelligence Aura */}
         <div
           aria-hidden="true"
-          className="absolute -left-40 sm:-left-56 lg:-left-64 top-1/2 -translate-y-1/2 w-[480px] sm:w-[600px] lg:w-[700px] h-[480px] sm:h-[600px] lg:h-[700px] rounded-full bg-gradient-to-r from-[#2466CB]/22 via-[#345DAB]/14 to-transparent blur-[120px] sm:blur-[140px] pointer-events-none"
+          className="absolute -left-36 sm:-left-48 lg:-left-56 top-1/2 -translate-y-1/2 w-[550px] sm:w-[680px] lg:w-[780px] h-[550px] sm:h-[680px] lg:h-[780px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at center, rgba(99, 102, 241, 0.28) 0%, rgba(79, 70, 229, 0.18) 32%, rgba(59, 130, 246, 0.08) 58%, transparent 75%)",
+            filter: "blur(60px)",
+          }}
         />
 
-        {/* Right Side Glow - Color 2: Nova Electric Cyan */}
+        {/* Right Side Glow - Color 2: Luminous Cyan-Azure / Clinical Diagnostic Aura */}
         <div
           aria-hidden="true"
-          className="absolute -right-40 sm:-right-56 lg:-right-64 top-1/2 -translate-y-1/2 w-[480px] sm:w-[600px] lg:w-[700px] h-[480px] sm:h-[600px] lg:h-[700px] rounded-full bg-gradient-to-l from-[#56ADE2]/25 via-[#38BDF8]/16 to-transparent blur-[120px] sm:blur-[140px] pointer-events-none"
+          className="absolute -right-36 sm:-right-48 lg:-right-56 top-1/2 -translate-y-1/2 w-[550px] sm:w-[680px] lg:w-[780px] h-[550px] sm:h-[680px] lg:h-[780px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at center, rgba(6, 182, 212, 0.28) 0%, rgba(14, 165, 233, 0.18) 32%, rgba(56, 189, 248, 0.08) 58%, transparent 75%)",
+            filter: "blur(60px)",
+          }}
         />
 
         {/* Subtle Ambient Dot Grid Pattern */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 pointer-events-none opacity-35 [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_85%)]"
+          className="absolute inset-0 pointer-events-none opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]"
           style={{
-            backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.20) 1.25px, transparent 1.25px)",
+            backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
             backgroundSize: "24px 24px",
           }}
         />
