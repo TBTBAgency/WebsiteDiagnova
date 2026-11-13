@@ -351,18 +351,18 @@ export default function ModulesPage() {
           <div className="max-w-2xl mb-12 sm:mb-14">
             <div className="mb-3.5">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Workstation Interaktif" : "Interactive Station"}
+                {language === "ID" ? "Nova AI • Pelaporan Pasien" : "Nova AI • Patient Reporting"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-bold text-slate-900 tracking-tight leading-[1.2]">
               {language === "ID"
-                ? "Laporan Pasien Cerdas & Narasi Klinis Terpercaya"
-                : "Intelligent Patient Reporting & Clinical Trust"}
+                ? "Laporan Pasien Cerdas dengan Validasi Klinis Penuh"
+                : "Intelligent Patient Reporting with Full Clinical Oversight"}
             </h2>
             <p className="mt-2.5 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
               {language === "ID"
-                ? "Menjembatani temuan laboratorium yang kompleks menjadi wawasan yang mudah dipahami pasien, dengan kendali dan persetujuan penuh di tangan dokter penanggung jawab."
-                : "Transforming complex laboratory findings into clear, patient-friendly insights while keeping physicians in total diagnostic command."}
+                ? "Nova AI menerjemahkan hasil patologi dan laboratorium yang kompleks menjadi ringkasan yang jelas, empatik, dan mudah dipahami pasien—tanpa mengurangi otoritas diagnostik dokter."
+                : "Nova AI translates complex laboratory and pathology findings into clear, empathetic patient summaries—while keeping diagnostic authority firmly with the attending physician."}
             </p>
           </div>
 
@@ -377,23 +377,23 @@ export default function ModulesPage() {
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
                   <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Pemahaman Jelas atas Temuan Kunci" : "Clear Understanding of Key Findings"}
+                    {language === "ID" ? "Penjelasan Hasil Lab yang Mudah Dipahami" : "Clear Translation of Complex Findings"}
                   </h3>
                   <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Menerjemahkan terminologi medis menjadi penjelasan yang mudah dipahami"
-                          : "Converts medical terminology into easy-to-understand explanations"}
+                          ? "Mengubah terminologi medis & nilai rujukan teknis menjadi narasi ramah pasien"
+                          : "Transforms technical medical terminology into clear, everyday patient language"}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Menyoroti hasil pemeriksaan paling penting beserta maknanya bagi pasien"
-                          : "Highlights the most important results and what they mean"}
+                          ? "Menyoroti temuan utama dan indikator kritis secara terstruktur tanpa memicu kecemasan"
+                          : "Highlights key findings and critical markers clearly without causing unnecessary anxiety"}
                       </span>
                     </li>
                   </ul>
@@ -407,23 +407,23 @@ export default function ModulesPage() {
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
                   <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Rekomendasi Pola Hidup yang Aplikatif" : "Actionable Lifestyle Recommendations"}
+                    {language === "ID" ? "Panduan Pola Hidup Berbasis Bukti" : "Evidence-Based Lifestyle Guidance"}
                   </h3>
                   <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Menyajikan panduan kebugaran berbasis bukti (evidence-based) selaras hasil uji"
-                          : "Provides general, evidence-based wellness guidance aligned with results"}
+                          ? "Memberikan rekomendasi nutrisi, hidrasi, dan kebiasaan harian selaras hasil tes"
+                          : "Delivers tailored nutrition, hydration, and daily wellness guidance aligned with results"}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Mendorong manajemen kesehatan yang proaktif dan preventif secara terarah"
-                          : "Encourages proactive health management"}
+                          ? "Membantu pasien mengambil langkah preventif terarah sebelum jadwal kontrol berikutnya"
+                          : "Empowers proactive, preventive health management ahead of follow-up visits"}
                       </span>
                     </li>
                   </ul>
@@ -437,23 +437,23 @@ export default function ModulesPage() {
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
                   <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Panduan Roadmap \"Langkah Selanjutnya\"" : "Guided \"Next Steps\" Roadmap"}
+                    {language === "ID" ? "Roadmap Tindak Lanjut Terarah" : "Guided \"Next Steps\" Care Roadmap"}
                   </h3>
                   <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Merinci jadwal waktu tepat untuk konsultasi lanjutan dengan dokter spesialis"
-                          : "Outlines when to follow up with a physician"}
+                          ? "Menentukan waktu ideal untuk konsultasi ulang maupun pemeriksaan berkala bersama dokter"
+                          : "Outlines ideal timelines for physician follow-ups and routine monitoring"}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Menyarankan daftar pertanyaan penting yang dapat diajukan kepada dokter"
-                          : "Suggests appropriate questions patients may ask their provider"}
+                          ? "Menyediakan daftar pertanyaan kunci agar diskusi pasien dengan dokter lebih efektif"
+                          : "Suggests focused questions patients can bring to their next consultation"}
                       </span>
                     </li>
                   </ul>
@@ -467,23 +467,23 @@ export default function ModulesPage() {
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
                   <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Tervalidasi & Diawasi Dokter Spesialis" : "Doctor-Approved and Trustworthy"}
+                    {language === "ID" ? "Otorisasi & Kendali Mutlak Dokter (DPJP)" : "Physician-Approved & Clinically Verified"}
                   </h3>
                   <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Menjaga pengawasan dan validasi klinis mutlak dari dokter spesialis patologi"
-                          : "Maintains clinical oversight and approval"}
+                          ? "Setiap narasi pasien wajib melalui peninjauan dan persetujuan digital dokter Sp.PK / Sp.PA"
+                          : "Every patient narrative requires mandatory clinical review and digital sign-off"}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
-                          ? "Memastikan penjelasan medis akurat, bertanggung jawab, dan sesuai standar profesi"
-                          : "Ensures explanations remain accurate, responsible, and aligned with professional standards"}
+                          ? "Menjamin akurasi diagnostik, etika medis, dan kepatuhan standar akreditasi rumah sakit"
+                          : "Ensures medical accuracy, safety guardrails, and alignment with hospital accreditation standards"}
                       </span>
                     </li>
                   </ul>
@@ -499,7 +499,7 @@ export default function ModulesPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-display text-lg sm:text-xl font-bold text-slate-900">
                       {isClinicalView
-                        ? (language === "ID" ? "Tampilan Klinis Dokter" : "Clinical Pathologist View")
+                        ? (language === "ID" ? "Tampilan Klinis Dokter (Sp.PA)" : "Clinical Pathologist View")
                         : "AI Patient Report"}
                     </span>
                   </div>
@@ -523,18 +523,18 @@ export default function ModulesPage() {
                       <FileText className="h-4.5 w-4.5" />
                       <h4>
                         {isClinicalView
-                          ? (language === "ID" ? "Temuan Histopatologi & Morfometrik" : "Histopathology & Microscopic Evaluation")
-                          : (language === "ID" ? "Ringkasan Hasil Anda" : "Your Results Summary")}
+                          ? (language === "ID" ? "Evaluasi Histopatologi & Morfologi" : "Histopathology & Microscopic Evaluation")
+                          : (language === "ID" ? "Ringkasan Hasil Pemeriksaan" : "Your Results Summary")}
                       </h4>
                     </div>
                     <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
                       {isClinicalView
                         ? (language === "ID"
-                            ? "Biopsi jaringan menunjukkan epitel skuamosa hiperplastik tanpa atipia sitologis atau invasi stroma. Indeks mitosis < 1/10 HPF. Batas sayatan bedah bebas sel tumor (> 2mm)."
-                            : "Tissue biopsy demonstrates hyperplastic squamous epithelium without cytological atypia or invasive stromal breach. Mitotic index < 1/10 HPF. Surgical margins clear (> 2mm).")
+                            ? "Sediaan biopsi eksisi menunjukkan proliferasi epitel skuamosa hiperplastik tanpa atipia sitologis maupun invasi stroma. Indeks mitosis < 1/10 HPF; batas sayatan bedah bebas tumor (> 2 mm)."
+                            : "Excisional biopsy demonstrates hyperplastic squamous epithelium without cytological atypia or stromal invasion. Mitotic index < 1/10 HPF; surgical margins clear (> 2 mm).")
                         : (language === "ID"
-                            ? "Sampel jaringan Anda menunjukkan sel-sel jinak (non-kanker). Ini adalah hasil yang sangat baik dan menandakan tidak ditemukan adanya sel ganas."
-                            : "Your tissue sample showed benign (non-cancerous) cells. This is a good result that means no cancer was detected.")}
+                            ? "Hasil pemeriksaan jaringan menunjukkan kondisi jinak (non-kanker). Tidak ditemukan sel ganas, atipia, maupun tanda pertumbuhan abnormal pada sampel yang diperiksa."
+                            : "Your tissue sample showed benign (non-cancerous) cells. No malignant cells, atypia, or signs of abnormal spread were detected.")}
                     </p>
                   </div>
 
@@ -544,18 +544,18 @@ export default function ModulesPage() {
                       <Info className="h-4.5 w-4.5 text-emerald-700" />
                       <h4>
                         {isClinicalView
-                          ? (language === "ID" ? "Korelasi Diagnostik & Standar ICD-O-3" : "Diagnostic Classification & ICD-O-3")
-                          : (language === "ID" ? "Makna Hasil Pemeriksaan" : "What This Means")}
+                          ? (language === "ID" ? "Klasifikasi ICD-O-3 & Delta Check" : "Diagnostic Coding & Longitudinal Check")
+                          : (language === "ID" ? "Makna Klinis bagi Anda" : "What This Means for You")}
                       </h4>
                     </div>
                     <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
                       {isClinicalView
                         ? (language === "ID"
-                            ? "Klasifikasi SNOMED: M-7200/0 (Alterasi fibrokistik jinak). Tidak teridentifikasi penanda displasia tingkat tinggi. Korelasi longitudinal delta biomarker stabil."
-                            : "SNOMED code M-7200/0 (Benign fibrocystic alteration). No high-grade dysplasia detected. Correlation with longitudinal delta-check confirms stable metabolic baseline.")
+                            ? "Kode SNOMED / ICD-O-3: M-7200/0 (Alterasi fibrokistik jinak). Tidak teridentifikasi displasia derajat tinggi; korelasi riwayat biomarker longitudinal pasien dalam batas stabil."
+                            : "SNOMED / ICD-O-3: M-7200/0 (Benign fibrocystic alteration). No high-grade dysplasia identified; longitudinal delta-check confirms stable clinical baseline.")
                         : (language === "ID"
-                            ? "Pertumbuhan kecil jaringan yang diangkat tidak berbahaya. Tubuh Anda dalam kondisi sehat dan normal pada area pemeriksaan ini."
-                            : "The small growth that was removed is not harmful. Your body is healthy in this area.")}
+                            ? "Jaringan kecil yang diangkat bersifat tidak berbahaya. Kondisi jaringan di area pemeriksaan dinyatakan sehat, stabil, dan Anda dapat beraktivitas seperti biasa."
+                            : "The small tissue growth removed is harmless. Your body is healthy and stable in this area, with no immediate intervention required.")}
                     </p>
                   </div>
 
@@ -565,7 +565,7 @@ export default function ModulesPage() {
                       <Sparkles className="h-4.5 w-4.5 text-[#2764B8]" />
                       <h4>
                         {isClinicalView
-                          ? (language === "ID" ? "Rekomendasi DPJP & Verifikasi Digital" : "Pathologist Sign-off & Follow-up Protocol")
+                          ? (language === "ID" ? "Rekomendasi DPJP & Otorisasi Digital" : "Pathologist Sign-Off & Surveillance Plan")
                           : (language === "ID" ? "Langkah Selanjutnya" : "Next Steps")}
                       </h4>
                     </div>
@@ -576,16 +576,16 @@ export default function ModulesPage() {
                             <Check className="h-4 w-4 text-emerald-600 shrink-0" />
                             <span>
                               {language === "ID"
-                                ? "Jadwal USG / Mammografi pengawasan rutin pada interval 6 bulan"
-                                : "Surveillance ultrasound/mammography at standard 6-month interval"}
+                                ? "Evaluasi USG / skrining pencitraan pengawasan pada interval 6 bulan"
+                                : "Surveillance ultrasound / imaging follow-up at 6-month interval"}
                             </span>
                           </li>
                           <li className="flex items-center gap-2">
                             <Check className="h-4 w-4 text-emerald-600 shrink-0" />
                             <span>
                               {language === "ID"
-                                ? "Tanda tangan digital terverifikasi: dr. Rahadian, Sp.PA (STR Aktif ✓)"
-                                : "Digital verification complete: dr. Rahadian, Sp.PA (Active License ✓)"}
+                                ? "Terverifikasi elektronik: dr. Rahadian Pratama, Sp.PA (STR Aktif ✓)"
+                                : "Electronically signed: dr. Rahadian Pratama, Sp.PA (Active License ✓)"}
                             </span>
                           </li>
                         </>
@@ -595,16 +595,16 @@ export default function ModulesPage() {
                             <span className="text-slate-800 font-bold shrink-0">✓</span>
                             <span>
                               {language === "ID"
-                                ? "Lakukan konsultasi tindak lanjut dengan dokter Anda dalam 6 bulan"
-                                : "Follow up with your doctor in 6 months"}
+                                ? "Jadwalkan kontrol rutin bersama dokter Anda dalam 6 bulan ke depan"
+                                : "Follow up with your physician in 6 months for routine review"}
                             </span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-slate-800 font-bold shrink-0">✓</span>
                             <span>
                               {language === "ID"
-                                ? "Tanyakan mengenai jadwal skrining pemeriksaan rutin"
-                                : "Ask about routine screening schedule"}
+                                ? "Tanyakan jadwal skrining berkala yang sesuai dengan riwayat kesehatan Anda"
+                                : "Ask about a routine screening schedule tailored to your health profile"}
                             </span>
                           </li>
                         </>
