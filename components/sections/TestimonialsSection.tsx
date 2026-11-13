@@ -264,8 +264,8 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
                 </div>
               </div>
 
-              {/* Right side: Compact frame on mobile (h-40), 4:5 portrait on md+ */}
-              <div className="relative w-full h-40 sm:h-48 md:h-auto md:w-[260px] lg:w-[290px] xl:w-[320px] md:min-h-[290px] md:aspect-[4/5] rounded-xl sm:rounded-2xl lg:rounded-[22px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
+              {/* Right side: 4:5 portrait on md+, hidden on mobile so card stays clean */}
+              <div className="hidden md:block relative md:w-[260px] lg:w-[290px] xl:w-[320px] md:min-h-[290px] md:aspect-[4/5] rounded-2xl lg:rounded-[22px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
                 <Image
                   src={item.imageSrc}
                   alt={`${item.name} - silhouette`}
