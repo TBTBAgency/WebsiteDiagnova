@@ -344,12 +344,12 @@ export default function ModulesPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="modules-explorer"
-        className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24"
+        className="relative scroll-mt-24 w-full bg-white py-12 sm:py-16 lg:py-24"
       >
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-2xl mb-12 sm:mb-14">
-            <div className="mb-3.5">
+          <div className="max-w-2xl mb-8 sm:mb-12 lg:mb-14">
+            <div className="mb-3 sm:mb-3.5">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Nova AI • Pelaporan Pasien" : "Nova AI • Patient Reporting"}
               </SectionBadge>
@@ -367,20 +367,20 @@ export default function ModulesPage() {
           </div>
 
           {/* 2-Column LigoLab Architecture: Left 4 Value Rows + Right Dual-Mode Patient Report Card */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-20 items-center">
-            {/* Left Column: 4 Clean Feature Rows with Larger Icon Badge */}
-            <div className="lg:col-span-6 space-y-7 sm:space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 lg:gap-12 xl:gap-20 items-center">
+            {/* Left Column: 4 Clean Feature Rows with Responsive Icon Badge */}
+            <div className="lg:col-span-6 space-y-5 sm:space-y-7 lg:space-y-8">
               {/* Item 1 */}
-              <div className="flex items-start gap-5 sm:gap-6 group">
-                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <FileCheck2 className="h-8 w-8 stroke-[1.6]" />
+              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <FileCheck2 className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
                 </div>
-                <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Penjelasan Hasil Lab yang Mudah Dipahami" : "Clear Translation of Complex Findings"}
                   </h3>
-                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-2">
+                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -388,7 +388,7 @@ export default function ModulesPage() {
                           : "Transforms technical medical terminology into clear, everyday patient language"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -401,16 +401,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Item 2 */}
-              <div className="flex items-start gap-5 sm:gap-6 group">
-                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <HeartPulse className="h-8 w-8 stroke-[1.6]" />
+              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <HeartPulse className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
                 </div>
-                <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Panduan Pola Hidup Berbasis Bukti" : "Evidence-Based Lifestyle Guidance"}
                   </h3>
-                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-2">
+                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -418,7 +418,7 @@ export default function ModulesPage() {
                           : "Delivers tailored nutrition, hydration, and daily wellness guidance aligned with results"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -431,16 +431,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Item 3 */}
-              <div className="flex items-start gap-5 sm:gap-6 group">
-                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <Shuffle className="h-8 w-8 stroke-[1.6]" />
+              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <Shuffle className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
                 </div>
-                <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Roadmap Tindak Lanjut Terarah" : "Guided \"Next Steps\" Care Roadmap"}
                   </h3>
-                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-2">
+                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -448,7 +448,7 @@ export default function ModulesPage() {
                           : "Outlines ideal timelines for physician follow-ups and routine monitoring"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -461,16 +461,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Item 4 */}
-              <div className="flex items-start gap-5 sm:gap-6 group">
-                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <UserCheck className="h-8 w-8 stroke-[1.6]" />
+              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <UserCheck className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
                 </div>
-                <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Otorisasi & Kendali Mutlak Dokter (DPJP)" : "Physician-Approved & Clinically Verified"}
                   </h3>
-                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-2">
+                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -478,7 +478,7 @@ export default function ModulesPage() {
                           : "Every patient narrative requires mandatory clinical review and digital sign-off"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -493,18 +493,18 @@ export default function ModulesPage() {
 
             {/* Right Column: High-Fidelity Report Card with Interactive Mode Switcher */}
             <div className="lg:col-span-6">
-              <div className="rounded-[28px] sm:rounded-[32px] bg-[#FAFBFD] border border-slate-200/90 p-6 sm:p-8 shadow-[0_10px_35px_-15px_rgba(15,23,42,0.05)] relative flex flex-col justify-between">
+              <div className="rounded-[22px] sm:rounded-[28px] lg:rounded-[32px] bg-[#FAFBFD] border border-slate-200/90 p-4 sm:p-6 lg:p-8 shadow-[0_10px_35px_-15px_rgba(15,23,42,0.05)] relative flex flex-col justify-between">
                 {/* Card Header with Interactive Toggle Button */}
                 <div
                   className={cn(
-                    "flex items-center justify-between",
+                    "flex flex-wrap items-center justify-between gap-3",
                     isClinicalView
-                      ? "pb-5 mb-6 border-b border-slate-200/75"
-                      : "mb-5 sm:mb-6"
+                      ? "pb-4 sm:pb-5 mb-5 sm:mb-6 border-b border-slate-200/75"
+                      : "mb-4 sm:mb-5 lg:mb-6"
                   )}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="font-display text-lg sm:text-xl font-bold text-slate-900">
+                    <span className="font-display text-base sm:text-lg lg:text-xl font-bold text-slate-900">
                       AI Patient Report
                     </span>
                   </div>
@@ -513,9 +513,9 @@ export default function ModulesPage() {
                   <button
                     type="button"
                     onClick={() => setIsClinicalView(!isClinicalView)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white font-sans text-xs font-bold tracking-wide shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white font-sans text-[11px] sm:text-xs font-bold tracking-wide shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer shrink-0"
                   >
-                    <ArrowLeftRight className="h-3.5 w-3.5" />
+                    <ArrowLeftRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     <span>
                       {isClinicalView
                         ? (language === "ID" ? "TAMPILAN PASIEN" : "PATIENT VIEW")
@@ -526,12 +526,12 @@ export default function ModulesPage() {
 
                 {isClinicalView ? (
                   /* Clinical View: Structured Pathology Report matching LigoLab Spec */
-                  <div className="space-y-4 sm:space-y-4.5 pb-1">
-                    <p className="text-xs sm:text-[13px] font-bold tracking-wider text-slate-400 uppercase">
+                  <div className="space-y-3 sm:space-y-4 pb-1">
+                    <p className="text-[11px] sm:text-[13px] font-bold tracking-wider text-slate-400 uppercase">
                       {language === "ID" ? "LAPORAN PATOLOGI" : "PATHOLOGY REPORT"}
                     </p>
 
-                    <div className="space-y-3.5 text-sm sm:text-[15px] leading-relaxed text-slate-700">
+                    <div className="space-y-2.5 sm:space-y-3.5 text-[13px] sm:text-sm lg:text-[15px] leading-relaxed text-slate-700">
                       <p>
                         <span className="font-medium text-[#0073FC]">
                           {language === "ID" ? "Spesimen:" : "Specimen:"}
@@ -581,11 +581,11 @@ export default function ModulesPage() {
                   </div>
                 ) : (
                   /* Patient View: 3 Stacked Pastel Cards */
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {/* Card 1: Blue Card - Results Summary */}
-                    <div className="rounded-2xl bg-[#EFF6FF] border border-blue-200/80 p-4 sm:p-5 transition-all">
-                      <div className="flex items-center gap-2 text-[#1E40AF] font-bold text-sm sm:text-[15px] mb-2">
-                        <FileText className="h-4.5 w-4.5" />
+                    <div className="rounded-xl sm:rounded-2xl bg-[#EFF6FF] border border-blue-200/80 p-3.5 sm:p-4 lg:p-5 transition-all">
+                      <div className="flex items-center gap-2 text-[#1E40AF] font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-1.5 sm:mb-2">
+                        <FileText className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0" />
                         <h4>
                           {language === "ID" ? "Ringkasan Hasil Pemeriksaan" : "Your Results Summary"}
                         </h4>
@@ -598,9 +598,9 @@ export default function ModulesPage() {
                     </div>
 
                     {/* Card 2: Green Card - What This Means */}
-                    <div className="rounded-2xl bg-[#F0FDF4] border border-emerald-200/80 p-4 sm:p-5 transition-all">
-                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm sm:text-[15px] mb-2">
-                        <Info className="h-4.5 w-4.5 text-emerald-700" />
+                    <div className="rounded-xl sm:rounded-2xl bg-[#F0FDF4] border border-emerald-200/80 p-3.5 sm:p-4 lg:p-5 transition-all">
+                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-1.5 sm:mb-2">
+                        <Info className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-emerald-700 shrink-0" />
                         <h4>
                           {language === "ID" ? "Makna Klinis bagi Anda" : "What This Means for You"}
                         </h4>
@@ -613,15 +613,15 @@ export default function ModulesPage() {
                     </div>
 
                     {/* Card 3: White Card - Next Steps */}
-                    <div className="rounded-2xl bg-white border border-slate-200/90 p-4 sm:p-5 shadow-2xs transition-all">
-                      <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-[15px] mb-2.5">
-                        <Sparkles className="h-4.5 w-4.5 text-[#2764B8]" />
+                    <div className="rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 lg:p-5 shadow-2xs transition-all">
+                      <div className="flex items-center gap-2 text-slate-900 font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-2">
+                        <Sparkles className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#2764B8] shrink-0" />
                         <h4>
                           {language === "ID" ? "Langkah Selanjutnya" : "Next Steps"}
                         </h4>
                       </div>
-                      <ul className="space-y-2 text-xs sm:text-[13.5px] text-slate-700">
-                        <li className="flex items-center gap-2">
+                      <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] text-slate-700">
+                        <li className="flex items-start sm:items-center gap-2">
                           <span className="text-slate-800 font-bold shrink-0">✓</span>
                           <span>
                             {language === "ID"
@@ -629,7 +629,7 @@ export default function ModulesPage() {
                               : "Follow up with your physician in 6 months for routine review"}
                           </span>
                         </li>
-                        <li className="flex items-center gap-2">
+                        <li className="flex items-start sm:items-center gap-2">
                           <span className="text-slate-800 font-bold shrink-0">✓</span>
                           <span>
                             {language === "ID"
