@@ -1266,7 +1266,7 @@ export default function ModulesPage() {
               {/* Right 7 Cols: 3 Stepped Escalating Metric Bars (Ref 4) */}
               <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-end pt-4">
                 {/* Step 1: 2.4x */}
-                <div className="rounded-3xl bg-[#F4F6F9] border border-slate-200/80 p-6 flex flex-col justify-between min-h-[140px] sm:h-[210px]">
+                <div className="rounded-3xl bg-[#F4F6F9] border border-slate-200/80 p-6 flex flex-col justify-between min-h-[140px] sm:h-[210px] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
                   <div>
                     <div className="font-display text-4xl sm:text-[42px] font-bold text-slate-800 tracking-tight leading-none">
                       2.4x
@@ -1286,7 +1286,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Step 2: 5.1x */}
-                <div className="rounded-3xl bg-[#EEF2F7] border border-slate-200/90 p-6 flex flex-col justify-between min-h-[155px] sm:h-[285px]">
+                <div className="rounded-3xl bg-[#EEF2F7] border border-slate-200/90 p-6 flex flex-col justify-between min-h-[155px] sm:h-[285px] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
                   <div>
                     <div className="font-display text-4xl sm:text-[46px] font-bold text-slate-900 tracking-tight leading-none">
                       5.1x
@@ -1306,7 +1306,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Step 3: 10x Bright Blue Hero Bar with Vertical Bar Texture */}
-                <div className="rounded-3xl bg-[#0073FC] text-white p-6 flex flex-col justify-between min-h-[200px] sm:h-[365px] relative overflow-hidden shadow-lg shadow-blue-600/20">
+                <div className="group rounded-3xl bg-[#0073FC] text-white p-6 flex flex-col justify-between min-h-[200px] sm:h-[365px] relative overflow-hidden shadow-lg shadow-blue-600/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-blue-600/30">
                   <div className="relative z-10">
                     <div className="font-display text-5xl sm:text-[54px] font-bold text-white tracking-tight leading-none">
                       10x

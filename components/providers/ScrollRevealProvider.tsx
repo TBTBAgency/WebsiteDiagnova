@@ -54,6 +54,13 @@ export function ScrollRevealProvider({
           const delay = Math.min(idx * 75, 300);
           child.style.setProperty("--ll-delay", `${delay}ms`);
           child.classList.add("ll-reveal");
+
+          // Add interactive spotlight & lift to bordered card elements
+          const cls = child.className?.toString() || "";
+          if (cls.includes("border") && cls.includes("rounded")) {
+            child.classList.add("ll-card-interactive");
+          }
+
           targets.push(child);
         });
       });
@@ -99,8 +106,21 @@ export function ScrollRevealProvider({
 
     pending.forEach((el) => observer.observe(el));
 
+    // Lightweight cursor spotlight tracking for interactive cards (desktop fine pointer)
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const card = (e.target as HTMLElement | null)?.closest?.(".ll-card-interactive") as HTMLElement | null;
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+      card.style.setProperty("--my", `${e.clientY - rect.top}px`);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+
     return () => {
       observer.disconnect();
+      window.removeEventListener("pointermove", handlePointerMove);
     };
   }, [pathname]);
 

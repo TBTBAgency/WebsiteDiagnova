@@ -175,7 +175,7 @@ export default function PlatformPage() {
                       </span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                      <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-[#0073FC] to-emerald-500" />
+                      <div className="h-full w-[86%] group-hover:w-[96%] transition-all duration-500 ease-out rounded-full bg-gradient-to-r from-[#0073FC] to-emerald-500" />
                     </div>
                   </div>
 
@@ -225,7 +225,7 @@ export default function PlatformPage() {
 
                   {/* Branching Split Cards */}
                   <div className="grid grid-cols-2 gap-2.5 w-full">
-                    <div className="bg-white p-2.5 rounded-xl border border-emerald-200/90 shadow-xs space-y-1.5">
+                    <div className="bg-white p-2.5 rounded-xl border border-emerald-200/90 shadow-xs space-y-1.5 transition-transform duration-300 group-hover:-translate-y-0.5">
                       <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700">
                         <span className="flex items-center gap-1">
                           <CheckCircle2 className="h-3.5 w-3.5" />
@@ -238,7 +238,7 @@ export default function PlatformPage() {
                       <span className="text-[10px] text-slate-500 font-mono block">85% Normal SOP</span>
                     </div>
 
-                    <div className="bg-white p-2.5 rounded-xl border border-blue-200/90 shadow-xs space-y-1.5">
+                    <div className="bg-white p-2.5 rounded-xl border border-blue-200/90 shadow-xs space-y-1.5 transition-transform duration-300 delay-75 group-hover:-translate-y-0.5">
                       <div className="flex items-center justify-between text-[11px] font-bold text-[#0073FC]">
                         <span className="flex items-center gap-1">
                           <ShieldCheck className="h-3.5 w-3.5" />
@@ -289,8 +289,8 @@ export default function PlatformPage() {
                     {[65, 85, 72, 95, 80, 90, 75, 100].map((h, i) => (
                       <div key={i} className="flex-1 h-full flex items-end">
                         <div
-                          className="w-full rounded-sm bg-[#0073FC]/85"
-                          style={{ height: `${h}%` }}
+                          className="w-full rounded-sm bg-[#0073FC]/85 origin-bottom transition-transform duration-300 group-hover:scale-y-110"
+                          style={{ height: `${h}%`, transitionDelay: `${i * 35}ms` }}
                         />
                       </div>
                     ))}

@@ -277,6 +277,45 @@ html.lenis body {
   will-change: auto;
 }
 
+/* ─── Interactive Card Hover & Cursor Spotlight ─── */
+.ll-card-interactive {
+  position: relative;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ll-card-interactive::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(0, 115, 252, 0.06),
+      transparent 60%
+    );
+    z-index: 1;
+  }
+
+  .ll-card-interactive:hover {
+    transform: translate3d(0, -4px, 0);
+    border-color: rgba(0, 115, 252, 0.32);
+    box-shadow:
+      0 14px 34px -10px rgba(15, 23, 42, 0.08),
+      0 4px 14px -4px rgba(0, 115, 252, 0.08);
+  }
+
+  .ll-card-interactive:hover::after {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-dna-float,
   .animate-dna-glow,
