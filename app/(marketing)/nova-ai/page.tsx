@@ -370,7 +370,7 @@ export default function NovaAIPage() {
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: SYSTEM OF RECORD VS SYSTEM OF ACTION
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-white py-16 sm:py-20 lg:py-24">
+      <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-b border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
@@ -461,135 +461,17 @@ export default function NovaAIPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 2: 6-CARD AI CAPABILITIES GRID
+          SECTION 2: PATHOLOGIST WORKSTATION & AI CAPABILITIES (#workstation-demo)
+          (3x2 Flat Card Grid on Pure White Background)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
+      <section id="workstation-demo" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Ekosistem Agen AI" : "AI Agent Ecosystem"}
-                </SectionBadge>
-              </div>
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
-                {language === "ID"
-                  ? "Enam Agen Spesifik untuk Setiap Titik Kritis Lab"
-                  : "Six Purpose-Built Agents Across the Lab Lifecycle"}
-              </h2>
-            </div>
-            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
-                ? "Setiap agen bekerja di dalam alur klinis yang sudah ada—mengurangi pekerjaan administratif 30–60% tanpa mengubah otoritas dokter."
-                : "Each agent operates inside existing clinical workflows—cutting administrative effort by 30–60% without altering physician authority."}
-            </p>
-          </div>
-
-          {/* 3x2 Capabilities Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              {
-                icon: ScanText,
-                title: language === "ID" ? "Ekstraksi Order OCR & LLM" : "OCR & LLM Order Extraction",
-                status: "Live in Production",
-                statusColor: "text-[#0073FC]",
-                desc:
-                  language === "ID"
-                    ? "Mengubah formulir permintaan lab cetak atau tulisan tangan menjadi order digital dan menandai ketidaksesuaian jenis tabung."
-                    : "Converts paper or handwritten requisitions into digital orders and flags tube or specimen mismatches automatically.",
-              },
-              {
-                icon: Mic,
-                title: language === "ID" ? "Dikte Klinis Bebas Genggam" : "Hands-Free Voice Dictation",
-                status: "Live in Production",
-                statusColor: "text-[#0073FC]",
-                desc:
-                  language === "ID"
-                    ? "Dokter mendiktekan temuan mikroskopis atau kesan klinis secara natural dan sistem langsung mengisi kolom laporan terstruktur."
-                    : "Pathologists dictate microscopic findings naturally while Nova AI populates structured report templates hands-free.",
-              },
-              {
-                icon: TrendingUp,
-                title: language === "ID" ? "Deteksi Delta-Check Serial" : "Longitudinal Delta-Check",
-                status: "Live in Production",
-                statusColor: "text-[#0073FC]",
-                desc:
-                  language === "ID"
-                    ? "Membandingkan nilai analit pasien dengan riwayat kunjungan sebelumnya untuk menangkap perburukan klinis yang lolos dari batas statis."
-                    : "Compares current analytes against prior patient visits to catch acute shifts missed by static reference intervals.",
-              },
-              {
-                icon: ShieldCheck,
-                title: language === "ID" ? "Audit Kualitas Pra-Otorisasi" : "Pre-Signout Quality Audit",
-                status: "In Beta",
-                statusColor: "text-slate-500",
-                desc:
-                  language === "ID"
-                    ? "Memeriksa konsistensi antara kesan klinis, kode ICD-10, dan kelengkapan parameter sebelum laporan ditandatangani secara digital."
-                    : "Verifies consistency between clinical impressions, ICD-10 codes, and required parameters prior to electronic sign-off.",
-              },
-              {
-                icon: GitBranch,
-                title: language === "ID" ? "Smart Case Routing" : "Smart Case Routing",
-                status: "Live in Production",
-                statusColor: "text-[#0073FC]",
-                desc:
-                  language === "ID"
-                    ? "Membagi antrean spesimen kompleks secara otomatis berdasarkan kompetensi sub-spesialis dan kapasitas waktu nyata dokter Sp.PK."
-                    : "Distributes complex cases automatically based on subspecialty expertise and real-time pathologist queue capacity.",
-              },
-              {
-                icon: BarChart3,
-                title: language === "ID" ? "Analitik Operasional Percakapan" : "Conversational Lab Analytics",
-                status: "Q2 2026",
-                statusColor: "text-slate-500",
-                desc:
-                  language === "ID"
-                    ? "Ajukan pertanyaan bahasa natural untuk melacak bottleneck TAT, lonjakan sampel IGD, hingga prediksi keterlambatan rilis."
-                    : "Query turnaround-time bottlenecks, ER volume surges, and release delay predictions using plain natural language.",
-              },
-            ].map((cap) => {
-              const CapIcon = cap.icon;
-              return (
-                <div
-                  key={cap.title}
-                  className="rounded-[24px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_6px_20px_-10px_rgba(15,23,42,0.05)] hover:border-blue-200/80 transition-colors flex flex-col gap-4"
-                >
-                  <div className="flex items-start gap-3.5">
-                    <div className="h-11 w-11 rounded-2xl bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                      <CapIcon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-base sm:text-[17px] font-bold text-slate-900 leading-snug">
-                        {cap.title}
-                      </h3>
-                      <span className={cn("text-xs font-semibold block mt-0.5", cap.statusColor)}>
-                        {cap.status}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
-                    {cap.desc}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════
-          SECTION 3: CLINICAL PATHOLOGY WORKSTATION (#workstation-demo)
-          ══════════════════════════════════════════════════════════════ */}
-      <section id="workstation-demo" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
-            <div className="max-w-2xl">
-              <div className="mb-3.5">
-                <SectionBadge variant="blue">
-                  {language === "ID" ? "Simulasi Meja Kerja Patologi Klinik" : "Pathologist Workstation Simulation"}
+                  {language === "ID" ? "Meja Kerja Patologi Klinik" : "Pathologist Workstation"}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
@@ -600,329 +482,100 @@ export default function NovaAIPage() {
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
-                ? "Pilih profil spesimen klinis di bawah untuk melihat kalkulasi delta-check longitudinal, penandaan deviasi, dan draf narasi medis siap sah."
-                : "Select a clinical specimen profile below to inspect longitudinal delta-checks, deviation flags, and structured clinical drafts ready for sign-off."}
+                ? "Enam kapabilitas agen cerdas yang tertanam langsung di meja kerja dokter Sp.PK—mempercepat validasi tanpa mengurangi otoritas medis."
+                : "Six embedded AI capabilities inside the pathologist desk—accelerating sign-off without altering physician authority."}
             </p>
           </div>
 
-          {/* Clean Segmented Tab Buttons */}
-          <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-3 mb-7">
-            {profiles.map((p, idx) => {
-              const isActive = selectedProfileIdx === idx;
-              const isDone = authorizedProfiles[p.id];
+          {/* 3x2 Flat Cards Grid (Matches Reference Screenshot) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {[
+              {
+                icon: ScanText,
+                title: language === "ID" ? "Analisis & Pencitraan Sel" : "Analysis & Imaging",
+                status: language === "ID" ? "Tersedia di Ekosistem" : "Available in the Marketplace",
+                statusColor: "text-[#0073FC]",
+                desc:
+                  language === "ID"
+                    ? "Pewarnaan virtual berbasis AI, kuantifikasi gambar otomatis, dan pra-skrining cerdas untuk mempercepat tinjauan serta akurasi diagnostik."
+                    : "AI-powered virtual staining, automated image quantification, and intelligent pre-screening to accelerate review and enhance diagnostic efficiency.",
+              },
+              {
+                icon: GitBranch,
+                title: language === "ID" ? "Optimasi Alur Kerja" : "Workflow Optimization",
+                status: "Live in Production",
+                statusColor: "text-[#0073FC]",
+                desc:
+                  language === "ID"
+                    ? "Distribusi kasus cerdas yang menyeimbangkan beban kerja dokter patologi serta entri hasil bebas genggam."
+                    : "Intelligent case distribution optimizing pathologist workload with hands-free result entry.",
+              },
+              {
+                icon: FileText,
+                title: language === "ID" ? "Pemrosesan Order & Spesimen" : "Specimen & Order Processing",
+                status: "Live in Production",
+                statusColor: "text-[#0073FC]",
+                desc:
+                  language === "ID"
+                    ? "Konversi formulir permintaan kertas menjadi order digital berbasis OCR serta anotasi dan validasi spesimen otomatis."
+                    : "OCR conversion of paper requests to digital orders and AI-powered measurement/annotation of specimens.",
+              },
+              {
+                icon: ShieldCheck,
+                title: language === "ID" ? "Kualitas & Konsistensi" : "Quality & Consistency",
+                status: "In Beta",
+                statusColor: "text-slate-400",
+                desc:
+                  language === "ID"
+                    ? "Asisten AI menandai inkonsistensi terminologi dan kode ICD-10 untuk menjamin kejelasan laporan sebelum otorisasi."
+                    : "AI assistant flags inconsistencies to ensure clarity and consistency before signing out.",
+              },
+              {
+                icon: TrendingUp,
+                title: language === "ID" ? "Delta-Check & Triage Kritis" : "Delta-Check & Critical Triage",
+                status: "Live in Production",
+                statusColor: "text-[#0073FC]",
+                desc:
+                  language === "ID"
+                    ? "Kalkulasi tren serial otomatis antar-kunjungan pasien dan penyiaran nilai kritis KARS dalam hitungan menit."
+                    : "Automated serial trend calculations across visits with instant KARS-compliant critical panic alerts.",
+              },
+              {
+                icon: BarChart3,
+                title: language === "ID" ? "Inteligensi & Analitik" : "Intelligence & Analytics",
+                status: "Q2 2026",
+                statusColor: "text-slate-400",
+                desc:
+                  language === "ID"
+                    ? "Analitik bahasa natural memungkinkan tim menanyakan data operasional dan bottleneck TAT secara percakapan real-time."
+                    : "Natural language analytics allow teams to query data conversationally, unlocking real-time operational and financial insights.",
+              },
+            ].map((cap) => {
+              const CapIcon = cap.icon;
               return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setSelectedProfileIdx(idx)}
-                  className={cn(
-                    "inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border",
-                    isActive
-                      ? "bg-[#0073FC] text-white border-[#0073FC] shadow-[0_4px_14px_-3px_rgba(0,115,252,0.45)]"
-                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300"
-                  )}
+                <div
+                  key={cap.title}
+                  className="rounded-[22px] bg-[#F7F9FC] p-7 sm:p-8 flex flex-col gap-5 transition-colors hover:bg-[#F1F5FA]"
                 >
-                  {p.isPanicValue && !isActive ? (
-                    <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
-                  ) : (
-                    <Activity className={cn("h-4 w-4", isActive ? "text-white" : "text-[#0073FC]")} />
-                  )}
-                  <span>{language === "ID" ? p.tabLabel : p.tabLabelEn}</span>
-                  {isDone && (
-                    <CheckCheck className={cn("h-4 w-4", isActive ? "text-blue-100" : "text-emerald-600")} />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Master Clinical Pathology Workstation Card */}
-          <div className="rounded-[24px] sm:rounded-[30px] border border-slate-200/90 bg-white shadow-[0_20px_50px_-15px_rgba(15,23,42,0.08)] overflow-hidden">
-            {/* Header: Patient & Specimen Medical Context */}
-            <div className="bg-[#FAFBFD] border-b border-slate-200 px-6 sm:px-8 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm">
-                <div>
-                  <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
-                    {language === "ID" ? "No. Spesimen" : "Specimen No."}
-                  </span>
-                  <span className="font-mono font-bold text-[#0073FC]">{currentProfile.specimenNo}</span>
-                </div>
-                <div className="h-7 w-[1px] bg-slate-200 hidden sm:block" />
-                <div>
-                  <span className="font-bold text-slate-900 block">{currentProfile.patientName}</span>
-                  <span className="text-slate-500 text-xs font-normal">
-                    {language === "ID" ? currentProfile.patientAgeGender : currentProfile.patientAgeGenderEn}
-                  </span>
-                </div>
-                <div className="h-7 w-[1px] bg-slate-200 hidden md:block" />
-                <div className="hidden md:block">
-                  <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
-                    {language === "ID" ? "Ruangan Rawat" : "Ward"}
-                  </span>
-                  <span className="text-slate-700 text-xs font-medium">
-                    {language === "ID" ? currentProfile.ward : currentProfile.wardEn}
-                  </span>
-                </div>
-                <div className="h-7 w-[1px] bg-slate-200 hidden lg:block" />
-                <div className="hidden lg:block">
-                  <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
-                    {language === "ID" ? "Dokter Pengirim (DPJP)" : "Attending DPJP"}
-                  </span>
-                  <span className="text-slate-700 text-xs font-medium">{currentProfile.attendingDoc}</span>
-                </div>
-              </div>
-
-              {/* Status Verification Pill */}
-              <div className="flex items-center gap-2">
-                {isAuthorized ? (
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
-                    <BadgeCheck className="h-4 w-4 text-emerald-600" />
-                    <span>{language === "ID" ? "Disahkan Dokter Sp.PK (E-Sign Valid)" : "Authorized by Pathologist (E-Sign)"}</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-slate-700 text-xs font-medium border border-slate-200 shadow-2xs">
-                    <span className={cn("h-2 w-2 rounded-full", currentProfile.isPanicValue ? "bg-rose-500" : "bg-amber-500")} />
-                    <span>{language === "ID" ? "Menunggu Review Dokter Sp.PK" : "Pending Pathologist Review"}</span>
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Content Body: Split View */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 items-stretch">
-              {/* Left Column: Analyte Telemetry & Delta Comparison */}
-              <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white">
-                <div className="space-y-5">
-                  {/* Analyte Header */}
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <span className="text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider">
-                      {currentProfile.analyteCode}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs font-semibold px-3 py-1 rounded-full border",
-                        currentProfile.isPanicValue
-                          ? "bg-rose-50 text-rose-700 border-rose-200/80"
-                          : "bg-[#EBF3FE] text-[#0073FC] border-blue-200/60"
-                      )}
-                    >
-                      {language === "ID" ? currentProfile.statusLabel : currentProfile.statusLabelEn}
-                    </span>
-                  </div>
-
-                  {/* Primary Numeric Readout */}
-                  <div className="space-y-1">
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                      {language === "ID" ? currentProfile.parameterName : currentProfile.parameterNameEn}
-                    </h3>
-                    <div className="flex items-baseline gap-2 pt-1">
-                      <span
-                        className={cn(
-                          "font-mono text-4xl sm:text-5xl font-bold tracking-tight tabular-nums",
-                          currentProfile.isPanicValue ? "text-rose-600" : "text-[#0073FC]"
-                        )}
-                      >
-                        {currentProfile.currentValue}
-                      </span>
-                      <span className="text-base font-semibold text-slate-500 font-mono">
-                        {currentProfile.unit}
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center shrink-0">
+                      <CapIcon className="h-6 w-6 stroke-[1.75]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-base sm:text-[17px] font-bold text-slate-900 leading-snug">
+                        {cap.title}
+                      </h3>
+                      <span className={cn("text-xs font-medium block mt-0.5", cap.statusColor)}>
+                        {cap.status}
                       </span>
                     </div>
                   </div>
-
-                  {/* Visual Reference Range Gauge */}
-                  <div className="p-4 rounded-2xl bg-[#FAFBFD] border border-slate-200/80 space-y-2.5">
-                    <div className="flex items-center justify-between text-xs font-medium">
-                      <span className="text-slate-500">
-                        {language === "ID" ? "Rentang Rujukan Normal:" : "Normal Reference Range:"}
-                      </span>
-                      <span className="font-mono font-bold text-slate-800">{currentProfile.refInterval}</span>
-                    </div>
-                    <div className="relative h-2 w-full rounded-full bg-slate-200/80 overflow-visible">
-                      <div className="absolute inset-y-0 left-[25%] right-[25%] bg-emerald-500/25 rounded-full" />
-                      <div
-                        className={cn(
-                          "absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm transition-all duration-300",
-                          currentProfile.isPanicValue ? "bg-rose-600" : "bg-[#0073FC]",
-                          currentProfile.isDeltaDrop ? "left-[10%]" : "left-[86%]"
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Longitudinal Delta-Check Card */}
-                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 space-y-3">
-                    <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-                      <span className="flex items-center gap-1.5 text-[#0073FC]">
-                        <TrendingUp className="h-4 w-4" />
-                        {language === "ID" ? "Komparasi Riwayat Pasien:" : "Historical Comparison:"}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-normal">
-                        {language === "ID" ? currentProfile.prevTimestamp : currentProfile.prevTimestampEn}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-0.5 text-xs">
-                      <div className="text-slate-600">
-                        {language === "ID" ? "Baseline Sebelumnya:" : "Previous Baseline:"}{" "}
-                        <strong className="font-mono font-bold text-slate-900">{currentProfile.prevValue}</strong>
-                      </div>
-                      <div
-                        className={cn(
-                          "inline-flex items-center gap-1 font-mono font-bold px-2.5 py-1 rounded-lg border",
-                          currentProfile.isPanicValue
-                            ? "bg-rose-50 text-rose-700 border-rose-200"
-                            : "bg-slate-100 text-slate-900 border-slate-200"
-                        )}
-                      >
-                        {currentProfile.isDeltaDrop ? (
-                          <TrendingDown className="h-3.5 w-3.5" />
-                        ) : (
-                          <TrendingUp className="h-3.5 w-3.5" />
-                        )}
-                        <span>{currentProfile.deltaText} ({currentProfile.deltaPercent})</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-slate-500 font-normal flex items-center justify-between pt-2 border-t border-slate-100">
-                  <span>{language === "ID" ? "Verifikasi Otomatis Analyzer" : "Analyzer Auto-Verification"}</span>
-                  <span className="font-mono font-semibold text-slate-600">ASTM E1381</span>
-                </div>
-              </div>
-
-              {/* Kolom Kanan: Draf Catatan Interpretasi Patologi (Format Lembar Medis Rapi) */}
-              <div className="lg:col-span-7 p-6 sm:p-8 bg-[#FAFBFD] flex flex-col justify-between space-y-6">
-                <div className="space-y-5">
-                  {/* Header Panel */}
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                    <div className="flex items-center gap-2 text-[#0073FC]">
-                      <Stethoscope className="h-4 w-4" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
-                        {language === "ID" ? "Draf Hasil Verifikasi Patologi Klinik" : "Pathology Clinical Interpretation Draft"}
-                      </span>
-                    </div>
-                    <span className="text-[11px] font-mono text-slate-500 font-medium bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
-                      CDSS ENGINE v2.4
-                    </span>
-                  </div>
-
-                  {/* Format Lembar Catatan Klinis Terpadu */}
-                  <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
-                    {/* 1. Kesan Patologi */}
-                    <div className="space-y-1.5">
-                      <span className="text-[11px] font-bold text-[#0073FC] uppercase tracking-wider block">
-                        {language === "ID" ? "1. Kesan Patologi (Clinical Impression)" : "1. Clinical Impression"}
-                      </span>
-                      <p className="text-sm sm:text-[15px] text-slate-800 leading-relaxed font-normal">
-                        &ldquo;{language === "ID" ? currentProfile.clinicalImpression : currentProfile.clinicalImpressionEn}&rdquo;
-                      </p>
-                    </div>
-
-                    <div className="h-[1px] w-full bg-slate-100" />
-
-                    {/* 2. Rekomendasi Korelasi */}
-                    <div className="space-y-1.5">
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                        {language === "ID" ? "2. Rekomendasi Korelasi Tambahan" : "2. Correlative Recommendation"}
-                      </span>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                        {language === "ID" ? currentProfile.clinicalRecommendation : currentProfile.clinicalRecommendationEn}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Status Notifikasi Terkirim */}
-                  {isAlertSent && (
-                    <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs text-slate-800 flex items-center gap-2.5">
-                      <BellRing className="h-4 w-4 text-[#0073FC] shrink-0" />
-                      <span>
-                        {language === "ID"
-                          ? `Notifikasi Nilai Kritis telah disiarkan ke WhatsApp & SIMRS ${currentProfile.attendingDoc} (KARS SKP 2.2).`
-                          : `Critical value notification dispatched to ${currentProfile.attendingDoc}'s EMR and mobile (KARS SKP 2.2).`}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Status E-Sign Berhasil */}
-                  {isAuthorized && (
-                    <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2.5">
-                      <BadgeCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                      <div>
-                        <strong className="block font-semibold">
-                          {language === "ID" ? "Laporan Laboratorium Resmi Disahkan" : "Official Laboratory Report Authorized"}
-                        </strong>
-                        <span className="text-emerald-700 text-[11px]">
-                          {language === "ID"
-                            ? "Ditandatangani secara elektronik oleh dr. Sp.PK • Tersertifikasi BSrE & Rilis ke SIMRS"
-                            : "Digitally signed by Attending Clinical Pathologist • BSrE Certified & Released to EMR"}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Tombol Aksi Dokter */}
-                <div className="pt-4 border-t border-slate-200 space-y-2.5">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={handleToggleAuthorize}
-                      className={cn(
-                        "flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-[0.98]",
-                        isAuthorized
-                          ? "bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300"
-                          : "bg-[#0073FC] hover:bg-[#0061D6] text-white shadow-[0_4px_14px_-3px_rgba(0,115,252,0.45)]"
-                      )}
-                    >
-                      <BadgeCheck className="h-4 w-4" />
-                      <span>
-                        {isAuthorized
-                          ? language === "ID" ? "Batalkan Pengesahan" : "Revoke Authorization"
-                          : language === "ID" ? "Sahkan Hasil & E-Sign" : "Authorize & Digital E-Sign"}
-                      </span>
-                    </button>
-
-                    {currentProfile.isPanicValue && (
-                      <button
-                        type="button"
-                        onClick={handleDispatchAlert}
-                        disabled={isAlertSent}
-                        className={cn(
-                          "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all border cursor-pointer active:scale-[0.98]",
-                          isAlertSent
-                            ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-                            : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-                        )}
-                      >
-                        <BellRing className="h-4 w-4 text-[#0073FC]" />
-                        <span>
-                          {isAlertSent
-                            ? language === "ID" ? "Notifikasi Terkirim" : "Notification Sent"
-                            : language === "ID" ? "Kirim Notifikasi DPJP" : "Notify DPJP"}
-                        </span>
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={handleResetProfile}
-                      title={language === "ID" ? "Atur Ulang Status" : "Reset Status"}
-                      className="p-3 rounded-full border border-slate-200 bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <p className="text-[11px] text-slate-400 text-center font-normal">
-                    {language === "ID"
-                      ? "Interaksi simulasi: Klik tombol di atas untuk menguji pengesahan E-Sign dokter dan transmisi alert darurat."
-                      : "Simulation interactive: Click above to test pathologist e-sign authorization and critical panic alert dispatch."}
+                  <p className="text-xs sm:text-[14px] text-slate-600 leading-relaxed font-normal">
+                    {cap.desc}
                   </p>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
