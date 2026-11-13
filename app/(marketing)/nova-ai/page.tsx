@@ -406,29 +406,20 @@ export default function NovaAIPage() {
             {/* Left Card: Traditional LIS */}
             <div className="rounded-[28px] bg-[#F1F4F8] p-7 sm:p-9 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="font-display text-xl font-bold text-slate-800">
-                    {language === "ID" ? "LIS Konvensional" : "Traditional LIS"}
-                  </h3>
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-300/80 text-slate-700 text-xs font-semibold">
-                    System of Record
-                  </span>
+                <h3 className="font-display text-xl font-bold text-slate-800">
+                  {language === "ID" ? "LIS Konvensional" : "Traditional LIS"}
+                </h3>
+                <div className="mt-3.5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-400/80 text-white text-xs font-semibold">
+                  <Server className="h-3.5 w-3.5" />
+                  <span>{language === "ID" ? "System of Record (Pasif)" : "System of Record"}</span>
                 </div>
 
-                <ul className="mt-6 space-y-3.5 text-xs sm:text-sm text-slate-600">
+                <ul className="mt-7 space-y-3.5 text-xs sm:text-sm text-slate-600">
                   {[
-                    language === "ID"
-                      ? "Input ulang formulir permintaan fisik secara manual saat registrasi"
-                      : "Manual re-keying of paper requisitions during accessioning",
-                    language === "ID"
-                      ? "Penandaan abnormal hanya mengacu pada rentang statis tanpa riwayat serial"
-                      : "Static reference flags with zero longitudinal patient trend awareness",
-                    language === "ID"
-                      ? "Pembagian antrean kasus ke dokter dilakukan manual tanpa melihat beban kerja"
-                      : "Manual case distribution blind to subspecialty and workload queues",
-                    language === "ID"
-                      ? "Revisi kode ICD-10 atau inkonsistensi narasi baru terdeteksi setelah rilis"
-                      : "ICD-10 and terminology mismatches caught reactively post-signout",
+                    language === "ID" ? "Hanya menyimpan & mengambil data hasil lab" : "Passive data storage & retrieval",
+                    language === "ID" ? "Manajemen alur kerja & verifikasi manual" : "Manual workflow & validation management",
+                    language === "ID" ? "Penanganan error bersifat reaktif setelah rilis" : "Reactive error handling after sign-out",
+                    language === "ID" ? "Pelaporan statis tanpa analisis tren serial" : "Static reporting without longitudinal context",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <XCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
@@ -440,32 +431,30 @@ export default function NovaAIPage() {
             </div>
 
             {/* Right Card: Diagnova Nova AI */}
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-[0_12px_32px_-12px_rgba(15,23,42,0.08)] flex flex-col justify-between">
+            <div className="rounded-[28px] bg-white border-2 border-[#0073FC]/25 p-7 sm:p-9 shadow-[0_14px_38px_-12px_rgba(0,115,252,0.16)] flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="font-display text-xl font-bold text-slate-900">
-                    {language === "ID" ? "Diagnova Nova AI" : "Diagnova Nova AI"}
-                  </h3>
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0073FC] text-white text-xs font-semibold shadow-[0_4px_12px_-3px_rgba(0,115,252,0.45)]">
-                    <Zap className="h-3.5 w-3.5" />
-                    <span>System of Action</span>
-                  </span>
+                <h3 className="font-display text-xl font-bold text-[#0073FC]">
+                  {language === "ID" ? "Diagnova Nova AI" : "Diagnova Modern LIS"}
+                </h3>
+                <div className="mt-3.5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0073FC] text-white text-xs font-semibold shadow-[0_4px_14px_-3px_rgba(0,115,252,0.45)]">
+                  <Zap className="h-3.5 w-3.5" />
+                  <span>{language === "ID" ? "System of Action (Aktif)" : "System of Action"}</span>
                 </div>
 
-                <ul className="mt-6 space-y-3.5 text-xs sm:text-sm text-slate-700 font-medium">
+                <ul className="mt-7 space-y-3.5 text-xs sm:text-sm text-slate-700 font-medium">
                   {[
                     language === "ID"
-                      ? "Ekstraksi order OCR + LLM & validasi kecocokan spesimen otomatis"
-                      : "OCR + LLM requisition extraction with automated specimen mismatch checks",
+                      ? "Interpretasi & delta-check longitudinal secara real-time"
+                      : "Real-time interpretation & longitudinal delta-check",
                     language === "ID"
-                      ? "Kalkulasi delta-check longitudinal terhadap baseline pasien dalam < 3 detik"
-                      : "Longitudinal delta-check calculations against patient baselines in < 3 sec",
+                      ? "Orkestrasi auto-verifikasi & routing kasus otomatis"
+                      : "Automated workflow orchestration & smart case routing",
                     language === "ID"
-                      ? "Dikte klinis bebas genggam (voice-to-report) & routing kasus berbasis beban kerja"
-                      : "Hands-free voice dictation & workload-aware pathologist case routing",
+                      ? "Deteksi dini nilai kritis & inkonsistensi pra-otorisasi"
+                      : "Proactive panic triage & pre-signout inconsistency alerts",
                     language === "ID"
-                      ? "Audit terminologi & pembaruan kode ICD-10 otomatis sebelum dokter Sp.PK sign-off"
-                      : "Pre-signout terminology audit & automatic ICD-10 updates before authorization",
+                      ? "Draf narasi medis terstruktur siap otorisasi dokter Sp.PK"
+                      : "Structured clinical drafts ready for pathologist sign-off",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
