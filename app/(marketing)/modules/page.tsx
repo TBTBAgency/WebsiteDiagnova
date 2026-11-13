@@ -43,6 +43,156 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function ModulesPage() {
   const { language } = useLanguage();
   const [isClinicalView, setIsClinicalView] = useState<boolean>(false);
+  const [activeCase, setActiveCase] = useState<number>(0);
+
+  const reportCases = [
+    {
+      id: "pathology",
+      label: language === "ID" ? "Patologi" : "Pathology",
+      patientSummary:
+        language === "ID"
+          ? "Hasil pemeriksaan jaringan menunjukkan kondisi jinak (non-kanker). Tidak ditemukan sel ganas, atipia, maupun tanda pertumbuhan abnormal pada sampel yang diperiksa."
+          : "Your tissue sample showed benign (non-cancerous) cells. No malignant cells, atypia, or signs of abnormal spread were detected.",
+      patientMeaning:
+        language === "ID"
+          ? "Jaringan kecil yang diangkat bersifat tidak berbahaya. Kondisi jaringan di area pemeriksaan dinyatakan sehat, stabil, dan Anda dapat beraktivitas seperti biasa."
+          : "The small tissue growth removed is harmless. Your body is healthy and stable in this area, with no immediate intervention required.",
+      patientSteps: [
+        language === "ID"
+          ? "Jadwalkan kontrol rutin bersama dokter Anda dalam 6 bulan ke depan"
+          : "Follow up with your physician in 6 months for routine review",
+        language === "ID"
+          ? "Tanyakan jadwal skrining berkala yang sesuai dengan riwayat kesehatan Anda"
+          : "Ask about a routine screening schedule tailored to your health profile",
+      ],
+      clinicalHeading: language === "ID" ? "LAPORAN PATOLOGI" : "PATHOLOGY REPORT",
+      clinicalFields: [
+        {
+          label: language === "ID" ? "Spesimen:" : "Specimen:",
+          value: language === "ID" ? "Kulit, lengan bawah kiri, eksisi" : "Skin, left forearm, excision",
+        },
+        {
+          label: "Diagnosis:",
+          value:
+            language === "ID"
+              ? "Histiositoma fibrosa jinak (dermatofibroma)"
+              : "Benign fibrous histiocytoma (dermatofibroma)",
+        },
+        {
+          label: language === "ID" ? "Batas Sayatan:" : "Margins:",
+          value: language === "ID" ? "Bebas jaringan lesi" : "Free of lesional tissue",
+        },
+        {
+          label: language === "ID" ? "Mikroskopis:" : "Microscopic:",
+          value:
+            language === "ID"
+              ? "Proliferasi fibroblas berbentuk gelendong dan histiosit dengan pola storiform pada lapisan dermis."
+              : "Proliferation of spindle-shaped fibroblasts and histiocytes in a storiform pattern within the dermis.",
+        },
+        { label: "ICD-10:", value: "D23.62" },
+        { label: "CPT:", value: "88305" },
+      ],
+    },
+    {
+      id: "hematology",
+      label: language === "ID" ? "Hematologi" : "Hematology",
+      patientSummary:
+        language === "ID"
+          ? "Seluruh parameter darah lengkap dan kadar gula darah rata-rata (HbA1c 5.4%) berada dalam rentang normal dan sehat."
+          : "All complete blood count markers and 3-month average glucose (HbA1c 5.4%) are within healthy reference ranges.",
+      patientMeaning:
+        language === "ID"
+          ? "Tidak ditemukan tanda anemia, infeksi aktif, maupun risiko diabetes. Metabolisme dan daya tahan tubuh Anda berada pada kondisi optimal."
+          : "No signs of anemia, acute inflammation, or diabetes were found. Your blood health and metabolic baseline are stable.",
+      patientSteps: [
+        language === "ID"
+          ? "Pertahankan pola makan seimbang, rendah gula tambahan, dan hidrasi 2L per hari"
+          : "Maintain a balanced diet, limit added sugars, and stay well hydrated daily",
+        language === "ID"
+          ? "Lakukan pemeriksaan darah rutin tahunan sebagai pemantauan preventif"
+          : "Schedule your routine annual wellness blood panel for ongoing prevention",
+      ],
+      clinicalHeading: language === "ID" ? "LAPORAN HEMATOLOGI & KIMIA" : "HEMATOLOGY & CHEMISTRY REPORT",
+      clinicalFields: [
+        {
+          label: language === "ID" ? "Panel Uji:" : "Test Panel:",
+          value: language === "ID" ? "Darah Lengkap (CBC) + HbA1c" : "Complete Blood Count (CBC) + HbA1c",
+        },
+        {
+          label: language === "ID" ? "Hasil Kunci:" : "Key Findings:",
+          value: "Hb 13.8 g/dL, WBC 6.9×10³/µL, PLT 265×10³/µL, HbA1c 5.4%",
+        },
+        {
+          label: "Delta Check:",
+          value:
+            language === "ID"
+              ? "Stabil dalam rentang baseline 12 bulan terakhir (-0.1%)"
+              : "Stable within 12-month longitudinal baseline (-0.1%)",
+        },
+        {
+          label: language === "ID" ? "Interpretasi:" : "Interpretation:",
+          value:
+            language === "ID"
+              ? "Profil hematologi dan kontrol glikemik dalam batas normal tanpa tanda anemia atau inflamasi akut."
+              : "Hematologic profile and glycemic control within normal limits without anemia or acute inflammation.",
+        },
+        { label: "ICD-10:", value: "Z00.00" },
+        { label: "LOINC:", value: "58410-2" },
+      ],
+    },
+    {
+      id: "microbiology",
+      label: language === "ID" ? "Mikrobiologi" : "Microbiology",
+      patientSummary:
+        language === "ID"
+          ? "Hasil kultur laboratorium tidak menunjukkan adanya pertumbuhan bakteri penyebab infeksi saluran kemih."
+          : "Laboratory culture showed no significant growth of bacteria responsible for urinary tract infection.",
+      patientMeaning:
+        language === "ID"
+          ? "Keluhan ringan yang Anda rasakan bukan disebabkan oleh infeksi bakteri, sehingga Anda tidak perlu mengonsumsi antibiotik."
+          : "Mild symptoms are not caused by a bacterial infection, meaning antibiotic treatment is not required.",
+      patientSteps: [
+        language === "ID"
+          ? "Perbanyak konsumsi air putih minimal 2 liter per hari untuk menjaga kesehatan saluran kemih"
+          : "Increase daily water intake to at least 2 liters to support urinary tract health",
+        language === "ID"
+          ? "Konsultasikan kembali ke dokter apabila keluhan menetap lebih dari 3 hari"
+          : "Consult your doctor again if mild symptoms persist beyond 3 days",
+      ],
+      clinicalHeading: language === "ID" ? "LAPORAN KULTUR & KEPEKAAN" : "MICROBIOLOGY & AST REPORT",
+      clinicalFields: [
+        {
+          label: language === "ID" ? "Spesimen:" : "Specimen:",
+          value: language === "ID" ? "Urin porsi tengah (Midstream), kultur aerob" : "Midstream urine, aerobic culture",
+        },
+        {
+          label: language === "ID" ? "Identifikasi:" : "Organism:",
+          value:
+            language === "ID"
+              ? "Tidak ada pertumbuhan patogen bermakna (< 10³ CFU/mL)"
+              : "No significant pathogen growth (< 10³ CFU/mL)",
+        },
+        {
+          label: language === "ID" ? "Pewarnaan Gram:" : "Gram Stain:",
+          value:
+            language === "ID"
+              ? "Sel epitel minimal, leukosit < 2/LPB, bakteri (-)"
+              : "Minimal epithelial cells, WBC < 2/HPF, bacteria (-)",
+        },
+        {
+          label: language === "ID" ? "Rekomendasi PPRA:" : "Stewardship:",
+          value:
+            language === "ID"
+              ? "Tidak direkomendasikan terapi antibiotik empiris lanjutan."
+              : "No further empiric antibiotic therapy recommended.",
+        },
+        { label: "ICD-10:", value: "Z03.89" },
+        { label: "CPT:", value: "87086" },
+      ],
+    },
+  ];
+
+  const currentReport = reportCases[activeCase];
 
   const modules = [
     {
@@ -491,20 +641,13 @@ export default function ModulesPage() {
               </div>
             </div>
 
-            {/* Right Column: High-Fidelity Report Card with Interactive Mode Switcher */}
-            <div className="lg:col-span-6">
-              <div className="rounded-[22px] sm:rounded-[28px] lg:rounded-[32px] bg-[#FAFBFD] border border-slate-200/90 p-4 sm:p-6 lg:p-8 shadow-[0_10px_35px_-15px_rgba(15,23,42,0.05)] relative flex flex-col justify-between">
+            {/* Right Column: Dynamic & Responsive Report Card with Specialty & Mode Switcher */}
+            <div className="lg:col-span-6 w-full min-w-0">
+              <div className="rounded-[22px] sm:rounded-[28px] lg:rounded-[32px] bg-[#FAFBFD] border border-slate-200/90 p-4 sm:p-6 lg:p-8 shadow-[0_10px_35px_-15px_rgba(15,23,42,0.05)] relative flex flex-col justify-between transition-all duration-300">
                 {/* Card Header with Interactive Toggle Button */}
-                <div
-                  className={cn(
-                    "flex flex-wrap items-center justify-between gap-3",
-                    isClinicalView
-                      ? "pb-4 sm:pb-5 mb-5 sm:mb-6 border-b border-slate-200/75"
-                      : "mb-4 sm:mb-5 lg:mb-6"
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="font-display text-base sm:text-lg lg:text-xl font-bold text-slate-900">
+                <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mb-3.5 sm:mb-4">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="font-display text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate">
                       AI Patient Report
                     </span>
                   </div>
@@ -513,9 +656,9 @@ export default function ModulesPage() {
                   <button
                     type="button"
                     onClick={() => setIsClinicalView(!isClinicalView)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white font-sans text-[11px] sm:text-xs font-bold tracking-wide shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer shrink-0"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white font-sans text-[11px] sm:text-xs font-bold tracking-wide shadow-xs hover:shadow-sm transition-all duration-200 active:scale-95 cursor-pointer shrink-0 group"
                   >
-                    <ArrowLeftRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <ArrowLeftRight className={cn("h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300", isClinicalView ? "rotate-180" : "rotate-0")} />
                     <span>
                       {isClinicalView
                         ? (language === "ID" ? "TAMPILAN PASIEN" : "PATIENT VIEW")
@@ -524,123 +667,107 @@ export default function ModulesPage() {
                   </button>
                 </div>
 
-                {isClinicalView ? (
-                  /* Clinical View: Structured Pathology Report matching LigoLab Spec */
-                  <div className="space-y-3 sm:space-y-4 pb-1">
-                    <p className="text-[11px] sm:text-[13px] font-bold tracking-wider text-slate-400 uppercase">
-                      {language === "ID" ? "LAPORAN PATOLOGI" : "PATHOLOGY REPORT"}
-                    </p>
+                {/* Dynamic Case Switcher Pills (Responsive horizontal scroll / wrap on tiny screens) */}
+                <div
+                  className={cn(
+                    "flex flex-wrap items-center gap-1.5 sm:gap-2",
+                    isClinicalView
+                      ? "pb-4 sm:pb-5 mb-4 sm:mb-5 border-b border-slate-200/75"
+                      : "mb-4 sm:mb-5"
+                  )}
+                >
+                  {reportCases.map((item, idx) => {
+                    const isActive = activeCase === idx;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActiveCase(idx)}
+                        className={cn(
+                          "px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold transition-all duration-200 cursor-pointer",
+                          isActive
+                            ? "bg-[#EBF3FE] text-[#1E5299] border border-blue-200/90 shadow-2xs"
+                            : "bg-white text-slate-500 border border-slate-200/70 hover:text-slate-800 hover:border-slate-300"
+                        )}
+                      >
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
 
-                    <div className="space-y-2.5 sm:space-y-3.5 text-[13px] sm:text-sm lg:text-[15px] leading-relaxed text-slate-700">
-                      <p>
-                        <span className="font-medium text-[#0073FC]">
-                          {language === "ID" ? "Spesimen:" : "Specimen:"}
-                        </span>{" "}
-                        {language === "ID"
-                          ? "Kulit, lengan bawah kiri, eksisi"
-                          : "Skin, left forearm, excision"}
+                {/* Dynamic Content Area */}
+                <div
+                  key={`${currentReport.id}-${isClinicalView ? "clinical" : "patient"}`}
+                  className="animate-in fade-in slide-in-from-bottom-1 duration-300"
+                >
+                  {isClinicalView ? (
+                    /* Clinical View: Structured Report matching LigoLab Spec */
+                    <div className="space-y-3 sm:space-y-4 pb-1">
+                      <p className="text-[11px] sm:text-[13px] font-bold tracking-wider text-slate-400 uppercase">
+                        {currentReport.clinicalHeading}
                       </p>
 
-                      <p>
-                        <span className="font-medium text-[#0073FC]">
-                          {language === "ID" ? "Diagnosis:" : "Diagnosis:"}
-                        </span>{" "}
-                        {language === "ID"
-                          ? "Histiositoma fibrosa jinak (dermatofibroma)"
-                          : "Benign fibrous histiocytoma (dermatofibroma)"}
-                      </p>
-
-                      <p>
-                        <span className="font-medium text-[#0073FC]">
-                          {language === "ID" ? "Batas Sayatan:" : "Margins:"}
-                        </span>{" "}
-                        {language === "ID"
-                          ? "Bebas jaringan lesi"
-                          : "Free of lesional tissue"}
-                      </p>
-
-                      <p>
-                        <span className="font-medium text-[#0073FC]">
-                          {language === "ID" ? "Mikroskopis:" : "Microscopic:"}
-                        </span>{" "}
-                        {language === "ID"
-                          ? "Proliferasi fibroblas berbentuk gelendong dan histiosit dengan pola storiform pada lapisan dermis."
-                          : "Proliferation of spindle-shaped fibroblasts and histiocytes in a storiform pattern within the dermis."}
-                      </p>
-
-                      <p>
-                        <span className="font-medium text-[#0073FC]">ICD-10:</span>{" "}
-                        D23.62
-                      </p>
-
-                      <p>
-                        <span className="font-medium text-[#0073FC]">CPT:</span>{" "}
-                        88305
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  /* Patient View: 3 Stacked Pastel Cards */
-                  <div className="space-y-3 sm:space-y-4">
-                    {/* Card 1: Blue Card - Results Summary */}
-                    <div className="rounded-xl sm:rounded-2xl bg-[#EFF6FF] border border-blue-200/80 p-3.5 sm:p-4 lg:p-5 transition-all">
-                      <div className="flex items-center gap-2 text-[#1E40AF] font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-1.5 sm:mb-2">
-                        <FileText className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0" />
-                        <h4>
-                          {language === "ID" ? "Ringkasan Hasil Pemeriksaan" : "Your Results Summary"}
-                        </h4>
+                      <div className="space-y-2.5 sm:space-y-3.5 text-[13px] sm:text-sm lg:text-[15px] leading-relaxed text-slate-700">
+                        {currentReport.clinicalFields.map((field, fIdx) => (
+                          <p key={fIdx} className="break-words">
+                            <span className="font-medium text-[#0073FC]">
+                              {field.label}
+                            </span>{" "}
+                            {field.value}
+                          </p>
+                        ))}
                       </div>
-                      <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
-                        {language === "ID"
-                          ? "Hasil pemeriksaan jaringan menunjukkan kondisi jinak (non-kanker). Tidak ditemukan sel ganas, atipia, maupun tanda pertumbuhan abnormal pada sampel yang diperiksa."
-                          : "Your tissue sample showed benign (non-cancerous) cells. No malignant cells, atypia, or signs of abnormal spread were detected."}
-                      </p>
                     </div>
-
-                    {/* Card 2: Green Card - What This Means */}
-                    <div className="rounded-xl sm:rounded-2xl bg-[#F0FDF4] border border-emerald-200/80 p-3.5 sm:p-4 lg:p-5 transition-all">
-                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-1.5 sm:mb-2">
-                        <Info className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-emerald-700 shrink-0" />
-                        <h4>
-                          {language === "ID" ? "Makna Klinis bagi Anda" : "What This Means for You"}
-                        </h4>
+                  ) : (
+                    /* Patient View: 3 Stacked Pastel Cards */
+                    <div className="space-y-3 sm:space-y-3.5">
+                      {/* Card 1: Blue Card - Results Summary */}
+                      <div className="rounded-xl sm:rounded-2xl bg-[#EFF6FF] border border-blue-200/80 p-3.5 sm:p-4 lg:p-5 transition-all duration-200 hover:border-blue-300/80">
+                        <div className="flex items-center gap-2 text-[#1E40AF] font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-1.5 sm:mb-2">
+                          <FileText className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0" />
+                          <h4>
+                            {language === "ID" ? "Ringkasan Hasil Pemeriksaan" : "Your Results Summary"}
+                          </h4>
+                        </div>
+                        <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                          {currentReport.patientSummary}
+                        </p>
                       </div>
-                      <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
-                        {language === "ID"
-                          ? "Jaringan kecil yang diangkat bersifat tidak berbahaya. Kondisi jaringan di area pemeriksaan dinyatakan sehat, stabil, dan Anda dapat beraktivitas seperti biasa."
-                          : "The small tissue growth removed is harmless. Your body is healthy and stable in this area, with no immediate intervention required."}
-                      </p>
-                    </div>
 
-                    {/* Card 3: White Card - Next Steps */}
-                    <div className="rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 lg:p-5 shadow-2xs transition-all">
-                      <div className="flex items-center gap-2 text-slate-900 font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-2">
-                        <Sparkles className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#2764B8] shrink-0" />
-                        <h4>
-                          {language === "ID" ? "Langkah Selanjutnya" : "Next Steps"}
-                        </h4>
+                      {/* Card 2: Green Card - What This Means */}
+                      <div className="rounded-xl sm:rounded-2xl bg-[#F0FDF4] border border-emerald-200/80 p-3.5 sm:p-4 lg:p-5 transition-all duration-200 hover:border-emerald-300/80">
+                        <div className="flex items-center gap-2 text-emerald-800 font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-1.5 sm:mb-2">
+                          <Info className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-emerald-700 shrink-0" />
+                          <h4>
+                            {language === "ID" ? "Makna Klinis bagi Anda" : "What This Means for You"}
+                          </h4>
+                        </div>
+                        <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                          {currentReport.patientMeaning}
+                        </p>
                       </div>
-                      <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] text-slate-700">
-                        <li className="flex items-start sm:items-center gap-2">
-                          <span className="text-slate-800 font-bold shrink-0">✓</span>
-                          <span>
-                            {language === "ID"
-                              ? "Jadwalkan kontrol rutin bersama dokter Anda dalam 6 bulan ke depan"
-                              : "Follow up with your physician in 6 months for routine review"}
-                          </span>
-                        </li>
-                        <li className="flex items-start sm:items-center gap-2">
-                          <span className="text-slate-800 font-bold shrink-0">✓</span>
-                          <span>
-                            {language === "ID"
-                              ? "Tanyakan jadwal skrining berkala yang sesuai dengan riwayat kesehatan Anda"
-                              : "Ask about a routine screening schedule tailored to your health profile"}
-                          </span>
-                        </li>
-                      </ul>
+
+                      {/* Card 3: White Card - Next Steps */}
+                      <div className="rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 p-3.5 sm:p-4 lg:p-5 shadow-2xs transition-all duration-200 hover:border-slate-300/90">
+                        <div className="flex items-center gap-2 text-slate-900 font-bold text-[13.5px] sm:text-sm lg:text-[15px] mb-2">
+                          <Sparkles className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#2764B8] shrink-0" />
+                          <h4>
+                            {language === "ID" ? "Langkah Selanjutnya" : "Next Steps"}
+                          </h4>
+                        </div>
+                        <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] text-slate-700">
+                          {currentReport.patientSteps.map((step, sIdx) => (
+                            <li key={sIdx} className="flex items-start sm:items-center gap-2">
+                              <span className="text-slate-800 font-bold shrink-0">✓</span>
+                              <span>{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
