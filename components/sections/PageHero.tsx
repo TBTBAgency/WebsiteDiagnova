@@ -51,11 +51,13 @@ export function PageHero({
         paddingTop: "calc(80px + var(--announcement-bar-height, 0px))",
       }}
     >
-      {/* ─── Framed Hero Card with Exact Same Dimensions & Rounded Corners as Home Hero ─── */}
-      <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white border border-slate-200/90 shadow-xs flex items-center justify-center px-5 py-9 sm:p-8 lg:p-12">
-        {/* Subtle Ambient Soft Glow */}
-        <div className="absolute -top-32 right-1/4 w-[480px] h-[480px] rounded-full bg-blue-100/35 blur-[120px] pointer-events-none z-0" />
-        <div className="absolute -bottom-32 left-1/4 w-[420px] h-[420px] rounded-full bg-blue-50/50 blur-[100px] pointer-events-none z-0" />
+      {/* ─── Framed Hero Card with Luminous Diagnova Blue Gradient ─── */}
+      <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-br from-[#DCEBFA] via-[#ECF4FD] to-[#F8FBFF] border border-blue-200/70 shadow-[0_14px_40px_-14px_rgba(37,104,186,0.12)] flex items-center justify-center px-5 py-9 sm:p-8 lg:p-12">
+        {/* Multi-layer Ambient Blue Gradient Glows */}
+        <div className="absolute -top-36 -right-16 w-[520px] h-[520px] rounded-full bg-[#56ADE2]/25 blur-[115px] pointer-events-none z-0" />
+        <div className="absolute -top-24 -left-24 w-[440px] h-[440px] rounded-full bg-[#2764B8]/12 blur-[120px] pointer-events-none z-0" />
+        <div className="absolute -bottom-32 left-1/3 w-[480px] h-[480px] rounded-full bg-[#93C5FD]/25 blur-[110px] pointer-events-none z-0" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/75 via-white/25 to-transparent pointer-events-none z-0" />
 
         {/* Centered Content Wrapper: Perfectly balanced vertically with ample breathing room on top & bottom */}
         <div className="relative z-10 w-full max-w-[1560px] mx-auto px-0 sm:px-4 lg:px-10 my-auto flex flex-col items-center justify-center text-center">
