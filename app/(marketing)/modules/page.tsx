@@ -775,35 +775,35 @@ export default function ModulesPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          COMPLETE MODULE DIRECTORY (BALANCED 6-CARD 3x2 GRID)
-          5 Core Modules + 1 Custom Specialty Gateway = ZERO EMPTY SLOTS
+          COMPLETE MODULE DIRECTORY (CLEAN 6-CARD 3x2 LIGOLAB GRID)
+          5 Core Modules + 1 Custom Specialty Gateway
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
+      <section className="w-full bg-white py-14 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Header */}
-          <div className="max-w-3xl mb-12 sm:mb-14">
-            <div className="mb-4">
+          <div className="max-w-3xl mb-10 sm:mb-14">
+            <div className="mb-3.5 sm:mb-4">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Katalog Modul Lengkap" : "Complete Module Catalog"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-900">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-900">
               {language === "ID" ? (
                 <>Arsitektur 5 Modul Inti &amp; Gateway Khusus</>
               ) : (
                 <>5 Core Clinical Modules &amp; Specialty Gateway</>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+            <p className="mt-2.5 sm:mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Daftar spesifikasi ringkas dan cakupan alur kerja untuk memudahkan evaluasi tim medis, kepala laboratorium, dan manajemen rumah sakit."
                 : "A structured overview designed for effortless evaluation by laboratory directors, medical specialists, and hospital IT leadership."}
             </p>
           </div>
 
-          {/* Symmetrical 3x2 Grid (6 Cards Total) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch">
-            {directoryItems.map((m, idx) => {
+          {/* Symmetrical 3x2 Clean Grid (Matching Reference Spec) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-7 items-stretch">
+            {directoryItems.map((m) => {
               const Icon = m.icon;
               const isCustom = m.id === "custom-gateway";
 
@@ -811,74 +811,32 @@ export default function ModulesPage() {
                 <div
                   key={m.id}
                   id={m.id}
-                  className={cn(
-                    "scroll-mt-32 rounded-[28px] p-7 transition-all duration-200 flex flex-col justify-between border",
-                    isCustom
-                      ? "bg-gradient-to-br from-[#F5F9FF] to-[#EBF3FB] border-[#2466CB]/40 shadow-xs hover:border-[#2466CB]"
-                      : "bg-white border-slate-200/90 shadow-xs hover:border-[#2466CB]/60 hover:shadow-sm"
-                  )}
+                  className="scroll-mt-32 rounded-2xl sm:rounded-[24px] bg-[#F7F9FC] hover:bg-[#F3F7FD] border border-slate-200/50 hover:border-blue-200/80 p-6 sm:p-7 transition-all duration-200 flex flex-col group"
                 >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className={cn(
-                        "h-12 w-12 rounded-2xl flex items-center justify-center shadow-2xs border",
-                        isCustom
-                          ? "bg-[#2466CB] text-white border-[#2466CB]"
-                          : "bg-[#EBF3FB] text-[#2466CB] border-blue-100"
-                      )}>
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <span className={cn(
-                        "text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border",
-                        isCustom
-                          ? "bg-[#2466CB] text-white border-[#2466CB]"
-                          : "bg-slate-100 text-slate-500 border-slate-200"
-                      )}>
-                        MOD-0{idx + 1}
-                      </span>
+                  {/* Top Row: Icon Badge Left + Bold Title & Status Subtitle Right */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EBF3FE] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform duration-200">
+                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 stroke-[1.6]" />
                     </div>
-
-                    <div>
-                      <span className="text-[11px] font-semibold text-[#1E5299] bg-blue-50 border border-blue-200/60 px-2.5 py-0.5 rounded-full inline-block mb-2">
-                        {m.targetDept}
-                      </span>
-                      <h3 className="font-display text-xl font-bold text-slate-900 leading-snug">
+                    <div className="min-w-0">
+                      <h3 className="font-display text-base sm:text-[17px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                         {m.name}
                       </h3>
-                      <p className="text-xs text-slate-600 font-normal leading-relaxed mt-2 line-clamp-3">
-                        {m.description}
+                      <p
+                        className={cn(
+                          "text-xs font-medium mt-0.5 truncate",
+                          isCustom ? "text-slate-500" : "text-[#0073FC]"
+                        )}
+                      >
+                        {m.targetDept}
                       </p>
                     </div>
-
-                    {/* Quick Highlights */}
-                    <div className="pt-2 border-t border-slate-100 space-y-2 text-xs text-slate-700">
-                      {m.highlights.slice(0, 3).map((h, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <Check className="h-3.5 w-3.5 text-[#2466CB] shrink-0" />
-                          <span className="font-medium line-clamp-1">{h.title}</span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
 
-                  <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-[#2466CB]">
-                      {isCustom ? (language === "ID" ? "Kustomisasi Bebas" : "Tailored Architecture") : m.tabLabel}
-                    </span>
-
-                    <Link
-                      href={isCustom ? "/request-demo?module=custom" : `/request-demo?module=${m.id}`}
-                      className={cn(
-                        "inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full transition-all",
-                        isCustom
-                          ? "bg-[#2466CB] text-white hover:bg-[#1E5299]"
-                          : "text-slate-700 hover:text-[#2466CB] hover:bg-slate-50"
-                      )}
-                    >
-                      <span>{isCustom ? (language === "ID" ? "Konsultasi" : "Consult") : "Demo"}</span>
-                      <ChevronRight className="h-3 w-3" />
-                    </Link>
-                  </div>
+                  {/* Clean Description */}
+                  <p className="text-[13.5px] sm:text-sm text-slate-600 font-normal leading-relaxed">
+                    {m.description}
+                  </p>
                 </div>
               );
             })}
