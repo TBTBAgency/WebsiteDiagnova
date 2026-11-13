@@ -98,7 +98,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
         >
           {/* ── LEFT: CATEGORY TABS ── */}
           <div className="lg:col-span-4 xl:col-span-3">
-            <nav className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-none">
+            <nav className="flex flex-wrap lg:flex-col gap-2">
               {content.categories.map((cat) => {
                 const isActive = activeCategory === cat.id;
                 return (
@@ -110,10 +110,10 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                       setOpenIndex(0);
                     }}
                     className={cn(
-                      "px-5 py-2.5 rounded-full text-xs sm:text-[13px] transition-all duration-200 text-left whitespace-nowrap cursor-pointer",
+                      "px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-[13px] transition-all duration-200 text-left whitespace-nowrap cursor-pointer border",
                       isActive
-                        ? "bg-[#EBF3FB] border border-[#3880DB]/35 text-[#2568BA] font-semibold"
-                        : "text-slate-600 hover:text-[#2568BA] hover:bg-white/80 border border-transparent font-medium"
+                        ? "bg-[#EBF3FB] border-[#3880DB]/40 text-[#2568BA] font-semibold shadow-2xs"
+                        : "bg-white lg:bg-transparent border-slate-200/90 lg:border-transparent text-slate-600 hover:text-[#2568BA] hover:bg-white/90 font-medium shadow-2xs lg:shadow-none"
                     )}
                   >
                     {cat.label}
