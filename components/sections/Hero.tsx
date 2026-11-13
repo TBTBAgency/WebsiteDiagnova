@@ -139,7 +139,6 @@ export function Hero({ initialData }: HeroProps = {}) {
       : "A next-generation Laboratory Information System autonomously connecting medical instruments with clinicians. Transforming complex diagnostic data into fast, accurate, and actionable medical decisions.");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [prevSlide, setPrevSlide] = useState<number | null>(null);
-  const [isReady, setIsReady] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const nextSlide = useCallback(() => {
@@ -154,7 +153,6 @@ export function Hero({ initialData }: HeroProps = {}) {
   };
 
   useEffect(() => {
-    setIsReady(true);
     timerRef.current = setInterval(() => {
       nextSlide();
     }, AUTOPLAY_INTERVAL);
@@ -166,9 +164,9 @@ export function Hero({ initialData }: HeroProps = {}) {
 
   return (
     <section
-      className="relative w-full h-[100dvh] min-h-[600px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
+      className="relative w-full min-h-[600px] sm:h-[100dvh] sm:min-h-[680px] lg:min-h-[740px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
       style={{
-        paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
+        paddingTop: "calc(80px + var(--announcement-bar-height, 0px))",
       }}
       aria-label="Diagnova Hero Highlights"
     >
@@ -183,8 +181,8 @@ export function Hero({ initialData }: HeroProps = {}) {
         }
       `}</style>
 
-      {/* Hero Card Container with Rounded Corners - Fits 100% in viewport */}
-      <div className="relative w-full h-full rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden flex items-center bg-[#1A4B8C] gpu-layer">
+      {/* Hero Card Container with Rounded Corners */}
+      <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden flex items-center bg-[#1A4B8C] gpu-layer">
         {/* Background Images with Option 2: Horizontal Parallax Push & Soft Dissolve */}
         {slides.map((slide, index) => {
           const isActive = index === currentSlide;
@@ -224,26 +222,21 @@ export function Hero({ initialData }: HeroProps = {}) {
         {/* Static Full-Cover Thin White Fade Overlay */}
         <div className="absolute inset-0 bg-white/15 pointer-events-none z-[3]" />
 
-        {/* Soft Contrast Gradient Overlay on Left Side */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1A4B8C]/95 via-[#225FA8]/75 to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
+        {/* Soft Contrast Gradient Overlay (Full coverage on mobile for readability, left-focused on sm+) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#133A70]/85 via-[#1A4B8C]/78 to-[#133A70]/90 sm:bg-gradient-to-r sm:from-[#1A4B8C]/95 sm:via-[#225FA8]/75 sm:to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
 
         {/* Left Hero Content: Centered 2XL Grid Wrapper aligned with Navbar & Sections */}
-        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-6 sm:px-8 lg:px-10 my-auto flex items-center">
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-5 py-9 sm:py-0 sm:px-8 lg:px-10 my-auto flex items-center">
           <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
-          {/* Static Badge with subtle entrance transition */}
-          <div
-            className={cn(
-              "transition-all duration-700 ease-out",
-              isReady ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-            )}
-          >
-            <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6 hover:bg-white/25 transition-colors">
+          {/* Static Badge */}
+          <div>
+            <div className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-3.5 py-1.5 text-[11.5px] sm:text-sm font-medium text-white border border-white/30 shadow-sm mb-4 sm:mb-6 hover:bg-white/25 transition-colors">
               {(slides[currentSlide] as any)?.badge || sectionBadge}
             </div>
           </div>
 
           {/* Option 2: Horizontal Carousel Push Slide for Headline */}
-          <div className="grid grid-cols-1 grid-rows-1 mb-4 sm:mb-5 min-h-[96px] sm:min-h-[120px] lg:min-h-[145px] xl:min-h-[165px] items-center overflow-hidden py-1">
+          <div className="grid grid-cols-1 grid-rows-1 mb-3.5 sm:mb-5 min-h-[84px] sm:min-h-[120px] lg:min-h-[145px] xl:min-h-[165px] items-center overflow-hidden py-1">
             {slides.map((slide, index) => {
               const isActive = index === currentSlide;
               const isPrevious = index === prevSlide;
@@ -260,7 +253,7 @@ export function Hero({ initialData }: HeroProps = {}) {
                       : "opacity-0 translate-x-12 pointer-events-none duration-0"
                   )}
                 >
-                  <h1 className="text-[32px] sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.1] font-display">
+                  <h1 className="text-[28px] sm:text-5xl lg:text-[52px] xl:text-[62px] font-bold text-white tracking-tight leading-[1.15] sm:leading-[1.1] font-display">
                     {slide.title}
                   </h1>
                 </div>
@@ -268,26 +261,17 @@ export function Hero({ initialData }: HeroProps = {}) {
             })}
           </div>
 
-          {/* Subtitle - Smooth Fade In */}
-          <p
-            className={cn(
-              "text-sm sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-full sm:max-w-xl mb-5 sm:mb-8 text-left transition-all duration-700 delay-150 ease-out",
-              isReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-            )}
-          >
+          {/* Subtitle */}
+          <p className="text-[13.5px] sm:text-base lg:text-lg text-white/90 font-light leading-relaxed max-w-full sm:max-w-xl mb-6 sm:mb-8 text-left">
             {(slides[currentSlide] as any)?.subtitle || sectionSubtitle}
           </p>
 
-          {/* Static CTA Buttons with interactive hover & shimmer effects */}
-          <div
-            className={cn(
-              "flex flex-wrap items-center gap-4 sm:gap-5 transition-all duration-700 delay-300 ease-out",
-              isReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-            )}
-          >
+          {/* CTA Buttons — Full-width stacked on mobile, inline on sm+ */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
             <Link
               href={(slides[currentSlide] as any)?.ctaPrimaryUrl || "/request-demo"}
-              className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-white text-slate-900 font-semibold px-8 py-3.5 text-sm sm:text-base hover:bg-slate-50 hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-xl active:scale-[0.98] overflow-hidden"
+              prefetch={true}
+              className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-white text-slate-900 font-semibold px-7 py-3.5 text-sm sm:text-base hover:bg-slate-50 hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-xl active:scale-[0.98] overflow-hidden"
             >
               <span className="relative z-10">
                 {(slides[currentSlide] as any)?.ctaPrimaryText || (language === "ID" ? "Jadwalkan Demo" : "Schedule Demo")}
@@ -298,14 +282,15 @@ export function Hero({ initialData }: HeroProps = {}) {
 
             <Link
               href={(slides[currentSlide] as any)?.ctaSecondaryUrl || "/modules"}
-              className="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 hover:bg-white/25 hover:border-white text-white font-semibold px-8 py-3.5 text-sm sm:text-base backdrop-blur-md hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98]"
+              prefetch={true}
+              className="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 hover:bg-white/25 hover:border-white text-white font-semibold px-7 py-3.5 text-sm sm:text-base backdrop-blur-md hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98]"
             >
               {(slides[currentSlide] as any)?.ctaSecondaryText || (language === "ID" ? "Jelajahi Modul" : "Explore Modules")}
             </Link>
           </div>
 
-          {/* Thin Sleek Progress Bars under Text (GPU-accelerated CSS Keyframe Animation) */}
-          <div className="flex items-center gap-2.5 pt-8 sm:pt-10 max-w-[260px] sm:max-w-xs">
+          {/* Thin Sleek Progress Bars under Text */}
+          <div className="flex items-center gap-2.5 pt-6 sm:pt-10 max-w-full sm:max-w-xs">
             {slides.map((_, index) => {
               const isActive = index === currentSlide;
               const isPassed = index < currentSlide;
