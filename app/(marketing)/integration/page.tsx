@@ -374,12 +374,17 @@ export default function IntegrationPage() {
               </h2>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <p className="max-w-sm text-sm leading-relaxed text-slate-600 font-normal">
+                {language === "ID"
+                  ? "Klik simpul mana saja pada diagram untuk memeriksa alur otomatisasi dan protokolnya."
+                  : "Select any node on the diagram to inspect its live automation flow and protocols."}
+              </p>
               <button
                 type="button"
                 onClick={() => setAutoCycle((prev) => !prev)}
                 className={cn(
-                  "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer",
+                  "inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0",
                   autoCycle
                     ? "bg-[#0073FC] text-white border-[#0073FC] shadow-xs"
                     : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
@@ -395,7 +400,7 @@ export default function IntegrationPage() {
             </div>
           </div>
 
-          {/* Reference 2: Light Dot-Grid Node Canvas with Faded Surroundings & Double-Ringed Active Hub */}
+          {/* Reference 2: Light Dot-Grid Node Canvas with Crisp Opaque Nodes & Flush Connectors */}
           <div
             className="relative rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8 mb-10 overflow-hidden"
             style={{
@@ -403,10 +408,10 @@ export default function IntegrationPage() {
               backgroundSize: "18px 18px",
             }}
           >
-            {/* Soft radial white fade on edges (Attio/Causal style) */}
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_45%,rgba(255,255,255,0.88)_100%)]" />
+            {/* Soft radial white fade on edges */}
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_50%,rgba(255,255,255,0.85)_100%)]" />
 
-            {/* Desktop Dashed Bezier Connectors + Port Dots */}
+            {/* Desktop Dashed Bezier Connectors (Flush with Card Borders) */}
             <svg
               className="hidden lg:block pointer-events-none absolute inset-0 w-full h-full z-0"
               viewBox="0 0 1200 220"
@@ -414,11 +419,11 @@ export default function IntegrationPage() {
               aria-hidden="true"
             >
               {[
-                { idx: 2, d: "M 340 60 C 420 60, 420 110, 480 110", px: 340, py: 60 },
-                { idx: 4, d: "M 340 160 C 420 160, 420 110, 480 110", px: 340, py: 160 },
-                { idx: 0, d: "M 720 110 C 780 110, 780 38, 860 38", px: 860, py: 38 },
-                { idx: 1, d: "M 720 110 L 860 110", px: 860, py: 110 },
-                { idx: 3, d: "M 720 110 C 780 110, 780 182, 860 182", px: 860, py: 182 },
+                { idx: 2, d: "M 392 64 C 430 64, 430 110, 468 110", px: 392, py: 64 },
+                { idx: 4, d: "M 392 156 C 430 156, 430 110, 468 110", px: 392, py: 156 },
+                { idx: 0, d: "M 732 110 C 770 110, 770 38, 808 38", px: 808, py: 38 },
+                { idx: 1, d: "M 732 110 L 808 110", px: 808, py: 110 },
+                { idx: 3, d: "M 732 110 C 770 110, 770 182, 808 182", px: 808, py: 182 },
               ].map((line) => {
                 const isActive = selectedIntegration === line.idx;
                 return (
@@ -439,6 +444,23 @@ export default function IntegrationPage() {
                   </g>
                 );
               })}
+              <circle r="3.5" fill="#0073FC">
+                <animateMotion
+                  dur="1.5s"
+                  repeatCount="indefinite"
+                  path={
+                    selectedIntegration === 2
+                      ? "M 392 64 C 430 64, 430 110, 468 110"
+                      : selectedIntegration === 4
+                      ? "M 392 156 C 430 156, 430 110, 468 110"
+                      : selectedIntegration === 0
+                      ? "M 732 110 C 770 110, 770 38, 808 38"
+                      : selectedIntegration === 1
+                      ? "M 732 110 L 808 110"
+                      : "M 732 110 C 770 110, 770 182, 808 182"
+                  }
+                />
+              </circle>
             </svg>
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
@@ -454,13 +476,13 @@ export default function IntegrationPage() {
                       type="button"
                       onClick={() => selectPillar(idx)}
                       className={cn(
-                        "w-full text-left rounded-2xl px-4 py-3.5 border transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer bg-white",
+                        "group w-full text-left rounded-2xl px-4 py-3.5 border transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer bg-white",
                         active
-                          ? "border-[#0073FC]/50 ring-4 ring-blue-50 shadow-sm opacity-100"
-                          : "border-slate-200/80 opacity-60 hover:opacity-100"
+                          ? "border-[#0073FC]/60 ring-4 ring-blue-50 shadow-sm"
+                          : "border-slate-200/90 hover:border-slate-300"
                       )}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className={cn("flex items-center gap-3 min-w-0 transition-opacity", active ? "opacity-100" : "opacity-65 group-hover:opacity-100")}>
                         <div className="h-9 w-9 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center shrink-0">
                           <Icon className="h-4.5 w-4.5" />
                         </div>
@@ -477,7 +499,7 @@ export default function IntegrationPage() {
                 })}
               </div>
 
-              {/* Center Double-Ringed Hub Card (Reference 2) */}
+              {/* Center Double-Ringed Hub Card */}
               <div className="lg:col-span-4 flex justify-center py-2">
                 <div className="w-full max-w-[270px] rounded-2xl bg-white border border-slate-200 ring-4 ring-slate-100/90 p-5 shadow-sm">
                   <div className="flex items-center justify-between mb-3">
@@ -517,13 +539,13 @@ export default function IntegrationPage() {
                       type="button"
                       onClick={() => selectPillar(idx)}
                       className={cn(
-                        "w-full text-left rounded-2xl px-4 py-3 border transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer bg-white",
+                        "group w-full text-left rounded-2xl px-4 py-3 border transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer bg-white",
                         active
-                          ? "border-[#0073FC]/50 ring-4 ring-blue-50 shadow-sm opacity-100"
-                          : "border-slate-200/80 opacity-60 hover:opacity-100"
+                          ? "border-[#0073FC]/60 ring-4 ring-blue-50 shadow-sm"
+                          : "border-slate-200/90 hover:border-slate-300"
                       )}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className={cn("flex items-center gap-3 min-w-0 transition-opacity", active ? "opacity-100" : "opacity-65 group-hover:opacity-100")}>
                         <div className="h-8 w-8 rounded-lg bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center shrink-0">
                           <Icon className="h-4 w-4" />
                         </div>
@@ -543,14 +565,17 @@ export default function IntegrationPage() {
           </div>
 
           {/* Reference 3 & 4: Attio Split Editorial + Vertical Connected Workflow */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Editorial + Giant Typographic Metrics (Reference 4) */}
-            <div className="lg:col-span-5 space-y-6">
-              <div>
-                <h3 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+            {/* Left Editorial + Giant Typographic Metrics */}
+            <div className="lg:col-span-5 rounded-2xl bg-white border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between gap-6">
+              <div className="space-y-4">
+                <span className="inline-block text-[11px] font-mono font-semibold uppercase tracking-wider text-[#0073FC]">
+                  {current.tabLabel}
+                </span>
+                <h3 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-[1.15]">
                   {current.name}
                 </h3>
-                <p className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                   {current.tagline}
                 </p>
               </div>
@@ -572,7 +597,7 @@ export default function IntegrationPage() {
                   {current.protocols.map((p) => (
                     <span
                       key={p}
-                      className="rounded-md bg-white border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700"
+                      className="rounded-md bg-[#F7F9FC] border border-slate-200/80 px-2.5 py-1 text-xs font-medium text-slate-700"
                     >
                       {p}
                     </span>
@@ -588,23 +613,23 @@ export default function IntegrationPage() {
               </div>
             </div>
 
-            {/* Right: Attio Vertical Dot-Grid Workflow Cards (Reference 3) */}
+            {/* Right: Attio Vertical Dot-Grid Workflow Cards */}
             <div className="lg:col-span-7">
               <div
-                className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-7"
+                className="h-full rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-7 flex flex-col justify-between"
                 style={{
                   backgroundImage: "radial-gradient(#E2E8F0 1px, transparent 1px)",
                   backgroundSize: "16px 16px",
                 }}
               >
-                <div className="flex items-center justify-between text-xs text-slate-500 pb-4 mb-4 border-b border-slate-100">
+                <div className="flex items-center justify-between text-xs text-slate-500 pb-4 mb-5 border-b border-slate-100">
                   <span className="font-medium text-slate-700">
                     Automations / <strong className="text-slate-900">{current.tabLabel}</strong>
                   </span>
                   <span className="font-mono text-[11px] text-[#0073FC] font-semibold">Live Pipeline</span>
                 </div>
 
-                <div className="max-w-lg mx-auto space-y-2">
+                <div className="max-w-lg w-full mx-auto">
                   {current.workflowSteps.map((step, i) => (
                     <React.Fragment key={step.title}>
                       <div>
@@ -639,8 +664,9 @@ export default function IntegrationPage() {
                         </div>
                       </div>
                       {i < current.workflowSteps.length - 1 && (
-                        <div className="flex justify-center py-0.5">
-                          <ArrowDown className="h-4 w-4 text-emerald-500" />
+                        <div className="flex flex-col items-center py-0.5">
+                          <div className="h-3.5 w-px bg-emerald-400" />
+                          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         </div>
                       )}
                     </React.Fragment>
