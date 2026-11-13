@@ -918,200 +918,142 @@ export default function NovaAIPage() {
         id="ai-doctor"
         className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full space-y-12 sm:space-y-14">
-          {/* Split Header */}
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full space-y-10 sm:space-y-12">
+          {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Tata Kelola Klinis & Akuntabilitas" : "Clinical Governance & Legal Accountability"}
+                  {language === "ID" ? "Tata Kelola Klinis & Keamanan Data" : "Clinical Governance & Security"}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
                 {language === "ID"
-                  ? "Mengapa Dokter Tetap Menjadi Otoritas Klinis Tertinggi?"
-                  : "Why Physicians Retain Absolute Medical Authority"}
+                  ? "Kepatuhan & Keamanan untuk Data Klinis Sensitif"
+                  : "Compliance & Security Built for Clinical Data"}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
-                ? "Sistem komputasi mempercepat pemrosesan data, sementara pertimbangan diagnosis holistik dan tanggung jawab hukum mutlak berada di tangan dokter spesialis teregistrasi."
-                : "Computational systems accelerate data processing, while holistic diagnostic judgment and full legal accountability remain with licensed medical practitioners."}
+                ? "Nova AI beroperasi dengan prinsip Human-in-the-Loop mutlak—mempercepat analisis data laboratorium sekaligus menjaga otoritas hukum dokter dan keamanan rekam medis."
+                : "Nova AI operates under strict Human-in-the-Loop governance—accelerating lab intelligence while safeguarding physician sovereignty and patient record security."}
             </p>
           </div>
 
-          {/* Side-by-Side Bento Responsibility Matrix */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Box A: Sistem Nova AI */}
-            <div className="rounded-[28px] bg-[#F1F4F8] p-7 sm:p-9 flex flex-col justify-between space-y-6">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3.5 pb-4 border-b border-slate-200/80">
-                  <div className="h-12 w-12 rounded-2xl bg-[#0073FC] text-white flex items-center justify-center shadow-[0_8px_18px_-4px_rgba(0,115,252,0.4)] shrink-0">
-                    <Cpu className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-xl font-bold text-slate-900">
-                      {language === "ID" ? "Sistem Nova AI (Decision Support)" : "Nova AI System (Decision Support)"}
-                    </h3>
-                    <p className="text-xs text-slate-600 font-medium">
-                      {language === "ID" ? "Komputasi Presisi & Deteksi Deviasi" : "High-Speed Computing & Variance Detection"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-3 text-xs sm:text-sm text-slate-700">
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Memindai ribuan hasil lab serial pasien dalam hitungan milidetik secara konsisten."
-                        : "Scans thousands of serial patient laboratory results in milliseconds with zero fatigue."}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Menghitung deviasi delta-check otomatis terhadap baseline individual pasien terdahulu."
-                        : "Automatically calculates longitudinal delta deviations against individual patient baselines."}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Menyiapkan draf narasi interpretasi terstruktur untuk mempercepat review dokter."
-                        : "Drafts structured clinical interpretation notes to accelerate pathologist review time."}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Menyiarkan alarm nilai kritis (Panic Values) ke dokter jaga < 15 menit sesuai KARS."
-                        : "Dispatches critical panic value alerts to attending physicians in < 15 minutes per KARS."}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Batasan Mutlak */}
-              <div className="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-1.5 text-xs text-slate-600">
-                <span className="font-bold text-slate-500 uppercase tracking-wider text-[11px] block">
-                  {language === "ID" ? "Batasan Regulasi Mutlak" : "Strict Regulatory Limits"}
+          {/* Compliance & Governance Banner */}
+          <div className="rounded-[28px] bg-[#F1F4F8] p-7 sm:p-10 lg:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-7 space-y-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#0073FC] text-[11px] font-bold uppercase tracking-wider border border-blue-200/70">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <span>{language === "ID" ? "Standar Tata Kelola Medis" : "Medical Governance Standard"}</span>
                 </span>
-                <p className="text-slate-700 font-normal leading-relaxed">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
                   {language === "ID"
-                    ? "Nova AI tidak memiliki wewenang hukum untuk menegakkan diagnosis definitif mandiri atau meresepkan terapi obat."
-                    : "Nova AI possesses zero legal authority to issue autonomous definitive diagnoses or prescribe therapeutic drugs."}
+                    ? "100% Otoritas Diagnosis Tetap di Tangan Dokter Sp.PK"
+                    : "100% Diagnostic Authority Remains with Certified Physicians"}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-2xl">
+                  {language === "ID"
+                    ? "Sistem komputasi hanya menyajikan kalkulasi delta-check, draf interpretasi, dan peringatan nilai kritis. Penetapan diagnosis definitif, peresepan terapi, serta tanda tangan digital resmi (BSrE) mutlak dilakukan oleh dokter yang memiliki STR dan SIP aktif."
+                    : "Computational agents only provide delta-check calculations, draft narratives, and critical panic alerts. Definitive diagnosis, treatment orders, and BSrE digital sign-off remain exclusively under licensed physicians."}
                 </p>
               </div>
-            </div>
 
-            {/* Box B: Dokter Spesialis Patologi Klinik & DPJP */}
-            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs flex flex-col justify-between space-y-6">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center shrink-0">
-                    <Stethoscope className="h-6 w-6" />
+              {/* 5 Compliance Badges */}
+              <div className="lg:col-span-5 flex flex-wrap gap-3 lg:justify-end">
+                {[
+                  { code: "UU 17/2023", label: language === "ID" ? "Akuntabilitas Medis" : "Medical Law" },
+                  { code: "PMK 24/2022", label: "RME & SATUSEHAT" },
+                  { code: "KARS SKP 2.2", label: language === "ID" ? "Nilai Kritis < 15m" : "Panic SLA < 15m" },
+                  { code: "ISO 15189", label: language === "ID" ? "Mutu Lab Medik" : "Lab Quality" },
+                  { code: "BSrE E-Sign", label: language === "ID" ? "Tanda Tangan Sah" : "Digital Sign-Off" },
+                ].map((badge) => (
+                  <div
+                    key={badge.code}
+                    className="rounded-2xl bg-white border border-slate-200/80 px-4 py-3 shadow-2xs flex items-center gap-2.5"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0" />
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block leading-tight">{badge.code}</span>
+                      <span className="text-[10px] font-medium text-slate-500 block">{badge.label}</span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-display text-xl font-bold text-slate-900">
-                      {language === "ID" ? "Dokter Sp.PK & DPJP (Otoritas Medis)" : "Pathologist & Attending Physician"}
-                    </h3>
-                    <p className="text-xs text-slate-600 font-medium">
-                      {language === "ID" ? "Pertimbangan Holistik & Akuntabilitas Hukum" : "Holistic Clinical Judgment & Legal Responsibility"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-3 text-xs sm:text-sm text-slate-700">
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Mengkorelasikan temuan laboratorium dengan anamnesis dan kondisi fisik riil pasien."
-                        : "Correlates laboratory telemetry against patient clinical history and direct physical exam."}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Menilai, mengedit, atau menolak draf narasi interpretasi yang diajukan sistem."
-                        : "Evaluates, modifies, or overrides automated clinical narrative recommendations."}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Menetapkan diagnosis medis definitif dan merumuskan rencana terapi penanganan."
-                        : "Establishes definitive medical diagnoses and prescribes therapeutic treatment plans."}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>
-                      {language === "ID"
-                        ? "Mengesahkan lembar hasil laboratorium dengan tanda tangan digital resmi (BSrE)."
-                        : "Authorizes finalized laboratory reports with accredited cryptographic digital signatures."}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Landasan Hukum */}
-              <div className="rounded-2xl bg-[#FAFBFD] border border-slate-200/80 p-4 space-y-1.5 text-xs text-slate-600">
-                <span className="font-bold text-slate-500 uppercase tracking-wider text-[11px] block">
-                  {language === "ID" ? "Landasan Hukum Republik Indonesia" : "Indonesian Statutory Foundation"}
-                </span>
-                <p className="text-slate-700 font-normal leading-relaxed">
-                  {language === "ID"
-                    ? "Berdasarkan UU Kesehatan No. 17/2023, seluruh pertimbangan klinis dan tanggung jawab hukum medis melekat pada dokter yang memiliki STR dan SIP aktif."
-                    : "Under Healthcare Law No. 17/2023, all medical decisions and legal responsibilities rest exclusively with certified and registered physicians."}
-                </p>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* 3 Regulatory Standards Trust Strip */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="p-5 rounded-2xl bg-[#FAFBFD] border border-slate-200/80 flex items-center gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <span className="font-bold text-xs sm:text-sm text-slate-900 block">UU Kesehatan No. 17/2023</span>
-                <span className="text-[11px] text-slate-500 font-normal">
-                  {language === "ID" ? "Kepastian hukum tanggung jawab medis" : "Legal medical accountability"}
-                </span>
-              </div>
+          {/* 4-Card Safeguards Grid: Order to Report */}
+          <div className="space-y-6 pt-2">
+            <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+              {language === "ID"
+                ? "Lapisan Pengaman Klinis dari Order hingga Rilis Laporan"
+                : "Protect Sensitive Clinical Data From Order to Report"}
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {[
+                {
+                  icon: Stethoscope,
+                  title: language === "ID" ? "Otoritas Mutlak Dokter" : "Physician Sovereignty",
+                  desc:
+                    language === "ID"
+                      ? "AI hanya menyusun draf pendukung; dokter Sp.PK berwenang penuh menilai, menyunting, atau menolak rekomendasi."
+                      : "AI drafts only assist; certified pathologists retain full authority to review, edit, or override recommendations.",
+                },
+                {
+                  icon: Lock,
+                  title: language === "ID" ? "Kontrol Akses & RBAC" : "Role-Based Access Control",
+                  desc:
+                    language === "ID"
+                      ? "Pembatasan hak akses berbasis peran serta pengesahan tanda tangan elektronik tersertifikasi BSrE."
+                      : "Granular role-based permissions combined with accredited cryptographic digital signatures for every release.",
+                },
+                {
+                  icon: Server,
+                  title: language === "ID" ? "Enkripsi End-to-End" : "End-to-End Encryption",
+                  desc:
+                    language === "ID"
+                      ? "Mengamankan data klinis pasien saat transmisi (TLS 1.3) maupun penyimpanan basis data rumah sakit."
+                      : "Encrypts sensitive laboratory telemetry and patient demographics both in transit and at rest.",
+                },
+                {
+                  icon: FileCheck2,
+                  title: language === "ID" ? "Jejak Audit Digital" : "Immutable Audit Trails",
+                  desc:
+                    language === "ID"
+                      ? "Merekam setiap perubahan draf, riwayat delta, dan waktu pelaporan nilai kritis untuk inspeksi akreditasi."
+                      : "Maintains detailed audit trails across every draft edit and critical alert to support regulatory inspections.",
+                },
+              ].map((item) => {
+                const ItemIcon = item.icon;
+                return (
+                  <div
+                    key={item.title}
+                    className="rounded-[22px] bg-[#F7F9FC] p-6 sm:p-7 space-y-4 transition-colors hover:bg-[#F1F5FA]"
+                  >
+                    <div className="h-11 w-11 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center">
+                      <ItemIcon className="h-5 w-5 stroke-[1.75]" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="font-display text-sm sm:text-base font-bold text-slate-900">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#FAFBFD] border border-slate-200/80 flex items-center gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                <Lock className="h-5 w-5" />
-              </div>
-              <div>
-                <span className="font-bold text-xs sm:text-sm text-slate-900 block">Permenkes No. 24/2022</span>
-                <span className="text-[11px] text-slate-500 font-normal">
-                  {language === "ID" ? "Interoperabilitas RME & SATUSEHAT" : "EMR & SATUSEHAT interoperability"}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-[#FAFBFD] border border-slate-200/80 flex items-center gap-3.5">
-              <div className="h-10 w-10 rounded-xl bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                <Activity className="h-5 w-5" />
-              </div>
-              <div>
-                <span className="font-bold text-xs sm:text-sm text-slate-900 block">KARS SKP 2.2 & ISO 15189</span>
-                <span className="text-[11px] text-slate-500 font-normal">
-                  {language === "ID" ? "Prosedur baku pelaporan nilai kritis" : "Accredited panic value triage"}
-                </span>
-              </div>
-            </div>
+            <p className="text-xs sm:text-sm font-medium text-[#0073FC]">
+              {language === "ID"
+                ? "Bersama-sama, seluruh lapisan pengaman ini memastikan data laboratorium tetap aman, terverifikasi dokter, dan siap diaudit setiap saat."
+                : "Together, these safeguards keep laboratory data secure, physician-verified, and audit-ready throughout the testing process."}
+            </p>
           </div>
         </div>
       </section>
