@@ -578,7 +578,7 @@ export default function PlatformPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="analytics"
-        className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
+        className="relative scroll-mt-28 w-full bg-[#FAFBFD] border-t border-slate-200/60 py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
         <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
@@ -799,7 +799,7 @@ export default function PlatformPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#FAFBFD] border-t border-slate-200/60" topColor="#FAFBFD" />
+      <CTABanner bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
     </div>
   );
 }
