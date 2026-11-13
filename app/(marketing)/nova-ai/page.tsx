@@ -28,6 +28,7 @@ import {
   ScanText,
   GitBranch,
   BarChart3,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -69,6 +70,7 @@ interface ClinicalProfile {
 
 export default function NovaAIPage() {
   const { language } = useLanguage();
+  const [virtualStaining, setVirtualStaining] = useState<boolean>(true);
   const [selectedProfileIdx, setSelectedProfileIdx] = useState<number>(0);
   const [authorizedProfiles, setAuthorizedProfiles] = useState<Record<string, boolean>>({});
   const [alertDispatched, setAlertDispatched] = useState<Record<string, boolean>>({});
@@ -609,280 +611,299 @@ export default function NovaAIPage() {
             </p>
           </div>
 
-          {/* 2x2 Asymmetrical Bento Showcase (Matches Modules Page Layout) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
-            {/* BENTO 1 (Wide Left - 7 cols): Ekstraksi Requisisi OCR + LLM */}
-            <div className="lg:col-span-7 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
-              <div className="mb-6">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Ekstraksi Requisisi OCR + LLM" : "AI-Powered Requisition Extraction"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Konversi formulir permintaan fisik ke order digital dengan deteksi mismatch otomatis."
-                    : "OCR + LLM extraction of paper requisitions with automated specimen mismatch detection."}
-                </p>
-              </div>
-
-              {/* Visual: Workflow Node Flow */}
-              <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
-                {/* Left Core Hub Node */}
-                <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  <ScanText className="h-7 w-7 stroke-[2]" />
+          {/* 2x2 Symmetrical AI Feature Cards (Matches LigoLab AI Agents Reference) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* CARD 1 (Top Left): AI-Powered Virtual Staining */}
+            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-200/75 p-7 sm:p-9 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)] flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <Sparkles className="h-5 w-5 text-[#0073FC] shrink-0" />
+                  <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900">
+                    {language === "ID" ? "Pewarnaan Virtual Berbasis AI" : "AI-Powered Virtual Staining"}
+                  </h3>
                 </div>
 
-                {/* Connector Lines (Desktop) */}
-                <svg
-                  className="hidden sm:block w-14 h-[212px] shrink-0 text-slate-300"
-                  viewBox="0 0 56 212"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d="M0 106 C24 106, 24 27, 56 27" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 106 L56 106" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 106 C24 106, 24 188, 56 188" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-
-                {/* Right Stacked Branch Cards */}
-                <div className="w-full sm:w-[320px] space-y-3">
-                  {/* Top Branch */}
-                  <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                      <FileText className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-900 truncate">
-                        {language === "ID" ? "Formulir Pengantar RS #409" : "Paper Requisition #409"}
-                      </p>
-                      <p className="text-[11px] text-slate-500 truncate">
-                        {language === "ID" ? "Tulisan Tangan & PDF Terbaca" : "Handwriting & PDF Parsed"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Center Branch */}
-                  <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-slate-800">
-                        {language === "ID" ? "Identitas & DPJP" : "Patient & DPJP"}
-                      </span>
-                      <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        Cocok ✓
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
-                      <span className="font-semibold text-slate-800">
-                        {language === "ID" ? "Panel Pemeriksaan" : "Test Panels"}
-                      </span>
-                      <span className="text-[11px] text-slate-500 font-medium">CBC + Cr + HbA1c</span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
-                      <span className="font-semibold text-slate-800">
-                        {language === "ID" ? "Validasi Jenis Tabung" : "Specimen Tube Check"}
-                      </span>
-                      <span className="text-[10px] font-semibold text-[#0073FC]">EDTA + SST</span>
-                    </div>
-                  </div>
-
-                  {/* Bottom Branch */}
-                  <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                      <BellRing className="h-4 w-4" />
-                    </div>
-                    <p className="text-xs font-bold text-slate-900 truncate">
-                      {language === "ID" ? "Flag Mismatch Pra-Analitik" : "Pre-Analytical Mismatch Flag"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* BENTO 2 (Narrow Right - 5 cols): Hands-Free Voice & Delta Engine */}
-            <div className="lg:col-span-5 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
-              <div className="mb-5">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Entri Hasil Bebas Genggam (Voice AI)" : "Hands-Free Voice Result Entry"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Dikte temuan klinis speech-to-text dengan pengisian template otomatis."
-                    : "AI-powered speech-to-text dictation with context-aware template autofill."}
-                </p>
-              </div>
-
-              {/* Visual: Voice Waveform + Auto-filled Fields (LigoLab Reference) */}
-              <div className="mt-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm p-4 sm:p-5 space-y-4">
-                {/* Mic + Waveform Pill */}
-                <div className="flex items-center gap-3 rounded-xl bg-[#F4F8FF] border border-blue-100/80 px-3.5 py-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#0073FC] text-white flex items-center justify-center shrink-0 shadow-[0_4px_12px_-2px_rgba(0,115,252,0.45)]">
-                    <Mic className="h-4 w-4" />
-                  </div>
-                  <div className="flex items-center gap-1 flex-1 justify-center h-6">
-                    {[12, 20, 10, 24, 16, 22, 14, 24, 18, 12, 20, 14, 22, 16, 10].map((h, i) => (
-                      <span
-                        key={i}
-                        className="w-1 rounded-full bg-[#0073FC]/80 group-hover:bg-[#0073FC] transition-colors"
-                        style={{ height: `${h}px` }}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-[#0073FC] shrink-0">LIVE</span>
-                </div>
-
-                {/* Auto-filled Diagnosis & Specimen */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="rounded-xl bg-[#FAFBFD] border border-slate-200/80 p-2.5">
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
-                      {language === "ID" ? "KESAN KLINIS" : "IMPRESSION"}
-                    </span>
-                    <span className="text-[11px] font-semibold text-slate-800 block mt-0.5 truncate">
-                      Anemia Normositik
-                    </span>
-                  </div>
-                  <div className="rounded-xl bg-[#FAFBFD] border border-slate-200/80 p-2.5">
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
-                      {language === "ID" ? "SPESIMEN" : "SPECIMEN"}
-                    </span>
-                    <span className="text-[11px] font-semibold text-slate-800 block mt-0.5 truncate">
-                      Darah EDTA • Sentral
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* BENTO 3 (Narrow Left - 5 cols): Pre-Signout Review & ICD-10 Consistency */}
-            <div className="lg:col-span-5 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
-              <div className="mb-6">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Review Pra-Otorisasi & Terminologi" : "Pre-Signout Review & Reporting"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Mendeteksi inkonsistensi istilah medis & pembaruan kode ICD-10/LOINC."
-                    : "Flags terminology inconsistencies & auto-updates ICD-10/LOINC codes."}
-                </p>
-              </div>
-
-              {/* Visual: Pre-Signout Terminology Auto-Correction Widget (LigoLab Reference) */}
-              <div className="mt-auto rounded-2xl bg-white border border-slate-200/90 shadow-sm p-4 sm:p-5 space-y-3">
-                <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-[#FAFBFD] px-3.5 py-2.5">
-                  <span className="text-xs font-mono font-medium text-slate-700">Anemia normosi</span>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                    {language === "ID" ? "Periksa" : "Check"}
-                  </span>
-                </div>
-
-                {/* Blue Sparkle Suggestion Pill */}
-                <div className="rounded-xl bg-[#0073FC] text-white px-4 py-3 shadow-[0_10px_24px_-8px_rgba(0,115,252,0.5)] flex items-center gap-2.5 group-hover:-translate-y-0.5 transition-transform duration-200">
-                  <Sparkles className="h-4 w-4 text-blue-100 shrink-0" />
-                  <p className="text-[11px] sm:text-xs font-medium leading-snug">
-                    {language === "ID"
-                      ? "Maksud Anda 'Anemia Normositik'? Kode ICD-10 D64.9 diperbarui."
-                      : "Did you mean 'Normocytic Anemia'? ICD-10 D64.9 updated."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* BENTO 4 (Wide Right - 7 cols): Smart Case Routing & Beban Kerja Sp.PK */}
-            <div className="lg:col-span-7 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
-              <div className="mb-6">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Smart Case Routing & Antrean Sp.PK" : "Smart Case Routing & Workload Balance"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Distribusi kasus kompleks berdasarkan sub-spesialisasi dan beban antrean dokter."
-                    : "Automated case distribution balanced by subspecialty and real-time pathologist queues."}
-                </p>
-              </div>
-
-              {/* Visual: Connected Routing Flow */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
-                {/* Left 2 Input Signal Cards */}
-                <div className="w-full sm:w-[42%] space-y-3">
-                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
-                        <TrendingUp className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-xs font-bold text-slate-900">
-                        {language === "ID" ? "Skor Kompleksitas" : "Case Complexity"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500">
-                      {language === "ID" ? "Delta Akut • Nilai Kritis" : "Acute Delta • Critical Flag"}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                        <Clock className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-xs font-bold text-slate-900">
-                        {language === "ID" ? "Kapasitas Antrean" : "Queue Capacity"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500">
-                      {language === "ID" ? "Target TAT IGD < 30m" : "ER TAT Target < 30m"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Connector SVG */}
-                <svg
-                  className="hidden sm:block w-12 h-32 shrink-0 text-slate-300"
-                  viewBox="0 0 48 128"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d="M0 30 C22 30, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 98 C22 98, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-
-                {/* Right Unified Pathologist Queue Card */}
-                <div className="w-full sm:w-[46%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm space-y-2.5">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    {language === "ID" ? "Distribusi Dokter Sp.PK" : "Pathologist Routing"}
-                  </p>
-
+                <ul className="space-y-2 text-xs sm:text-[13.5px] text-slate-600 mb-7">
                   {[
-                    {
-                      icon: Stethoscope,
-                      title: "dr. Hendra, Sp.PK",
-                      tag: "32% Load",
-                    },
-                    {
-                      icon: Stethoscope,
-                      title: "dr. Ratna, Sp.PK",
-                      tag: "28% Load",
-                    },
-                    {
-                      icon: BadgeCheck,
-                      title: language === "ID" ? "Prioritas Kritis IGD" : "ER Critical Fast-Track",
-                      tag: "< 15m",
-                    },
-                  ].map((item) => {
-                    const ItemIcon = item.icon;
-                    return (
-                      <div
-                        key={item.title}
-                        className="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0 first:pt-0"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="w-6 h-6 rounded-full bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                            <ItemIcon className="h-3.5 w-3.5" />
-                          </span>
-                          <span className="text-xs font-semibold text-slate-800 truncate">{item.title}</span>
+                    language === "ID" ? "Menjaga integritas jaringan biopsi berharga" : "Preserves precious tissue",
+                    language === "ID" ? "Mempercepat waktu rilis hasil (TAT)" : "Improves turnaround time (TAT)",
+                    language === "ID" ? "Memungkinkan triage kasus darurat lebih cepat" : "Enables rapid case triage",
+                    language === "ID" ? "Mengurangi variabilitas preparasi slide" : "Reduces slide preparation variability",
+                    language === "ID" ? "Menurunkan beban kerja teknis lab basah" : "Lowers manual labor demands",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Monitor Frame Visual */}
+              <div className="mt-auto flex flex-col items-center">
+                <div className="relative w-full max-w-[440px] rounded-2xl border-[3px] border-slate-200 bg-white shadow-sm overflow-hidden">
+                  {/* Top Toggle Bar inside Monitor */}
+                  <div className="flex items-center justify-center gap-3 py-3.5 px-4 border-b border-slate-100 bg-white">
+                    <span className={cn("text-xs font-medium", !virtualStaining ? "text-slate-900 font-bold" : "text-slate-400")}>
+                      H&amp;E
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setVirtualStaining((prev) => !prev)}
+                      aria-label="Toggle Virtual Staining"
+                      className={cn(
+                        "relative inline-flex h-7 w-14 items-center rounded-full transition-colors cursor-pointer",
+                        virtualStaining ? "bg-[#0073FC]" : "bg-slate-300"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "inline-block h-5 w-5 transform rounded-full bg-white shadow-xs transition-transform",
+                          virtualStaining ? "translate-x-8" : "translate-x-1"
+                        )}
+                      />
+                    </button>
+                    <span className={cn("text-xs font-bold", virtualStaining ? "text-[#0073FC]" : "text-slate-400")}>
+                      Virtual Staining
+                    </span>
+                  </div>
+
+                  {/* Histology Slide Canvas */}
+                  <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-[#FCE7F3]">
+                    <svg className="w-full h-full" viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
+                      <rect width="400" height="160" fill={virtualStaining ? "#F5D0FE" : "#FBCFE8"} />
+                      <path
+                        d="M0 90 C60 40, 120 130, 190 70 C250 20, 320 110, 400 60 L400 160 L0 160 Z"
+                        fill={virtualStaining ? "#C084FC" : "#F472B6"}
+                        opacity="0.45"
+                      />
+                      <path
+                        d="M0 110 C80 75, 160 140, 240 95 C300 60, 350 120, 400 85 L400 160 L0 160 Z"
+                        fill={virtualStaining ? "#7E22CE" : "#BE185D"}
+                        opacity="0.32"
+                      />
+                      {[
+                        [45, 55], [92, 82], [138, 48], [185, 92], [230, 58], [280, 78], [332, 46], [368, 95],
+                        [68, 118], [120, 108], [164, 125], [218, 112], [265, 128], [315, 105], [355, 122],
+                      ].map(([cx, cy], idx) => (
+                        <circle
+                          key={idx}
+                          cx={cx}
+                          cy={cy}
+                          r={(idx % 3) + 2.5}
+                          fill={virtualStaining ? "#581C87" : "#831843"}
+                          opacity="0.55"
+                        />
+                      ))}
+                    </svg>
+
+                    {/* Mini Slide Thumbnail (Left) */}
+                    <div className="absolute left-3 top-3 w-12 h-14 rounded-lg bg-white/95 border border-slate-200 shadow-xs p-1 flex flex-col justify-between">
+                      <div className="h-8 rounded-sm bg-pink-200/80" />
+                      <div className="h-1.5 w-6 bg-slate-300 rounded-full mx-auto" />
+                    </div>
+
+                    {/* Floating Blue Pill */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0073FC] text-white text-[11px] font-semibold shadow-[0_6px_18px_-4px_rgba(0,115,252,0.55)] whitespace-nowrap">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      <span>{language === "ID" ? "Tanpa proses lab basah" : "Without wet lab work"}</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Monitor Stand */}
+                <div className="w-16 h-6 bg-gradient-to-b from-slate-200 to-slate-300" />
+                <div className="w-28 h-1.5 rounded-full bg-slate-200" />
+              </div>
+            </div>
+
+            {/* CARD 2 (Top Right): Dynamic Case & Resource Optimization */}
+            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-200/75 p-7 sm:p-9 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)] flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <GitBranch className="h-5 w-5 text-[#0073FC] shrink-0" />
+                  <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900">
+                    {language === "ID" ? "Optimasi Kasus & Beban Kerja Dinamis" : "Dynamic Case & Resource Optimization"}
+                  </h3>
+                </div>
+
+                <ul className="space-y-2 text-xs sm:text-[13.5px] text-slate-600 mb-7">
+                  {[
+                    language === "ID" ? "Prioritas kasus berdasarkan TAT, urgensi, & kompleksitas" : "Prioritizes cases based on TAT, payer type, and complexity",
+                    language === "ID" ? "Menyeimbangkan beban kerja antar dokter Sp.PK" : "Balances workload across pathologists",
+                    language === "ID" ? "Memprediksi bottleneck harian dan mingguan" : "Predicts daily and weekly bottlenecks",
+                    language === "ID" ? "Peringatan proaktif saat mendekati ambang batas SLA/TAT" : "Alerts teams as cases approach SLA/TAT thresholds",
+                    language === "ID" ? "Rekomendasi penyesuaian staf secara proaktif" : "Suggests staffing adjustments proactively",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Monitor Frame Visual */}
+              <div className="mt-auto flex flex-col items-center">
+                <div className="w-full max-w-[440px] rounded-2xl border-[3px] border-slate-200 bg-[#F8FAFD] p-3.5 sm:p-4 shadow-sm">
+                  <div className="grid grid-cols-11 items-center gap-2">
+                    {/* Left 3 Cases */}
+                    <div className="col-span-4 space-y-2">
+                      <div className="rounded-lg bg-[#0073FC] text-white p-2 shadow-xs">
+                        <p className="text-[9px] font-bold">CASE #9435</p>
+                        <p className="text-[8px] text-blue-100">CITO • IGD</p>
+                        <div className="mt-1.5 h-1 w-full rounded-full bg-white/30">
+                          <div className="h-1 w-3/4 rounded-full bg-white" />
                         </div>
-                        <span className="text-[10px] font-semibold text-[#0073FC] bg-[#EBF3FE] px-2 py-0.5 rounded-full shrink-0">
-                          {item.tag}
+                      </div>
+                      <div className="rounded-lg bg-white border border-slate-200 p-2">
+                        <p className="text-[9px] font-bold text-slate-700">CASE #7889</p>
+                        <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
+                          <div className="h-1 w-1/2 rounded-full bg-[#0073FC]" />
+                        </div>
+                      </div>
+                      <div className="rounded-lg bg-white border border-slate-200 p-2">
+                        <p className="text-[9px] font-bold text-slate-700">CASE #9102</p>
+                        <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
+                          <div className="h-1 w-2/3 rounded-full bg-[#0073FC]" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Center Smart Distribution Hub */}
+                    <div className="col-span-3 flex flex-col items-center justify-center">
+                      <div className="rounded-xl bg-white border border-blue-200/80 px-2 py-3 text-center shadow-xs">
+                        <Cpu className="h-4 w-4 text-[#0073FC] mx-auto mb-1" />
+                        <span className="text-[8px] font-bold text-slate-600 leading-tight block uppercase">
+                          Smart Routing
                         </span>
                       </div>
-                    );
-                  })}
+                    </div>
+
+                    {/* Right 3 Pathologists */}
+                    <div className="col-span-4 space-y-2">
+                      {[
+                        { name: "dr. Hendra", load: "32%", w: "w-1/3" },
+                        { name: "dr. Ratna", load: "28%", w: "w-1/4" },
+                        { name: "dr. Budi", load: "45%", w: "w-1/2" },
+                      ].map((doc) => (
+                        <div key={doc.name} className="rounded-lg bg-white border border-slate-200 p-2">
+                          <div className="flex items-center justify-between text-[8px] font-bold text-slate-800">
+                            <span>{doc.name}</span>
+                            <span className="text-[#0073FC]">{doc.load}</span>
+                          </div>
+                          <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
+                            <div className={`h-1 ${doc.w} rounded-full bg-[#0073FC]`} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {/* Monitor Stand */}
+                <div className="w-16 h-6 bg-gradient-to-b from-slate-200 to-slate-300" />
+                <div className="w-28 h-1.5 rounded-full bg-slate-200" />
+              </div>
+            </div>
+
+            {/* CARD 3 (Bottom Left): Hands-Free Result Entry */}
+            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-200/75 p-7 sm:p-9 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)] flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <Mic className="h-5 w-5 text-[#0073FC] shrink-0" />
+                  <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900">
+                    {language === "ID" ? "Entri Hasil Bebas Genggam" : "Hands-Free Result Entry"}
+                  </h3>
+                </div>
+
+                <ul className="space-y-2 text-xs sm:text-[13.5px] text-slate-600 mb-7">
+                  {[
+                    language === "ID" ? "Dikte klinis speech-to-text bertenaga AI" : "AI-powered speech-to-text",
+                    language === "ID" ? "Navigasi sistem berbasis perintah suara (speech-to-operate)" : "Voice-driven system navigation (speech-to-operate)",
+                    language === "ID" ? "Pengisian template laporan otomatis sesuai konteks" : "Context-aware template autofill",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Voice Waveform + Autofill Box */}
+              <div className="mt-auto rounded-2xl bg-[#F4F8FC] p-5 sm:p-6 space-y-4">
+                <div className="flex items-center justify-center">
+                  <div className="inline-flex items-center gap-3 rounded-full bg-[#E8F1FD] pl-2 pr-5 py-2 border border-blue-200/60">
+                    <div className="w-9 h-9 rounded-full bg-[#0073FC] text-white flex items-center justify-center shadow-[0_4px_12px_-2px_rgba(0,115,252,0.45)]">
+                      <Mic className="h-4 w-4" />
+                    </div>
+                    <div className="flex items-center gap-1 h-7">
+                      {[10, 18, 12, 26, 16, 22, 12, 26, 18, 10, 22, 14, 24, 16, 10].map((h, i) => (
+                        <span key={i} className="w-1 rounded-full bg-[#0073FC]" style={{ height: `${h}px` }} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                      DIAGNOSIS:
+                    </span>
+                    <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 text-xs font-medium text-slate-800 shadow-2xs">
+                      {language === "ID" ? "Anemia Normositik (D64.9)" : "Malignant Melanoma (T4b)"}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                      {language === "ID" ? "SPESIMEN:" : "SPECIMEN:"}
+                    </span>
+                    <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 text-xs font-medium text-slate-800 shadow-2xs">
+                      {language === "ID" ? "Darah EDTA • Lab Sentral" : "Skin, Left Forearm"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 4 (Bottom Right): Pre-Signout Review & Reporting Support */}
+            <div className="rounded-[24px] sm:rounded-[28px] bg-white border border-slate-200/75 p-7 sm:p-9 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)] flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <Stethoscope className="h-5 w-5 text-[#0073FC] shrink-0" />
+                  <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900">
+                    {language === "ID" ? "Review Pra-Otorisasi & Pelaporan" : "Pre-Signout Review & Reporting Support"}
+                  </h3>
+                </div>
+
+                <ul className="space-y-2 text-xs sm:text-[13.5px] text-slate-600 mb-7">
+                  {[
+                    language === "ID" ? "Meningkatkan kejelasan dan keringkasan laporan medis" : "Enhances clarity and conciseness of reports",
+                    language === "ID" ? "Menjaga konsistensi terminologi klinis terstandar" : "Promotes consistency in terminology",
+                    language === "ID" ? "Menyarankan pemeriksaan lanjutan & diagnosis banding" : "Suggests IHCs and differential diagnoses",
+                    language === "ID" ? "Terintegrasi dengan basis pengetahuan klinis terverifikasi" : "Integrates clinical knowledge support tools",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Pre-Signout Input + Tooltip Widget */}
+              <div className="mt-auto rounded-2xl bg-[#F4F8FC] p-5 sm:p-6 flex flex-col justify-center">
+                <div className="rounded-xl bg-white border border-slate-200/90 px-4 py-3 flex items-center justify-between shadow-2xs">
+                  <span className="text-sm font-medium text-slate-700">Carcino</span>
+                  <AlertTriangle className="h-4 w-4 text-rose-500 shrink-0" />
+                </div>
+                <div className="relative mt-2.5 rounded-xl bg-[#0073FC] text-white px-4 py-3 shadow-[0_12px_28px_-8px_rgba(0,115,252,0.55)] flex items-center gap-2.5">
+                  <span className="absolute -top-1.5 left-6 w-3 h-3 bg-[#0073FC] rotate-45" />
+                  <Sparkles className="h-4 w-4 text-blue-100 shrink-0" />
+                  <span className="text-xs sm:text-[13px] font-medium">
+                    {language === "ID"
+                      ? "Maksud Anda 'Carcinoma'? Kode ICD-10 diperbarui."
+                      : "Did you mean 'Carcinoma'? ICD-10 Code updated."}
+                  </span>
                 </div>
               </div>
             </div>
