@@ -581,9 +581,9 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* Ambient Gradient & Texture Container with Smooth Edge Masking
-            Abstract dual-color blend of Diagnova Blue (#345DAB) and Nova Blue (#56ADE2)
-            Feathered at top/bottom boundaries to ensure seamless transition without cutoffs */}
+        {/* Ambient Modern SaaS Glow & Texture Container
+            Whisper-soft, ethereal aura inspired by modern design leaders (Linear, Stripe)
+            Acting as a subtle visual enhancement ("pemanis") without overpowering content */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none overflow-hidden"
@@ -594,41 +594,41 @@ export default function PlatformPage() {
               "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
           }}
         >
-          {/* Abstract Shape 1: Top-Left to Center-Left Sweeping Flow - Diagnova into Nova */}
+          {/* Top-Left Ambient Aurora - Diagnova Blue into Nova Cyan */}
           <div
-            className="absolute -top-8 sm:-top-12 lg:-top-16 -left-16 sm:-left-24 lg:-left-28 w-[560px] sm:w-[720px] lg:w-[860px] h-[340px] sm:h-[420px] lg:h-[480px] rounded-[100%] rotate-[-15deg]"
+            className="absolute -top-12 sm:-top-16 lg:-top-20 -left-16 sm:-left-24 lg:-left-28 w-[580px] sm:w-[720px] lg:w-[860px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[-12deg]"
             style={{
               background:
-                "linear-gradient(135deg, rgba(52, 93, 171, 0.48) 0%, rgba(42, 130, 184, 0.38) 45%, rgba(86, 173, 226, 0.46) 80%, rgba(151, 207, 238, 0.20) 100%)",
-              filter: "blur(75px)",
+                "linear-gradient(135deg, rgba(52, 93, 171, 0.22) 0%, rgba(42, 130, 184, 0.18) 40%, rgba(86, 173, 226, 0.26) 80%, rgba(202, 226, 241, 0.12) 100%)",
+              filter: "blur(120px)",
             }}
           />
 
-          {/* Abstract Shape 2: Bottom-Right Angled Wave - Nova Blue into Deep Diagnova */}
+          {/* Bottom-Right Ambient Aurora - Nova Cyan into Diagnova Deep Blue */}
           <div
-            className="absolute -bottom-12 sm:-bottom-16 lg:-bottom-20 -right-20 sm:-right-28 lg:-right-36 w-[580px] sm:w-[740px] lg:w-[880px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[25deg]"
+            className="absolute -bottom-16 sm:-bottom-20 lg:-bottom-24 -right-16 sm:-right-24 lg:-right-32 w-[580px] sm:w-[740px] lg:w-[880px] h-[380px] sm:h-[460px] lg:h-[520px] rounded-[100%] rotate-[20deg]"
             style={{
               background:
-                "linear-gradient(225deg, rgba(86, 173, 226, 0.48) 0%, rgba(52, 93, 171, 0.42) 60%, rgba(29, 63, 130, 0.25) 100%)",
-              filter: "blur(80px)",
+                "linear-gradient(225deg, rgba(86, 173, 226, 0.26) 0%, rgba(52, 93, 171, 0.20) 55%, rgba(29, 63, 130, 0.10) 100%)",
+              filter: "blur(130px)",
             }}
           />
 
-          {/* Abstract Shape 3: Mid-Upper-Right Asymmetrical Accent Glow */}
+          {/* Mid-Right Accent Glow - Ultra-Soft Diffuse Backlight */}
           <div
-            className="absolute top-[22%] right-[10%] sm:right-[16%] lg:right-[20%] w-[320px] sm:w-[420px] lg:w-[480px] h-[220px] sm:h-[280px] lg:h-[320px] rounded-full rotate-[-30deg]"
+            className="absolute top-[28%] right-[8%] sm:right-[14%] lg:right-[18%] w-[320px] sm:w-[400px] lg:w-[480px] h-[240px] sm:h-[300px] lg:h-[360px] rounded-full rotate-[-25deg]"
             style={{
               background:
-                "radial-gradient(circle at 40% 40%, rgba(86, 173, 226, 0.38) 0%, rgba(52, 93, 171, 0.25) 55%, transparent 75%)",
-              filter: "blur(60px)",
+                "radial-gradient(circle at 45% 45%, rgba(86, 173, 226, 0.18) 0%, rgba(52, 93, 171, 0.10) 50%, transparent 75%)",
+              filter: "blur(100px)",
             }}
           />
 
-          {/* Subtle Ambient Dot Grid Pattern */}
+          {/* Subtle Ambient Dot Grid Pattern - Modern Tactile Micro-Texture */}
           <div
-            className="absolute inset-0 opacity-35"
+            className="absolute inset-0 opacity-[0.18]"
             style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.25) 1.25px, transparent 1.25px)",
+              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.20) 1.25px, transparent 1.25px)",
               backgroundSize: "24px 24px",
             }}
           />

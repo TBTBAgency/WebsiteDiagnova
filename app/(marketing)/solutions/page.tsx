@@ -120,9 +120,9 @@ export default function SolutionsPage() {
         id="facility-solutions"
         className="relative scroll-mt-24 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
-        {/* Ambient Gradient & Texture Container with Smooth Edge Masking
-            Abstract dual-color blend of Diagnova Blue (#345DAB) and Nova Blue (#56ADE2)
-            Asymmetrical distribution (Top-Right wing + Mid-Left swell + Bottom-Center anchor) */}
+        {/* Ambient Modern SaaS Glow & Texture Container
+            Whisper-soft, ethereal aura inspired by modern design leaders (Linear, Stripe)
+            Distinct asymmetrical layout: Top-Right aurora + Mid-Left wave + Bottom-Center anchor */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none overflow-hidden"
@@ -133,41 +133,41 @@ export default function SolutionsPage() {
               "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
           }}
         >
-          {/* Abstract Shape 1: Top-Right Sweeping Wing - Nova into Diagnova Blue */}
+          {/* Top-Right Ambient Aurora - Nova Cyan into Diagnova Royal Blue */}
           <div
-            className="absolute -top-10 sm:-top-16 lg:-top-20 right-[2%] sm:-right-12 lg:-right-20 w-[580px] sm:w-[740px] lg:w-[880px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[20deg]"
+            className="absolute -top-12 sm:-top-16 lg:-top-20 right-[2%] sm:-right-10 lg:-right-16 w-[580px] sm:w-[740px] lg:w-[880px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[18deg]"
             style={{
               background:
-                "linear-gradient(155deg, rgba(86, 173, 226, 0.48) 0%, rgba(52, 93, 171, 0.42) 50%, rgba(29, 63, 130, 0.22) 100%)",
-              filter: "blur(80px)",
+                "linear-gradient(155deg, rgba(86, 173, 226, 0.26) 0%, rgba(52, 93, 171, 0.20) 50%, rgba(29, 63, 130, 0.08) 100%)",
+              filter: "blur(125px)",
             }}
           />
 
-          {/* Abstract Shape 2: Mid-Left to Lower-Left Asymmetrical Fluid Swell */}
+          {/* Mid-Left Asymmetrical Fluid Swell - Diagnova into Nova Cyan */}
           <div
-            className="absolute top-[42%] -left-16 sm:-left-24 lg:-left-32 w-[540px] sm:w-[680px] lg:w-[820px] h-[380px] sm:h-[460px] lg:h-[520px] rounded-[100%] rotate-[-28deg]"
+            className="absolute top-[38%] -left-16 sm:-left-24 lg:-left-32 w-[540px] sm:w-[680px] lg:w-[820px] h-[380px] sm:h-[460px] lg:h-[520px] rounded-[100%] rotate-[-24deg]"
             style={{
               background:
-                "linear-gradient(320deg, rgba(52, 93, 171, 0.45) 0%, rgba(42, 130, 184, 0.36) 45%, rgba(86, 173, 226, 0.46) 85%, rgba(151, 207, 238, 0.22) 100%)",
-              filter: "blur(80px)",
+                "linear-gradient(320deg, rgba(52, 93, 171, 0.22) 0%, rgba(42, 130, 184, 0.16) 45%, rgba(86, 173, 226, 0.24) 85%, rgba(202, 226, 241, 0.10) 100%)",
+              filter: "blur(130px)",
             }}
           />
 
-          {/* Abstract Shape 3: Bottom-Center-Right Luminous Anchor */}
+          {/* Bottom-Center-Right Luminous Anchor */}
           <div
-            className="absolute -bottom-8 sm:-bottom-12 right-[15%] sm:right-[22%] w-[440px] sm:w-[540px] lg:w-[620px] h-[260px] sm:h-[320px] lg:h-[380px] rounded-full rotate-[15deg]"
+            className="absolute -bottom-10 sm:-bottom-14 right-[12%] sm:right-[18%] w-[440px] sm:w-[540px] lg:w-[640px] h-[280px] sm:h-[340px] lg:h-[400px] rounded-full rotate-[12deg]"
             style={{
               background:
-                "radial-gradient(ellipse at 45% 45%, rgba(86, 173, 226, 0.42) 0%, rgba(52, 93, 171, 0.30) 50%, rgba(202, 226, 241, 0.10) 75%, transparent 85%)",
-              filter: "blur(65px)",
+                "radial-gradient(ellipse at 45% 45%, rgba(86, 173, 226, 0.20) 0%, rgba(52, 93, 171, 0.12) 50%, transparent 80%)",
+              filter: "blur(100px)",
             }}
           />
 
-          {/* Subtle Ambient Dot Grid Pattern */}
+          {/* Subtle Ambient Dot Grid Pattern - Modern Tactile Micro-Texture */}
           <div
-            className="absolute inset-0 opacity-30"
+            className="absolute inset-0 opacity-[0.18]"
             style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.25) 1.25px, transparent 1.25px)",
+              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.20) 1.25px, transparent 1.25px)",
               backgroundSize: "24px 24px",
             }}
           />
