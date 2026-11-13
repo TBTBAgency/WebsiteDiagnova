@@ -64,6 +64,16 @@ export function ScrollRevealProvider({
           targets.push(child);
         });
       });
+
+      // 3. Also apply consistent interactive shadow & spotlight to standalone bento cards
+      const standaloneCards = Array.from(
+        section.querySelectorAll(":scope > div > div.border[class*='rounded-'], :scope > div > div > div.border[class*='rounded-']")
+      ) as HTMLElement[];
+      standaloneCards.forEach((card) => {
+        if (!card.classList.contains("ll-card-interactive") && card.offsetHeight >= 100) {
+          card.classList.add("ll-card-interactive");
+        }
+      });
     });
 
     if (targets.length === 0) return;

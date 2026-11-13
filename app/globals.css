@@ -277,16 +277,48 @@ html.lenis body {
   will-change: auto;
 }
 
-/* ─── Interactive Card Hover & Cursor Spotlight ─── */
+/* ─── Interactive Card Elevation, Gradient Glow & Cursor Dot Matrix ─── */
 .ll-card-interactive {
   position: relative;
+  box-shadow:
+    0 2px 10px -3px rgba(15, 23, 42, 0.05),
+    0 1px 3px -1px rgba(15, 23, 42, 0.03);
   transition:
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.3s ease;
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.32s ease,
+    background-image 0.35s ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
+  /* Interactive subtle dot matrix revealed around the cursor */
+  .ll-card-interactive::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background-image: radial-gradient(
+      rgba(0, 115, 252, 0.22) 1px,
+      transparent 1px
+    );
+    background-size: 16px 16px;
+    -webkit-mask-image: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(0, 0, 0, 0.95) 0%,
+      transparent 75%
+    );
+    mask-image: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(0, 0, 0, 0.95) 0%,
+      transparent 75%
+    );
+    transition: opacity 0.35s ease;
+    z-index: 1;
+  }
+
+  /* Smooth multi-stop blue-cyan gradient spotlight */
   .ll-card-interactive::after {
     content: "";
     position: absolute;
@@ -295,22 +327,30 @@ html.lenis body {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.35s ease;
-    background: radial-gradient(
-      420px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(0, 115, 252, 0.06),
-      transparent 60%
-    );
+    background:
+      radial-gradient(
+        460px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(0, 115, 252, 0.09),
+        rgba(56, 189, 248, 0.045) 42%,
+        transparent 72%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(240, 247, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
     z-index: 1;
   }
 
   .ll-card-interactive:hover {
-    transform: translate3d(0, -4px, 0);
-    border-color: rgba(0, 115, 252, 0.32);
+    transform: translate3d(0, -5px, 0);
+    border-color: rgba(0, 115, 252, 0.38);
     box-shadow:
-      0 14px 34px -10px rgba(15, 23, 42, 0.08),
-      0 4px 14px -4px rgba(0, 115, 252, 0.08);
+      0 18px 40px -12px rgba(15, 23, 42, 0.1),
+      0 6px 18px -4px rgba(0, 115, 252, 0.12);
   }
 
+  .ll-card-interactive:hover::before,
   .ll-card-interactive:hover::after {
     opacity: 1;
   }
