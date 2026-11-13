@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
@@ -40,8 +40,6 @@ export function PageHero({
   metrics,
   className,
 }: PageHeroProps) {
-  const [activeMetric, setActiveMetric] = useState<number | null>(null);
-
   return (
     <section
       className={cn(
@@ -112,87 +110,30 @@ export function PageHero({
               </div>
             )}
 
-            {/* Exactly 4 Dynamic Interactive Hero Metric Cards */}
-            <div className="mt-10 sm:mt-12 lg:mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 w-full max-w-4xl">
-              {metrics.map((kpi, idx) => {
-                const isActive = activeMetric === idx;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onMouseEnter={() => setActiveMetric(idx)}
-                    onMouseLeave={() => setActiveMetric(null)}
-                    onClick={() => setActiveMetric(isActive ? null : idx)}
-                    className={cn(
-                      "group relative overflow-hidden rounded-[22px] sm:rounded-[26px] bg-white/95 backdrop-blur-xs border p-4 sm:p-5 text-left transition-all duration-300 ease-out flex flex-col justify-between min-h-[126px] sm:min-h-[140px] animate-ll-hero cursor-pointer",
-                      isActive
-                        ? "-translate-y-1.5 border-[#0073FC]/45 shadow-[0_16px_34px_-12px_rgba(0,115,252,0.18)]"
-                        : "border-slate-200/90 shadow-[0_2px_10px_-3px_rgba(15,23,42,0.05)] hover:-translate-y-1.5 hover:border-[#0073FC]/40 hover:shadow-[0_16px_34px_-12px_rgba(0,115,252,0.16)]"
-                    )}
-                    style={{ animationDelay: `${300 + idx * 70}ms` }}
-                  >
-                    {/* Animated Top Accent Sweep */}
-                    <span
-                      className={cn(
-                        "absolute top-0 left-0 h-[3px] bg-gradient-to-r from-[#0073FC] to-[#38BDF8] transition-all duration-300 ease-out",
-                        isActive ? "w-full" : "w-0 group-hover:w-full"
-                      )}
-                    />
-
-                    {/* Soft Ambient Hover Glow */}
-                    <span
-                      className={cn(
-                        "pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full bg-[#0073FC]/10 blur-2xl transition-opacity duration-300",
-                        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                      )}
-                    />
-
-                    <div className="relative z-10 w-full">
-                      {/* Top Index + Live Pulse Indicator */}
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-mono font-semibold tracking-wider text-slate-400 group-hover:text-[#0073FC] transition-colors">
-                          0{idx + 1}
-                        </span>
-                        <span
-                          className={cn(
-                            "h-1.5 w-1.5 rounded-full transition-all duration-300",
-                            isActive
-                              ? "bg-[#0073FC] scale-125"
-                              : "bg-blue-300/80 group-hover:bg-[#0073FC] group-hover:scale-125"
-                          )}
-                        />
-                      </div>
-
-                      <p
-                        className={cn(
-                          "font-display text-2xl sm:text-3xl font-bold tracking-tight transition-colors duration-200",
-                          isActive ? "text-[#0073FC]" : "text-slate-900 group-hover:text-[#0073FC]"
-                        )}
-                      >
-                        {kpi.value}
-                      </p>
-                      <p className="text-xs sm:text-sm font-semibold text-slate-800 mt-1 leading-snug">
-                        {kpi.label}
-                      </p>
-                    </div>
-
-                    <div className="relative z-10 w-full mt-2.5">
-                      <p className="text-[11px] sm:text-xs text-slate-500 leading-tight">
-                        {kpi.sub}
-                      </p>
-                      {/* Interactive Progress Spark */}
-                      <div className="mt-2.5 h-1 w-full rounded-full bg-slate-100 overflow-hidden">
-                        <div
-                          className={cn(
-                            "h-full rounded-full bg-gradient-to-r from-[#0073FC] to-[#38BDF8] transition-all duration-500 ease-out",
-                            isActive ? "w-full" : "w-1/2 group-hover:w-full"
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+            {/* Architectural Hairline-Divided Hero Metric Strip */}
+            <div
+              className="mt-10 sm:mt-12 lg:mt-14 w-full max-w-4xl rounded-2xl bg-white/95 backdrop-blur-xs border border-slate-200/85 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-2 lg:grid-cols-4 divide-y divide-slate-200/75 lg:divide-y-0 lg:divide-x animate-ll-hero"
+              style={{ animationDelay: "300ms" }}
+            >
+              {metrics.map((kpi, idx) => (
+                <div
+                  key={idx}
+                  className={cn(
+                    "group px-5 py-4 sm:px-6 sm:py-5 text-left transition-colors duration-200 hover:bg-[#F8FBFF]",
+                    idx % 2 === 1 && "border-l border-slate-200/75 lg:border-l-0"
+                  )}
+                >
+                  <p className="font-display text-2xl sm:text-[28px] font-bold tracking-tight text-slate-900 group-hover:text-[#0073FC] transition-colors duration-200 tabular-nums">
+                    {kpi.value}
+                  </p>
+                  <p className="text-xs sm:text-[13px] font-semibold text-slate-800 mt-1">
+                    {kpi.label}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                    {kpi.sub}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
