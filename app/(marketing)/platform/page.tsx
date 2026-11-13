@@ -147,7 +147,7 @@ export default function PlatformPage() {
             {/* Card 1: Pangkas TAT & Zero Rekeying */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage: Live Telemetry Pipeline */}
-              <div className="h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+              <div className="ll-card-stage h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
                 <div className="w-full max-w-[300px] rounded-xl bg-white border border-slate-200/90 shadow-sm p-3.5 space-y-3">
                   {/* Instrument -> LIS Header */}
                   <div className="flex items-center justify-between gap-2">
@@ -206,7 +206,7 @@ export default function PlatformPage() {
             {/* Card 2: Smart Auto-Verification Engine */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage: Clinical Rule Decision Tree */}
-              <div className="h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+              <div className="ll-card-stage h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
                 <div className="w-full max-w-[300px] flex flex-col items-center">
                   {/* Inbound Specimen Node */}
                   <div className="w-fit bg-white px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-2">
@@ -270,7 +270,7 @@ export default function PlatformPage() {
             {/* Card 3: Resilient Edge Buffer */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage: Edge Buffer Health Monitor */}
-              <div className="h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+              <div className="ll-card-stage h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
                 <div className="w-full max-w-[300px] rounded-xl bg-white border border-slate-200/90 shadow-sm p-3.5 space-y-3">
                   {/* Status Header */}
                   <div className="flex items-center justify-between gap-2">

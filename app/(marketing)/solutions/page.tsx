@@ -156,7 +156,7 @@ export default function SolutionsPage() {
               {/* Card 1: Central Hospital Laboratory */}
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Peach/Orange Canvas with 3 Floating Status Pills */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FFF5ED] via-[#FFF9F5] to-white border border-orange-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-5 shadow-2xs">
+                <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FFF5ED] via-[#FFF9F5] to-white border border-orange-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-5 shadow-2xs">
                   {/* Floating Pill 1: Automated HIS & EMR Bridging */}
                   <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
                     <div className="h-6 w-6 rounded-lg bg-[#FFEFE6] text-amber-600 flex items-center justify-center shrink-0">
@@ -196,7 +196,7 @@ export default function SolutionsPage() {
               {/* Card 2: Clinical & Reference Labs */}
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Cyan/Blue Canvas with Corporate MCU Intake Box */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EFF8FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
+                <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EFF8FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
@@ -249,7 +249,7 @@ export default function SolutionsPage() {
               {/* Card 3: Anatomical Pathology */}
               <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Mint/Green Canvas with 5-Step Pipeline & Action Buttons */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
+                <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800">Alur Kaset &amp; Slide</span>
                     <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
@@ -318,7 +318,7 @@ export default function SolutionsPage() {
               {/* Card 4: Microbiology Stewardship & Blood Bank (Wide 7-col) */}
               <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Workstation Telemetry & AST Sensitivity Table */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#F6F9FD] via-[#FAFBFD] to-white border border-slate-200/90 mb-5 space-y-3.5 shadow-2xs">
+                <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#F6F9FD] via-[#FAFBFD] to-white border border-slate-200/90 mb-5 space-y-3.5 shadow-2xs">
                   {/* Top Bar with Tab Switcher & Status Badge */}
                   <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-200/70">
                     <div className="flex items-center gap-1.5">
@@ -448,7 +448,7 @@ export default function SolutionsPage() {
               {/* Card 5: Nova AI Clinical Summaries (Compact 5-col) */}
               <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Nova AI Clinical Narrative Summary */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FAFBFD] via-[#F8FAFD] to-white border border-slate-200/90 mb-5 space-y-2.5 shadow-2xs">
+                <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FAFBFD] via-[#F8FAFD] to-white border border-slate-200/90 mb-5 space-y-2.5 shadow-2xs">
                   <div className="flex items-center justify-between border-b border-slate-200/70 pb-2">
                     <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                       <Sparkles className="h-3.5 w-3.5 text-[#2764B8]" />

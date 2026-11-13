@@ -277,18 +277,16 @@ html.lenis body {
   will-change: auto;
 }
 
-/* ─── Interactive Card Elevation, Gradient Glow & Cursor Dot Matrix ─── */
+/* ─── Interactive Card Elevation (Clean Shadow + Lift across all cards) ─── */
 .ll-card-interactive {
   position: relative;
-  isolation: isolate;
   box-shadow:
     0 2px 10px -3px rgba(15, 23, 42, 0.05),
     0 1px 3px -1px rgba(15, 23, 42, 0.03);
   transition:
-    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.32s ease,
-    background-image 0.35s ease;
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
 }
 
 @keyframes llDotDrift {
@@ -301,74 +299,15 @@ html.lenis body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  /* Subtle resting dot matrix in card background; gently drifts & brightens on hover */
-  .ll-card-interactive::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 0.45;
-    background-image: radial-gradient(
-      rgba(100, 116, 139, 0.22) 1px,
-      transparent 1px
-    );
-    background-size: 16px 16px;
-    transition: opacity 0.38s ease, background-image 0.38s ease;
-    z-index: -1;
-  }
-
-  /* Smooth multi-stop blue-cyan gradient spotlight (behind card content) */
-  .ll-card-interactive::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.42s ease;
-    background:
-      radial-gradient(
-        460px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(0, 115, 252, 0.1),
-        rgba(56, 189, 248, 0.05) 42%,
-        transparent 72%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(239, 246, 255, 0.42) 0%,
-        rgba(255, 255, 255, 0) 65%
-      );
-    z-index: -1;
-  }
-
   .ll-card-interactive:hover {
-    transform: translate3d(0, -5px, 0);
-    border-color: rgba(0, 115, 252, 0.38);
+    transform: translate3d(0, -4px, 0);
+    border-color: rgba(0, 115, 252, 0.32);
     box-shadow:
-      0 18px 40px -12px rgba(15, 23, 42, 0.1),
-      0 6px 18px -4px rgba(0, 115, 252, 0.12);
+      0 16px 36px -12px rgba(15, 23, 42, 0.09),
+      0 6px 16px -4px rgba(0, 115, 252, 0.1);
   }
 
-  .ll-card-interactive:hover::before {
-    opacity: 0.85;
-    background-image: radial-gradient(
-      rgba(0, 115, 252, 0.24) 1px,
-      transparent 1px
-    );
-    animation: llDotDrift 14s linear infinite;
-  }
-
-  .ll-card-interactive:hover::after {
-    opacity: 1;
-  }
-
-  /* When a card has an inner visual stage, move both dots and gradient into the inner stage only */
-  .ll-card-interactive.ll-card-has-stage::before,
-  .ll-card-interactive.ll-card-has-stage::after {
-    display: none;
-  }
-
+  /* Opt-in inner visual stage: subtle dot matrix + smooth hover drift & gradient */
   .ll-card-stage {
     position: relative;
     isolation: isolate;
@@ -381,7 +320,7 @@ html.lenis body {
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.45;
     background-image: radial-gradient(
       rgba(100, 116, 139, 0.22) 1px,
       transparent 1px
@@ -408,13 +347,14 @@ html.lenis body {
       ),
       linear-gradient(
         180deg,
-        rgba(239, 246, 255, 0.45) 0%,
+        rgba(239, 246, 255, 0.42) 0%,
         rgba(255, 255, 255, 0) 70%
       );
     z-index: -1;
   }
 
-  .ll-card-interactive:hover .ll-card-stage::before {
+  .group:hover .ll-card-stage::before,
+  .ll-card-stage:hover::before {
     opacity: 0.9;
     background-image: radial-gradient(
       rgba(0, 115, 252, 0.26) 1px,
@@ -423,7 +363,8 @@ html.lenis body {
     animation: llDotDrift 14s linear infinite;
   }
 
-  .ll-card-interactive:hover .ll-card-stage::after {
+  .group:hover .ll-card-stage::after,
+  .ll-card-stage:hover::after {
     opacity: 1;
   }
 }

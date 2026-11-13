@@ -55,17 +55,10 @@ export function ScrollRevealProvider({
           child.style.setProperty("--ll-delay", `${delay}ms`);
           child.classList.add("ll-reveal");
 
-          // Add interactive spotlight & lift to bordered card elements
+          // Add clean shadow & lift to bordered card elements
           const cls = child.className?.toString() || "";
           if (cls.includes("border") && cls.includes("rounded")) {
             child.classList.add("ll-card-interactive");
-            const innerStage = child.querySelector(
-              ":scope > div.rounded-2xl"
-            ) as HTMLElement | null;
-            if (innerStage && innerStage.offsetHeight >= 110) {
-              child.classList.add("ll-card-has-stage");
-              innerStage.classList.add("ll-card-stage");
-            }
           }
 
           targets.push(child);
@@ -123,18 +116,17 @@ export function ScrollRevealProvider({
 
     pending.forEach((el) => observer.observe(el));
 
-    // Lightweight cursor spotlight tracking for interactive cards (desktop fine pointer)
+    // Lightweight cursor spotlight tracking for opt-in .ll-card-stage elements
     const handlePointerMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
-      const card = (e.target as HTMLElement | null)?.closest?.(".ll-card-interactive") as HTMLElement | null;
-      if (!card) return;
-      const stage = card.classList.contains("ll-card-has-stage")
-        ? (card.querySelector(".ll-card-stage") as HTMLElement | null)
-        : null;
-      const targetEl = stage || card;
-      const rect = targetEl.getBoundingClientRect();
-      targetEl.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-      targetEl.style.setProperty("--my", `${e.clientY - rect.top}px`);
+      const target = e.target as HTMLElement | null;
+      const stage =
+        (target?.closest?.(".ll-card-stage") as HTMLElement | null) ||
+        (target?.closest?.(".group")?.querySelector?.(".ll-card-stage") as HTMLElement | null);
+      if (!stage) return;
+      const rect = stage.getBoundingClientRect();
+      stage.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+      stage.style.setProperty("--my", `${e.clientY - rect.top}px`);
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
