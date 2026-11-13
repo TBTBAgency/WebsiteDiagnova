@@ -702,27 +702,30 @@ export function Navbar() {
                 )}
               </Link>
 
-              {/* Ultra-Minimalist Dropdown Menu - Premium 1 Column */}
+              {/* Clean Minimalist Dropdown Menu with Top Caret */}
               {item.children && activeDropdown === item.label && (
-                <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2.5 z-50">
-                  <div className="relative w-[320px] overflow-hidden rounded-2xl border border-slate-100 bg-white/95 backdrop-blur-xl p-2 shadow-[0_20px_45px_-12px_rgba(15,23,42,0.12),0_0_1px_1px_rgba(15,23,42,0.04)] animate-dropdown">
-                    <div className="flex flex-col gap-0.5">
+                <div className="absolute -left-3 top-full pt-3 z-50">
+                  <div className="relative w-[250px] rounded-xl border border-slate-200/90 bg-white py-3.5 px-2 shadow-[0_14px_36px_-10px_rgba(15,23,42,0.12)] animate-dropdown">
+                    {/* Top-left triangle caret */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute -top-[6px] left-7 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 bg-white"
+                    />
+                    <div className="relative z-10 flex flex-col">
                       {item.children.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
+                          prefetch={true}
                           onClick={() => handleNavClick(child.href)}
-                          className="group/item relative flex flex-col justify-center rounded-xl px-3.5 py-2.5 transition-all duration-150 hover:bg-slate-50/90 active:bg-slate-100/80"
+                          className={cn(
+                            "block px-5 py-2.5 text-[14.5px] leading-snug transition-colors duration-150",
+                            pathname === child.href
+                              ? "text-[#1D82F5] font-medium"
+                              : "text-slate-600 hover:text-[#1D82F5]"
+                          )}
                         >
-                          {/* Micro indicator line on hover */}
-                          <span className="absolute left-1.5 top-2.5 bottom-2.5 w-[2.5px] rounded-full bg-[#2764B8] opacity-0 transition-all duration-150 group-hover/item:opacity-100" />
-
-                          <span className="text-[13.5px] font-medium tracking-tight text-slate-800 transition-colors group-hover/item:text-[#2764B8] group-hover/item:translate-x-0.5 duration-150">
-                            {child.title}
-                          </span>
-                          <span className="mt-0.5 text-[11px] text-slate-400 transition-colors group-hover/item:text-slate-500 group-hover/item:translate-x-0.5 duration-150 line-clamp-1">
-                            {child.description}
-                          </span>
+                          {child.title}
                         </Link>
                       ))}
                     </div>
