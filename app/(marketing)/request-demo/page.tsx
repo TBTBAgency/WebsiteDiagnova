@@ -51,7 +51,7 @@ function TrustMarquee({ language }: { language: "ID" | "EN" }) {
   };
 
   return (
-    <div className="relative z-10 pt-4 mt-auto border-t border-white/15 overflow-hidden">
+    <div className="relative z-10 pt-4 mt-auto border-t border-blue-200/70 overflow-hidden">
       <style>{`
         @keyframes marqueeTrustPanel {
           0% {
@@ -69,7 +69,7 @@ function TrustMarquee({ language }: { language: "ID" | "EN" }) {
         }
       `}</style>
 
-      <p className="text-[11px] uppercase tracking-wider text-blue-200/80 font-semibold mb-2.5">
+      <p className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-2.5">
         {language === "ID" ? "Dipercaya oleh Mitra & Jaringan Faskes" : "Trusted by Healthcare Partners"}
       </p>
 
@@ -90,7 +90,7 @@ function TrustMarquee({ language }: { language: "ID" | "EN" }) {
           {[...logos, ...logos].map((_, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-center shrink-0 opacity-50 hover:opacity-100 transition-all duration-300 select-none cursor-default"
+              className="flex items-center justify-center shrink-0 opacity-60 hover:opacity-100 transition-all duration-300 select-none cursor-default"
             >
               <Image
                 src="/images/trust-logo.svg"
@@ -98,7 +98,7 @@ function TrustMarquee({ language }: { language: "ID" | "EN" }) {
                 width={140}
                 height={40}
                 loading="eager"
-                className="h-6 sm:h-7 md:h-8 w-auto object-contain brightness-0 invert"
+                className="h-6 sm:h-7 md:h-8 w-auto object-contain brightness-0"
               />
             </div>
           ))}
@@ -586,25 +586,27 @@ export default function RequestDemoPage() {
         <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.07)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 xl:gap-8 h-full items-stretch">
 
-            {/* LEFT: Diagnova Hero-Matched Deep Navy-Blue Feature Banner */}
-            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#1A4B8C] via-[#225FA8] to-[#133A70] text-white p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full shadow-inner">
-              {/* Subtle ambient glowing orbs matching Homepage Hero */}
-              <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#56ADE2]/20 blur-[90px] pointer-events-none" />
-              <div className="absolute -bottom-20 -left-16 w-72 h-72 rounded-full bg-[#0F2C59]/45 blur-[80px] pointer-events-none" />
+            {/* LEFT: Luminous Diagnova Blue Gradient Feature Banner (Matching PageHero) */}
+            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#DCEBFA] via-[#ECF4FD] to-[#F8FBFF] border border-blue-200/70 shadow-[0_14px_40px_-14px_rgba(37,104,186,0.10)] text-slate-900 p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full">
+              {/* Multi-layer Ambient Blue Gradient Glows */}
+              <div className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-[#56ADE2]/25 blur-[95px] pointer-events-none z-0" />
+              <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-[#2764B8]/12 blur-[95px] pointer-events-none z-0" />
+              <div className="absolute -bottom-24 left-1/4 w-72 h-72 rounded-full bg-[#93C5FD]/25 blur-[90px] pointer-events-none z-0" />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white/70 via-white/20 to-transparent pointer-events-none z-0" />
 
               {/* Top Content */}
               <div className="relative z-10 space-y-3.5">
                 <div>
-                  <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 backdrop-blur-md px-3.5 py-1 text-xs font-medium text-white shadow-xs">
+                  <span className="inline-flex items-center rounded-full bg-white/80 border border-blue-200/80 backdrop-blur-md px-3.5 py-1 text-xs font-semibold text-[#1E5299] shadow-xs">
                     {language === "ID" ? "Platform Diagnostik Modern" : "Modern Diagnostic Platform"}
                   </span>
                 </div>
-                <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-bold leading-tight text-white tracking-tight">
+                <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-bold leading-tight text-slate-900 tracking-tight">
                   {language === "ID"
                     ? "Percepat & Otomasi Alur Kerja Laboratorium Anda"
                     : "Speed up your lab workflow with Diagnova LIS"}
                 </h2>
-                <p className="text-xs sm:text-sm text-blue-100/80 font-normal leading-relaxed pt-0.5">
+                <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed pt-0.5">
                   {language === "ID"
                     ? "Satu platform terintegrasi untuk interfacing analyzer instan, verifikasi hasil berbasis AI, dan pelaporan nasional."
                     : "An all-in-one platform for analyzer interfacing, AI auto-verification, and seamless healthcare integration."}
