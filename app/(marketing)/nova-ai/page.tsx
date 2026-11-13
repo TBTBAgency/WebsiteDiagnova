@@ -557,7 +557,7 @@ export default function NovaAIPage() {
               return (
                 <div
                   key={cap.title}
-                  className="rounded-[22px] bg-[#F7F9FC] p-7 sm:p-8 flex flex-col gap-5 transition-colors hover:bg-[#F1F5FA]"
+                  className="rounded-[22px] bg-[#F7F9FC] border border-transparent p-7 sm:p-8 flex flex-col gap-5 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
                 >
                   <div className="flex items-start gap-4">
                     <div className="h-12 w-12 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center shrink-0">
@@ -669,38 +669,104 @@ export default function NovaAIPage() {
                   </div>
 
                   {/* Histology Slide Canvas */}
-                  <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-[#FCE7F3]">
-                    <svg className="w-full h-full" viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
-                      <rect width="400" height="160" fill={virtualStaining ? "#F5D0FE" : "#FBCFE8"} />
+                  <div className="relative h-40 sm:h-44 w-full overflow-hidden bg-[#FDF2F8]">
+                    <svg className="w-full h-full" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                      <rect width="400" height="168" fill={virtualStaining ? "#F5E8FF" : "#FCE7F3"} />
+                      {/* Stromal fibers */}
                       <path
-                        d="M0 90 C60 40, 120 130, 190 70 C250 20, 320 110, 400 60 L400 160 L0 160 Z"
-                        fill={virtualStaining ? "#C084FC" : "#F472B6"}
-                        opacity="0.45"
+                        d="M-10 38 C55 18, 115 62, 185 36 C255 10, 325 58, 410 30"
+                        fill="none"
+                        stroke={virtualStaining ? "#D8B4FE" : "#F9A8D4"}
+                        strokeWidth="12"
+                        strokeLinecap="round"
+                        opacity="0.55"
                       />
                       <path
-                        d="M0 110 C80 75, 160 140, 240 95 C300 60, 350 120, 400 85 L400 160 L0 160 Z"
-                        fill={virtualStaining ? "#7E22CE" : "#BE185D"}
-                        opacity="0.32"
+                        d="M-10 92 C70 55, 130 128, 210 82 C280 42, 335 112, 410 78"
+                        fill="none"
+                        stroke={virtualStaining ? "#C084FC" : "#F472B6"}
+                        strokeWidth="18"
+                        strokeLinecap="round"
+                        opacity="0.38"
                       />
+                      <path
+                        d="M-10 142 C85 112, 165 160, 250 122 C315 95, 360 142, 410 118"
+                        fill="none"
+                        stroke={virtualStaining ? "#A855F7" : "#EC4899"}
+                        strokeWidth="22"
+                        strokeLinecap="round"
+                        opacity="0.28"
+                      />
+                      {/* Glandular lumens & cellular clusters */}
                       {[
-                        [45, 55], [92, 82], [138, 48], [185, 92], [230, 58], [280, 78], [332, 46], [368, 95],
-                        [68, 118], [120, 108], [164, 125], [218, 112], [265, 128], [315, 105], [355, 122],
-                      ].map(([cx, cy], idx) => (
+                        { cx: 118, cy: 62, rx: 32, ry: 20, rot: -12 },
+                        { cx: 232, cy: 52, rx: 28, ry: 18, rot: 14 },
+                        { cx: 318, cy: 96, rx: 36, ry: 22, rot: -8 },
+                        { cx: 172, cy: 118, rx: 30, ry: 17, rot: 9 },
+                        { cx: 74, cy: 124, rx: 24, ry: 15, rot: -16 },
+                      ].map((gland, idx) => (
+                        <g key={idx} transform={`translate(${gland.cx} ${gland.cy}) rotate(${gland.rot})`}>
+                          <ellipse
+                            cx="0"
+                            cy="0"
+                            rx={gland.rx}
+                            ry={gland.ry}
+                            fill={virtualStaining ? "#E9D5FF" : "#FBCFE8"}
+                            stroke={virtualStaining ? "#9333EA" : "#DB2777"}
+                            strokeWidth="2"
+                            opacity="0.72"
+                          />
+                          <ellipse
+                            cx="0"
+                            cy="0"
+                            rx={gland.rx * 0.48}
+                            ry={gland.ry * 0.44}
+                            fill="#FFFFFF"
+                            opacity="0.85"
+                          />
+                        </g>
+                      ))}
+                      {/* Dense cellular nuclei */}
+                      {[
+                        [44, 34, 2.8], [62, 48, 3.2], [88, 58, 3.5], [104, 42, 2.8], [134, 45, 3.4], [148, 66, 3.1],
+                        [115, 82, 2.9], [186, 38, 3.0], [206, 54, 3.6], [222, 34, 2.7], [254, 46, 3.4], [262, 68, 3.1],
+                        [286, 84, 3.5], [304, 72, 2.9], [344, 84, 3.4], [356, 108, 3.2], [322, 122, 2.8], [282, 114, 3.0],
+                        [142, 114, 3.4], [164, 98, 2.9], [198, 112, 3.3], [182, 136, 2.8], [52, 118, 3.2], [92, 134, 3.0],
+                        [242, 134, 3.1], [374, 48, 2.9], [386, 136, 3.3], [28, 78, 2.8], [248, 92, 3.2],
+                      ].map(([cx, cy, r], idx) => (
                         <circle
                           key={idx}
                           cx={cx}
                           cy={cy}
-                          r={(idx % 3) + 2.5}
-                          fill={virtualStaining ? "#581C87" : "#831843"}
-                          opacity="0.55"
+                          r={r}
+                          fill={
+                            virtualStaining
+                              ? idx % 4 === 0
+                                ? "#B45309"
+                                : "#581C87"
+                              : "#831843"
+                          }
+                          opacity={virtualStaining && idx % 4 === 0 ? "0.88" : "0.62"}
                         />
                       ))}
                     </svg>
 
                     {/* Mini Slide Thumbnail (Left) */}
                     <div className="absolute left-3 top-3 w-12 h-14 rounded-lg bg-white/95 border border-slate-200 shadow-xs p-1 flex flex-col justify-between">
-                      <div className="h-8 rounded-sm bg-pink-200/80" />
+                      <div className={`h-8 rounded-sm ${virtualStaining ? "bg-purple-200/80" : "bg-pink-200/80"}`} />
                       <div className="h-1.5 w-6 bg-slate-300 rounded-full mx-auto" />
+                    </div>
+
+                    {/* Magnification & Live Stain Badges (Top Right) */}
+                    <div className="absolute right-3 top-3 flex items-center gap-1.5">
+                      {virtualStaining && (
+                        <span className="px-2 py-0.5 rounded-md bg-white/95 border border-purple-200/80 text-[10px] font-bold text-purple-700 shadow-xs">
+                          Ki-67: 18.4%
+                        </span>
+                      )}
+                      <span className="px-2 py-0.5 rounded-md bg-slate-900/80 text-white text-[10px] font-semibold tracking-wide">
+                        40x WSI
+                      </span>
                     </div>
 
                     {/* Floating Blue Pill */}
@@ -745,57 +811,118 @@ export default function NovaAIPage() {
               {/* Monitor Frame Visual */}
               <div className="mt-auto flex flex-col items-center">
                 <div className="w-full max-w-[440px] rounded-2xl border-[3px] border-slate-200 bg-[#F8FAFD] p-3.5 sm:p-4 shadow-sm">
-                  <div className="grid grid-cols-11 items-center gap-2">
-                    {/* Left 3 Cases */}
-                    <div className="col-span-4 space-y-2">
-                      <div className="rounded-lg bg-[#0073FC] text-white p-2 shadow-xs">
-                        <p className="text-[9px] font-bold">CASE #9435</p>
-                        <p className="text-[8px] text-blue-100">CITO • IGD</p>
-                        <div className="mt-1.5 h-1 w-full rounded-full bg-white/30">
-                          <div className="h-1 w-3/4 rounded-full bg-white" />
-                        </div>
-                      </div>
-                      <div className="rounded-lg bg-white border border-slate-200 p-2">
-                        <p className="text-[9px] font-bold text-slate-700">CASE #7889</p>
-                        <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
-                          <div className="h-1 w-1/2 rounded-full bg-[#0073FC]" />
-                        </div>
-                      </div>
-                      <div className="rounded-lg bg-white border border-slate-200 p-2">
-                        <p className="text-[9px] font-bold text-slate-700">CASE #9102</p>
-                        <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
-                          <div className="h-1 w-2/3 rounded-full bg-[#0073FC]" />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="relative">
+                    {/* SVG Bezier Routing Connectors */}
+                    <svg
+                      className="pointer-events-none absolute inset-0 w-full h-full"
+                      viewBox="0 0 400 180"
+                      preserveAspectRatio="none"
+                      aria-hidden="true"
+                    >
+                      {/* Left Cases -> Center Hub */}
+                      <path
+                        d="M 140 28 C 166 28, 166 90, 178 90"
+                        fill="none"
+                        stroke="#0073FC"
+                        strokeWidth="1.75"
+                        strokeDasharray="4 3"
+                        opacity="0.7"
+                      />
+                      <path
+                        d="M 140 90 L 178 90"
+                        fill="none"
+                        stroke="#94A3B8"
+                        strokeWidth="1.5"
+                        strokeDasharray="3 3"
+                        opacity="0.7"
+                      />
+                      <path
+                        d="M 140 152 C 166 152, 166 90, 178 90"
+                        fill="none"
+                        stroke="#94A3B8"
+                        strokeWidth="1.5"
+                        strokeDasharray="3 3"
+                        opacity="0.7"
+                      />
+                      {/* Center Hub -> Right Pathologists */}
+                      <path
+                        d="M 222 90 C 234 90, 234 28, 260 28"
+                        fill="none"
+                        stroke="#0073FC"
+                        strokeWidth="1.75"
+                        strokeDasharray="4 3"
+                        opacity="0.7"
+                      />
+                      <path
+                        d="M 222 90 L 260 90"
+                        fill="none"
+                        stroke="#0073FC"
+                        strokeWidth="1.5"
+                        strokeDasharray="3 3"
+                        opacity="0.55"
+                      />
+                      <path
+                        d="M 222 90 C 234 90, 234 152, 260 152"
+                        fill="none"
+                        stroke="#94A3B8"
+                        strokeWidth="1.5"
+                        strokeDasharray="3 3"
+                        opacity="0.7"
+                      />
+                    </svg>
 
-                    {/* Center Smart Distribution Hub */}
-                    <div className="col-span-3 flex flex-col items-center justify-center">
-                      <div className="rounded-xl bg-white border border-blue-200/80 px-2 py-3 text-center shadow-xs">
-                        <Cpu className="h-4 w-4 text-[#0073FC] mx-auto mb-1" />
-                        <span className="text-[8px] font-bold text-slate-600 leading-tight block uppercase">
-                          Smart Routing
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right 3 Pathologists */}
-                    <div className="col-span-4 space-y-2">
-                      {[
-                        { name: "dr. Hendra", load: "32%", w: "w-1/3" },
-                        { name: "dr. Ratna", load: "28%", w: "w-1/4" },
-                        { name: "dr. Budi", load: "45%", w: "w-1/2" },
-                      ].map((doc) => (
-                        <div key={doc.name} className="rounded-lg bg-white border border-slate-200 p-2">
-                          <div className="flex items-center justify-between text-[8px] font-bold text-slate-800">
-                            <span>{doc.name}</span>
-                            <span className="text-[#0073FC]">{doc.load}</span>
+                    <div className="relative z-10 grid grid-cols-11 items-center gap-2">
+                      {/* Left 3 Cases */}
+                      <div className="col-span-4 space-y-2">
+                        <div className="rounded-lg bg-[#0073FC] text-white p-2 shadow-xs">
+                          <p className="text-[9px] font-bold">CASE #9435</p>
+                          <p className="text-[8px] text-blue-100">CITO • IGD</p>
+                          <div className="mt-1.5 h-1 w-full rounded-full bg-white/30">
+                            <div className="h-1 w-3/4 rounded-full bg-white" />
                           </div>
+                        </div>
+                        <div className="rounded-lg bg-white border border-slate-200 p-2">
+                          <p className="text-[9px] font-bold text-slate-700">CASE #7889</p>
                           <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
-                            <div className={`h-1 ${doc.w} rounded-full bg-[#0073FC]`} />
+                            <div className="h-1 w-1/2 rounded-full bg-[#0073FC]" />
                           </div>
                         </div>
-                      ))}
+                        <div className="rounded-lg bg-white border border-slate-200 p-2">
+                          <p className="text-[9px] font-bold text-slate-700">CASE #9102</p>
+                          <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
+                            <div className="h-1 w-2/3 rounded-full bg-[#0073FC]" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Center Smart Distribution Hub */}
+                      <div className="col-span-3 flex flex-col items-center justify-center">
+                        <div className="rounded-xl bg-white border border-blue-200/80 px-2.5 py-3 text-center shadow-xs">
+                          <Cpu className="h-4 w-4 text-[#0073FC] mx-auto mb-1" />
+                          <span className="text-[8px] font-bold text-slate-600 leading-tight block uppercase">
+                            Smart Routing
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right 3 Pathologists */}
+                      <div className="col-span-4 space-y-2">
+                        {[
+                          { name: "dr. Hendra", load: "32%", w: "w-1/3" },
+                          { name: "dr. Ratna", load: "28%", w: "w-1/4" },
+                          { name: "dr. Budi", load: "45%", w: "w-1/2" },
+                        ].map((doc) => (
+                          <div key={doc.name} className="rounded-lg bg-white border border-slate-200 p-2">
+                            <div className="flex items-center justify-between text-[8px] font-bold text-slate-800">
+                              <span>{doc.name}</span>
+                              <span className="text-[#0073FC]">{doc.load}</span>
+                            </div>
+                            <div className="mt-1.5 h-1 w-full rounded-full bg-slate-100">
+                              <div className={`h-1 ${doc.w} rounded-full bg-[#0073FC]`} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -830,10 +957,10 @@ export default function NovaAIPage() {
               </div>
 
               {/* Voice Waveform + Autofill Box */}
-              <div className="mt-auto rounded-2xl bg-[#F4F8FC] p-5 sm:p-6 space-y-4">
+              <div className="mt-auto rounded-2xl bg-[#F4F8FC] p-5 sm:p-6 space-y-4 min-h-[176px] flex flex-col justify-center">
                 <div className="flex items-center justify-center">
                   <div className="inline-flex items-center gap-3 rounded-full bg-[#E8F1FD] pl-2 pr-5 py-2 border border-blue-200/60">
-                    <div className="w-9 h-9 rounded-full bg-[#0073FC] text-white flex items-center justify-center shadow-[0_4px_12px_-2px_rgba(0,115,252,0.45)]">
+                    <div className="w-9 h-9 rounded-full bg-[#0073FC] text-white flex items-center justify-center ring-4 ring-blue-200/70 shadow-[0_4px_12px_-2px_rgba(0,115,252,0.45)]">
                       <Mic className="h-4 w-4" />
                     </div>
                     <div className="flex items-center gap-1 h-7">
@@ -891,7 +1018,7 @@ export default function NovaAIPage() {
               </div>
 
               {/* Pre-Signout Input + Tooltip Widget */}
-              <div className="mt-auto rounded-2xl bg-[#F4F8FC] p-5 sm:p-6 flex flex-col justify-center">
+              <div className="mt-auto rounded-2xl bg-[#F4F8FC] p-5 sm:p-6 min-h-[176px] flex flex-col justify-center">
                 <div className="rounded-xl bg-white border border-slate-200/90 px-4 py-3 flex items-center justify-between shadow-2xs">
                   <span className="text-sm font-medium text-slate-700">Carcino</span>
                   <AlertTriangle className="h-4 w-4 text-rose-500 shrink-0" />
@@ -960,18 +1087,19 @@ export default function NovaAIPage() {
                 </p>
               </div>
 
-              {/* 5 Compliance Badges */}
-              <div className="lg:col-span-5 flex flex-wrap gap-3 lg:justify-end">
+              {/* 6 Compliance Badges (Balanced 3x2 Grid) */}
+              <div className="lg:col-span-5 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 {[
                   { code: "UU 17/2023", label: language === "ID" ? "Akuntabilitas Medis" : "Medical Law" },
                   { code: "PMK 24/2022", label: "RME & SATUSEHAT" },
                   { code: "KARS SKP 2.2", label: language === "ID" ? "Nilai Kritis < 15m" : "Panic SLA < 15m" },
                   { code: "ISO 15189", label: language === "ID" ? "Mutu Lab Medik" : "Lab Quality" },
                   { code: "BSrE E-Sign", label: language === "ID" ? "Tanda Tangan Sah" : "Digital Sign-Off" },
+                  { code: "TLS 1.3", label: language === "ID" ? "Enkripsi End-to-End" : "Encrypted" },
                 ].map((badge) => (
                   <div
                     key={badge.code}
-                    className="rounded-2xl bg-white border border-slate-200/80 px-4 py-3 shadow-2xs flex items-center gap-2.5"
+                    className="rounded-2xl bg-white border border-slate-200/80 px-3.5 py-3 shadow-2xs flex items-center gap-2.5"
                   >
                     <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0" />
                     <div>
@@ -1031,7 +1159,7 @@ export default function NovaAIPage() {
                 return (
                   <div
                     key={item.title}
-                    className="rounded-[22px] bg-[#F7F9FC] p-6 sm:p-7 space-y-4 transition-colors hover:bg-[#F1F5FA]"
+                    className="rounded-[22px] bg-[#F7F9FC] border border-transparent p-6 sm:p-7 space-y-4 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
                   >
                     <div className="h-11 w-11 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center">
                       <ItemIcon className="h-5 w-5 stroke-[1.75]" />
