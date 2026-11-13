@@ -812,12 +812,12 @@ export default function ModulesPage() {
             </div>
           </div>
 
-          {/* 2x2 Asymmetrical Bento Grid (7+5, 5+7) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+          {/* 2x2 Asymmetrical Bento Grid — Horizontal snap-scroll on mobile, grid on md+ */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-12 md:gap-5 sm:gap-6 md:mx-0 md:px-0 md:pb-0 md:overflow-visible items-stretch">
             {/* ── BENTO 1 (WIDE - 7 COLS): Routine & Hematology + Analyzer Workflow ── */}
             <div
               id="routine-hematology"
-              className="scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-5 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
             >
               <div className="mb-6 sm:mb-8">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
@@ -906,7 +906,7 @@ export default function ModulesPage() {
             {/* ── BENTO 2 (NARROW - 5 COLS): Inventory & Reagent Telemetry ── */}
             <div
               id="inventory-reagent"
-              className="scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-6 px-6 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-5 px-5 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
             >
               <div className="mb-5">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
@@ -978,7 +978,7 @@ export default function ModulesPage() {
             {/* ── BENTO 3 (NARROW - 5 COLS): Blood Bank (BDRS) Telemetry ── */}
             <div
               id="blood-bank"
-              className="scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-6 px-6 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-5 px-5 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
             >
               <div className="mb-6">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
@@ -1033,7 +1033,7 @@ export default function ModulesPage() {
             {/* ── BENTO 4 (WIDE - 7 COLS): Pathology, Microbiology & Custom Gateway ── */}
             <div
               id="pathology"
-              className="scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-5 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
             >
               <div id="microbiology" className="mb-6 sm:mb-8">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
@@ -1176,8 +1176,8 @@ export default function ModulesPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-              <div className="p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
+            <div className="lg:col-span-7 flex overflow-x-auto snap-x snap-mandatory gap-3.5 -mx-5 px-5 pb-2 scrollbar-hide sm:grid sm:grid-cols-3 sm:gap-6 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible">
+              <div className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
                   <Database className="h-5.5 w-5.5" />
                 </div>
@@ -1191,7 +1191,7 @@ export default function ModulesPage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
+              <div className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
                   <Cpu className="h-5.5 w-5.5" />
                 </div>
@@ -1205,7 +1205,7 @@ export default function ModulesPage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
+              <div className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
                   <FileCheck2 className="h-5.5 w-5.5" />
                 </div>

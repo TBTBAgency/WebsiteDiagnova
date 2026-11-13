@@ -142,10 +142,10 @@ export default function PlatformPage() {
             </p>
           </div>
 
-          {/* 3 Bento Cards with Top Visual Stage (Ref: Modern SaaS Micro-UI Architecture) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {/* 3 Bento Cards — Horizontal snap-scroll on mobile, 3-column grid on md+ */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-3 md:gap-6 lg:gap-8 md:mx-0 md:px-0 md:pb-0 md:overflow-visible">
             {/* Card 1: Pangkas TAT & Zero Rekeying */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage: Live Telemetry Pipeline */}
               <div className="ll-card-stage h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
                 <div className="w-full max-w-[300px] rounded-xl bg-white border border-slate-200/90 shadow-sm p-3.5 space-y-3">
@@ -204,7 +204,7 @@ export default function PlatformPage() {
             </div>
 
             {/* Card 2: Smart Auto-Verification Engine */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage: Clinical Rule Decision Tree */}
               <div className="ll-card-stage h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
                 <div className="w-full max-w-[300px] flex flex-col items-center">
@@ -268,7 +268,7 @@ export default function PlatformPage() {
             </div>
 
             {/* Card 3: Resilient Edge Buffer */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage: Edge Buffer Health Monitor */}
               <div className="ll-card-stage h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
                 <div className="w-full max-w-[300px] rounded-xl bg-white border border-slate-200/90 shadow-sm p-3.5 space-y-3">
@@ -358,7 +358,7 @@ export default function PlatformPage() {
                   : "Absolute transparency for every clinical action. Every result change, instrument calibration, and physician sign-off is permanently recorded with millisecond-level timestamps."}
               </p>
 
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="rounded-[20px] bg-[#F8FBFE] border border-blue-100/80 p-5 space-y-2">
                   <div className="flex items-center gap-2 text-[#2764B8] font-bold text-sm">
                     <Lock className="h-4 w-4" />
@@ -615,10 +615,10 @@ export default function PlatformPage() {
             </p>
           </div>
 
-          {/* 3 LigoLab-Standard Intelligence Cards (Clean Icon Badge + Bold Blue Title + Bullet Points) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {/* 3 LigoLab-Standard Intelligence Cards — Horizontal snap-scroll on mobile, 3-col grid on md+ */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-3 md:gap-6 lg:gap-8 md:mx-0 md:px-0 md:pb-0 md:overflow-visible">
             {/* Card 1: TAT Real-Time & Bottleneck Detection */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
               {/* Header: Icon Badge + Blue Title */}
               <div className="flex items-center gap-3.5 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
@@ -677,7 +677,7 @@ export default function PlatformPage() {
             </div>
 
             {/* Card 2: Analyzer Workload & Reagent Tracking */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
               {/* Header: Icon Badge + Blue Title */}
               <div className="flex items-center gap-3.5 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
@@ -736,7 +736,7 @@ export default function PlatformPage() {
             </div>
 
             {/* Card 3: Nova AI & Clinical Intelligence */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
               {/* Header: Icon Badge + Blue Title */}
               <div className="flex items-center gap-3.5 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">

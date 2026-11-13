@@ -151,10 +151,10 @@ export default function SolutionsPage() {
               5-CARD ARCHITECTURE (UNIFIED 2-ROW GRID)
               ══════════════════════════════════════════════════════════════ */}
           <div className="space-y-6 sm:space-y-7">
-            {/* ROW 1: 3 EQUAL VERTICAL CARDS (Hospital, Clinical/MCU, Pathology) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
+            {/* ROW 1: 3 EQUAL VERTICAL CARDS — Horizontal snap-scroll on mobile, 3-col grid on md+ */}
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-3 md:gap-6 sm:gap-7 md:mx-0 md:px-0 md:pb-0 md:overflow-visible">
               {/* Card 1: Central Hospital Laboratory */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
+              <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Peach/Orange Canvas with 3 Floating Status Pills */}
                 <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FFF5ED] via-[#FFF9F5] to-white border border-orange-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-5 shadow-2xs">
                   {/* Floating Pill 1: Automated HIS & EMR Bridging */}
@@ -194,7 +194,7 @@ export default function SolutionsPage() {
               </div>
 
               {/* Card 2: Clinical & Reference Labs */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
+              <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Cyan/Blue Canvas with Corporate MCU Intake Box */}
                 <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EFF8FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
@@ -247,7 +247,7 @@ export default function SolutionsPage() {
               </div>
 
               {/* Card 3: Anatomical Pathology */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
+              <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Mint/Green Canvas with 5-Step Pipeline & Action Buttons */}
                 <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
@@ -570,10 +570,10 @@ export default function SolutionsPage() {
             </div>
           </div>
 
-          {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture - Fits 100% On Screen) */}
-          <div className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-28 grid grid-cols-1 md:grid-cols-3 gap-3.5 lg:gap-4.5 max-w-[1240px] mx-auto items-stretch px-5 sm:px-6">
+          {/* 3 Floating White Cards — Horizontal snap-scroll on mobile, 3-col grid on md+ */}
+          <div className="relative z-20 -mt-16 sm:-mt-24 lg:-mt-28 flex overflow-x-auto snap-x snap-mandatory gap-3.5 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-3 lg:gap-4.5 md:max-w-[1240px] md:mx-auto md:px-6 md:pb-0 md:overflow-visible items-stretch">
             {/* Card 1: Tier 1 - Hospital Systems */}
-            <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
               <div className="absolute top-0 left-0 right-0 h-[36px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk RS Sentral Tipe A, B & C" : "Ideal for general hospital networks"}
@@ -663,7 +663,7 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 2: Tier 2 - Clinical & MCU Labs */}
-            <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
               <div className="absolute top-0 left-0 right-0 h-[36px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk Lab Mandiri & MCU" : "Ideal for enterprise companies"}
@@ -753,7 +753,7 @@ export default function SolutionsPage() {
             </div>
 
             {/* Card 3: Tier 3 - Specialist Diagnostics */}
-            <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
+            <div className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
               <div className="absolute top-0 left-0 right-0 h-[36px] flex items-center justify-center text-[12.5px] font-medium text-[#1E54A8] opacity-0 translate-y-1 transition-all duration-200 group-hover/plan:opacity-100 group-hover/plan:translate-y-0 group-focus-within/plan:opacity-100 group-focus-within/plan:translate-y-0 pointer-events-none">
                 {language === "ID" ? "Ideal untuk Spesialis PA, Mikro & BDRS" : "Ideal for specialist diagnostics"}

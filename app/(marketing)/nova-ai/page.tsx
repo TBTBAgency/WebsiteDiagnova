@@ -469,8 +469,8 @@ export default function NovaAIPage() {
             </p>
           </div>
 
-          {/* 3x2 Flat Cards Grid (Matches Reference Screenshot) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {/* 3x2 Flat Cards Grid — Horizontal snap-scroll on mobile, grid on md+ */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 sm:gap-6 md:mx-0 md:px-0 md:pb-0 md:overflow-visible">
             {[
               {
                 icon: ScanText,
@@ -537,7 +537,7 @@ export default function NovaAIPage() {
               return (
                 <div
                   key={cap.title}
-                  className="rounded-[22px] bg-[#F7F9FC] border border-transparent p-7 sm:p-8 flex flex-col gap-5 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
+                  className="w-[84vw] max-w-[330px] shrink-0 snap-center md:w-auto md:max-w-none rounded-[22px] bg-[#F7F9FC] border border-transparent p-6 sm:p-8 flex flex-col gap-5 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
                 >
                   <div className="flex items-start gap-4">
                     <div className="h-12 w-12 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center shrink-0">
@@ -1100,7 +1100,7 @@ export default function NovaAIPage() {
                 : "Protect Sensitive Clinical Data From Order to Report"}
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-5 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible">
               {[
                 {
                   icon: Stethoscope,
@@ -1139,7 +1139,7 @@ export default function NovaAIPage() {
                 return (
                   <div
                     key={item.title}
-                    className="rounded-[22px] bg-[#F7F9FC] border border-transparent p-6 sm:p-7 space-y-4 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
+                    className="w-[78vw] max-w-[300px] shrink-0 snap-center sm:w-auto sm:max-w-none rounded-[22px] bg-[#F7F9FC] border border-transparent p-6 sm:p-7 space-y-4 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
                   >
                     <div className="h-11 w-11 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center">
                       <ItemIcon className="h-5 w-5 stroke-[1.75]" />
