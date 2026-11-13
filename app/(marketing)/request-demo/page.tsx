@@ -579,23 +579,18 @@ export default function RequestDemoPage() {
 
   return (
     <main
-      style={{
-        paddingTop: "calc(60px + var(--announcement-bar-height, 0px))",
-        paddingBottom: "20px",
-      }}
-      className="relative w-full lg:h-[100dvh] min-h-[660px] bg-[#F4F6F9] flex flex-col justify-center transition-[padding-top] duration-300 ease-in-out"
+      className="relative w-full lg:h-[100dvh] min-h-[660px] bg-[#F4F6F9] flex flex-col justify-center pt-[calc(76px+var(--announcement-bar-height,0px))] lg:pt-[calc(96px+var(--announcement-bar-height,0px))] pb-4 lg:pb-5 transition-[padding-top] duration-300 ease-in-out"
     >
       {/* Outer Card with Exact Standard Width max-w-[1560px] px-5 sm:px-6 lg:px-10 Matching Navbar & Site Content */}
       <div className="mx-auto w-full max-w-[1560px] px-5 sm:px-6 lg:px-10 h-full flex flex-col justify-center">
         <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.07)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 xl:gap-8 h-full items-stretch">
 
-            {/* LEFT: Vibrant Bright Blue Feature Banner (Modern, Segar & Tidak Gelap) */}
-            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] text-white p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full shadow-inner">
-              {/* Ambient glowing orbs (Bright & luminous) */}
-              <div className="absolute -top-16 -left-16 w-80 h-80 rounded-full bg-[#60A5FA]/40 blur-3xl pointer-events-none" />
-              <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full bg-[#38BDF8]/30 blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-16 left-1/4 w-72 h-72 rounded-full bg-[#56ADE2]/35 blur-3xl pointer-events-none" />
+            {/* LEFT: Diagnova Hero-Matched Deep Navy-Blue Feature Banner */}
+            <div className="lg:col-span-5 relative rounded-[20px] sm:rounded-[24px] overflow-hidden bg-gradient-to-br from-[#1A4B8C] via-[#225FA8] to-[#133A70] text-white p-6 sm:p-8 lg:p-9 xl:p-10 flex flex-col justify-between h-full shadow-inner">
+              {/* Subtle ambient glowing orbs matching Homepage Hero */}
+              <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#56ADE2]/20 blur-[90px] pointer-events-none" />
+              <div className="absolute -bottom-20 -left-16 w-72 h-72 rounded-full bg-[#0F2C59]/45 blur-[80px] pointer-events-none" />
 
               {/* Top Content */}
               <div className="relative z-10 space-y-3.5">

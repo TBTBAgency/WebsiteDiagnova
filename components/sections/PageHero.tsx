@@ -44,12 +44,9 @@ export function PageHero({
     <section
       className={cn(
         // Exact same outer dimensions as Home Hero on desktop, auto-height breathable layout on mobile
-        "relative w-full min-h-[600px] lg:h-[100dvh] lg:min-h-[760px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
+        "relative w-full min-h-[600px] lg:h-[100dvh] lg:min-h-[760px] pt-[calc(76px+var(--announcement-bar-height,0px))] lg:pt-[calc(96px+var(--announcement-bar-height,0px))] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
         className
       )}
-      style={{
-        paddingTop: "calc(80px + var(--announcement-bar-height, 0px))",
-      }}
     >
       {/* ─── Framed Hero Card with Luminous Diagnova Blue Gradient ─── */}
       <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-br from-[#DCEBFA] via-[#ECF4FD] to-[#F8FBFF] border border-blue-200/70 shadow-[0_14px_40px_-14px_rgba(37,104,186,0.12)] flex items-center justify-center px-5 py-9 sm:p-8 lg:p-12">

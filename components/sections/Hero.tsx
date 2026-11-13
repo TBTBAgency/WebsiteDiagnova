@@ -164,10 +164,7 @@ export function Hero({ initialData }: HeroProps = {}) {
 
   return (
     <section
-      className="relative w-full min-h-[600px] sm:h-[100dvh] sm:min-h-[680px] lg:min-h-[740px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
-      style={{
-        paddingTop: "calc(80px + var(--announcement-bar-height, 0px))",
-      }}
+      className="relative w-full min-h-[600px] sm:h-[100dvh] sm:min-h-[680px] lg:min-h-[740px] pt-[calc(76px+var(--announcement-bar-height,0px))] lg:pt-[calc(96px+var(--announcement-bar-height,0px))] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out"
       aria-label="Diagnova Hero Highlights"
     >
       <style>{`
