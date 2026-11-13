@@ -120,44 +120,24 @@ export default function SolutionsPage() {
         id="facility-solutions"
         className="relative scroll-mt-24 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
-        {/* LigoLab-Inspired Ambient Circular Gradient Orbs & Texture Container
-            Features distinct, luminous circular radial gradient shapes on the outer flanks
-            Acting as ambient rim-lighting behind cards while keeping the center clean */}
+        {/* LigoLab-Identical 3D Glassmorphic Ambient Canvas & Specular Orbs
+            Renders true 3D volumetric spheres, specular rim lighting, and overlapping glass arcs */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 pointer-events-none overflow-hidden"
+          className="absolute inset-0 pointer-events-none overflow-hidden bg-cover bg-center bg-no-repeat"
           style={{
+            backgroundImage: "url('/images/ambient-solutions-orbs.webp')",
             maskImage:
-              "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)",
+              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)",
+              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
           }}
         >
-          {/* Top-Right Flank Circular Gradient Orb - Nova Sky Blue Core */}
-          <div
-            className="absolute top-[12%] sm:top-[14%] lg:top-[16%] -right-[160px] sm:-right-[220px] lg:-right-[260px] w-[500px] sm:w-[620px] lg:w-[720px] h-[500px] sm:h-[620px] lg:h-[720px] rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle at center, rgba(86, 173, 226, 0.42) 0%, rgba(52, 93, 171, 0.20) 35%, rgba(202, 226, 241, 0.06) 58%, transparent 75%)",
-              filter: "blur(65px)",
-            }}
-          />
-
-          {/* Lower-Left Flank Circular Gradient Orb - Diagnova Royal Blue Core */}
-          <div
-            className="absolute bottom-[10%] sm:bottom-[12%] lg:bottom-[15%] -left-[160px] sm:-left-[220px] lg:-left-[260px] w-[480px] sm:w-[600px] lg:w-[680px] h-[480px] sm:h-[600px] lg:h-[680px] rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle at center, rgba(52, 93, 171, 0.38) 0%, rgba(39, 100, 184, 0.22) 32%, rgba(86, 173, 226, 0.08) 55%, transparent 72%)",
-              filter: "blur(60px)",
-            }}
-          />
-
           {/* Subtle Ambient Dot Grid Pattern - Modern Tactile Micro-Texture */}
           <div
-            className="absolute inset-0 opacity-[0.16]"
+            className="absolute inset-0 opacity-[0.14]"
             style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.20) 1.25px, transparent 1.25px)",
+              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.18) 1.25px, transparent 1.25px)",
               backgroundSize: "24px 24px",
             }}
           />
