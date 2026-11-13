@@ -146,58 +146,53 @@ export default function PlatformPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {/* Card 1: Pangkas TAT & Zero Rekeying */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
-              {/* Top Visual Stage (Micro-UI Mockup) */}
-              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
-                {/* Subtle Grid Accent */}
-                <div
-                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
-                    backgroundSize: "16px 16px",
-                  }}
-                />
-
-                {/* Ambient Soft Glow */}
-                <div className="absolute w-28 h-28 rounded-full bg-blue-400/15 blur-2xl pointer-events-none" />
-
-                {/* Floating Visual: Connection Handshake & Instant TAT Meter */}
-                <div className="relative z-10 w-full max-w-[280px] space-y-3">
-                  {/* Two Connected Instruments */}
+              {/* Top Visual Stage: Live Telemetry Pipeline */}
+              <div className="h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div className="w-full max-w-[300px] rounded-xl bg-white border border-slate-200/90 shadow-sm p-3.5 space-y-3">
+                  {/* Instrument -> LIS Header */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="bg-white/90 backdrop-blur-xs px-2.5 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-1.5">
-                      <Cpu className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <div className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/80 text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-1.5">
+                      <Cpu className="h-3.5 w-3.5 text-[#0073FC]" />
                       <span>Sysmex XN</span>
                     </div>
-
-                    {/* Animated Connection Dots */}
                     <div className="flex-1 flex items-center justify-center gap-1 px-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                      <span className="h-1 w-6 bg-gradient-to-r from-blue-300 to-[#2764B8] rounded-full" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#2764B8]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] animate-pulse" />
+                      <span className="h-[2px] flex-1 bg-gradient-to-r from-blue-300 to-[#0073FC] rounded-full" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC]" />
                     </div>
-
-                    <div className="bg-[#2764B8] px-2.5 py-1.5 rounded-xl shadow-xs text-[11px] font-semibold text-white flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-blue-200" />
+                    <div className="px-2.5 py-1 rounded-lg bg-[#0073FC] text-[11px] font-semibold text-white flex items-center gap-1">
+                      <Zap className="h-3 w-3 text-blue-100" />
                       <span>LIS Host</span>
                     </div>
                   </div>
 
-                  {/* Stopwatch TAT Reduction Pill */}
-                  <div className="bg-white/95 backdrop-blur-xs p-2.5 rounded-xl border border-blue-100/90 shadow-2xs flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-[#2764B8]" />
-                      <span className="line-through text-slate-400 text-[11px] font-mono">8 min manual</span>
+                  {/* TAT Progress Comparison */}
+                  <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 line-through font-mono">8 min manual</span>
+                      <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80">
+                        0.04s Ingested
+                      </span>
                     </div>
-                    <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
-                      0.04s Ingested
-                    </span>
+                    <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-[#0073FC] to-emerald-500" />
+                    </div>
+                  </div>
+
+                  {/* Live Parameter Telemetry Strip */}
+                  <div className="flex items-center justify-between rounded-lg bg-slate-50/90 border border-slate-200/60 px-2.5 py-1.5 text-[10px] font-mono text-slate-600">
+                    <span>WBC 7.42</span>
+                    <span className="text-slate-300">·</span>
+                    <span>HGB 14.1</span>
+                    <span className="text-slate-300">·</span>
+                    <span>PLT 245</span>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Content (Crisp, High Contrast, No AI Slop) */}
+              {/* Bottom Content */}
               <div>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#0073FC] transition-colors">
                   {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
@@ -210,41 +205,50 @@ export default function PlatformPage() {
 
             {/* Card 2: Smart Auto-Verification Engine */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
-              {/* Top Visual Stage (Micro-UI Mockup) */}
-              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
-                <div
-                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
-                    backgroundSize: "16px 16px",
-                  }}
-                />
-                <div className="absolute w-28 h-28 rounded-full bg-emerald-400/15 blur-2xl pointer-events-none" />
-
-                {/* Floating Visual: Dual-Branching Decision Node */}
-                <div className="relative z-10 w-full max-w-[280px] space-y-2.5">
-                  {/* Central Inbound Specimen */}
-                  <div className="mx-auto w-fit bg-white/95 px-3 py-1 rounded-full border border-slate-200/90 shadow-2xs text-[11px] font-mono font-semibold text-slate-700 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-blue-500" />
+              {/* Top Visual Stage: Clinical Rule Decision Tree */}
+              <div className="h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div className="w-full max-w-[300px] flex flex-col items-center">
+                  {/* Inbound Specimen Node */}
+                  <div className="w-fit bg-white px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#0073FC]" />
                     <span>Specimen #DX-889</span>
+                    <span className="text-[10px] font-sans font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                      Delta OK
+                    </span>
                   </div>
 
+                  {/* Crisp SVG Branch Connectors */}
+                  <svg viewBox="0 0 240 28" className="w-56 h-7 overflow-visible" aria-hidden="true">
+                    <path d="M 120 0 L 120 12 L 56 12 L 56 28" fill="none" stroke="#10B981" strokeWidth="1.5" strokeOpacity="0.65" />
+                    <path d="M 120 0 L 120 12 L 184 12 L 184 28" fill="none" stroke="#0073FC" strokeWidth="1.5" strokeOpacity="0.65" />
+                  </svg>
+
                   {/* Branching Split Cards */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-white/95 p-2 rounded-xl border border-emerald-200/80 shadow-2xs text-center">
-                      <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-emerald-700">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>Auto-Release</span>
+                  <div className="grid grid-cols-2 gap-2.5 w-full">
+                    <div className="bg-white p-2.5 rounded-xl border border-emerald-200/90 shadow-xs space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700">
+                        <span className="flex items-center gap-1">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Auto-Release
+                        </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-mono block mt-0.5">85% Normal SOP</span>
+                      <div className="h-1 w-full rounded-full bg-emerald-100 overflow-hidden">
+                        <div className="h-full w-[85%] rounded-full bg-emerald-500" />
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono block">85% Normal SOP</span>
                     </div>
 
-                    <div className="bg-white/95 p-2 rounded-xl border border-blue-200/80 shadow-2xs text-center">
-                      <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#2764B8]">
-                        <ShieldCheck className="h-3.5 w-3.5" />
-                        <span>Doctor Triage</span>
+                    <div className="bg-white p-2.5 rounded-xl border border-blue-200/90 shadow-xs space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-[#0073FC]">
+                        <span className="flex items-center gap-1">
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          Doctor Triage
+                        </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-mono block mt-0.5">15% Critical Risk</span>
+                      <div className="h-1 w-full rounded-full bg-blue-100 overflow-hidden">
+                        <div className="h-full w-[25%] rounded-full bg-[#0073FC]" />
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono block">15% Critical Risk</span>
                     </div>
                   </div>
                 </div>
@@ -252,7 +256,7 @@ export default function PlatformPage() {
 
               {/* Bottom Content */}
               <div>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#0073FC] transition-colors">
                   {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
@@ -265,42 +269,44 @@ export default function PlatformPage() {
 
             {/* Card 3: Resilient Edge Buffer */}
             <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
-              {/* Top Visual Stage (Micro-UI Mockup) */}
-              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
-                <div
-                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
-                    backgroundSize: "16px 16px",
-                  }}
-                />
-                <div className="absolute w-28 h-28 rounded-full bg-blue-500/15 blur-2xl pointer-events-none" />
-
-                {/* Floating Visual: Edge Buffer Storage Box & Live Toggle */}
-                <div className="relative z-10 w-full max-w-[280px] space-y-2.5">
-                  {/* Status Toggle Header */}
-                  <div className="bg-white/95 px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-700 text-[11px] flex items-center gap-1.5">
-                      <Server className="h-3.5 w-3.5 text-[#2764B8]" />
+              {/* Top Visual Stage: Edge Buffer Health Monitor */}
+              <div className="h-48 sm:h-52 w-full rounded-2xl bg-[#F4F8FD] border border-slate-200/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div className="w-full max-w-[300px] rounded-xl bg-white border border-slate-200/90 shadow-sm p-3.5 space-y-3">
+                  {/* Status Header */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-slate-800 text-[11px] flex items-center gap-1.5">
+                      <Server className="h-3.5 w-3.5 text-[#0073FC]" />
                       Edge Gateway
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       72H Retention Safe
                     </span>
                   </div>
 
-                  {/* Packet Resync Badge */}
-                  <div className="bg-white/95 p-2 rounded-xl border border-blue-100/90 shadow-2xs flex items-center justify-between text-[11px] font-mono text-slate-600">
-                    <span>Pending: 0 Packets</span>
-                    <span className="text-[#2764B8] font-bold">Zero Data Loss</span>
+                  {/* Buffer Channel Sync Bars */}
+                  <div className="flex items-end justify-between gap-1.5 h-10 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    {[65, 85, 72, 95, 80, 90, 75, 100].map((h, i) => (
+                      <div key={i} className="flex-1 h-full flex items-end">
+                        <div
+                          className="w-full rounded-sm bg-[#0073FC]/85"
+                          style={{ height: `${h}%` }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Packet Resync Footer */}
+                  <div className="flex items-center justify-between text-[11px] font-mono pt-0.5">
+                    <span className="text-slate-500">Pending: 0 Packets</span>
+                    <span className="text-[#0073FC] font-bold">Zero Data Loss</span>
                   </div>
                 </div>
               </div>
 
               {/* Bottom Content */}
               <div>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#0073FC] transition-colors">
                   {language === "ID" ? "Resilient Edge Buffer" : "Resilient Edge Buffer"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
