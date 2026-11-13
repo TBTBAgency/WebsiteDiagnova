@@ -132,18 +132,18 @@ export function CTABanner({
               </form>
             </div>
 
-            {/* Right/Bottom Column: Official CTA Image */}
+            {/* Right/Bottom Column: Official CTA Image anchored flush to bottom-right edge */}
             <div
               id="cta-image-container"
-              className="lg:col-span-5 relative w-full lg:h-full lg:min-h-[440px] self-stretch flex items-end justify-center lg:justify-end pointer-events-none overflow-hidden px-5 pt-1 pb-0 lg:p-0"
+              className="lg:col-span-5 relative w-full lg:h-full lg:min-h-[440px] self-stretch flex items-end justify-end pointer-events-none overflow-hidden pt-2 lg:p-0"
             >
-              <div className="relative lg:absolute right-0 bottom-0 w-full max-w-[330px] sm:max-w-[440px] lg:max-w-[659px] flex items-end justify-center lg:justify-end lg:translate-x-1 z-10">
+              <div className="relative lg:absolute right-0 bottom-0 w-[94%] sm:w-[78%] lg:w-full lg:max-w-[659px] flex items-end justify-end translate-x-1 z-10">
                 <Image
                   src="/images/CTA-image.webp"
                   alt="Diagnova Platform on Laptop"
                   width={1200}
                   height={960}
-                  className="w-full h-auto object-contain object-bottom select-none pointer-events-none drop-shadow-[0_10px_24px_rgba(30,64,120,0.14)] lg:drop-shadow-none"
+                  className="w-full h-auto object-contain object-right-bottom select-none pointer-events-none"
                   loading="eager"
                 />
               </div>
