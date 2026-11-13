@@ -162,7 +162,7 @@ export default function SolutionsPage() {
                     <div className="h-6 w-6 rounded-lg bg-[#FFEFE6] text-amber-600 flex items-center justify-center shrink-0">
                       <Building2 className="h-3.5 w-3.5" />
                     </div>
-                    <span className="truncate">Automated HIS &amp; EMR Bridging</span>
+                    <span className="truncate">{language === "ID" ? "Bridging SIMRS & RME Otomatis" : "Automated HIS & EMR Bridging"}</span>
                   </div>
 
                   {/* Floating Pill 2: ER & ICU Panic Alerts < 25m */}
@@ -170,7 +170,7 @@ export default function SolutionsPage() {
                     <div className="h-6 w-6 rounded-lg bg-[#FEECEB] text-rose-500 flex items-center justify-center shrink-0">
                       <AlertTriangle className="h-3.5 w-3.5" />
                     </div>
-                    <span className="truncate">ER &amp; ICU Panic Alerts &lt; 25m</span>
+                    <span className="truncate">{language === "ID" ? "Notifikasi Kritis IGD & ICU < 25m" : "ER & ICU Panic Alerts < 25m"}</span>
                   </div>
 
                   {/* Floating Pill 3: Bedside Phlebotomy Barcode */}
@@ -178,7 +178,7 @@ export default function SolutionsPage() {
                     <div className="h-6 w-6 rounded-lg bg-[#FEF6E6] text-amber-500 flex items-center justify-center shrink-0">
                       <Zap className="h-3.5 w-3.5" />
                     </div>
-                    <span className="truncate">Bedside Phlebotomy Barcode</span>
+                    <span className="truncate">{language === "ID" ? "Barcode Flebotomi Bedside" : "Bedside Phlebotomy Barcode"}</span>
                   </div>
                 </div>
 
@@ -200,15 +200,15 @@ export default function SolutionsPage() {
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      Batch Ingested
+                      {language === "ID" ? "Batch Diterima" : "Batch Ingested"}
                     </span>
-                    <span className="text-[10px] font-mono font-bold text-slate-700">PT Telkom (450 Pax)</span>
+                    <span className="text-[11px] font-mono font-bold text-slate-700">PT Telkom (450 Pax)</span>
                   </div>
 
                   {/* Corporate MCU Roster Box */}
                   <div className="p-3 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-1">
-                    <h4 className="font-bold text-xs sm:text-sm text-slate-900">Corporate MCU Roster</h4>
-                    <p className="text-[10px] font-mono text-slate-500">450 Barcode Terbit • 0.4s / Peserta</p>
+                    <h4 className="font-bold text-xs sm:text-sm text-slate-900">{language === "ID" ? "Roster MCU Korporat" : "Corporate MCU Roster"}</h4>
+                    <p className="text-[10px] font-mono text-slate-500">{language === "ID" ? "450 Barcode Terbit • 0.4s / Peserta" : "450 Barcodes Issued • 0.4s / Patient"}</p>
                   </div>
 
                   {/* Bottom Avatar Initials + WhatsApp Delivery */}
@@ -225,7 +225,7 @@ export default function SolutionsPage() {
                           C
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-medium">+447 Lainnya</span>
+                      <span className="text-[10px] text-slate-500 font-medium">{language === "ID" ? "+447 Lainnya" : "+447 Others"}</span>
                     </div>
 
                     <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2764B8]">
@@ -251,7 +251,7 @@ export default function SolutionsPage() {
                 {/* Top Visual Stage: Soft Mint/Green Canvas with 5-Step Pipeline & Action Buttons */}
                 <div className="ll-card-stage p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800">Alur Kaset &amp; Slide</span>
+                    <span className="text-xs font-bold text-slate-800">{language === "ID" ? "Alur Kaset & Slide" : "Cassette & Slide Flow"}</span>
                     <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
                       Zero Mix-Up
                     </span>
@@ -278,7 +278,7 @@ export default function SolutionsPage() {
 
                   {/* Sample ID & ICD-O Standard */}
                   <div className="flex items-center justify-between text-[10px] font-mono">
-                    <span className="text-slate-500">#PA-24-0982 (Biopsi)</span>
+                    <span className="text-slate-500">{language === "ID" ? "#PA-24-0982 (Biopsi)" : "#PA-24-0982 (Biopsy)"}</span>
                     <span className="text-slate-700 font-bold">ICD-O 8500/3</span>
                   </div>
 
@@ -288,13 +288,13 @@ export default function SolutionsPage() {
                       type="button"
                       className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-[10px] font-medium text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
                     >
-                      Arsip Blok
+                      {language === "ID" ? "Arsip Blok" : "Block Archive"}
                     </button>
                     <button
                       type="button"
                       className="px-2 py-1 rounded-lg bg-[#0F172A] text-[10px] font-semibold text-white shadow-2xs hover:bg-slate-800 transition-colors"
                     >
-                      Validasi Sp.PA
+                      {language === "ID" ? "Validasi Sp.PA" : "Pathologist Sign-Off"}
                     </button>
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export default function SolutionsPage() {
                             : "text-slate-600 hover:text-slate-900 bg-transparent"
                         )}
                       >
-                        Kultur Mikrobiologi PPRA
+                        {language === "ID" ? "Kultur Mikrobiologi PPRA" : "ASP Microbiology Culture"}
                       </button>
                       <button
                         type="button"
@@ -344,7 +344,7 @@ export default function SolutionsPage() {
                             : "text-slate-600 hover:text-slate-900 bg-transparent"
                         )}
                       >
-                        Bank Darah (BDRS)
+                        {language === "ID" ? "Bank Darah (BDRS)" : "Blood Bank"}
                       </button>
                     </div>
 
@@ -358,7 +358,7 @@ export default function SolutionsPage() {
                     /* 3 Telemetry Columns (Microbiology Mode) */
                     <div className="grid grid-cols-3 divide-x divide-slate-100 bg-white rounded-xl border border-slate-200/80 p-2 text-xs">
                       <div className="px-2 py-1">
-                        <span className="text-[10px] text-slate-400 font-mono block">Isolat Kuman</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">{language === "ID" ? "Isolat Kuman" : "Pathogen Isolate"}</span>
                         <span className="font-bold text-slate-900 text-xs sm:text-sm font-mono truncate block mt-0.5">
                           S. aureus (18h)
                         </span>
@@ -367,7 +367,7 @@ export default function SolutionsPage() {
                         </span>
                       </div>
                       <div className="px-2.5 py-1">
-                        <span className="text-[10px] text-slate-400 font-mono block">Sensitivitas Utama</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">{language === "ID" ? "Sensitivitas Utama" : "Primary Susceptibility"}</span>
                         <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono block mt-0.5">
                           Vancomycin (S)
                         </span>
@@ -376,7 +376,7 @@ export default function SolutionsPage() {
                         </span>
                       </div>
                       <div className="px-2.5 py-1">
-                        <span className="text-[10px] text-red-500 font-mono block font-bold">Resistensi Terdeteksi</span>
+                        <span className="text-[10px] text-red-500 font-mono block font-bold">{language === "ID" ? "Resistensi Terdeteksi" : "Resistance Detected"}</span>
                         <span className="font-bold text-red-700 text-xs sm:text-sm font-mono block mt-0.5">
                           Cefoxitin / MRSA (R)
                         </span>
@@ -389,27 +389,27 @@ export default function SolutionsPage() {
                     /* 3 Telemetry Columns (Blood Bank Mode) */
                     <div className="grid grid-cols-3 divide-x divide-slate-100 bg-white rounded-xl border border-slate-200/80 p-2 text-xs">
                       <div className="px-2 py-1">
-                        <span className="text-[10px] text-slate-400 font-mono block">Uji Silang Serasi</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">{language === "ID" ? "Uji Silang Serasi" : "Cross-Match Test"}</span>
                         <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono truncate block mt-0.5">
-                          Mayor &amp; Minor (OK)
+                          {language === "ID" ? "Mayor & Minor (OK)" : "Major & Minor (OK)"}
                         </span>
                         <span className="text-[10px] font-mono text-slate-500 block mt-0.5">
-                          #ID-0892 &times; Ny. Mariam
+                          {language === "ID" ? "#ID-0892 × Ny. Mariam" : "#ID-0892 × Mrs. Mariam"}
                         </span>
                       </div>
                       <div className="px-2.5 py-1">
-                        <span className="text-[10px] text-slate-400 font-mono block">Suhu Kulkas BDRS</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">{language === "ID" ? "Suhu Kulkas BDRS" : "Blood Fridge Temp"}</span>
                         <span className="font-bold text-[#2764B8] text-xs sm:text-sm font-mono block mt-0.5">
-                          3.8&deg;C (Aman)
+                          {language === "ID" ? "3.8°C (Aman)" : "3.8°C (Safe)"}
                         </span>
                         <span className="text-[10px] font-mono text-slate-500 block mt-0.5">
-                          Rentang 2&deg;C - 6&deg;C
+                          {language === "ID" ? "Rentang 2°C - 6°C" : "Range 2°C - 6°C"}
                         </span>
                       </div>
                       <div className="px-2.5 py-1">
-                        <span className="text-[10px] text-slate-400 font-mono block">Rotasi FEFO Stok</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">{language === "ID" ? "Rotasi FEFO Stok" : "FEFO Stock Rotation"}</span>
                         <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono block mt-0.5">
-                          Sisa 24 Hari
+                          {language === "ID" ? "Sisa 24 Hari" : "24 Days Left"}
                         </span>
                         <span className="text-[10px] font-mono text-emerald-600 font-semibold block mt-0.5">
                           ISBT-128 Verified
@@ -421,7 +421,9 @@ export default function SolutionsPage() {
                   {/* Interactive Search Pill Bar */}
                   <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
                     <span className="text-[11px] text-slate-400 font-normal px-1 truncate">
-                      Cari riwayat kultur kuman atau pola resistensi antibiogram...
+                      {language === "ID"
+                        ? "Cari riwayat kultur kuman atau pola resistensi antibiogram..."
+                        : "Search pathogen culture history or antibiogram resistance patterns..."}
                     </span>
                     <button
                       type="button"
@@ -452,7 +454,7 @@ export default function SolutionsPage() {
                   <div className="flex items-center justify-between border-b border-slate-200/70 pb-2">
                     <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                       <Sparkles className="h-3.5 w-3.5 text-[#2764B8]" />
-                      Summary Nova AI
+                      {language === "ID" ? "Ringkasan Nova AI" : "Nova AI Summary"}
                     </span>
                     <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
                       Delta Check
@@ -462,13 +464,19 @@ export default function SolutionsPage() {
                   {/* 3 Narrative Summary Cards */}
                   <div className="space-y-1.5 text-[11px] text-slate-600 leading-relaxed font-normal">
                     <p className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
-                      Terdeteksi lonjakan biomarker serum Kreatinin (+115% vs baseline 3 bulan lalu).
+                      {language === "ID"
+                        ? "Terdeteksi lonjakan biomarker serum Kreatinin (+115% vs baseline 3 bulan lalu)."
+                        : "Detected serum Creatinine biomarker surge (+115% vs 3-month baseline)."}
                     </p>
                     <p className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
-                      Rekomendasi DPJP: Lakukan evaluasi Acute Kidney Injury (AKI) sebelum memulai peresepan nefrotoksik.
+                      {language === "ID"
+                        ? "Rekomendasi DPJP: Lakukan evaluasi Acute Kidney Injury (AKI) sebelum memulai peresepan nefrotoksik."
+                        : "Attending Recommendation: Evaluate for Acute Kidney Injury (AKI) before initiating nephrotoxic prescriptions."}
                     </p>
                     <p className="p-2 rounded-lg bg-emerald-50/70 border border-emerald-100 text-emerald-800 font-medium">
-                      Otorisasi Klinis: Keputusan diagnostik dan tindakan medis 100% di tangan dokter spesialis.
+                      {language === "ID"
+                        ? "Otorisasi Klinis: Keputusan diagnostik dan tindakan medis 100% di tangan dokter spesialis."
+                        : "Clinical Authorization: Diagnostic decisions and medical actions remain 100% with the specialist."}
                     </p>
                   </div>
                 </div>

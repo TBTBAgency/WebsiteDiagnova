@@ -169,9 +169,9 @@ export default function PlatformPage() {
                   {/* TAT Progress Comparison */}
                   <div className="space-y-1.5 pt-1 border-t border-slate-100">
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-slate-400 line-through font-mono">8 min manual</span>
+                      <span className="text-slate-400 line-through font-mono">{language === "ID" ? "8 mnt manual" : "8 min manual"}</span>
                       <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80">
-                        0.04s Ingested
+                        {language === "ID" ? "0.04d Masuk" : "0.04s Ingested"}
                       </span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
@@ -211,7 +211,7 @@ export default function PlatformPage() {
                   {/* Inbound Specimen Node */}
                   <div className="w-fit bg-white px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#0073FC]" />
-                    <span>Specimen #DX-889</span>
+                    <span>{language === "ID" ? "Spesimen #DX-889" : "Specimen #DX-889"}</span>
                     <span className="text-[10px] font-sans font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
                       Delta OK
                     </span>
@@ -229,26 +229,26 @@ export default function PlatformPage() {
                       <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700">
                         <span className="flex items-center gap-1">
                           <CheckCircle2 className="h-3.5 w-3.5" />
-                          Auto-Release
+                          {language === "ID" ? "Rilis Otomatis" : "Auto-Release"}
                         </span>
                       </div>
                       <div className="h-1 w-full rounded-full bg-emerald-100 overflow-hidden">
                         <div className="h-full w-[85%] rounded-full bg-emerald-500" />
                       </div>
-                      <span className="text-[10px] text-slate-500 font-mono block">85% Normal SOP</span>
+                      <span className="text-[10px] text-slate-500 font-mono block">{language === "ID" ? "85% SOP Normal" : "85% Normal SOP"}</span>
                     </div>
 
                     <div className="bg-white p-2.5 rounded-xl border border-blue-200/90 shadow-xs space-y-1.5 transition-transform duration-300 delay-75 group-hover:-translate-y-0.5">
                       <div className="flex items-center justify-between text-[11px] font-bold text-[#0073FC]">
                         <span className="flex items-center gap-1">
                           <ShieldCheck className="h-3.5 w-3.5" />
-                          Doctor Triage
+                          {language === "ID" ? "Triase Dokter" : "Doctor Triage"}
                         </span>
                       </div>
                       <div className="h-1 w-full rounded-full bg-blue-100 overflow-hidden">
                         <div className="h-full w-[25%] rounded-full bg-[#0073FC]" />
                       </div>
-                      <span className="text-[10px] text-slate-500 font-mono block">15% Critical Risk</span>
+                      <span className="text-[10px] text-slate-500 font-mono block">{language === "ID" ? "15% Risiko Kritis" : "15% Critical Risk"}</span>
                     </div>
                   </div>
                 </div>
@@ -280,7 +280,7 @@ export default function PlatformPage() {
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      72H Retention Safe
+                      {language === "ID" ? "Retensi 72J Aman" : "72H Retention Safe"}
                     </span>
                   </div>
 
@@ -298,8 +298,8 @@ export default function PlatformPage() {
 
                   {/* Packet Resync Footer */}
                   <div className="flex items-center justify-between text-[11px] font-mono pt-0.5">
-                    <span className="text-slate-500">Pending: 0 Packets</span>
-                    <span className="text-[#0073FC] font-bold">Zero Data Loss</span>
+                    <span className="text-slate-500">{language === "ID" ? "Antrean: 0 Paket" : "Pending: 0 Packets"}</span>
+                    <span className="text-[#0073FC] font-bold">{language === "ID" ? "Nol Data Hilang" : "Zero Data Loss"}</span>
                   </div>
                 </div>
               </div>
