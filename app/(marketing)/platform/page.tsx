@@ -378,9 +378,6 @@ export default function PlatformPage() {
 
             {/* Right Column: Modern Desktop Workstation Showcase with Floating Accent Card (Shifted to the Right, Compact Width) */}
             <div className="lg:col-span-6 relative mt-8 lg:mt-0 flex justify-end pb-8 sm:pb-10 lg:pb-0 w-full">
-              {/* Subtle ambient glow behind monitor */}
-              <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[36px] blur-2xl pointer-events-none" />
-
               {/* Monitor Chassis Container (Precisely Flush to Max Content Right Edge, No Translate Offset) */}
               <div className="relative z-10 w-full ml-auto max-w-[540px] sm:max-w-[580px] lg:max-w-[600px]">
                 {/* 1. Monitor Bezel Frame */}
@@ -583,29 +580,6 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* LigoLab-Identical 3D Ambient Canvas & Pure Smooth Orbs
-            Renders true 3D volumetric spheres with ultra-smooth smootherstep C2 fade opacity */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none overflow-hidden bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/images/ambient-platform-orbs.webp?v=pure')",
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-          }}
-        >
-          {/* Subtle Ambient Dot Grid Pattern - Modern Tactile Micro-Texture */}
-          <div
-            className="absolute inset-0 opacity-[0.14]"
-            style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.18) 1.25px, transparent 1.25px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-        </div>
-
         <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
           <div className="mb-10 sm:mb-14">

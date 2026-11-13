@@ -120,29 +120,6 @@ export default function SolutionsPage() {
         id="facility-solutions"
         className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* LigoLab-Identical 3D Ambient Canvas & Pure Smooth Orbs
-            Renders true 3D volumetric spheres with ultra-smooth smootherstep C2 fade opacity */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none overflow-hidden bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/images/ambient-solutions-orbs.webp?v=pure')",
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-          }}
-        >
-          {/* Subtle Ambient Dot Grid Pattern - Modern Tactile Micro-Texture */}
-          <div
-            className="absolute inset-0 opacity-[0.14]"
-            style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.18) 1.25px, transparent 1.25px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-        </div>
-
         <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header (Left-aligned with SectionBadge like other sections) */}
           <div className="max-w-3xl mb-10 sm:mb-12">
