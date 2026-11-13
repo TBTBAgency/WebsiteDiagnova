@@ -140,58 +140,61 @@ export default function PlatformPage() {
           </div>
 
           {/* 3 Bento Cards with Top Visual Stage (Ref: Modern SaaS Micro-UI Architecture) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {/* Card 1: Pangkas TAT & Zero Rekeying */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.05)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage (Micro-UI Mockup) */}
-              <div className="h-52 w-full rounded-2xl bg-[#F4F7FB] border border-slate-200/70 relative flex flex-col justify-between p-4 overflow-hidden mb-6">
-                {/* Mini Telemetry Header */}
-                <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="font-semibold text-slate-500">HL7 / ASTM Bidirectional</span>
-                  <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Live
-                  </span>
-                </div>
+              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                {/* Subtle Grid Accent */}
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                />
 
-                {/* Two Connected Instruments */}
-                <div className="relative z-10 flex items-center justify-between gap-1.5 my-auto">
-                  <div className="bg-white px-3 py-2 rounded-xl border border-slate-200/90 shadow-2xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-1.5 shrink-0">
-                    <Cpu className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span>Sysmex XN</span>
+                {/* Ambient Soft Glow */}
+                <div className="absolute w-28 h-28 rounded-full bg-blue-400/15 blur-2xl pointer-events-none" />
+
+                {/* Floating Visual: Connection Handshake & Instant TAT Meter */}
+                <div className="relative z-10 w-full max-w-[280px] space-y-3">
+                  {/* Two Connected Instruments */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="bg-white/90 backdrop-blur-xs px-2.5 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-1.5">
+                      <Cpu className="h-3.5 w-3.5 text-[#2764B8]" />
+                      <span>Sysmex XN</span>
+                    </div>
+
+                    {/* Animated Connection Dots */}
+                    <div className="flex-1 flex items-center justify-center gap-1 px-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                      <span className="h-1 w-6 bg-gradient-to-r from-blue-300 to-[#2764B8] rounded-full" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#2764B8]" />
+                    </div>
+
+                    <div className="bg-[#2764B8] px-2.5 py-1.5 rounded-xl shadow-xs text-[11px] font-semibold text-white flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-blue-200" />
+                      <span>LIS Host</span>
+                    </div>
                   </div>
 
-                  {/* Clean SVG Data Pipe */}
-                  <div className="flex-1 flex items-center justify-center px-1">
-                    <svg className="w-full h-4 text-[#0073FC]" viewBox="0 0 64 16" fill="none" aria-hidden="true">
-                      <line x1="2" y1="8" x2="62" y2="8" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="3 3" />
-                      <circle cx="32" cy="8" r="3.5" fill="#0073FC" />
-                    </svg>
-                  </div>
-
-                  <div className="bg-[#0073FC] px-3 py-2 rounded-xl shadow-[0_4px_12px_-2px_rgba(0,115,252,0.35)] text-[11px] font-semibold text-white flex items-center gap-1.5 shrink-0">
-                    <Zap className="h-3.5 w-3.5 text-blue-100" />
-                    <span>LIS Host</span>
-                  </div>
-                </div>
-
-                {/* Stopwatch TAT Reduction Pill */}
-                <div className="bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-2xs flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span className="line-through text-slate-400 text-[11px] font-mono">8m manual</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80 text-[10.5px]">
+                  {/* Stopwatch TAT Reduction Pill */}
+                  <div className="bg-white/95 backdrop-blur-xs p-2.5 rounded-xl border border-blue-100/90 shadow-2xs flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-[#2764B8]" />
+                      <span className="line-through text-slate-400 text-[11px] font-mono">8 min manual</span>
+                    </div>
+                    <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
                       0.04s Ingested
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Content */}
+              {/* Bottom Content (Crisp, High Contrast, No AI Slop) */}
               <div>
-                <h3 className="font-display text-xl sm:text-[22px] font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Pangkas TAT Hingga 70%" : "Cut Turnaround Time by 70%"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
@@ -203,43 +206,39 @@ export default function PlatformPage() {
             </div>
 
             {/* Card 2: Smart Auto-Verification Engine */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.05)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage (Micro-UI Mockup) */}
-              <div className="h-52 w-full rounded-2xl bg-[#F4F7FB] border border-slate-200/70 relative flex flex-col justify-between p-4 overflow-hidden mb-6">
-                <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="font-semibold text-slate-500">Westgard &amp; Delta Rules</span>
-                  <span className="text-[#2764B8] font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200/80">
-                    Active
-                  </span>
-                </div>
+              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                />
+                <div className="absolute w-28 h-28 rounded-full bg-emerald-400/15 blur-2xl pointer-events-none" />
 
-                {/* Floating Visual: Dual-Branching Decision Node with SVG Connectors */}
-                <div className="relative z-10 w-full flex flex-col items-center my-auto">
+                {/* Floating Visual: Dual-Branching Decision Node */}
+                <div className="relative z-10 w-full max-w-[280px] space-y-2.5">
                   {/* Central Inbound Specimen */}
-                  <div className="bg-white px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-2xs text-[11px] font-mono font-semibold text-slate-800 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-[#0073FC]" />
+                  <div className="mx-auto w-fit bg-white/95 px-3 py-1 rounded-full border border-slate-200/90 shadow-2xs text-[11px] font-mono font-semibold text-slate-700 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-blue-500" />
                     <span>Specimen #DX-889</span>
                   </div>
 
-                  {/* Branching SVG Connector */}
-                  <svg className="w-48 h-6 text-slate-300" viewBox="0 0 192 24" fill="none" aria-hidden="true">
-                    <path d="M96 0 C96 12, 46 10, 46 24" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M96 0 C96 12, 146 10, 146 24" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-
                   {/* Branching Split Cards */}
-                  <div className="grid grid-cols-2 gap-2.5 w-full">
-                    <div className="bg-white p-2.5 rounded-xl border border-emerald-200/90 shadow-2xs text-center">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-white/95 p-2 rounded-xl border border-emerald-200/80 shadow-2xs text-center">
                       <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-emerald-700">
-                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                        <CheckCircle2 className="h-3.5 w-3.5" />
                         <span>Auto-Release</span>
                       </div>
                       <span className="text-[10px] text-slate-500 font-mono block mt-0.5">85% Normal SOP</span>
                     </div>
 
-                    <div className="bg-white p-2.5 rounded-xl border border-blue-200/90 shadow-2xs text-center">
+                    <div className="bg-white/95 p-2 rounded-xl border border-blue-200/80 shadow-2xs text-center">
                       <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-[#2764B8]">
-                        <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+                        <ShieldCheck className="h-3.5 w-3.5" />
                         <span>Doctor Triage</span>
                       </div>
                       <span className="text-[10px] text-slate-500 font-mono block mt-0.5">15% Critical Risk</span>
@@ -250,7 +249,7 @@ export default function PlatformPage() {
 
               {/* Bottom Content */}
               <div>
-                <h3 className="font-display text-xl sm:text-[22px] font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Auto-Verification Engine" : "Auto-Verification Engine"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
@@ -262,42 +261,43 @@ export default function PlatformPage() {
             </div>
 
             {/* Card 3: Resilient Edge Buffer */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.05)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
               {/* Top Visual Stage (Micro-UI Mockup) */}
-              <div className="h-52 w-full rounded-2xl bg-[#F4F7FB] border border-slate-200/70 relative flex flex-col justify-between p-4 overflow-hidden mb-6">
-                {/* Status Toggle Header */}
-                <div className="bg-white px-3 py-2 rounded-xl border border-slate-200/80 shadow-2xs flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-800 text-[11px] flex items-center gap-1.5">
-                    <Server className="h-3.5 w-3.5 text-[#0073FC]" />
-                    Edge Gateway
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    72H Retention
-                  </span>
-                </div>
+              <div className="h-44 sm:h-48 w-full rounded-2xl bg-gradient-to-b from-[#F8FBFE] to-[#F1F6FC] border border-blue-100/70 relative flex items-center justify-center p-4 overflow-hidden mb-6">
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
+                    backgroundSize: "16px 16px",
+                  }}
+                />
+                <div className="absolute w-28 h-28 rounded-full bg-blue-500/15 blur-2xl pointer-events-none" />
 
-                {/* Local Ring Buffer Visualizer */}
-                <div className="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between text-[10.5px] font-mono">
-                    <span className="text-slate-500">Local Ring Buffer</span>
-                    <span className="font-bold text-emerald-700">100% Synced</span>
+                {/* Floating Visual: Edge Buffer Storage Box & Live Toggle */}
+                <div className="relative z-10 w-full max-w-[280px] space-y-2.5">
+                  {/* Status Toggle Header */}
+                  <div className="bg-white/95 px-3 py-1.5 rounded-xl border border-slate-200/90 shadow-2xs flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 text-[11px] flex items-center gap-1.5">
+                      <Server className="h-3.5 w-3.5 text-[#2764B8]" />
+                      Edge Gateway
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      72H Retention Safe
+                    </span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden flex gap-0.5">
-                    <div className="h-full w-full bg-[#0073FC] rounded-full" />
-                  </div>
-                </div>
 
-                {/* Packet Resync Badge */}
-                <div className="bg-white px-3 py-2 rounded-xl border border-slate-200/80 shadow-2xs flex items-center justify-between text-[11px] font-mono text-slate-600">
-                  <span>Pending: 0 Packets</span>
-                  <span className="text-[#2764B8] font-bold">Zero Data Loss</span>
+                  {/* Packet Resync Badge */}
+                  <div className="bg-white/95 p-2 rounded-xl border border-blue-100/90 shadow-2xs flex items-center justify-between text-[11px] font-mono text-slate-600">
+                    <span>Pending: 0 Packets</span>
+                    <span className="text-[#2764B8] font-bold">Zero Data Loss</span>
+                  </div>
                 </div>
               </div>
 
               {/* Bottom Content */}
               <div>
-                <h3 className="font-display text-xl sm:text-[22px] font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#2764B8] transition-colors">
                   {language === "ID" ? "Resilient Edge Buffer" : "Resilient Edge Buffer"}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed font-normal">
@@ -632,240 +632,191 @@ export default function PlatformPage() {
             </p>
           </div>
 
-          {/* 3 LigoLab-Standard Intelligence Cards with Compact Live Micro-Telemetry Footer */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
+          {/* 3 LigoLab-Standard Intelligence Cards (Clean Icon Badge + Bold Blue Title + Bullet Points) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {/* Card 1: TAT Real-Time & Bottleneck Detection */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.05)] hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between group">
-              <div>
-                {/* Header: Icon Badge + Blue Title */}
-                <div className="flex items-center gap-3.5 pb-5 mb-5 border-b border-slate-100">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
-                    <Clock className="h-6 w-6 stroke-[1.8]" />
-                  </div>
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
-                    {language === "ID" ? (
-                      <>
-                        TAT Real-Time &amp; <br />
-                        Deteksi Bottleneck
-                      </>
-                    ) : (
-                      <>
-                        Real-Time TAT &amp; <br />
-                        Bottleneck Detection
-                      </>
-                    )}
-                  </h3>
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+              {/* Header: Icon Badge + Blue Title */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
+                  <Clock className="h-6 w-6 stroke-[1.8]" />
                 </div>
-
-                {/* Bullet Points */}
-                <ul className="space-y-3 text-sm text-slate-600 leading-relaxed font-normal mb-6">
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Prediksi waktu tunggu (predictive TAT) otomatis sebelum sampel memasuki antrean analis"
-                        : "Predictive turnaround time scoring before specimens enter analyzer queues"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Heatmap operasional live per departemen untuk mendeteksi penumpukan tabung seketika"
-                        : "Operational real-time heatmaps to instantly pinpoint departmental specimen bottlenecks"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Pemicu alarm dini sebelum spesimen melewati batas SLA rumah sakit yang disepakati"
-                        : "Early alert triggers before specimens breach hospital SLA turnaround thresholds"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Pelacakan kecepatan alur spesimen per shift guna mengoptimalkan alokasi staf laboratorium"
-                        : "Specimen velocity tracking across shifts to optimize laboratory staffing allocation"}
-                    </span>
-                  </li>
-                </ul>
+                <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
+                  {language === "ID" ? (
+                    <>
+                      TAT Real-Time &amp; <br />
+                      Deteksi Bottleneck
+                    </>
+                  ) : (
+                    <>
+                      Real-Time TAT &amp; <br />
+                      Bottleneck Detection
+                    </>
+                  )}
+                </h3>
               </div>
 
-              {/* Micro-Telemetry Footer */}
-              <div className="mt-auto rounded-2xl bg-[#F4F7FB] border border-slate-200/70 p-3.5 space-y-2">
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span className="font-semibold text-slate-600">
-                    {language === "ID" ? "Rata-rata TAT IGD" : "ER TAT Average"}
+              {/* Bullet Points */}
+              <ul className="space-y-3.5 text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Prediksi waktu tunggu (predictive TAT) otomatis sebelum sampel memasuki antrean analis"
+                      : "Predictive turnaround time scoring before specimens enter analyzer queues"}
                   </span>
-                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    19m / 60m SLA
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Heatmap operasional live per departemen untuk mendeteksi penumpukan tabung seketika"
+                      : "Operational real-time heatmaps to instantly pinpoint departmental specimen bottlenecks"}
                   </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-white border border-slate-200/60 overflow-hidden">
-                  <div className="h-full w-[94%] rounded-full bg-[#0073FC]" />
-                </div>
-              </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Pemicu alarm dini sebelum spesimen melewati batas SLA rumah sakit yang disepakati"
+                      : "Early alert triggers before specimens breach hospital SLA turnaround thresholds"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Pelacakan kecepatan alur spesimen per shift guna mengoptimalkan alokasi staf laboratorium"
+                      : "Specimen velocity tracking across shifts to optimize laboratory staffing allocation"}
+                  </span>
+                </li>
+              </ul>
             </div>
 
             {/* Card 2: Analyzer Workload & Reagent Tracking */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.05)] hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between group">
-              <div>
-                {/* Header: Icon Badge + Blue Title */}
-                <div className="flex items-center gap-3.5 pb-5 mb-5 border-b border-slate-100">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
-                    <Cpu className="h-6 w-6 stroke-[1.8]" />
-                  </div>
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
-                    {language === "ID" ? (
-                      <>
-                        Beban Instrumen &amp; <br />
-                        Utilisasi Reagen
-                      </>
-                    ) : (
-                      <>
-                        Analyzer Load &amp; <br />
-                        Reagent Tracking
-                      </>
-                    )}
-                  </h3>
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+              {/* Header: Icon Badge + Blue Title */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
+                  <Cpu className="h-6 w-6 stroke-[1.8]" />
                 </div>
-
-                {/* Bullet Points */}
-                <ul className="space-y-3 text-sm text-slate-600 leading-relaxed font-normal mb-6">
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Distribusi otomatis beban kerja sampel antar instrumen medis (dynamic workload balancing)"
-                        : "Dynamic workload balancing to distribute specimen tubes across available analyzers"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Pemantauan sisa volume dan laju pemakaian reagen secara real-time untuk mencegah kehabisan"
-                        : "Real-time monitoring of reagent volume and consumption rates to prevent stockouts"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Peringatan dini tanggal kedaluwarsa dan nomor lot reagen guna menihilkan pemborosan (zero wastage)"
-                        : "Expiration date and lot number alerts to eliminate discarded inventory and operational waste"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Penjadwalan otomatis rotasi instrumen dan QC terencana tanpa mengganggu alur tes aktif"
-                        : "Scheduled auto-calibration and QC runs without interrupting live diagnostic workflows"}
-                    </span>
-                  </li>
-                </ul>
+                <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
+                  {language === "ID" ? (
+                    <>
+                      Beban Instrumen &amp; <br />
+                      Utilisasi Reagen
+                    </>
+                  ) : (
+                    <>
+                      Analyzer Load &amp; <br />
+                      Reagent Tracking
+                    </>
+                  )}
+                </h3>
               </div>
 
-              {/* Micro-Telemetry Footer */}
-              <div className="mt-auto rounded-2xl bg-[#F4F7FB] border border-slate-200/70 p-3.5 space-y-2">
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span className="font-semibold text-slate-600">Sysmex 74% • Cobas 62%</span>
-                  <span className="font-bold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                    FEFO Active
+              {/* Bullet Points */}
+              <ul className="space-y-3.5 text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Distribusi otomatis beban kerja sampel antar instrumen medis (dynamic workload balancing)"
+                      : "Dynamic workload balancing to distribute specimen tubes across available analyzers"}
                   </span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="h-2 rounded-full bg-white border border-slate-200/60 overflow-hidden">
-                    <div className="h-full w-[74%] rounded-full bg-[#0073FC]" />
-                  </div>
-                  <div className="h-2 rounded-full bg-white border border-slate-200/60 overflow-hidden">
-                    <div className="h-full w-[62%] rounded-full bg-emerald-500" />
-                  </div>
-                </div>
-              </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Pemantauan sisa volume dan laju pemakaian reagen secara real-time untuk mencegah kehabisan"
+                      : "Real-time monitoring of reagent volume and consumption rates to prevent stockouts"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Peringatan dini tanggal kedaluwarsa dan nomor lot reagen guna menihilkan pemborosan (zero wastage)"
+                      : "Expiration date and lot number alerts to eliminate discarded inventory and operational waste"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Penjadwalan otomatis rotasi instrumen dan QC terencana tanpa mengganggu alur tes aktif"
+                      : "Scheduled auto-calibration and QC runs without interrupting live diagnostic workflows"}
+                  </span>
+                </li>
+              </ul>
             </div>
 
             {/* Card 3: Nova AI & Clinical Intelligence */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-8 shadow-[0_4px_20px_-6px_rgba(15,23,42,0.05)] hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-between group">
-              <div>
-                {/* Header: Icon Badge + Blue Title */}
-                <div className="flex items-center gap-3.5 pb-5 mb-5 border-b border-slate-100">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
-                    <BarChart3 className="h-6 w-6 stroke-[1.8]" />
-                  </div>
-                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
-                    {language === "ID" ? (
-                      <>
-                        Nova AI &amp; <br />
-                        Clinical Intelligence
-                      </>
-                    ) : (
-                      <>
-                        Nova AI &amp; <br />
-                        Clinical Intelligence
-                      </>
-                    )}
-                  </h3>
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+              {/* Header: Icon Badge + Blue Title */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
+                  <BarChart3 className="h-6 w-6 stroke-[1.8]" />
                 </div>
-
-                {/* Bullet Points */}
-                <ul className="space-y-3 text-sm text-slate-600 leading-relaxed font-normal mb-6">
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Komparasi deviasi longitudinal (delta-check) otomatis terhadap riwayat pemeriksaan pasien"
-                        : "Automated longitudinal delta-checks comparing results against patient historical baselines"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Deteksi anomali klinis seketika saat terjadi lonjakan biomarker kritis sebelum rilis hasil"
-                        : "Real-time clinical anomaly detection for critical biomarker shifts prior to result release"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Validasi aturan klinis lintas-parameter untuk mencegah eror dan hasil yang kontradiktif"
-                        : "Cross-parameter clinical rule validation to prevent contradictory or implausible findings"}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0073FC] shrink-0 mt-2" />
-                    <span>
-                      {language === "ID"
-                        ? "Rekomendasi kontekstual untuk DPJP dengan kendali diagnosis mutlak di tangan dokter"
-                        : "Context-aware clinical recommendations while keeping attending physicians in total command"}
-                    </span>
-                  </li>
-                </ul>
+                <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
+                  {language === "ID" ? (
+                    <>
+                      Nova AI &amp; <br />
+                      Clinical Intelligence
+                    </>
+                  ) : (
+                    <>
+                      Nova AI &amp; <br />
+                      Clinical Intelligence
+                    </>
+                  )}
+                </h3>
               </div>
 
-              {/* Micro-Telemetry Footer */}
-              <div className="mt-auto rounded-2xl bg-[#F4F7FB] border border-slate-200/70 p-3.5 space-y-2">
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-[#0073FC]" />
-                    Delta Check: Creatinine
+              {/* Bullet Points */}
+              <ul className="space-y-3.5 text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Komparasi deviasi longitudinal (delta-check) otomatis terhadap riwayat pemeriksaan pasien"
+                      : "Automated longitudinal delta-checks comparing results against patient historical baselines"}
                   </span>
-                  <span className="font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                    +115% Flagged
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Deteksi anomali klinis seketika saat terjadi lonjakan biomarker kritis sebelum rilis hasil"
+                      : "Real-time clinical anomaly detection for critical biomarker shifts prior to result release"}
                   </span>
-                </div>
-                <div className="text-[10.5px] text-slate-500 font-medium">
-                  {language === "ID"
-                    ? "100% Otorisasi Akhir oleh Dokter Sp.PK"
-                    : "100% Final Authorization by Pathologist"}
-                </div>
-              </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Validasi aturan klinis lintas-parameter untuk mencegah eror dan hasil yang kontradiktif"
+                      : "Cross-parameter clinical rule validation to prevent contradictory or implausible findings"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Rekomendasi kontekstual untuk DPJP dengan otoritas dan kendali diagnosis mutlak pada dokter"
+                      : "Context-aware clinical recommendations while keeping attending physicians in total command"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Beroperasi dari satu sumber data terpadu (single source of truth) untuk mutu & operasional"
+                      : "Operate from a single source of truth across operations, diagnostic quality, and outcomes"}
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -874,7 +825,7 @@ export default function PlatformPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
+      <CTABanner bgClassName="bg-[#FAFBFD] border-t border-slate-200/60" topColor="#FAFBFD" />
     </div>
   );
 }
