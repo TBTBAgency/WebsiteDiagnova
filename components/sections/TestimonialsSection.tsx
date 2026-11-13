@@ -202,12 +202,6 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
 
       {/* ═══ SCROLLABLE CARD TRACK ═══ */}
       <div className="relative">
-        {/* Left Fade Gradient Mask (Matching TrustedByBar style) */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-5 sm:w-24 md:w-36 lg:w-48 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
-
-        {/* Right Fade Gradient Mask (Matching TrustedByBar style) */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-5 sm:w-24 md:w-36 lg:w-48 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
-
       <div
         ref={scrollContainerRef}
         className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-5 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
