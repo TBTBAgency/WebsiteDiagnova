@@ -280,6 +280,7 @@ html.lenis body {
 /* ─── Interactive Card Elevation, Gradient Glow & Cursor Dot Matrix ─── */
 .ll-card-interactive {
   position: relative;
+  isolation: isolate;
   box-shadow:
     0 2px 10px -3px rgba(15, 23, 42, 0.05),
     0 1px 3px -1px rgba(15, 23, 42, 0.03);
@@ -291,7 +292,7 @@ html.lenis body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  /* Interactive subtle dot matrix revealed around the cursor */
+  /* Interactive subtle dot matrix revealed around the cursor (behind card content) */
   .ll-card-interactive::before {
     content: "";
     position: absolute;
@@ -315,10 +316,10 @@ html.lenis body {
       transparent 75%
     );
     transition: opacity 0.35s ease;
-    z-index: 1;
+    z-index: -1;
   }
 
-  /* Smooth multi-stop blue-cyan gradient spotlight */
+  /* Smooth multi-stop blue-cyan gradient spotlight (behind card content) */
   .ll-card-interactive::after {
     content: "";
     position: absolute;
@@ -339,7 +340,7 @@ html.lenis body {
         rgba(240, 247, 255, 0.35) 0%,
         rgba(255, 255, 255, 0) 60%
       );
-    z-index: 1;
+    z-index: -1;
   }
 
   .ll-card-interactive:hover {
