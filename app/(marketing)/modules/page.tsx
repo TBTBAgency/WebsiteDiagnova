@@ -927,7 +927,7 @@ export default function ModulesPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
+      <CTABanner bgClassName="bg-[#FAFBFD] border-t border-slate-200/60" topColor="#FAFBFD" />
     </div>
   );
 }
