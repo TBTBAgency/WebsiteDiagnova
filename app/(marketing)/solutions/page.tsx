@@ -613,10 +613,10 @@ export default function SolutionsPage() {
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13.5px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-slate-200 bg-white text-slate-800 font-semibold text-[13.5px] flex items-center justify-center gap-2 transition-all duration-200 group-hover/plan:bg-[#2764B8] group-hover/plan:border-[#2764B8] group-hover/plan:text-white group-focus-within/plan:bg-[#2764B8] group-focus-within/plan:border-[#2764B8] group-focus-within/plan:text-white active:scale-[0.98]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi RS" : "Talk to an expert"}</span>
-                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/plan:translate-x-1 shrink-0" />
                   </Link>
 
                   {/* Divider 2 */}
@@ -703,10 +703,10 @@ export default function SolutionsPage() {
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13.5px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-slate-200 bg-white text-slate-800 font-semibold text-[13.5px] flex items-center justify-center gap-2 transition-all duration-200 group-hover/plan:bg-[#2764B8] group-hover/plan:border-[#2764B8] group-hover/plan:text-white group-focus-within/plan:bg-[#2764B8] group-focus-within/plan:border-[#2764B8] group-focus-within/plan:text-white active:scale-[0.98]"
                   >
                     <span>{language === "ID" ? "Pilih Solusi Lab Klinik" : "Talk to an expert"}</span>
-                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/plan:translate-x-1 shrink-0" />
                   </Link>
 
                   {/* Divider 2 */}
@@ -793,10 +793,10 @@ export default function SolutionsPage() {
                   {/* CTA Button */}
                   <Link
                     href="/request-demo"
-                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-[#ECECEA] bg-white text-slate-900 font-semibold text-[13.5px] flex items-center justify-center gap-0 transition-all duration-200 group-hover/plan:bg-[#2466CB] group-hover/plan:border-[#2466CB] group-hover/plan:text-white group-hover/plan:gap-2 group-focus-within/plan:bg-[#2466CB] group-focus-within/plan:border-[#2466CB] group-focus-within/plan:text-white group-focus-within/plan:gap-2 active:scale-[0.99]"
+                    className="mt-4 w-full h-11.5 sm:h-12 rounded-full border border-slate-200 bg-white text-slate-800 font-semibold text-[13.5px] flex items-center justify-center gap-2 transition-all duration-200 group-hover/plan:bg-[#2764B8] group-hover/plan:border-[#2764B8] group-hover/plan:text-white group-focus-within/plan:bg-[#2764B8] group-focus-within/plan:border-[#2764B8] group-focus-within/plan:text-white active:scale-[0.98]"
                   >
                     <span>{language === "ID" ? "Konsultasi Solusi Spesialis" : "Talk to an expert"}</span>
-                    <ArrowUpRight className="w-0 h-3.5 opacity-0 group-hover/plan:w-3.5 group-hover/plan:opacity-100 group-focus-within/plan:w-3.5 group-focus-within/plan:opacity-100 transition-all duration-200 shrink-0" />
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/plan:translate-x-1 shrink-0" />
                   </Link>
 
                   {/* Divider 2 */}

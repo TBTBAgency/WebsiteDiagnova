@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 
@@ -124,9 +124,9 @@ export function CTABanner({
                   className="group relative inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-all duration-200 shadow-sm cursor-pointer active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/25 overflow-hidden"
                 >
                   <span className="animate-shine-continuous" />
-                  <span className="relative z-10 flex items-center gap-1.5">
+                  <span className="relative z-10 flex items-center gap-2">
                     {buttonText}
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </span>
                 </button>
               </form>

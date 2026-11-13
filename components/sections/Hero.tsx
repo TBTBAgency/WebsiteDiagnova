@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { ArrowRight } from "lucide-react";
 
 interface SlideData {
   id: number;
@@ -286,11 +287,12 @@ export function Hero({ initialData }: HeroProps = {}) {
           >
             <Link
               href={(slides[currentSlide] as any)?.ctaPrimaryUrl || "/request-demo"}
-              className="group relative inline-flex items-center justify-center rounded-full bg-white text-slate-900 font-semibold px-8 py-3.5 text-sm sm:text-base hover:bg-slate-50 hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-xl active:scale-[0.98] overflow-hidden"
+              className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-white text-slate-900 font-semibold px-8 py-3.5 text-sm sm:text-base hover:bg-slate-50 hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-xl active:scale-[0.98] overflow-hidden"
             >
               <span className="relative z-10">
                 {(slides[currentSlide] as any)?.ctaPrimaryText || (language === "ID" ? "Jadwalkan Demo" : "Schedule Demo")}
               </span>
+              <ArrowRight className="relative z-10 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
             </Link>
 
