@@ -34,6 +34,15 @@
     -webkit-user-select: none;
   }
 
+  button,
+  [role="button"],
+  nav,
+  header,
+  footer a {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
   .font-display {
     letter-spacing: -0.01em;
     line-height: 1.2;

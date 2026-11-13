@@ -204,7 +204,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
       <div className="relative">
       <div
         ref={scrollContainerRef}
-        className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-5 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
+        className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-5 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide select-none"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
