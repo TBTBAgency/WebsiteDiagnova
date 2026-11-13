@@ -121,7 +121,8 @@ export default function SolutionsPage() {
         className="relative scroll-mt-24 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
         {/* Ambient Gradient & Texture Container with Smooth Edge Masking
-            Prevents hard horizontal clipping/cutoffs at section borders by smoothly feathering to transparent at top and bottom */}
+            Abstract dual-color blend of Diagnova Blue (#345DAB) and Nova Blue (#56ADE2)
+            Asymmetrical distribution (Top-Right wing + Mid-Left swell + Bottom-Center anchor) */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none overflow-hidden"
@@ -132,23 +133,33 @@ export default function SolutionsPage() {
               "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
           }}
         >
-          {/* Top-Left Ambient Glow - #345DAB (Diagnova Blue) - Compact & Subtle */}
+          {/* Abstract Shape 1: Top-Right Sweeping Wing - Nova into Diagnova Blue */}
           <div
-            className="absolute -top-6 sm:-top-8 lg:-top-10 -left-12 sm:-left-16 lg:-left-20 w-[320px] sm:w-[400px] lg:w-[460px] h-[320px] sm:h-[400px] lg:h-[460px] rounded-full"
+            className="absolute -top-10 sm:-top-16 lg:-top-20 right-[2%] sm:-right-12 lg:-right-20 w-[580px] sm:w-[740px] lg:w-[880px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[20deg]"
             style={{
               background:
-                "radial-gradient(circle at center, rgba(52, 93, 171, 0.24) 0%, rgba(52, 93, 171, 0.12) 40%, rgba(202, 226, 241, 0.04) 65%, transparent 75%)",
-              filter: "blur(50px)",
+                "linear-gradient(155deg, rgba(86, 173, 226, 0.48) 0%, rgba(52, 93, 171, 0.42) 50%, rgba(29, 63, 130, 0.22) 100%)",
+              filter: "blur(80px)",
             }}
           />
 
-          {/* Bottom-Right Ambient Glow - #56ADE2 (Nova Blue) */}
+          {/* Abstract Shape 2: Mid-Left to Lower-Left Asymmetrical Fluid Swell */}
           <div
-            className="absolute -bottom-10 sm:-bottom-14 lg:-bottom-20 -right-16 sm:-right-24 lg:-right-32 w-[500px] sm:w-[620px] lg:w-[720px] h-[500px] sm:h-[620px] lg:h-[720px] rounded-full"
+            className="absolute top-[42%] -left-16 sm:-left-24 lg:-left-32 w-[540px] sm:w-[680px] lg:w-[820px] h-[380px] sm:h-[460px] lg:h-[520px] rounded-[100%] rotate-[-28deg]"
             style={{
               background:
-                "radial-gradient(circle at center, rgba(86, 173, 226, 0.28) 0%, rgba(86, 173, 226, 0.14) 40%, rgba(202, 226, 241, 0.05) 65%, transparent 75%)",
-              filter: "blur(60px)",
+                "linear-gradient(320deg, rgba(52, 93, 171, 0.45) 0%, rgba(42, 130, 184, 0.36) 45%, rgba(86, 173, 226, 0.46) 85%, rgba(151, 207, 238, 0.22) 100%)",
+              filter: "blur(80px)",
+            }}
+          />
+
+          {/* Abstract Shape 3: Bottom-Center-Right Luminous Anchor */}
+          <div
+            className="absolute -bottom-8 sm:-bottom-12 right-[15%] sm:right-[22%] w-[440px] sm:w-[540px] lg:w-[620px] h-[260px] sm:h-[320px] lg:h-[380px] rounded-full rotate-[15deg]"
+            style={{
+              background:
+                "radial-gradient(ellipse at 45% 45%, rgba(86, 173, 226, 0.42) 0%, rgba(52, 93, 171, 0.30) 50%, rgba(202, 226, 241, 0.10) 75%, transparent 85%)",
+              filter: "blur(65px)",
             }}
           />
 
@@ -156,7 +167,7 @@ export default function SolutionsPage() {
           <div
             className="absolute inset-0 opacity-30"
             style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.22) 1.25px, transparent 1.25px)",
+              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.25) 1.25px, transparent 1.25px)",
               backgroundSize: "24px 24px",
             }}
           />
