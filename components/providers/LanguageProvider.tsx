@@ -20,11 +20,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem("diagnova_language") as Language | null;
       if (saved === "ID" || saved === "EN") {
         setLanguageState(saved);
+        document.documentElement.lang = saved === "ID" ? "id" : "en";
       }
     } catch {
       // Ignore if localStorage is inaccessible
     }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language === "ID" ? "id" : "en";
+  }, [language]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
