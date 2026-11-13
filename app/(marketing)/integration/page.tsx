@@ -25,6 +25,13 @@ import {
   Dna,
   AlertTriangle,
   HardDrive,
+  Play,
+  Pause,
+  Search,
+  RefreshCw,
+  WifiOff,
+  CheckCheck,
+  ArrowDownUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -35,6 +42,24 @@ import { CTABanner } from "@/components/sections/CTABanner";
 export default function IntegrationPage() {
   const { language } = useLanguage();
   const [selectedIntegration, setSelectedIntegration] = useState<number>(0);
+  const [autoCycle, setAutoCycle] = useState<boolean>(false);
+  const [simrsStep, setSimrsStep] = useState<number>(0);
+  const [selectedBiomarker, setSelectedBiomarker] = useState<"creatinine" | "hba1c" | "hemoglobin">("creatinine");
+  const [hostQueryIdx, setHostQueryIdx] = useState<number>(0);
+  const [fhirResource, setFhirResource] = useState<"DiagnosticReport" | "ServiceRequest" | "Observation">("DiagnosticReport");
+  const [gatewayOffline, setGatewayOffline] = useState<boolean>(false);
+  const [bentoLoincIdx, setBentoLoincIdx] = useState<number>(0);
+  const [bentoPanicAck, setBentoPanicAck] = useState<boolean>(false);
+  const [analyzerQuery, setAnalyzerQuery] = useState<string>("");
+  const [selectedDiscipline, setSelectedDiscipline] = useState<string>("all");
+
+  useEffect(() => {
+    if (!autoCycle) return;
+    const timer = setInterval(() => {
+      setSelectedIntegration((prev) => (prev + 1) % 5);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [autoCycle]);
 
   const integrations = [
     {
@@ -215,12 +240,14 @@ export default function IntegrationPage() {
   const current = integrations[selectedIntegration];
 
   const selectPillar = (idx: number) => {
+    setAutoCycle(false);
     setSelectedIntegration(idx);
     window.history.replaceState(null, "", `#${integrations[idx].id}`);
   };
 
   const modalityCatalog = [
     {
+      key: "hematology",
       icon: TestTube2,
       discipline: language === "ID" ? "Hematologi & Koagulasi" : "Hematology & Coagulation",
       protocols: ["ASTM E1394", "HL7 v2.5", "TCP/IP"],
@@ -231,6 +258,7 @@ export default function IntegrationPage() {
       ],
     },
     {
+      key: "chemistry",
       icon: FlaskConical,
       discipline: language === "ID" ? "Kimia Klinik & Imunologi" : "Clinical Chemistry & Immunoassay",
       protocols: ["ASTM E1381", "HL7 v2.3.1", "RS-232"],
@@ -241,6 +269,7 @@ export default function IntegrationPage() {
       ],
     },
     {
+      key: "microbiology",
       icon: Microscope,
       discipline: language === "ID" ? "Mikrobiologi & Urinalisis" : "Microbiology & Urinalysis",
       protocols: ["ASTM / BCI", "HL7 v2.x", "USB / LAN"],
@@ -251,6 +280,7 @@ export default function IntegrationPage() {
       ],
     },
     {
+      key: "molecular",
       icon: Dna,
       discipline: language === "ID" ? "Molekuler & Patologi" : "Molecular & Pathology",
       protocols: ["HL7 FHIR", "CSV / REST", "ASTM"],
@@ -261,6 +291,22 @@ export default function IntegrationPage() {
       ],
     },
   ];
+
+  const filteredModalities = modalityCatalog
+    .filter((m) => selectedDiscipline === "all" || m.key === selectedDiscipline)
+    .map((m) => {
+      const q = analyzerQuery.trim().toLowerCase();
+      if (!q) return m;
+      const matchingBrands = m.brands.filter(
+        (b) =>
+          b.maker.toLowerCase().includes(q) ||
+          b.models.toLowerCase().includes(q) ||
+          m.discipline.toLowerCase().includes(q) ||
+          m.protocols.some((p) => p.toLowerCase().includes(q))
+      );
+      return { ...m, brands: matchingBrands };
+    })
+    .filter((m) => m.brands.length > 0);
 
   return (
     <div className="w-full bg-white text-slate-900">
@@ -352,8 +398,58 @@ export default function IntegrationPage() {
 
           {/* Interactive Hub-and-Spoke Topology Canvas */}
           <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)] mb-8">
+            {/* Topology Control Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-100">
+              <div className="flex items-center gap-2 text-xs text-slate-600">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-semibold text-slate-800">
+                  {language === "ID" ? "Klik simpul untuk inspeksi langsung" : "Click any node to inspect live"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAutoCycle((prev) => !prev)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer",
+                  autoCycle
+                    ? "bg-[#0073FC] text-white border-[#0073FC] shadow-xs"
+                    : "bg-[#F7F9FC] text-slate-700 border-slate-200 hover:border-blue-300"
+                )}
+              >
+                {autoCycle ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                <span>
+                  {autoCycle
+                    ? language === "ID"
+                      ? "Jeda Tur Otomatis"
+                      : "Pause Auto-Tour"
+                    : language === "ID"
+                    ? "Putar Tur Otomatis"
+                    : "Play Auto-Tour"}
+                </span>
+              </button>
+            </div>
+
+            {/* Mobile/Tablet Quick Pillar Pills */}
+            <div className="flex lg:hidden items-center gap-2 overflow-x-auto pb-4 mb-3 no-scrollbar">
+              {integrations.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => selectPillar(idx)}
+                  className={cn(
+                    "px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-colors cursor-pointer shrink-0",
+                    selectedIntegration === idx
+                      ? "bg-[#0073FC] text-white border-[#0073FC]"
+                      : "bg-[#F7F9FC] text-slate-700 border-slate-200"
+                  )}
+                >
+                  {item.tabLabel}
+                </button>
+              ))}
+            </div>
+
             <div className="relative">
-              {/* Desktop SVG Connector Lines */}
+              {/* Desktop SVG Connector Lines + Animated Data Packet */}
               <svg
                 className="hidden lg:block pointer-events-none absolute inset-0 w-full h-full"
                 viewBox="0 0 1200 220"
@@ -362,6 +458,7 @@ export default function IntegrationPage() {
               >
                 {/* Left Node 0 (Analyzer, index 2) -> Center */}
                 <path
+                  id="path-analyzer"
                   d="M 355 55 C 435 55, 435 110, 485 110"
                   fill="none"
                   stroke={selectedIntegration === 2 ? "#0073FC" : "#CBD5E1"}
@@ -370,6 +467,7 @@ export default function IntegrationPage() {
                 />
                 {/* Left Node 1 (Smart Gateway, index 4) -> Center */}
                 <path
+                  id="path-gateway"
                   d="M 355 165 C 435 165, 435 110, 485 110"
                   fill="none"
                   stroke={selectedIntegration === 4 ? "#0073FC" : "#CBD5E1"}
@@ -378,6 +476,7 @@ export default function IntegrationPage() {
                 />
                 {/* Center -> Right Node 0 (SIMRS, index 0) */}
                 <path
+                  id="path-simrs"
                   d="M 715 110 C 765 110, 765 36, 845 36"
                   fill="none"
                   stroke={selectedIntegration === 0 ? "#0073FC" : "#CBD5E1"}
@@ -386,6 +485,7 @@ export default function IntegrationPage() {
                 />
                 {/* Center -> Right Node 1 (RME, index 1) */}
                 <path
+                  id="path-rme"
                   d="M 715 110 L 845 110"
                   fill="none"
                   stroke={selectedIntegration === 1 ? "#0073FC" : "#CBD5E1"}
@@ -394,17 +494,37 @@ export default function IntegrationPage() {
                 />
                 {/* Center -> Right Node 2 (SATUSEHAT, index 3) */}
                 <path
+                  id="path-satusehat"
                   d="M 715 110 C 765 110, 765 184, 845 184"
                   fill="none"
                   stroke={selectedIntegration === 3 ? "#0073FC" : "#CBD5E1"}
                   strokeWidth={selectedIntegration === 3 ? "2.5" : "1.75"}
                   strokeDasharray={selectedIntegration === 3 ? "none" : "5 4"}
                 />
+
+                {/* Animated Packet Dot on Active Path */}
+                <circle r="4.5" fill="#0073FC">
+                  <animateMotion
+                    dur="1.6s"
+                    repeatCount="indefinite"
+                    path={
+                      selectedIntegration === 2
+                        ? "M 355 55 C 435 55, 435 110, 485 110"
+                        : selectedIntegration === 4
+                        ? "M 355 165 C 435 165, 435 110, 485 110"
+                        : selectedIntegration === 0
+                        ? "M 715 110 C 765 110, 765 36, 845 36"
+                        : selectedIntegration === 1
+                        ? "M 715 110 L 845 110"
+                        : "M 715 110 C 765 110, 765 184, 845 184"
+                    }
+                  />
+                </circle>
               </svg>
 
-              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-center">
                 {/* Left Column: Lab Floor Inputs (Analyzer + Smart Gateway) */}
-                <div className="lg:col-span-4 space-y-4">
+                <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4">
                   {[2, 4].map((idx) => {
                     const item = integrations[idx];
                     const Icon = item.icon;
@@ -441,6 +561,14 @@ export default function IntegrationPage() {
                   })}
                 </div>
 
+                {/* Mobile/Tablet Vertical Flow Indicator 1 */}
+                <div className="flex lg:hidden items-center justify-center py-1">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F1FD] text-[#0073FC] text-[11px] font-semibold">
+                    <ArrowDownUp className="h-3 w-3 animate-pulse" />
+                    <span>ASTM / RS-232 / Edge</span>
+                  </span>
+                </div>
+
                 {/* Center Hub: Diagnova Interop Engine */}
                 <div className="lg:col-span-4 flex flex-col items-center justify-center py-2">
                   <div className="w-full max-w-[260px] rounded-[24px] bg-[#0F172A] text-white p-5 text-center shadow-[0_18px_36px_-14px_rgba(15,23,42,0.45)] border border-slate-800">
@@ -458,8 +586,16 @@ export default function IntegrationPage() {
                   </div>
                 </div>
 
+                {/* Mobile/Tablet Vertical Flow Indicator 2 */}
+                <div className="flex lg:hidden items-center justify-center py-1">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F1FD] text-[#0073FC] text-[11px] font-semibold">
+                    <ArrowDownUp className="h-3 w-3 animate-pulse" />
+                    <span>HL7 ORM/ORU • FHIR R4</span>
+                  </span>
+                </div>
+
                 {/* Right Column: Hospital & National Outputs (SIMRS, RME, SATUSEHAT) */}
-                <div className="lg:col-span-4 space-y-3">
+                <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
                   {[0, 1, 3].map((idx) => {
                     const item = integrations[idx];
                     const Icon = item.icon;
@@ -582,96 +718,189 @@ export default function IntegrationPage() {
                     </span>
                   </div>
 
-                  {/* 1. SIMRS / HIS Visual: Bidirectional Sequence Flow */}
+                  {/* 1. SIMRS / HIS Visual: Interactive Bidirectional Sequence Flow */}
                   {current.simulationType === "simrs" && (
                     <div className="space-y-3">
                       <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-bold text-slate-700">
-                        <div className="rounded-xl bg-white border border-slate-200/80 py-2 px-2">SIMRS / HIS</div>
-                        <div className="rounded-xl bg-[#0073FC] text-white py-2 px-2 shadow-xs">Diagnova LIS</div>
-                        <div className="rounded-xl bg-white border border-slate-200/80 py-2 px-2">EMR & Billing</div>
+                        <div className={cn("rounded-xl border py-2 px-2 transition-colors", simrsStep === 0 ? "bg-[#0073FC] text-white border-[#0073FC]" : "bg-white border-slate-200/80")}>
+                          SIMRS / HIS
+                        </div>
+                        <div className={cn("rounded-xl border py-2 px-2 transition-colors", simrsStep === 1 ? "bg-[#0073FC] text-white border-[#0073FC]" : "bg-white border-slate-200/80")}>
+                          Diagnova LIS
+                        </div>
+                        <div className={cn("rounded-xl border py-2 px-2 transition-colors", simrsStep === 2 ? "bg-[#0073FC] text-white border-[#0073FC]" : "bg-white border-slate-200/80")}>
+                          EMR & Billing
+                        </div>
                       </div>
                       {[
-                        { code: "ORM^O01", dir: "HIS → LIS", label: language === "ID" ? "Order Poli/IGD otomatis jadi worklist" : "ER/Clinic order → barcode worklist", ms: "140ms" },
-                        { code: "DFT^P03", dir: "LIS → HIS", label: language === "ID" ? "Kunci billing & klaim BPJS real-time" : "Real-time BPJS / billing charge sync", ms: "95ms" },
-                        { code: "ORU^R01", dir: "LIS → EMR", label: language === "ID" ? "Hasil tervalidasi masuk ke layar dokter" : "Verified result posted to physician EMR", ms: "210ms" },
-                      ].map((row) => (
-                        <div key={row.code} className="rounded-xl bg-white border border-slate-200/80 p-3 flex items-center justify-between gap-3">
+                        { code: "ORM^O01", dir: "HIS → LIS", label: language === "ID" ? "Order Poli/IGD otomatis jadi worklist" : "ER/Clinic order → barcode worklist", ms: "140ms", payload: "MSH|^~\\&|SIMRS|IGD|DIAGNOVA|LIS||ORM^O01" },
+                        { code: "DFT^P03", dir: "LIS → HIS", label: language === "ID" ? "Kunci billing & klaim BPJS real-time" : "Real-time BPJS / billing charge sync", ms: "95ms", payload: "FT1|1||20261114||CG|CBC-PANEL|BPJS-VALID" },
+                        { code: "ORU^R01", dir: "LIS → EMR", label: language === "ID" ? "Hasil tervalidasi masuk ke layar dokter" : "Verified result posted to physician EMR", ms: "210ms", payload: "OBX|1|NM|718-7^HGB^LN||13.8|g/dL|F" },
+                      ].map((row, idx) => (
+                        <button
+                          key={row.code}
+                          type="button"
+                          onClick={() => setSimrsStep(idx)}
+                          className={cn(
+                            "w-full text-left rounded-xl border p-3 flex items-center justify-between gap-3 transition-all cursor-pointer",
+                            simrsStep === idx
+                              ? "bg-white border-[#0073FC] shadow-xs ring-2 ring-[#0073FC]/15"
+                              : "bg-white/80 border-slate-200/80 hover:border-blue-200"
+                          )}
+                        >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-[#E8F1FD] text-[#0073FC] shrink-0">
                               {row.code}
                             </span>
                             <div className="min-w-0">
                               <p className="text-xs font-semibold text-slate-900 truncate">{row.label}</p>
-                              <p className="text-[10px] text-slate-500 font-mono">{row.dir}</p>
+                              <p className="text-[10px] text-slate-500 font-mono truncate">{row.payload}</p>
                             </div>
                           </div>
                           <span className="text-[11px] font-mono font-semibold text-emerald-600 shrink-0">{row.ms}</span>
-                        </div>
+                        </button>
                       ))}
                     </div>
                   )}
 
-                  {/* 2. RME Visual: Doctor EMR Card + SVG Longitudinal Trend */}
-                  {current.simulationType === "rme" && (
-                    <div className="space-y-3.5">
-                      <div className="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-xs font-bold text-slate-900">Tn. Hendra Wijaya • #RM-0849201</p>
-                            <p className="text-[11px] text-slate-500">LOINC 2160-0 • Serum Creatinine (mg/dL)</p>
+                  {/* 2. RME Visual: Interactive Biomarker Trend Switcher */}
+                  {current.simulationType === "rme" && (() => {
+                    const bioMap = {
+                      creatinine: {
+                        label: "Creatinine",
+                        loinc: "LOINC 2160-0 • Serum Creatinine (mg/dL)",
+                        badge: "1.8 mg/dL ↑",
+                        badgeCls: "bg-amber-50 border-amber-200 text-amber-700",
+                        points: "30,54 115,46 205,36 290,18",
+                        pts: [
+                          { x: 30, y: 54, val: "1.0" },
+                          { x: 115, y: 46, val: "1.2" },
+                          { x: 205, y: 36, val: "1.4" },
+                          { x: 290, y: 18, val: "1.8" },
+                        ],
+                      },
+                      hba1c: {
+                        label: "HbA1c",
+                        loinc: "LOINC 4548-4 • Hemoglobin A1c (%)",
+                        badge: "6.2% ↓",
+                        badgeCls: "bg-emerald-50 border-emerald-200 text-emerald-700",
+                        points: "30,18 115,28 205,40 290,50",
+                        pts: [
+                          { x: 30, y: 18, val: "8.4" },
+                          { x: 115, y: 28, val: "7.6" },
+                          { x: 205, y: 40, val: "6.9" },
+                          { x: 290, y: 50, val: "6.2" },
+                        ],
+                      },
+                      hemoglobin: {
+                        label: "Hemoglobin",
+                        loinc: "LOINC 718-7 • Hemoglobin (g/dL)",
+                        badge: "13.8 g/dL",
+                        badgeCls: "bg-blue-50 border-blue-200 text-[#0073FC]",
+                        points: "30,48 115,42 205,30 290,26",
+                        pts: [
+                          { x: 30, y: 48, val: "11.2" },
+                          { x: 115, y: 42, val: "12.0" },
+                          { x: 205, y: 30, val: "13.4" },
+                          { x: 290, y: 26, val: "13.8" },
+                        ],
+                      },
+                    }[selectedBiomarker];
+
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-1.5">
+                          {(["creatinine", "hba1c", "hemoglobin"] as const).map((key) => (
+                            <button
+                              key={key}
+                              type="button"
+                              onClick={() => setSelectedBiomarker(key)}
+                              className={cn(
+                                "px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors cursor-pointer capitalize",
+                                selectedBiomarker === key
+                                  ? "bg-[#0073FC] text-white border-[#0073FC]"
+                                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-200"
+                              )}
+                            >
+                              {key === "hba1c" ? "HbA1c" : key}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-slate-900 truncate">Tn. Hendra Wijaya • #RM-0849201</p>
+                              <p className="text-[11px] text-slate-500 truncate">{bioMap.loinc}</p>
+                            </div>
+                            <span className={cn("px-2 py-0.5 rounded-full border text-[11px] font-bold shrink-0", bioMap.badgeCls)}>
+                              {bioMap.badge}
+                            </span>
                           </div>
-                          <span className="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-bold">
-                            1.8 mg/dL ↑
-                          </span>
-                        </div>
-                        {/* Longitudinal SVG Sparkline */}
-                        <div className="rounded-xl bg-[#F7F9FC] p-3 border border-slate-200/60">
-                          <svg className="w-full h-20" viewBox="0 0 320 72" aria-hidden="true">
-                            <line x1="20" y1="24" x2="300" y2="24" stroke="#F59E0B" strokeDasharray="4 3" strokeWidth="1" opacity="0.6" />
-                            <polyline
-                              fill="none"
-                              stroke="#0073FC"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              points="30,54 115,46 205,36 290,18"
-                            />
-                            {[
-                              { x: 30, y: 54, val: "1.0" },
-                              { x: 115, y: 46, val: "1.2" },
-                              { x: 205, y: 36, val: "1.4" },
-                              { x: 290, y: 18, val: "1.8" },
-                            ].map((pt) => (
-                              <g key={pt.x}>
-                                <circle cx={pt.x} cy={pt.y} r="4.5" fill="#0073FC" stroke="#FFFFFF" strokeWidth="2" />
-                                <text x={pt.x} y={pt.y - 8} textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
-                                  {pt.val}
-                                </text>
-                              </g>
-                            ))}
-                          </svg>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px] text-slate-600 pt-1">
-                          <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700">
-                            <QrCode className="h-3.5 w-3.5" /> BSrE SHA-256 Verified
-                          </span>
-                          <span>dr. Ratna Sp.PK</span>
+                          <div className="rounded-xl bg-[#F7F9FC] p-3 border border-slate-200/60">
+                            <svg className="w-full h-20" viewBox="0 0 320 72" aria-hidden="true">
+                              <line x1="20" y1="24" x2="300" y2="24" stroke="#F59E0B" strokeDasharray="4 3" strokeWidth="1" opacity="0.55" />
+                              <polyline
+                                fill="none"
+                                stroke="#0073FC"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                points={bioMap.points}
+                              />
+                              {bioMap.pts.map((pt) => (
+                                <g key={pt.x}>
+                                  <circle cx={pt.x} cy={pt.y} r="4.5" fill="#0073FC" stroke="#FFFFFF" strokeWidth="2" />
+                                  <text x={pt.x} y={pt.y - 8} textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+                                    {pt.val}
+                                  </text>
+                                </g>
+                              ))}
+                            </svg>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] text-slate-600 pt-1">
+                            <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700">
+                              <QrCode className="h-3.5 w-3.5" /> BSrE SHA-256 Verified
+                            </span>
+                            <span>dr. Ratna Sp.PK</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
-                  {/* 3. Direct Analyzer Visual: Multi-Instrument Bench Rack */}
+                  {/* 3. Direct Analyzer Visual: Interactive Host Query Cycler */}
                   {current.simulationType === "analyzer" && (
                     <div className="space-y-2.5">
+                      <div className="flex items-center justify-between gap-2 pb-1">
+                        <span className="text-[11px] font-medium text-slate-600">
+                          {language === "ID" ? "Klik untuk uji Host Query:" : "Click to test Host Query:"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setHostQueryIdx((prev) => (prev + 1) % 3)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-blue-200 text-[#0073FC] text-[11px] font-semibold hover:bg-[#E8F1FD] transition-colors cursor-pointer"
+                        >
+                          <RefreshCw className="h-3 w-3" />
+                          <span>{language === "ID" ? "Scan Tabung Berikutnya" : "Scan Next Tube"}</span>
+                        </button>
+                      </div>
                       {[
                         { machine: "Sysmex XN-1000", proto: "ASTM E1394 • TCP/IP", sample: "#SP-08819", qc: "Westgard PASS" },
                         { machine: "Roche Cobas c501", proto: "HL7 v2.5 • LAN", sample: "#SP-08820", qc: "Westgard PASS" },
                         { machine: "Abbott Alinity i", proto: "ASTM E1381 • RS-232", sample: "#SP-08821", qc: "Host Query OK" },
-                      ].map((inst) => (
-                        <div key={inst.machine} className="rounded-xl bg-white border border-slate-200/80 p-3.5 flex items-center justify-between gap-3">
+                      ].map((inst, idx) => (
+                        <div
+                          key={inst.machine}
+                          onClick={() => setHostQueryIdx(idx)}
+                          className={cn(
+                            "rounded-xl bg-white border p-3.5 flex items-center justify-between gap-3 transition-all cursor-pointer",
+                            hostQueryIdx === idx
+                              ? "border-[#0073FC] ring-2 ring-[#0073FC]/15 shadow-xs"
+                              : "border-slate-200/80 hover:border-blue-200"
+                          )}
+                        >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="h-9 w-9 rounded-lg bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center shrink-0">
+                            <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center shrink-0", hostQueryIdx === idx ? "bg-[#0073FC] text-white" : "bg-[#E8F1FD] text-[#0073FC]")}>
                               <Cpu className="h-4.5 w-4.5" />
                             </div>
                             <div className="min-w-0">
@@ -680,25 +909,62 @@ export default function IntegrationPage() {
                             </div>
                           </div>
                           <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[10px] font-bold shrink-0">
-                            {inst.qc}
+                            {hostQueryIdx === idx ? "Query Active ✓" : inst.qc}
                           </span>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {/* 4. SATUSEHAT Visual: FHIR R4 Resource Pipeline */}
+                  {/* 4. SATUSEHAT Visual: Interactive FHIR R4 Resource Tabs */}
                   {current.simulationType === "satusehat" && (
                     <div className="space-y-3">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {(["DiagnosticReport", "ServiceRequest", "Observation"] as const).map((res) => (
+                          <button
+                            key={res}
+                            type="button"
+                            onClick={() => setFhirResource(res)}
+                            className={cn(
+                              "px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold border transition-colors cursor-pointer",
+                              fhirResource === res
+                                ? "bg-[#0073FC] text-white border-[#0073FC]"
+                                : "bg-white text-slate-600 border-slate-200 hover:border-blue-200"
+                            )}
+                          >
+                            {res}
+                          </button>
+                        ))}
+                      </div>
                       <div className="rounded-xl bg-[#0F172A] text-slate-100 p-4 font-mono text-[11px] leading-relaxed">
                         <div className="flex items-center justify-between text-slate-400 mb-2 pb-2 border-b border-slate-800">
-                          <span>POST /fhir-r4/v1/DiagnosticReport</span>
-                          <span className="text-emerald-400 font-bold">201 Created</span>
+                          <span className="truncate">POST /fhir-r4/v1/{fhirResource}</span>
+                          <span className="text-emerald-400 font-bold shrink-0">201 Created</span>
                         </div>
-                        <p><span className="text-blue-400">&quot;subject&quot;</span>: &quot;Patient/P10029482103&quot;,</p>
-                        <p><span className="text-blue-400">&quot;code&quot;</span>: &quot;LOINC#57021-8 (CBC)&quot;,</p>
-                        <p><span className="text-blue-400">&quot;status&quot;</span>: &quot;final&quot;,</p>
-                        <p><span className="text-blue-400">&quot;performer&quot;</span>: &quot;Practitioner/dr.Ratna&quot;</p>
+                        {fhirResource === "DiagnosticReport" && (
+                          <>
+                            <p><span className="text-blue-400">&quot;resourceType&quot;</span>: &quot;DiagnosticReport&quot;,</p>
+                            <p><span className="text-blue-400">&quot;subject&quot;</span>: &quot;Patient/P10029482103&quot;,</p>
+                            <p><span className="text-blue-400">&quot;code&quot;</span>: &quot;LOINC#57021-8 (CBC)&quot;,</p>
+                            <p><span className="text-blue-400">&quot;status&quot;</span>: &quot;final&quot;</p>
+                          </>
+                        )}
+                        {fhirResource === "ServiceRequest" && (
+                          <>
+                            <p><span className="text-blue-400">&quot;resourceType&quot;</span>: &quot;ServiceRequest&quot;,</p>
+                            <p><span className="text-blue-400">&quot;intent&quot;</span>: &quot;order&quot;,</p>
+                            <p><span className="text-blue-400">&quot;priority&quot;</span>: &quot;stat (CITO)&quot;,</p>
+                            <p><span className="text-blue-400">&quot;requester&quot;</span>: &quot;Practitioner/N10009182&quot;</p>
+                          </>
+                        )}
+                        {fhirResource === "Observation" && (
+                          <>
+                            <p><span className="text-blue-400">&quot;resourceType&quot;</span>: &quot;Observation&quot;,</p>
+                            <p><span className="text-blue-400">&quot;code&quot;</span>: &quot;LOINC#718-7 (Hemoglobin)&quot;,</p>
+                            <p><span className="text-blue-400">&quot;valueQuantity&quot;</span>: &quot;13.8 g/dL&quot;,</p>
+                            <p><span className="text-blue-400">&quot;interpretation&quot;</span>: &quot;Normal&quot;</p>
+                          </>
+                        )}
                       </div>
                       <div className="rounded-xl bg-white border border-slate-200/80 p-3 flex items-center justify-between text-xs">
                         <span className="font-semibold text-slate-700">OAuth 2.0 Kemenkes Gateway</span>
@@ -709,22 +975,40 @@ export default function IntegrationPage() {
                     </div>
                   )}
 
-                  {/* 5. Smart Gateway Visual: 72h Failover & Cito Queue */}
+                  {/* 5. Smart Gateway Visual: Interactive Offline / Online Failover Toggle */}
                   {current.simulationType === "gateway" && (
                     <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-medium text-slate-600">
+                          {language === "ID" ? "Simulasi Kondisi Jaringan:" : "Simulate Network State:"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setGatewayOffline((prev) => !prev)}
+                          className={cn(
+                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border transition-colors cursor-pointer",
+                            gatewayOffline
+                              ? "bg-amber-50 border-amber-300 text-amber-800"
+                              : "bg-white border-emerald-200 text-emerald-700"
+                          )}
+                        >
+                          {gatewayOffline ? <WifiOff className="h-3 w-3" /> : <Wifi className="h-3 w-3" />}
+                          <span>{gatewayOffline ? "WAN Offline (Buffering)" : "WAN Online (Synced)"}</span>
+                        </button>
+                      </div>
                       <div className="rounded-xl bg-white border border-slate-200/80 p-4 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-900">
                             <HardDrive className="h-4 w-4 text-[#0073FC]" /> Edge Buffer Storage
                           </span>
-                          <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                            AES-256 Encrypted
+                          <span className={cn("text-[11px] font-bold px-2 py-0.5 rounded-full", gatewayOffline ? "text-amber-800 bg-amber-50" : "text-emerald-700 bg-emerald-50")}>
+                            {gatewayOffline ? "Local Buffer Active" : "AES-256 Synced"}
                           </span>
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-center">
                           <div className="rounded-lg bg-[#F7F9FC] p-2.5">
-                            <p className="text-xs font-bold text-slate-900">72 Jam</p>
-                            <p className="text-[10px] text-slate-500">Offline Capacity</p>
+                            <p className="text-xs font-bold text-slate-900">{gatewayOffline ? "142 Rows" : "72 Jam"}</p>
+                            <p className="text-[10px] text-slate-500">{gatewayOffline ? "Queued Safely" : "Offline Capacity"}</p>
                           </div>
                           <div className="rounded-lg bg-[#E8F1FD] p-2.5">
                             <p className="text-xs font-bold text-[#0073FC]">CITO First</p>
@@ -738,7 +1022,8 @@ export default function IntegrationPage() {
                       </div>
                       <div className="rounded-xl bg-white border border-slate-200/80 p-3 flex items-center justify-between text-xs">
                         <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
-                          <Radio className="h-3.5 w-3.5 text-emerald-500" /> Heartbeat Telemetry: Active
+                          <Radio className={cn("h-3.5 w-3.5", gatewayOffline ? "text-amber-500 animate-pulse" : "text-emerald-500")} />{" "}
+                          {gatewayOffline ? "Edge Recording Active (No Internet Required)" : "Heartbeat Telemetry: Active"}
                         </span>
                         <span className="font-mono text-[11px] font-bold text-[#0073FC]">99.9% SLA</span>
                       </div>
@@ -827,17 +1112,39 @@ export default function IntegrationPage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-2 text-xs font-mono">
-                {[
-                  { raw: "HGB (Sysmex)", std: "LOINC 718-7 • Hemoglobin" },
-                  { raw: "CREA (Cobas)", std: "LOINC 2160-0 • Creatinine" },
-                ].map((m) => (
-                  <div key={m.raw} className="flex items-center justify-between gap-2 bg-[#F7F9FC] rounded-lg px-3 py-2">
-                    <span className="text-slate-600">{m.raw}</span>
-                    <ArrowRight className="h-3.5 w-3.5 text-[#0073FC] shrink-0" />
-                    <span className="font-bold text-[#0073FC] truncate">{m.std}</span>
-                  </div>
-                ))}
+              <div className="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-2.5 text-xs font-mono">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {["HGB", "CREA", "GLU", "WBC"].map((code, idx) => (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => setBentoLoincIdx(idx)}
+                      className={cn(
+                        "px-2.5 py-1 rounded-md text-[11px] font-bold border transition-colors cursor-pointer",
+                        bentoLoincIdx === idx
+                          ? "bg-[#0073FC] text-white border-[#0073FC]"
+                          : "bg-[#F7F9FC] text-slate-600 border-slate-200 hover:border-blue-200"
+                      )}
+                    >
+                      {code}
+                    </button>
+                  ))}
+                </div>
+                {(() => {
+                  const map = [
+                    { raw: "HGB (Sysmex XN)", std: "LOINC 718-7 • Hemoglobin [Mass/vol]" },
+                    { raw: "CREA (Roche Cobas)", std: "LOINC 2160-0 • Creatinine [Mass/vol]" },
+                    { raw: "GLU (Abbott Alinity)", std: "LOINC 2345-7 • Glucose [Mass/vol]" },
+                    { raw: "WBC (Mindray BC-6000)", std: "LOINC 6690-2 • Leukocytes [#/vol]" },
+                  ][bentoLoincIdx];
+                  return (
+                    <div className="flex items-center justify-between gap-2 bg-[#F7F9FC] rounded-lg px-3 py-2.5">
+                      <span className="text-slate-700 shrink-0">{map.raw}</span>
+                      <ArrowRight className="h-3.5 w-3.5 text-[#0073FC] shrink-0" />
+                      <span className="font-bold text-[#0073FC] truncate">{map.std}</span>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
@@ -884,15 +1191,34 @@ export default function IntegrationPage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-[#0073FC] text-white p-4 flex items-center justify-between gap-3 text-xs shadow-[0_10px_24px_-8px_rgba(0,115,252,0.5)]">
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle className="h-4 w-4 text-amber-300 shrink-0" />
-                  <span className="font-semibold">
-                    {language === "ID" ? "K+ 6.4 mmol/L • Notifikasi DPJP Terkirim (2m)" : "K+ 6.4 mmol/L • Physician Alerted (2m)"}
+              <button
+                type="button"
+                onClick={() => setBentoPanicAck((prev) => !prev)}
+                className={cn(
+                  "w-full text-left rounded-2xl p-4 flex items-center justify-between gap-3 text-xs transition-all cursor-pointer",
+                  bentoPanicAck
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "bg-[#0073FC] text-white shadow-[0_10px_24px_-8px_rgba(0,115,252,0.5)] hover:bg-[#0064DB]"
+                )}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {bentoPanicAck ? (
+                    <CheckCheck className="h-4 w-4 text-emerald-100 shrink-0" />
+                  ) : (
+                    <AlertTriangle className="h-4 w-4 text-amber-300 shrink-0" />
+                  )}
+                  <span className="font-semibold truncate">
+                    {bentoPanicAck
+                      ? language === "ID"
+                        ? "Diterima dr. DPJP (01m 42d) • Tercatat di Audit KARS"
+                        : "Acknowledged by Physician (01m 42s) • Logged"
+                      : language === "ID"
+                      ? "K+ 6.4 mmol/L • Klik untuk Simulasi Konfirmasi DPJP"
+                      : "K+ 6.4 mmol/L • Click to Simulate Physician Ack"}
                   </span>
                 </div>
                 <BadgeCheck className="h-4 w-4 text-blue-100 shrink-0" />
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -924,51 +1250,114 @@ export default function IntegrationPage() {
             </p>
           </div>
 
-          {/* 4 Discipline Cards (2x2) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {modalityCatalog.map((mod) => {
-              const ModIcon = mod.icon;
-              return (
-                <div
-                  key={mod.discipline}
-                  className="rounded-[24px] bg-white border border-slate-200/80 p-6 sm:p-7 transition-all duration-200 hover:border-blue-200/80 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
+          {/* Search & Discipline Filter Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-7">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {[
+                { key: "all", label: language === "ID" ? "Semua Divisi" : "All Disciplines" },
+                { key: "hematology", label: language === "ID" ? "Hematologi" : "Hematology" },
+                { key: "chemistry", label: language === "ID" ? "Kimia & Imuno" : "Chemistry" },
+                { key: "microbiology", label: language === "ID" ? "Mikrobiologi" : "Microbiology" },
+                { key: "molecular", label: language === "ID" ? "Molekuler" : "Molecular" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setSelectedDiscipline(tab.key)}
+                  className={cn(
+                    "px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer shrink-0",
+                    selectedDiscipline === tab.key
+                      ? "bg-[#0073FC] text-white border-[#0073FC] shadow-xs"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-blue-200 hover:text-slate-900"
+                  )}
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center">
-                        <ModIcon className="h-5 w-5 stroke-[1.75]" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full md:w-72">
+              <Search className="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={analyzerQuery}
+                onChange={(e) => setAnalyzerQuery(e.target.value)}
+                placeholder={language === "ID" ? "Cari merek / model (mis. Cobas, XN)..." : "Search brand / model (e.g. Cobas, XN)..."}
+                className="w-full rounded-full bg-white border border-slate-200 pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#0073FC] focus:ring-2 focus:ring-[#0073FC]/15 transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Filtered Discipline Cards */}
+          {filteredModalities.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {filteredModalities.map((mod) => {
+                const ModIcon = mod.icon;
+                return (
+                  <div
+                    key={mod.discipline}
+                    className="rounded-[24px] bg-white border border-slate-200/80 p-6 sm:p-7 transition-all duration-200 hover:border-blue-200/80 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)]"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center">
+                          <ModIcon className="h-5 w-5 stroke-[1.75]" />
+                        </div>
+                        <h3 className="font-display text-base sm:text-lg font-bold text-slate-900">
+                          {mod.discipline}
+                        </h3>
                       </div>
-                      <h3 className="font-display text-base sm:text-lg font-bold text-slate-900">
-                        {mod.discipline}
-                      </h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {mod.protocols.map((p) => (
+                          <span
+                            key={p}
+                            className="rounded-md bg-[#F7F9FC] border border-slate-200/80 px-2 py-0.5 text-[11px] font-semibold text-[#0073FC]"
+                          >
+                            {p}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {mod.protocols.map((p) => (
-                        <span
-                          key={p}
-                          className="rounded-md bg-[#F7F9FC] border border-slate-200/80 px-2 py-0.5 text-[11px] font-semibold text-[#0073FC]"
+
+                    <div className="space-y-2.5">
+                      {mod.brands.map((b) => (
+                        <div
+                          key={b.maker}
+                          className="flex items-center justify-between gap-3 rounded-xl bg-[#F7F9FC] px-3.5 py-2.5 text-xs sm:text-[13px]"
                         >
-                          {p}
-                        </span>
+                          <span className="font-bold text-slate-900">{b.maker}</span>
+                          <span className="text-slate-600 font-mono text-xs text-right">{b.models}</span>
+                        </div>
                       ))}
                     </div>
                   </div>
-
-                  <div className="space-y-2.5">
-                    {mod.brands.map((b) => (
-                      <div
-                        key={b.maker}
-                        className="flex items-center justify-between gap-3 rounded-xl bg-[#F7F9FC] px-3.5 py-2.5 text-xs sm:text-[13px]"
-                      >
-                        <span className="font-bold text-slate-900">{b.maker}</span>
-                        <span className="text-slate-600 font-mono text-xs text-right">{b.models}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-[24px] bg-white border border-slate-200/80 p-8 text-center space-y-3">
+              <p className="text-sm font-semibold text-slate-800">
+                {language === "ID"
+                  ? `Model "${analyzerQuery}" belum tampil di ringkasan katalog.`
+                  : `Model "${analyzerQuery}" is not shown in the summary catalog.`}
+              </p>
+              <p className="text-xs text-slate-500">
+                {language === "ID"
+                  ? "Diagnova mendukung 500+ instrumen via ASTM/HL7 dan dapat membangun driver kustom dalam 3–5 hari kerja."
+                  : "Diagnova supports 500+ instruments via ASTM/HL7 and builds custom drivers in 3–5 business days."}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setAnalyzerQuery("");
+                  setSelectedDiscipline("all");
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#E8F1FD] text-[#0073FC] text-xs font-semibold hover:bg-blue-100 transition-colors cursor-pointer"
+              >
+                {language === "ID" ? "Reset Pencarian" : "Reset Search"}
+              </button>
+            </div>
+          )}
 
           {/* Custom Driver Guarantee Banner */}
           <div className="mt-8 p-5 sm:px-7 rounded-2xl bg-[#F1F4F8] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
