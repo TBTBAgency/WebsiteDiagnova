@@ -369,56 +369,66 @@ export default function NovaAIPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: SYSTEM OF RECORD VS SYSTEM OF ACTION
-          (Inspired by LigoLab AI Agents: Traditional LIS vs Modern AI LIS)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Centered Header */}
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-14">
-            <div className="mb-3.5 flex justify-center">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Evolusi Sistem Informasi Lab" : "The LIS System of Action"}
-              </SectionBadge>
+          {/* Split Header (Left-Aligned) */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl">
+              <div className="mb-3.5">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Paradigma Baru LIS" : "The LIS System of Action"}
+                </SectionBadge>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
+                {language === "ID" ? (
+                  <>
+                    Dari <span className="text-slate-400">System of Record</span> Menuju{" "}
+                    <span className="text-[#0073FC]">System of Action</span>
+                  </>
+                ) : (
+                  <>
+                    From <span className="text-slate-400">System of Record</span> to{" "}
+                    <span className="text-[#0073FC]">System of Action</span>
+                  </>
+                )}
+              </h2>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.15] tracking-tight text-slate-900">
-              {language === "ID" ? (
-                <>
-                  Dari <span className="text-slate-500">System of Record</span> ke{" "}
-                  <span className="text-[#0073FC]">System of Action</span>
-                </>
-              ) : (
-                <>
-                  From <span className="text-slate-500">System of Record</span> to{" "}
-                  <span className="text-[#0073FC]">System of Action</span>
-                </>
-              )}
-            </h2>
-            <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
-                ? "LIS konvensional hanya mencatat data secara pasif. Nova AI bertindak aktif menginterpretasikan hasil secara real-time, mengorkestrasi alur kerja, dan mencegah kesalahan klinis sebelum terjadi."
-                : "Traditional LIS platforms act passively as systems of record. Nova AI actively interprets telemetry in real time, orchestrates workflows, and prevents clinical errors proactively."}
+                ? "LIS konvensional berhenti pada pencatatan pasif. Nova AI membaca konteks klinis secara aktif—mengekstrak order, menghitung tren delta, dan menyiapkan draf laporan siap sah."
+                : "Traditional LIS stops at passive record-keeping. Nova AI reads clinical context actively—extracting orders, computing delta trends, and preparing sign-off-ready drafts."}
             </p>
           </div>
 
           {/* 2-Card Comparison Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Card: Traditional LIS */}
             <div className="rounded-[28px] bg-[#F1F4F8] p-7 sm:p-9 flex flex-col justify-between">
               <div>
-                <h3 className="font-display text-xl font-bold text-slate-800">
-                  {language === "ID" ? "LIS Konvensional" : "Traditional LIS"}
-                </h3>
-                <div className="mt-3.5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-400/80 text-white text-xs font-semibold">
-                  <Server className="h-3.5 w-3.5" />
-                  <span>{language === "ID" ? "System of Record (Pasif)" : "System of Record"}</span>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-display text-xl font-bold text-slate-800">
+                    {language === "ID" ? "LIS Konvensional" : "Traditional LIS"}
+                  </h3>
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-300/80 text-slate-700 text-xs font-semibold">
+                    System of Record
+                  </span>
                 </div>
 
-                <ul className="mt-7 space-y-3.5 text-xs sm:text-sm text-slate-600">
+                <ul className="mt-6 space-y-3.5 text-xs sm:text-sm text-slate-600">
                   {[
-                    language === "ID" ? "Hanya menyimpan & mengambil data hasil lab" : "Passive data storage & retrieval",
-                    language === "ID" ? "Manajemen alur kerja & verifikasi manual" : "Manual workflow & validation management",
-                    language === "ID" ? "Penanganan error bersifat reaktif setelah rilis" : "Reactive error handling after sign-out",
-                    language === "ID" ? "Pelaporan statis tanpa analisis tren serial" : "Static reporting without longitudinal context",
+                    language === "ID"
+                      ? "Input ulang formulir permintaan fisik secara manual saat registrasi"
+                      : "Manual re-keying of paper requisitions during accessioning",
+                    language === "ID"
+                      ? "Penandaan abnormal hanya mengacu pada rentang statis tanpa riwayat serial"
+                      : "Static reference flags with zero longitudinal patient trend awareness",
+                    language === "ID"
+                      ? "Pembagian antrean kasus ke dokter dilakukan manual tanpa melihat beban kerja"
+                      : "Manual case distribution blind to subspecialty and workload queues",
+                    language === "ID"
+                      ? "Revisi kode ICD-10 atau inkonsistensi narasi baru terdeteksi setelah rilis"
+                      : "ICD-10 and terminology mismatches caught reactively post-signout",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <XCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
@@ -430,30 +440,32 @@ export default function NovaAIPage() {
             </div>
 
             {/* Right Card: Diagnova Nova AI */}
-            <div className="rounded-[28px] bg-white border-2 border-[#0073FC]/25 p-7 sm:p-9 shadow-[0_14px_38px_-12px_rgba(0,115,252,0.16)] flex flex-col justify-between">
+            <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-[0_12px_32px_-12px_rgba(15,23,42,0.08)] flex flex-col justify-between">
               <div>
-                <h3 className="font-display text-xl font-bold text-[#0073FC]">
-                  {language === "ID" ? "Diagnova Nova AI" : "Diagnova Modern LIS"}
-                </h3>
-                <div className="mt-3.5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0073FC] text-white text-xs font-semibold shadow-[0_4px_14px_-3px_rgba(0,115,252,0.45)]">
-                  <Zap className="h-3.5 w-3.5" />
-                  <span>{language === "ID" ? "System of Action (Aktif)" : "System of Action"}</span>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-display text-xl font-bold text-slate-900">
+                    {language === "ID" ? "Diagnova Nova AI" : "Diagnova Nova AI"}
+                  </h3>
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0073FC] text-white text-xs font-semibold shadow-[0_4px_12px_-3px_rgba(0,115,252,0.45)]">
+                    <Zap className="h-3.5 w-3.5" />
+                    <span>System of Action</span>
+                  </span>
                 </div>
 
-                <ul className="mt-7 space-y-3.5 text-xs sm:text-sm text-slate-700 font-medium">
+                <ul className="mt-6 space-y-3.5 text-xs sm:text-sm text-slate-700 font-medium">
                   {[
                     language === "ID"
-                      ? "Interpretasi & delta-check longitudinal secara real-time"
-                      : "Real-time interpretation & longitudinal delta-check",
+                      ? "Ekstraksi order OCR + LLM & validasi kecocokan spesimen otomatis"
+                      : "OCR + LLM requisition extraction with automated specimen mismatch checks",
                     language === "ID"
-                      ? "Orkestrasi auto-verifikasi & routing kasus otomatis"
-                      : "Automated workflow orchestration & smart case routing",
+                      ? "Kalkulasi delta-check longitudinal terhadap baseline pasien dalam < 3 detik"
+                      : "Longitudinal delta-check calculations against patient baselines in < 3 sec",
                     language === "ID"
-                      ? "Deteksi dini nilai kritis & inkonsistensi pra-otorisasi"
-                      : "Proactive panic triage & pre-signout inconsistency alerts",
+                      ? "Dikte klinis bebas genggam (voice-to-report) & routing kasus berbasis beban kerja"
+                      : "Hands-free voice dictation & workload-aware pathologist case routing",
                     language === "ID"
-                      ? "Draf narasi medis terstruktur siap otorisasi dokter Sp.PK"
-                      : "Structured clinical drafts ready for pathologist sign-off",
+                      ? "Audit terminologi & pembaruan kode ICD-10 otomatis sebelum dokter Sp.PK sign-off"
+                      : "Pre-signout terminology audit & automatic ICD-10 updates before authorization",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <CheckCircle2 className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
@@ -469,29 +481,27 @@ export default function NovaAIPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: 6-CARD AI CAPABILITIES GRID
-          (Inspired by LigoLab "Stop Documenting. Start Orchestrating.")
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Centered Header */}
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-14">
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.15] tracking-tight text-slate-900">
-              {language === "ID" ? (
-                <>
-                  Berhenti Sekadar Mencatat.{" "}
-                  <span className="text-[#0073FC]">Mulai Mengorkestrasi.</span>
-                </>
-              ) : (
-                <>
-                  Stop Documenting.{" "}
-                  <span className="text-[#0073FC]">Start Orchestrating.</span>
-                </>
-              )}
-            </h2>
-            <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+          {/* Split Header (Left-Aligned) */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl">
+              <div className="mb-3.5">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Ekosistem Agen AI" : "AI Agent Ecosystem"}
+                </SectionBadge>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
+                {language === "ID"
+                  ? "Enam Agen Spesifik untuk Setiap Titik Kritis Lab"
+                  : "Six Purpose-Built Agents Across the Lab Lifecycle"}
+              </h2>
+            </div>
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
-                ? "Ekosistem agen cerdas Nova AI tertanam langsung di seluruh siklus laboratorium—mengubah LIS menjadi platform informatika proaktif yang mengurangi beban kerja manual 30–60%."
-                : "Nova AI agents are embedded across the entire laboratory lifecycle—transforming the LIS into a proactive informatics platform that cuts manual effort by 30–60%."}
+                ? "Setiap agen bekerja di dalam alur klinis yang sudah ada—mengurangi pekerjaan administratif 30–60% tanpa mengubah otoritas dokter."
+                : "Each agent operates inside existing clinical workflows—cutting administrative effort by 30–60% without altering physician authority."}
             </p>
           </div>
 
@@ -499,64 +509,64 @@ export default function NovaAIPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
-                icon: TrendingUp,
-                title: language === "ID" ? "Delta-Check Longitudinal" : "Longitudinal Delta-Check",
-                status: language === "ID" ? "Live in Production" : "Live in Production",
-                statusColor: "text-[#0073FC]",
-                desc:
-                  language === "ID"
-                    ? "Membandingkan hasil terkini terhadap riwayat serial pasien untuk mendeteksi pergeseran klinis akut antar-kunjungan dalam hitungan milidetik."
-                    : "Compares current analytes against serial patient baselines to detect acute clinical shifts across visits in milliseconds.",
-              },
-              {
-                icon: GitBranch,
-                title: language === "ID" ? "Optimasi & Routing Alur Kerja" : "Workflow Optimization",
-                status: language === "ID" ? "Live in Production" : "Live in Production",
-                statusColor: "text-[#0073FC]",
-                desc:
-                  language === "ID"
-                    ? "Distribusi kasus cerdas yang menyeimbangkan beban kerja dokter Sp.PK serta auto-verifikasi sampel normal berstandar Westgard QC."
-                    : "Intelligent case distribution balancing pathologist workload alongside automated Westgard QC normal-sample verification.",
-              },
-              {
                 icon: ScanText,
-                title: language === "ID" ? "Pemrosesan Order & Spesimen OCR" : "Specimen & Order Processing",
-                status: language === "ID" ? "Live in Production" : "Live in Production",
+                title: language === "ID" ? "Ekstraksi Order OCR & LLM" : "OCR & LLM Order Extraction",
+                status: "Live in Production",
                 statusColor: "text-[#0073FC]",
                 desc:
                   language === "ID"
-                    ? "Konversi formulir permintaan kertas menjadi order digital terstruktur melalui OCR + LLM dengan deteksi ketidakcocokan spesimen otomatis."
-                    : "OCR + LLM conversion of paper requisitions into structured digital orders with automated specimen mismatch detection.",
+                    ? "Mengubah formulir permintaan lab cetak atau tulisan tangan menjadi order digital dan menandai ketidaksesuaian jenis tabung."
+                    : "Converts paper or handwritten requisitions into digital orders and flags tube or specimen mismatches automatically.",
+              },
+              {
+                icon: Mic,
+                title: language === "ID" ? "Dikte Klinis Bebas Genggam" : "Hands-Free Voice Dictation",
+                status: "Live in Production",
+                statusColor: "text-[#0073FC]",
+                desc:
+                  language === "ID"
+                    ? "Dokter mendiktekan temuan mikroskopis atau kesan klinis secara natural dan sistem langsung mengisi kolom laporan terstruktur."
+                    : "Pathologists dictate microscopic findings naturally while Nova AI populates structured report templates hands-free.",
+              },
+              {
+                icon: TrendingUp,
+                title: language === "ID" ? "Deteksi Delta-Check Serial" : "Longitudinal Delta-Check",
+                status: "Live in Production",
+                statusColor: "text-[#0073FC]",
+                desc:
+                  language === "ID"
+                    ? "Membandingkan nilai analit pasien dengan riwayat kunjungan sebelumnya untuk menangkap perburukan klinis yang lolos dari batas statis."
+                    : "Compares current analytes against prior patient visits to catch acute shifts missed by static reference intervals.",
               },
               {
                 icon: ShieldCheck,
-                title: language === "ID" ? "Kualitas & Konsistensi Pra-Rilis" : "Quality & Consistency",
-                status: language === "ID" ? "In Beta" : "In Beta",
+                title: language === "ID" ? "Audit Kualitas Pra-Otorisasi" : "Pre-Signout Quality Audit",
+                status: "In Beta",
                 statusColor: "text-slate-500",
                 desc:
                   language === "ID"
-                    ? "Asisten AI menandai inkonsistensi terminologi, kode ICD-10/LOINC, dan korelasi klinis sebelum dokter menandatangani laporan."
-                    : "AI assistant flags terminology inconsistencies, ICD-10/LOINC mismatches, and clinical gaps prior to pathologist sign-out.",
+                    ? "Memeriksa konsistensi antara kesan klinis, kode ICD-10, dan kelengkapan parameter sebelum laporan ditandatangani secara digital."
+                    : "Verifies consistency between clinical impressions, ICD-10 codes, and required parameters prior to electronic sign-off.",
               },
               {
-                icon: Activity,
-                title: language === "ID" ? "Triage Nilai Kritis KARS (< 15m)" : "Critical Panic Triage",
-                status: language === "ID" ? "Live in Production" : "Live in Production",
+                icon: GitBranch,
+                title: language === "ID" ? "Smart Case Routing" : "Smart Case Routing",
+                status: "Live in Production",
                 statusColor: "text-[#0073FC]",
                 desc:
                   language === "ID"
-                    ? "Menyiarkan notifikasi nilai kritis terstandar KARS SKP 2.2 ke WhatsApp & SIMRS DPJP dengan pencatatan SLA otomatis."
-                    : "Broadcasts KARS-compliant critical panic alerts to attending physicians via EMR & mobile with automated SLA logging.",
+                    ? "Membagi antrean spesimen kompleks secara otomatis berdasarkan kompetensi sub-spesialis dan kapasitas waktu nyata dokter Sp.PK."
+                    : "Distributes complex cases automatically based on subspecialty expertise and real-time pathologist queue capacity.",
               },
               {
                 icon: BarChart3,
-                title: language === "ID" ? "Analitik Operasional & TAT" : "Intelligence & Analytics",
-                status: language === "ID" ? "Q2 2026" : "Q2 2026",
+                title: language === "ID" ? "Analitik Operasional Percakapan" : "Conversational Lab Analytics",
+                status: "Q2 2026",
                 statusColor: "text-slate-500",
                 desc:
                   language === "ID"
-                    ? "Kueri data operasional laboratorium secara percakapan untuk memantau bottleneck TAT, utilisasi reagen, dan performa unit real-time."
-                    : "Natural-language operational analytics enabling teams to query TAT bottlenecks, reagent utilization, and unit KPIs.",
+                    ? "Ajukan pertanyaan bahasa natural untuk melacak bottleneck TAT, lonjakan sampel IGD, hingga prediksi keterlambatan rilis."
+                    : "Query turnaround-time bottlenecks, ER volume surges, and release delay predictions using plain natural language.",
               },
             ].map((cap) => {
               const CapIcon = cap.icon;
@@ -967,16 +977,16 @@ export default function NovaAIPage() {
 
           {/* 2x2 Asymmetrical Bento Showcase (Matches Modules Page Layout) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
-            {/* BENTO 1 (Wide Left - 7 cols): Interfacing Dua Arah Analyzer */}
+            {/* BENTO 1 (Wide Left - 7 cols): Ekstraksi Requisisi OCR + LLM */}
             <div className="lg:col-span-7 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
               <div className="mb-6">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Interfacing Dua Arah Analyzer" : "Bi-Directional Analyzer Interfacing"}
+                  {language === "ID" ? "Ekstraksi Requisisi OCR + LLM" : "AI-Powered Requisition Extraction"}
                 </h3>
                 <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
                   {language === "ID"
-                    ? "Data hasil uji dari 500+ instrumen ditransmisikan langsung tanpa entri manual."
-                    : "Direct telemetry ingestion from 500+ instruments with zero manual entry."}
+                    ? "Konversi formulir permintaan fisik ke order digital dengan deteksi mismatch otomatis."
+                    : "OCR + LLM extraction of paper requisitions with automated specimen mismatch detection."}
                 </p>
               </div>
 
@@ -984,7 +994,7 @@ export default function NovaAIPage() {
               <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
                 {/* Left Core Hub Node */}
                 <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  <Server className="h-7 w-7 stroke-[2]" />
+                  <ScanText className="h-7 w-7 stroke-[2]" />
                 </div>
 
                 {/* Connector Lines (Desktop) */}
@@ -1004,47 +1014,49 @@ export default function NovaAIPage() {
                   {/* Top Branch */}
                   <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs flex items-center gap-3">
                     <div className="w-7 h-7 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                      <Activity className="h-4 w-4" />
+                      <FileText className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-900 truncate">
-                        {language === "ID" ? "ASTM E1381 & HL7 v2" : "ASTM E1381 & HL7 v2"}
+                        {language === "ID" ? "Formulir Pengantar RS #409" : "Paper Requisition #409"}
                       </p>
-                      <p className="text-[11px] text-slate-500 truncate">Sysmex XN-1000 • Cobas c501</p>
+                      <p className="text-[11px] text-slate-500 truncate">
+                        {language === "ID" ? "Tulisan Tangan & PDF Terbaca" : "Handwriting & PDF Parsed"}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Center Branch (Telemetry Summary Card) */}
+                  {/* Center Branch */}
                   <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-semibold text-slate-800">
-                        {language === "ID" ? "Auto-QC Westgard" : "Auto-QC Westgard"}
+                        {language === "ID" ? "Identitas & DPJP" : "Patient & DPJP"}
                       </span>
                       <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        In-Control ✓
+                        Cocok ✓
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
                       <span className="font-semibold text-slate-800">
-                        {language === "ID" ? "Parser Bi-Directional" : "Bi-Directional Parser"}
+                        {language === "ID" ? "Panel Pemeriksaan" : "Test Panels"}
                       </span>
-                      <span className="text-[11px] text-slate-400">&lt; 200ms</span>
+                      <span className="text-[11px] text-slate-500 font-medium">CBC + Cr + HbA1c</span>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
                       <span className="font-semibold text-slate-800">
-                        {language === "ID" ? "Zero Manual Entry" : "Zero Manual Entry"}
+                        {language === "ID" ? "Validasi Jenis Tabung" : "Specimen Tube Check"}
                       </span>
-                      <span className="text-[10px] font-semibold text-[#0073FC]">100% Valid</span>
+                      <span className="text-[10px] font-semibold text-[#0073FC]">EDTA + SST</span>
                     </div>
                   </div>
 
                   {/* Bottom Branch */}
                   <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                      <FileText className="h-4 w-4" />
+                    <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                      <BellRing className="h-4 w-4" />
                     </div>
                     <p className="text-xs font-bold text-slate-900 truncate">
-                      {language === "ID" ? "Normalisasi LOINC & FHIR R4" : "LOINC & FHIR R4 Normalization"}
+                      {language === "ID" ? "Flag Mismatch Pra-Analitik" : "Pre-Analytical Mismatch Flag"}
                     </p>
                   </div>
                 </div>
@@ -1139,48 +1151,48 @@ export default function NovaAIPage() {
               </div>
             </div>
 
-            {/* BENTO 4 (Wide Right - 7 cols): Otorisasi Dokter Sp.PK & E-Sign BSrE */}
+            {/* BENTO 4 (Wide Right - 7 cols): Smart Case Routing & Beban Kerja Sp.PK */}
             <div className="lg:col-span-7 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
               <div className="mb-6">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Otorisasi Dokter Sp.PK & E-Sign BSrE" : "Pathologist Sign-Off & BSrE E-Sign"}
+                  {language === "ID" ? "Smart Case Routing & Antrean Sp.PK" : "Smart Case Routing & Workload Balance"}
                 </h3>
                 <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
                   {language === "ID"
-                    ? "100% kendali verifikasi medis dengan tanda tangan digital resmi."
-                    : "100% physician verification sovereignty with certified digital signatures."}
+                    ? "Distribusi kasus kompleks berdasarkan sub-spesialisasi dan beban antrean dokter."
+                    : "Automated case distribution balanced by subspecialty and real-time pathologist queues."}
                 </p>
               </div>
 
-              {/* Visual: Connected Multi-Step Sign-Off Flow */}
+              {/* Visual: Connected Routing Flow */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
-                {/* Left 2 Floating Verification Cards */}
+                {/* Left 2 Input Signal Cards */}
                 <div className="w-full sm:w-[42%] space-y-3">
                   <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
-                        <Stethoscope className="h-3.5 w-3.5" />
+                        <TrendingUp className="h-3.5 w-3.5" />
                       </span>
                       <span className="text-xs font-bold text-slate-900">
-                        {language === "ID" ? "Review Narasi Klinis" : "Clinical Narrative Review"}
+                        {language === "ID" ? "Skor Kompleksitas" : "Case Complexity"}
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-500">
-                      {language === "ID" ? "Sunting & Validasi dr. Sp.PK" : "Edit & Verify by Pathologist"}
+                      {language === "ID" ? "Delta Akut • Nilai Kritis" : "Acute Delta • Critical Flag"}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                        <ShieldCheck className="h-3.5 w-3.5" />
+                        <Clock className="h-3.5 w-3.5" />
                       </span>
                       <span className="text-xs font-bold text-slate-900">
-                        {language === "ID" ? "Korelasi Anamnesis" : "Clinical Correlation"}
+                        {language === "ID" ? "Kapasitas Antrean" : "Queue Capacity"}
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-500">
-                      {language === "ID" ? "100% Otoritas Medis DPJP" : "100% Attending Authority"}
+                      {language === "ID" ? "Target TAT IGD < 30m" : "ER TAT Target < 30m"}
                     </p>
                   </div>
                 </div>
@@ -1196,27 +1208,27 @@ export default function NovaAIPage() {
                   <path d="M0 98 C22 98, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
                 </svg>
 
-                {/* Right Unified Sign-Off Card */}
+                {/* Right Unified Pathologist Queue Card */}
                 <div className="w-full sm:w-[46%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm space-y-2.5">
                   <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    {language === "ID" ? "Otorisasi & Rilis Resmi" : "Official Sign-Off"}
+                    {language === "ID" ? "Distribusi Dokter Sp.PK" : "Pathologist Routing"}
                   </p>
 
                   {[
                     {
+                      icon: Stethoscope,
+                      title: "dr. Hendra, Sp.PK",
+                      tag: "32% Load",
+                    },
+                    {
+                      icon: Stethoscope,
+                      title: "dr. Ratna, Sp.PK",
+                      tag: "28% Load",
+                    },
+                    {
                       icon: BadgeCheck,
-                      title: language === "ID" ? "Tanda Tangan BSrE" : "BSrE Digital E-Sign",
-                      tag: "Valid",
-                    },
-                    {
-                      icon: FileCheck2,
-                      title: language === "ID" ? "Rilis ke SIMRS" : "EMR Release",
-                      tag: "Auto",
-                    },
-                    {
-                      icon: Server,
-                      title: language === "ID" ? "Kirim SATUSEHAT" : "SATUSEHAT Sync",
-                      tag: "FHIR R4",
+                      title: language === "ID" ? "Prioritas Kritis IGD" : "ER Critical Fast-Track",
+                      tag: "< 15m",
                     },
                   ].map((item) => {
                     const ItemIcon = item.icon;
