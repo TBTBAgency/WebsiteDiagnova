@@ -61,23 +61,32 @@ export function PageHero({
         <div className="relative z-10 w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 my-auto flex flex-col items-center justify-center text-center">
           <div className="max-w-4xl mx-auto flex flex-col items-center w-full">
             {/* Section Badge */}
-            <div className="mb-4 sm:mb-6">
+            <div className="mb-4 sm:mb-6 animate-ll-hero" style={{ animationDelay: "0ms" }}>
               <SectionBadge variant={badgeVariant}>{badge}</SectionBadge>
             </div>
 
             {/* Headline - Standardized font size & line-height */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-slate-900 min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center">
+            <h1
+              className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-slate-900 min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center animate-ll-hero"
+              style={{ animationDelay: "80ms" }}
+            >
               {title}
             </h1>
 
             {/* Subtitle - Generous breathing room, standardized typography */}
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] flex items-center justify-center">
+            <p
+              className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] flex items-center justify-center animate-ll-hero"
+              style={{ animationDelay: "160ms" }}
+            >
               {subtitle}
             </p>
 
             {/* CTA Buttons */}
             {(primaryCta || secondaryCta) && (
-              <div className="mt-8 sm:mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <div
+                className="mt-8 sm:mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4 animate-ll-hero"
+                style={{ animationDelay: "240ms" }}
+              >
                 {primaryCta && (
                   <Link
                     href={primaryCta.href}
@@ -106,7 +115,8 @@ export function PageHero({
               {metrics.map((kpi, idx) => (
                 <div
                   key={idx}
-                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors flex flex-col justify-between min-h-[105px] sm:min-h-[114px]"
+                  className="rounded-[20px] sm:rounded-[24px] bg-white border border-slate-200/90 p-4 sm:p-5 text-left shadow-xs hover:border-blue-200/80 transition-colors flex flex-col justify-between min-h-[105px] sm:min-h-[114px] animate-ll-hero"
+                  style={{ animationDelay: `${300 + idx * 70}ms` }}
                 >
                   <div>
                     <p className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#345DAB]">
