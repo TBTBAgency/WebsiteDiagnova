@@ -363,8 +363,9 @@ html.lenis body {
     opacity: 1;
   }
 
-  /* When a card has an inner visual stage, move the dot matrix into the inner stage only */
-  .ll-card-interactive.ll-card-has-stage::before {
+  /* When a card has an inner visual stage, move both dots and gradient into the inner stage only */
+  .ll-card-interactive.ll-card-has-stage::before,
+  .ll-card-interactive.ll-card-has-stage::after {
     display: none;
   }
 
@@ -390,6 +391,29 @@ html.lenis body {
     z-index: -1;
   }
 
+  .ll-card-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.42s ease;
+    background:
+      radial-gradient(
+        340px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(0, 115, 252, 0.14),
+        rgba(56, 189, 248, 0.07) 45%,
+        transparent 75%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(239, 246, 255, 0.45) 0%,
+        rgba(255, 255, 255, 0) 70%
+      );
+    z-index: -1;
+  }
+
   .ll-card-interactive:hover .ll-card-stage::before {
     opacity: 0.9;
     background-image: radial-gradient(
@@ -397,6 +421,10 @@ html.lenis body {
       transparent 1px
     );
     animation: llDotDrift 14s linear infinite;
+  }
+
+  .ll-card-interactive:hover .ll-card-stage::after {
+    opacity: 1;
   }
 }
 

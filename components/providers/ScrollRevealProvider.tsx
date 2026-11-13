@@ -128,9 +128,13 @@ export function ScrollRevealProvider({
       if (e.pointerType !== "mouse") return;
       const card = (e.target as HTMLElement | null)?.closest?.(".ll-card-interactive") as HTMLElement | null;
       if (!card) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-      card.style.setProperty("--my", `${e.clientY - rect.top}px`);
+      const stage = card.classList.contains("ll-card-has-stage")
+        ? (card.querySelector(".ll-card-stage") as HTMLElement | null)
+        : null;
+      const targetEl = stage || card;
+      const rect = targetEl.getBoundingClientRect();
+      targetEl.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+      targetEl.style.setProperty("--my", `${e.clientY - rect.top}px`);
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
