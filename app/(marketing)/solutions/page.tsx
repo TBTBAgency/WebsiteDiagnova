@@ -121,8 +121,8 @@ export default function SolutionsPage() {
         className="relative scroll-mt-24 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
         {/* Ambient Modern SaaS Glow & Texture Container
-            Whisper-soft, ethereal aura inspired by modern design leaders (Linear, Stripe)
-            Distinct asymmetrical layout: Top-Right aurora + Mid-Left wave + Bottom-Center anchor */}
+            Whisper-soft, peripheral rim-lighting hugging the outer edges (Linear/Stripe style)
+            Keeps the center content stage 100% clean and distraction-free */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none overflow-hidden"
@@ -133,39 +133,29 @@ export default function SolutionsPage() {
               "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
           }}
         >
-          {/* Top-Right Ambient Aurora - Nova Cyan into Diagnova Royal Blue */}
+          {/* Top-Right Outer Flank Aurora - Nova Cyan into Diagnova Royal Blue (Pushed far to the outer right margin) */}
           <div
-            className="absolute -top-12 sm:-top-16 lg:-top-20 right-[2%] sm:-right-10 lg:-right-16 w-[580px] sm:w-[740px] lg:w-[880px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[18deg]"
+            className="absolute -top-10 sm:-top-16 lg:-top-20 -right-28 sm:-right-40 lg:-right-56 w-[460px] sm:w-[580px] lg:w-[700px] h-[340px] sm:h-[420px] lg:h-[480px] rounded-[100%] rotate-[18deg]"
             style={{
               background:
                 "linear-gradient(155deg, rgba(86, 173, 226, 0.26) 0%, rgba(52, 93, 171, 0.20) 50%, rgba(29, 63, 130, 0.08) 100%)",
-              filter: "blur(125px)",
+              filter: "blur(115px)",
             }}
           />
 
-          {/* Mid-Left Asymmetrical Fluid Swell - Diagnova into Nova Cyan */}
+          {/* Mid-Left Outer Flank Swell - Diagnova into Nova Cyan (Pushed far to the outer left margin) */}
           <div
-            className="absolute top-[38%] -left-16 sm:-left-24 lg:-left-32 w-[540px] sm:w-[680px] lg:w-[820px] h-[380px] sm:h-[460px] lg:h-[520px] rounded-[100%] rotate-[-24deg]"
+            className="absolute top-[35%] -left-32 sm:-left-44 lg:-left-60 w-[460px] sm:w-[580px] lg:w-[700px] h-[360px] sm:h-[440px] lg:h-[500px] rounded-[100%] rotate-[-24deg]"
             style={{
               background:
                 "linear-gradient(320deg, rgba(52, 93, 171, 0.22) 0%, rgba(42, 130, 184, 0.16) 45%, rgba(86, 173, 226, 0.24) 85%, rgba(202, 226, 241, 0.10) 100%)",
-              filter: "blur(130px)",
-            }}
-          />
-
-          {/* Bottom-Center-Right Luminous Anchor */}
-          <div
-            className="absolute -bottom-10 sm:-bottom-14 right-[12%] sm:right-[18%] w-[440px] sm:w-[540px] lg:w-[640px] h-[280px] sm:h-[340px] lg:h-[400px] rounded-full rotate-[12deg]"
-            style={{
-              background:
-                "radial-gradient(ellipse at 45% 45%, rgba(86, 173, 226, 0.20) 0%, rgba(52, 93, 171, 0.12) 50%, transparent 80%)",
-              filter: "blur(100px)",
+              filter: "blur(115px)",
             }}
           />
 
           {/* Subtle Ambient Dot Grid Pattern - Modern Tactile Micro-Texture */}
           <div
-            className="absolute inset-0 opacity-[0.18]"
+            className="absolute inset-0 opacity-[0.16]"
             style={{
               backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.20) 1.25px, transparent 1.25px)",
               backgroundSize: "24px 24px",
