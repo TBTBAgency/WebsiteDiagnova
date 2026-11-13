@@ -831,7 +831,7 @@ export default function ModulesPage() {
               </div>
 
               {/* Visual: Workflow Node Flow */}
-              <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 py-2">
+              <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
                 {/* Left Core Hub Node */}
                 <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
                   <Activity className="h-7 w-7 stroke-[2]" />
@@ -839,14 +839,14 @@ export default function ModulesPage() {
 
                 {/* Connector Lines (Desktop) */}
                 <svg
-                  className="hidden sm:block w-14 h-36 shrink-0 text-slate-300"
-                  viewBox="0 0 56 144"
+                  className="hidden sm:block w-14 h-[212px] shrink-0 text-slate-300"
+                  viewBox="0 0 56 212"
                   fill="none"
                   aria-hidden="true"
                 >
-                  <path d="M0 72 C24 72, 24 22, 56 22" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 72 L56 72" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 72 C24 72, 24 122, 56 122" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 106 C24 106, 24 27, 56 27" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 106 L56 106" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 106 C24 106, 24 188, 56 188" stroke="currentColor" strokeWidth="1.5" />
                 </svg>
 
                 {/* Right Stacked Branch Cards */}
@@ -908,7 +908,7 @@ export default function ModulesPage() {
               id="inventory-reagent"
               className="scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-6 px-6 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
             >
-              <div className="mb-6">
+              <div className="mb-5">
                 <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
                   {language === "ID" ? "Inventori & Reagen Pintar" : "Smart Reagent Intelligence"}
                 </h3>
@@ -923,11 +923,14 @@ export default function ModulesPage() {
               <div className="relative mt-auto pt-4">
                 {/* Background Mockup Frame */}
                 <div className="ml-6 sm:ml-10 rounded-tl-2xl bg-white border-t border-l border-slate-200/90 shadow-sm pt-4 px-5 pb-6">
-                  <div className="flex items-center gap-2 mb-10">
-                    <span className="w-4 h-4 rounded-md bg-[#0073FC] flex items-center justify-center text-white text-[9px] font-bold">
-                      D
-                    </span>
-                    <span className="text-xs font-bold text-slate-800">Diagnova Telemetry</span>
+                  <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-md bg-[#0073FC] flex items-center justify-center text-white text-[9px] font-bold">
+                        D
+                      </span>
+                      <span className="text-xs font-bold text-slate-800">Diagnova Telemetry</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-400">500+ Lot</span>
                   </div>
 
                   {/* Subtle Area Chart SVG */}
@@ -938,6 +941,9 @@ export default function ModulesPage() {
                         <stop offset="100%" stopColor="#0073FC" stopOpacity="0.01" />
                       </linearGradient>
                     </defs>
+                    <line x1="0" y1="20" x2="240" y2="20" stroke="#F1F5F9" strokeWidth="1" />
+                    <line x1="0" y1="45" x2="240" y2="45" stroke="#F1F5F9" strokeWidth="1" />
+                    <line x1="0" y1="70" x2="240" y2="70" stroke="#F1F5F9" strokeWidth="1" />
                     <path
                       d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12 L240 80 L0 80 Z"
                       fill="url(#reagentGrad)"
@@ -952,7 +958,7 @@ export default function ModulesPage() {
                 </div>
 
                 {/* Floating KPI Card */}
-                <div className="absolute top-12 left-0 w-[72%] sm:w-[68%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-[0_14px_30px_-10px_rgba(15,23,42,0.12)] group-hover:-translate-y-1 transition-transform duration-300">
+                <div className="absolute top-16 left-0 w-[64%] sm:w-[60%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-[0_14px_30px_-10px_rgba(15,23,42,0.12)] group-hover:-translate-y-1 transition-transform duration-300">
                   <p className="text-[11px] font-medium text-slate-500">
                     {language === "ID" ? "Efisiensi Biaya Reagen" : "Reagent Cost Efficiency"}
                   </p>
@@ -986,8 +992,8 @@ export default function ModulesPage() {
               </div>
 
               {/* Visual: Mini Dashboard Bar Chart Frame */}
-              <div className="mt-auto rounded-t-2xl bg-white border-t border-x border-slate-200/90 shadow-sm p-4 sm:p-5">
-                <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="mt-auto rounded-t-2xl bg-white border-t border-x border-slate-200/90 shadow-sm p-4 sm:p-5 pb-5 sm:pb-6">
+                <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 border-b border-slate-100">
                   <div className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded-md bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center">
                       <HeartPulse className="h-3.5 w-3.5" />
@@ -1043,9 +1049,9 @@ export default function ModulesPage() {
               </div>
 
               {/* Visual: Connected Multi-Specialty Registry */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 py-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
                 {/* Left 2 Floating Module Cards */}
-                <div className="w-full sm:w-[44%] space-y-3">
+                <div className="w-full sm:w-[42%] space-y-3">
                   <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
@@ -1060,7 +1066,7 @@ export default function ModulesPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 sm:ml-6 group-hover:-translate-x-0.5 transition-transform duration-300">
+                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
                         <FlaskConical className="h-3.5 w-3.5" />
@@ -1077,13 +1083,13 @@ export default function ModulesPage() {
 
                 {/* Connector SVG */}
                 <svg
-                  className="hidden sm:block w-10 h-24 shrink-0 text-slate-300"
-                  viewBox="0 0 40 96"
+                  className="hidden sm:block w-12 h-32 shrink-0 text-slate-300"
+                  viewBox="0 0 48 128"
                   fill="none"
                   aria-hidden="true"
                 >
-                  <path d="M0 24 C18 24, 18 48, 40 48" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 72 C18 72, 18 48, 40 48" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 30 C22 30, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 98 C22 98, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
                 </svg>
 
                 {/* Right Unified Registry Card */}
