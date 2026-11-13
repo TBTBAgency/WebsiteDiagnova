@@ -66,7 +66,7 @@ export function PageHero({
             </div>
 
             {/* Headline - Standardized font size & line-height */}
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-[#345DAB] min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-slate-900 min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center">
               {title}
             </h1>
 

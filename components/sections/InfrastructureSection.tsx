@@ -265,7 +265,7 @@ export function InfrastructureSection({ initialData }: InfrastructureSectionProp
                   {sectionBadge}
                 </SectionBadge>
               </div>
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[36px] xl:text-[40px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#2A5298]">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[36px] xl:text-[40px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
                 {sectionTitle}
               </h2>
             </div>

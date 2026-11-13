@@ -53,7 +53,7 @@ export default function ModuleDetailPage({ params }: Props) {
             <div>
               <SectionBadge variant="blue">{mod.targetDepartment}</SectionBadge>
             </div>
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-[50px] font-bold leading-[1.14] tracking-tight text-[#345DAB]">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-[50px] font-bold leading-[1.14] tracking-tight text-slate-900">
               {mod.name}
             </h1>
             <p className="text-base sm:text-lg lg:text-xl text-slate-500 font-light leading-relaxed max-w-3xl">

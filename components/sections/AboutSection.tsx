@@ -158,10 +158,10 @@ export function AboutSection({ initialData }: AboutSectionProps = {}) {
                 const raw = (scrollProgress - wordStart) / windowSize;
                 const p = Math.min(Math.max(raw, 0), 1);
 
-                // Smooth RGB interpolation from Slate-300 (203, 213, 225) to Diagnova Blue (52, 93, 171)
-                const r = Math.round(203 + (52 - 203) * p);
-                const g = Math.round(213 + (93 - 213) * p);
-                const b = Math.round(225 + (171 - 225) * p);
+                // Smooth RGB interpolation from Slate-300 (203, 213, 225) to Slate-900 (15, 23, 42)
+                const r = Math.round(203 + (15 - 203) * p);
+                const g = Math.round(213 + (23 - 213) * p);
+                const b = Math.round(225 + (42 - 225) * p);
                 const opacity = (0.35 + 0.65 * p).toFixed(2);
 
                 return (

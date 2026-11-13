@@ -133,7 +133,7 @@ export default function SolutionsPage() {
                 {language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-slate-900">
               {language === "ID" ? (
                 <>Dirancang untuk Membuat Kerja Laboratorium Lebih Mudah</>
               ) : (

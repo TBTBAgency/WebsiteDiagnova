@@ -98,7 +98,7 @@ export function ComparisonSection({ initialData }: ComparisonSectionProps = {}) 
               {content.sectionBadge}
             </SectionBadge>
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
             {content.sectionTitle}
           </h2>
           <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">

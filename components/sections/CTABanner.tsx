@@ -98,7 +98,7 @@ export function CTABanner({
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center min-h-[400px] lg:min-h-[440px]">
             {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
             <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
-              <h2 className="font-display text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-[#275EA8] tracking-tight leading-[1.18] sm:leading-[1.22] mb-3 sm:mb-5">
+              <h2 className="font-display text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.18] sm:leading-[1.22] mb-3 sm:mb-5">
                 {titleText}
               </h2>
 

@@ -79,7 +79,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
             <div className="mb-3.5 sm:mb-4">
               <SectionBadge variant="blue">{content.sectionBadge}</SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
               {content.sectionTitle}
             </h2>
           </div>

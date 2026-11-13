@@ -50,7 +50,7 @@ export default function IntegrationDetailPage({ params }: Props) {
 
           <div className="max-w-3xl space-y-3">
             <SectionBadge variant="blue">Spesifikasi Arsitektur &amp; Protokol</SectionBadge>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#345DAB]">
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
               {integ.name}
             </h1>
             <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed">

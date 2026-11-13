@@ -38,7 +38,7 @@ export default function NovaAIDoctorPage() {
         </div>
 
         <div className="space-y-6 text-slate-700 text-sm leading-relaxed">
-          <h2 className="font-display text-2xl font-bold text-diagnova-navy">
+          <h2 className="font-display text-2xl font-bold text-slate-900">
             Mengapa Pendekatan Human-in-the-Loop Sangat Penting?
           </h2>
           <p>

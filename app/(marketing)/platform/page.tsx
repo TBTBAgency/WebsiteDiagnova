@@ -124,7 +124,7 @@ export default function PlatformPage() {
                 {language === "ID" ? "Otomatisasi 100%" : "100% Automation"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
               {language === "ID" ? (
                 <>
                   Interfacing Dua Arah dengan 500+ Instrumen Medis
@@ -331,7 +331,7 @@ export default function PlatformPage() {
                   {language === "ID" ? "Kepatuhan & Akreditasi" : "Compliance & Accreditation"}
                 </SectionBadge>
               </div>
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
                 {language === "ID" ? (
                   <>
                     Jejak Audit Digital Permanen,
@@ -591,7 +591,7 @@ export default function PlatformPage() {
                 {language === "ID" ? "Nova AI & Analitik" : "Nova AI & Analytics"}
               </SectionBadge>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-[#345DAB]">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
               {language === "ID" ? (
                 <>
                   Wawasan Operasional &amp; Asisten Klinis Nova AI
