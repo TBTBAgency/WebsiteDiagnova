@@ -291,31 +291,30 @@ html.lenis body {
     background-image 0.35s ease;
 }
 
+@keyframes llDotDrift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 32px 32px;
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
-  /* Interactive subtle dot matrix revealed around the cursor (behind card content) */
+  /* Subtle resting dot matrix in card background; gently drifts & brightens on hover */
   .ll-card-interactive::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    opacity: 0;
+    opacity: 0.45;
     background-image: radial-gradient(
-      rgba(0, 115, 252, 0.22) 1px,
+      rgba(100, 116, 139, 0.22) 1px,
       transparent 1px
     );
     background-size: 16px 16px;
-    -webkit-mask-image: radial-gradient(
-      240px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(0, 0, 0, 0.95) 0%,
-      transparent 75%
-    );
-    mask-image: radial-gradient(
-      240px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(0, 0, 0, 0.95) 0%,
-      transparent 75%
-    );
-    transition: opacity 0.35s ease;
+    transition: opacity 0.38s ease, background-image 0.38s ease;
     z-index: -1;
   }
 
@@ -327,18 +326,18 @@ html.lenis body {
     border-radius: inherit;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.42s ease;
     background:
       radial-gradient(
         460px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(0, 115, 252, 0.09),
-        rgba(56, 189, 248, 0.045) 42%,
+        rgba(0, 115, 252, 0.1),
+        rgba(56, 189, 248, 0.05) 42%,
         transparent 72%
       ),
       linear-gradient(
         180deg,
-        rgba(240, 247, 255, 0.35) 0%,
-        rgba(255, 255, 255, 0) 60%
+        rgba(239, 246, 255, 0.42) 0%,
+        rgba(255, 255, 255, 0) 65%
       );
     z-index: -1;
   }
@@ -351,7 +350,15 @@ html.lenis body {
       0 6px 18px -4px rgba(0, 115, 252, 0.12);
   }
 
-  .ll-card-interactive:hover::before,
+  .ll-card-interactive:hover::before {
+    opacity: 0.85;
+    background-image: radial-gradient(
+      rgba(0, 115, 252, 0.24) 1px,
+      transparent 1px
+    );
+    animation: llDotDrift 14s linear infinite;
+  }
+
   .ll-card-interactive:hover::after {
     opacity: 1;
   }
