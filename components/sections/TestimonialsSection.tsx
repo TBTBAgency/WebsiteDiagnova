@@ -221,7 +221,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
           <div
             key={item.id}
             className={cn(
-              "w-[85vw] sm:w-[620px] lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-[#F4F8FD] border border-[#D5E5F7] p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-[#B8D5F5] transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
+              "w-[84vw] max-w-[340px] sm:w-[620px] sm:max-w-none lg:w-[680px] xl:w-[740px] shrink-0 snap-start rounded-[24px] sm:rounded-[28px] lg:rounded-[32px] bg-[#F4F8FD] border border-[#D5E5F7] p-4 sm:p-5 lg:p-6 shadow-sm hover:shadow-[0_8px_28px_-4px_rgba(40,90,165,0.14),0_2px_8px_-2px_rgba(40,90,165,0.08)] hover:-translate-y-1 hover:border-[#B8D5F5] transition-all duration-300 group flex flex-col justify-between overflow-hidden gpu-layer",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-6"
@@ -232,14 +232,14 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
                 : "0ms",
             }}
           >
-            <div className="flex flex-col md:flex-row items-stretch justify-between gap-5 sm:gap-6 lg:gap-7 h-full">
+            <div className="flex flex-col md:flex-row items-stretch justify-between gap-3.5 sm:gap-6 lg:gap-7 h-full">
               {/* Left side: Quote + Author */}
-              <div className="flex-1 flex flex-col justify-between min-w-0 py-1 pl-1 sm:pl-2">
+              <div className="flex-1 flex flex-col justify-between min-w-0 py-0.5 pl-0.5 sm:py-1 sm:pl-2">
                 <div>
                   {/* Editorial Double Quote icon */}
-                  <div className="mb-3.5 sm:mb-4">
+                  <div className="mb-2.5 sm:mb-4">
                     <svg
-                      className="w-7 h-7 sm:w-8 sm:h-8 text-[#345DAB] fill-current opacity-95"
+                      className="w-6 h-6 sm:w-8 sm:h-8 text-[#345DAB] fill-current opacity-95"
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                     >
@@ -248,13 +248,13 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
                   </div>
 
                   {/* Testimonial Quote */}
-                  <p className="text-slate-700 text-sm sm:text-[15px] lg:text-base leading-relaxed mb-5 sm:mb-6">
+                  <p className="text-slate-700 text-[13.5px] sm:text-[15px] lg:text-base leading-relaxed mb-3.5 sm:mb-6">
                     {item.quote}
                   </p>
                 </div>
 
                 {/* Author Credentials */}
-                <div className="pt-3 sm:pt-4">
+                <div className="pt-2 sm:pt-4">
                   <h3 className="font-display font-semibold text-diagnova-navy text-sm sm:text-base leading-snug">
                     {item.name}
                   </h3>
@@ -264,14 +264,14 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
                 </div>
               </div>
 
-              {/* Right side: Enlarged Photographic Silhouette (Thin padding to card edge, no hover scale) */}
-              <div className="relative w-full md:w-[260px] lg:w-[290px] xl:w-[320px] min-h-[250px] md:min-h-[290px] aspect-[4/5] rounded-xl sm:rounded-2xl lg:rounded-[22px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
+              {/* Right side: Compact frame on mobile (h-40), 4:5 portrait on md+ */}
+              <div className="relative w-full h-40 sm:h-48 md:h-auto md:w-[260px] lg:w-[290px] xl:w-[320px] md:min-h-[290px] md:aspect-[4/5] rounded-xl sm:rounded-2xl lg:rounded-[22px] overflow-hidden bg-gradient-to-br from-[#275EA8] to-[#5AA3E8] shrink-0 shadow-inner">
                 <Image
                   src={item.imageSrc}
                   alt={`${item.name} - silhouette`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 290px, 320px"
-                  className="object-cover object-center"
+                  className="object-cover object-top md:object-center"
                   loading="eager"
                 />
                 {/* Subtle soft gradient overlay */}
