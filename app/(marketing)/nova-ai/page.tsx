@@ -381,17 +381,9 @@ export default function NovaAIPage() {
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
-                {language === "ID" ? (
-                  <>
-                    Dari <span className="text-slate-400">System of Record</span> Menuju{" "}
-                    <span className="text-[#0073FC]">System of Action</span>
-                  </>
-                ) : (
-                  <>
-                    From <span className="text-slate-400">System of Record</span> to{" "}
-                    <span className="text-[#0073FC]">System of Action</span>
-                  </>
-                )}
+                {language === "ID"
+                  ? "Dari System of Record Menuju System of Action"
+                  : "From System of Record to System of Action"}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
