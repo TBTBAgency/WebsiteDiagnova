@@ -29,6 +29,10 @@ import {
   FileText,
   BarChart2,
   FolderGit2,
+  ArrowLeftRight,
+  UserCheck,
+  Info,
+  Shuffle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -36,416 +40,9 @@ import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-// ─── HIGH-FIDELITY MEDICAL WORKSTATION PREVIEW (ZERO AI SLOP, REAL CLINICAL LIS UI) ───
-function ModuleWorkstationPreview({
-  moduleId,
-  language,
-}: {
-  moduleId: string;
-  language: "ID" | "EN";
-}) {
-  return (
-    <div className="rounded-[24px] bg-white border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
-      {/* 1. Header Bar: Real Medical Station Diagnostic Header */}
-      <div className="bg-[#0B1A30] text-white px-5 py-3.5 flex items-center justify-between border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse ring-4 ring-emerald-400/20 shrink-0" />
-          <span className="font-mono text-[11px] font-semibold text-slate-200 tracking-wider uppercase truncate">
-            {moduleId === "routine-hematology" && "Sysmex XN-1000 • Direct ASTM"}
-            {moduleId === "blood-bank" && "BDRS Core • ISBT-128 Gateway"}
-            {moduleId === "inventory-reagent" && "Smart Reagent Telemetry • Rack-02"}
-            {moduleId === "pathology" && "PA Synoptic Suite • Micro-Scan"}
-            {moduleId === "microbiology" && "CLSI M100 • Automated AST Incubator"}
-          </span>
-        </div>
-        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/12 text-blue-200 border border-white/20 shrink-0">
-          {moduleId === "routine-hematology" && "ASTM E1381"}
-          {moduleId === "blood-bank" && "ISBT 128"}
-          {moduleId === "inventory-reagent" && "FEFO Control"}
-          {moduleId === "pathology" && "ICD-O-3"}
-          {moduleId === "microbiology" && "CLSI 2024"}
-        </span>
-      </div>
-
-      {/* 2. Realistic Clinical Station Content */}
-      <div className="p-5 sm:p-6 space-y-4 bg-gradient-to-b from-slate-50/60 to-white flex-1">
-        {/* MODULE 1: ROUTINE & HEMATOLOGY */}
-        {moduleId === "routine-hematology" && (
-          <div className="space-y-3.5">
-            {/* Specimen Banner */}
-            <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-blue-50/70 border border-blue-200/60 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="font-mono font-bold text-[#1E5299] bg-white px-2 py-0.5 rounded border border-blue-200">
-                  #LAB-2026-8841
-                </span>
-                <span className="text-slate-800 font-semibold">
-                  {language === "ID" ? "Ny. Siti Rahma (46 th)" : "Mrs. Siti Rahma (46 y/o)"}
-                </span>
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200">
-                CITO IGD • Bedside Barcode ✓
-              </span>
-            </div>
-
-            {/* Test Results Table with Real Clinical Parameters */}
-            <div className="rounded-xl border border-slate-200 bg-white overflow-hidden text-xs">
-              <div className="grid grid-cols-12 bg-slate-100/80 px-3 py-2 text-[11px] font-bold text-slate-600 border-b border-slate-200">
-                <span className="col-span-4">{language === "ID" ? "Parameter" : "Analyte"}</span>
-                <span className="col-span-3 text-right">{language === "ID" ? "Hasil" : "Result"}</span>
-                <span className="col-span-3 text-right">{language === "ID" ? "Rujukan" : "Reference"}</span>
-                <span className="col-span-2 text-right">{language === "ID" ? "Status" : "Flag"}</span>
-              </div>
-              <div className="divide-y divide-slate-100">
-                <div className="grid grid-cols-12 px-3 py-2 items-center">
-                  <span className="col-span-4 font-semibold text-slate-800">WBC (Leukosit)</span>
-                  <span className="col-span-3 text-right font-mono font-bold text-slate-900">7.82 10³/µL</span>
-                  <span className="col-span-3 text-right font-mono text-slate-500">4.50 - 11.00</span>
-                  <span className="col-span-2 text-right">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Normal</span>
-                  </span>
-                </div>
-                <div className="grid grid-cols-12 px-3 py-2 items-center">
-                  <span className="col-span-4 font-semibold text-slate-800">Hemoglobin (HGB)</span>
-                  <span className="col-span-3 text-right font-mono font-bold text-slate-900">14.1 g/dL</span>
-                  <span className="col-span-3 text-right font-mono text-slate-500">13.0 - 17.5</span>
-                  <span className="col-span-2 text-right">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Normal</span>
-                  </span>
-                </div>
-                <div className="grid grid-cols-12 px-3 py-2 items-center">
-                  <span className="col-span-4 font-semibold text-slate-800">Trombosit (PLT)</span>
-                  <span className="col-span-3 text-right font-mono font-bold text-slate-900">248 10³/µL</span>
-                  <span className="col-span-3 text-right font-mono text-slate-500">150 - 450</span>
-                  <span className="col-span-2 text-right">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Normal</span>
-                  </span>
-                </div>
-                <div className="grid grid-cols-12 px-3 py-2 items-center bg-amber-50/50">
-                  <span className="col-span-4 font-bold text-amber-900">CRP Kuantitatif</span>
-                  <span className="col-span-3 text-right font-mono font-bold text-rose-600">18.4 mg/L</span>
-                  <span className="col-span-3 text-right font-mono text-slate-500">&lt; 5.0</span>
-                  <span className="col-span-2 text-right">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200">HIGH</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Validation & Delta-Check Telemetry */}
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between text-slate-700">
-              <div className="flex items-center gap-2">
-                <BadgeCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span className="font-medium">
-                  {language === "ID" ? "QC Levey-Jennings: In-Control (Westgard 1-2s)" : "Levey-Jennings QC: In-Control (Westgard 1-2s)"}
-                </span>
-              </div>
-              <span className="font-mono text-[11px] font-bold text-[#1E5299] bg-white px-2 py-0.5 rounded border border-slate-200">
-                Delta Check: -1.8%
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* MODULE 2: BLOOD BANK (BDRS) */}
-        {moduleId === "blood-bank" && (
-          <div className="space-y-3.5">
-            {/* Bag Info & Cold Storage Status */}
-            <div className="p-3.5 rounded-xl bg-rose-50/70 border border-rose-200/60 text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-rose-900 bg-white px-2 py-0.5 rounded border border-rose-200">
-                  =W0123 26 123456 00
-                </span>
-                <span className="font-bold text-[11px] text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                  {language === "ID" ? "Suhu 4.1°C (Aman 2°-6°C)" : "Temp 4.1°C (Safe 2°-6°C)"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-slate-700">
-                <span className="font-semibold text-slate-900">Packed Red Cells (PRC) Leucodepleted</span>
-                <span className="font-mono font-extrabold text-rose-700 text-sm">Golongan O+</span>
-              </div>
-            </div>
-
-            {/* Electronic Crossmatching Protocol */}
-            <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-2.5 text-xs">
-              <p className="font-bold text-slate-900 text-[11px] uppercase tracking-wider">
-                {language === "ID" ? "Protokol Uji Silang Serasi Elektronik:" : "Electronic Crossmatching Protocol:"}
-              </p>
-              <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
-                <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200 flex items-center justify-between">
-                  <span className="text-slate-700">{language === "ID" ? "Mayor (Donor RBC):" : "Major (Donor RBC):"}</span>
-                  <span className="font-bold text-emerald-700">Kompatibel (-)</span>
-                </div>
-                <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200 flex items-center justify-between">
-                  <span className="text-slate-700">{language === "ID" ? "Minor (Pasien RBC):" : "Minor (Pt RBC):"}</span>
-                  <span className="font-bold text-emerald-700">Kompatibel (-)</span>
-                </div>
-              </div>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
-                <span>{language === "ID" ? "Verifikasi Dokter Sp.PK:" : "Clinical Pathologist Sign-off:"}</span>
-                <span className="font-semibold text-slate-900">dr. Rahadian, Sp.PK (PIN Digital ✓)</span>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-              <span className="text-slate-600">{language === "ID" ? "Masa Simpan FEFO:" : "FEFO Expiry:"}</span>
-              <span className="font-semibold text-slate-800">18 Des 2026 (14 hari tersisa) • Bag Reserved</span>
-            </div>
-          </div>
-        )}
-
-        {/* MODULE 3: INVENTORY & REAGENT INTELLIGENCE */}
-        {moduleId === "inventory-reagent" && (
-          <div className="space-y-3.5">
-            {/* Live Reagent Level Gauge */}
-            <div className="p-3.5 rounded-xl bg-sky-50/70 border border-sky-200/60 text-xs space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-900">Sysmex Cellpack DCL (20L Box)</span>
-                <span className="font-mono font-bold text-sky-800 bg-white px-2 py-0.5 rounded border border-sky-200">
-                  LOT-202609A
-                </span>
-              </div>
-              <div>
-                <div className="flex items-center justify-between text-[11px] text-slate-600 mb-1">
-                  <span>{language === "ID" ? "Sisa Volume:" : "Volume Remaining:"}</span>
-                  <span className="font-bold font-mono text-slate-900">82% (410 / 500 tes)</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
-                  <div className="h-full bg-[#2764B8] rounded-full transition-all" style={{ width: "82%" }} />
-                </div>
-              </div>
-            </div>
-
-            {/* Automated Depletion & Low Stock Warning */}
-            <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-2 text-xs">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="font-bold text-slate-800">Cobas ISE Internal Standard</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                  {language === "ID" ? "Sisa 14% • Kritis" : "14% Left • Low Stock"}
-                </span>
-              </div>
-              <div className="p-2 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900">
-                {language === "ID"
-                  ? "✓ Purchase Order (PO-26-084) otomatis diterbitkan ke distributor rekanan."
-                  : "✓ Purchase Order (PO-26-084) automatically drafted to authorized vendor."}
-              </div>
-            </div>
-
-            {/* Granular Cost-Per-Test Metric */}
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-              <span className="text-slate-600">{language === "ID" ? "Estimasi Biaya per Tes:" : "Real Cost-per-Test:"}</span>
-              <span className="font-bold font-mono text-[#1E5299] text-sm">
-                Rp 8.450 <span className="text-[11px] font-normal text-emerald-600">(-24% vs manual)</span>
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* MODULE 4: ANATOMICAL PATHOLOGY */}
-        {moduleId === "pathology" && (
-          <div className="space-y-3.5">
-            {/* Cassette 2D Barcode Chain */}
-            <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/60 text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-[#1E5299] bg-white px-2 py-0.5 rounded border border-blue-200">
-                  BIO-PA-26-0914-1A
-                </span>
-                <span className="font-bold text-[11px] text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-300">
-                  Grossing ✓ • HE Stained ✓
-                </span>
-              </div>
-              <p className="font-semibold text-slate-900">
-                {language === "ID" ? "Biopsi Eksisi Jaringan Mammae Sinistra" : "Left Breast Excisional Biopsy Tissue"}
-              </p>
-            </div>
-
-            {/* Synoptic Structured Diagnostic (ICD-O-3 & Bethesda) */}
-            <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-2 text-xs">
-              <p className="font-bold text-slate-900 text-[11px] uppercase tracking-wider">
-                {language === "ID" ? "Pelaporan Terstruktur Standar ICD-O-3:" : "Standardized ICD-O-3 Synoptic Report:"}
-              </p>
-              <div className="space-y-1.5 font-mono text-[11px] bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Topography:</span>
-                  <span className="font-bold text-slate-800">C50.9 (Breast, NOS)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Morphology:</span>
-                  <span className="font-bold text-[#1E5299]">8500/3 (Infiltrating duct carcinoma)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Surgical Margin:</span>
-                  <span className="font-bold text-emerald-700">Tumor-free (&gt; 5mm)</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between text-slate-700">
-              <span>{language === "ID" ? "Foto Mikroskop Tersemat:" : "Microscopic Photos:"}</span>
-              <span className="font-semibold text-slate-900">4 Slide Kaca Digital (HE 400x) ✓</span>
-            </div>
-          </div>
-        )}
-
-        {/* MODULE 5: MICROBIOLOGY & ANTIBIOTIC STEWARDSHIP */}
-        {moduleId === "microbiology" && (
-          <div className="space-y-3.5">
-            {/* Culture Identification Banner */}
-            <div className="p-3.5 rounded-xl bg-teal-50/70 border border-teal-200/60 text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-teal-900 bg-white px-2 py-0.5 rounded border border-teal-200">
-                  MIC-2026-4402
-                </span>
-                <span className="font-bold text-[11px] text-teal-800 bg-teal-100/80 px-2.5 py-0.5 rounded-full border border-teal-300">
-                  Inkubasi 18 Jam • VITEK-2 Link
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-slate-700">
-                <span className="font-semibold text-slate-900">Sputum ICU Bed 04</span>
-                <span className="font-mono font-bold text-teal-950 italic">Klebsiella pneumoniae</span>
-              </div>
-            </div>
-
-            {/* AST Sensitivity Panel (CLSI M100 Rules) */}
-            <div className="rounded-xl border border-slate-200 bg-white overflow-hidden text-xs">
-              <div className="grid grid-cols-12 bg-slate-100/80 px-3 py-1.5 text-[11px] font-bold text-slate-600 border-b border-slate-200">
-                <span className="col-span-5">Antibiotik</span>
-                <span className="col-span-4 text-right">MIC (µg/mL)</span>
-                <span className="col-span-3 text-right">CLSI Interp</span>
-              </div>
-              <div className="divide-y divide-slate-100 font-mono text-[11px]">
-                <div className="grid grid-cols-12 px-3 py-1.5 items-center">
-                  <span className="col-span-5 font-semibold text-slate-800">Meropenem</span>
-                  <span className="col-span-4 text-right text-slate-600">&le; 0.25</span>
-                  <span className="col-span-3 text-right font-bold text-emerald-700">Sensitif (S)</span>
-                </div>
-                <div className="grid grid-cols-12 px-3 py-1.5 items-center">
-                  <span className="col-span-5 font-semibold text-slate-800">Amikacin</span>
-                  <span className="col-span-4 text-right text-slate-600">&le; 2.0</span>
-                  <span className="col-span-3 text-right font-bold text-emerald-700">Sensitif (S)</span>
-                </div>
-                <div className="grid grid-cols-12 px-3 py-1.5 items-center bg-rose-50/60">
-                  <span className="col-span-5 font-bold text-rose-900">Ceftriaxone</span>
-                  <span className="col-span-4 text-right text-rose-700">&ge; 64.0</span>
-                  <span className="col-span-3 text-right font-bold text-rose-700">Resisten (R)</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] flex items-center justify-between text-slate-700">
-              <span>{language === "ID" ? "Peta Antibiogram:" : "Antibiogram Sync:"}</span>
-              <span className="font-semibold text-teal-800">Tersinkronisasi Komite PPRA RS ✓</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 3. Footer Impact Metrics Strip */}
-      <div className="border-t border-slate-200/80 bg-white p-4 sm:p-5 grid grid-cols-2 gap-3">
-        {moduleId === "routine-hematology" && (
-          <>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-[#1E5299] block tracking-tight">-70%</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Turnaround Time (TAT)" : "Turnaround Time"}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-[#1E5299] block tracking-tight">0 Error</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Salah Ketik Manual" : "Zero Typing Errors"}
-              </span>
-            </div>
-          </>
-        )}
-        {moduleId === "blood-bank" && (
-          <>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-rose-700 block tracking-tight">0 Error</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Salah Kantong Darah" : "Zero Transfusion Mix-ups"}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-rose-700 block tracking-tight">-45%</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Darah Kedaluwarsa" : "Blood Bag Wastage"}
-              </span>
-            </div>
-          </>
-        )}
-        {moduleId === "inventory-reagent" && (
-          <>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-sky-700 block tracking-tight">0 Kali</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Habis di Tengah Shift" : "Zero Mid-shift Stockouts"}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-sky-700 block tracking-tight">20%</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Efisiensi Belanja Reagen" : "Procurement Savings"}
-              </span>
-            </div>
-          </>
-        )}
-        {moduleId === "pathology" && (
-          <>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-[#1E5299] block tracking-tight">Zero Error</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Spesimen Tertukar" : "Specimen Mix-ups"}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-[#1E5299] block tracking-tight">&lt; 1 Mnt</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Temu Arsip Slide/Blok" : "Slide Archive Search"}
-              </span>
-            </div>
-          </>
-        )}
-        {moduleId === "microbiology" && (
-          <>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-teal-700 block tracking-tight">2x Cepat</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Rekomendasi Terapi" : "Empirical to Targeted"}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl bg-[#F8FBFE] border border-blue-100/70">
-              <span className="font-display text-2xl font-bold text-teal-700 block tracking-tight">100%</span>
-              <span className="text-xs font-semibold text-slate-700 block mt-0.5 leading-snug">
-                {language === "ID" ? "Kepatuhan PPRA RS" : "PPRA Audit Ready"}
-              </span>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function ModulesPage() {
   const { language } = useLanguage();
-  const [selectedModule, setSelectedModule] = useState<number>(0);
-
-  // Sync tab with URL hash if present
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (hash) {
-        const foundIndex = modules.findIndex((m) => m.id === hash);
-        if (foundIndex !== -1) {
-          setSelectedModule(foundIndex);
-        }
-      }
-    };
-
-    handleHashChange();
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  const [isClinicalView, setIsClinicalView] = useState<boolean>(false);
 
   const modules = [
     {
@@ -683,9 +280,6 @@ export default function ModulesPage() {
     },
   ];
 
-  const current = modules[selectedModule];
-  const CurrentIcon = current.icon;
-
   return (
     <div className="w-full bg-white text-slate-800">
       {/* ══════════════════════════════════════════════════════════════
@@ -746,125 +340,300 @@ export default function ModulesPage() {
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          INTERACTIVE MODULE EXPLORER (FOCUS ON UX & SCANNABILITY)
+          INTERACTIVE STATION (MATCHING USER LIGOLAB SPEC: 4 VALUE ROWS + AI PATIENT & CLINICAL VIEW)
           ══════════════════════════════════════════════════════════════ */}
-      <section id="modules-explorer" className="w-full bg-[#FAFBFD] py-14 sm:py-18 lg:py-22 border-t border-slate-200/60">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+      <section
+        id="modules-explorer"
+        className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
+      >
+        {/* Ambient Smooth Orbs Background (Pure Soft Diffusion) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none overflow-hidden bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/images/ambient-platform-orbs.webp?v=pure')",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+          }}
+        >
+          {/* Subtle Ambient Dot Grid Pattern */}
+          <div
+            className="absolute inset-0 opacity-[0.14]"
+            style={{
+              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.18) 1.25px, transparent 1.25px)",
+              backgroundSize: "24px 24px",
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-2xl mb-8 sm:mb-10">
+          <div className="max-w-2xl mb-12 sm:mb-16">
             <div className="mb-3.5">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Workstation Interaktif" : "Interactive Station"}
               </SectionBadge>
             </div>
             <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-bold text-slate-900 tracking-tight leading-[1.2]">
-              {language === "ID" ? "Eksplorasi Kapabilitas Setiap Modul" : "Explore Each Dedicated Module"}
+              {language === "ID"
+                ? "Laporan Pasien Cerdas & Narasi Klinis Terpercaya"
+                : "Intelligent Patient Reporting & Clinical Trust"}
             </h2>
             <p className="mt-2.5 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
               {language === "ID"
-                ? "Pilih modul di bawah untuk melihat ringkasan fungsi, protokol klinis, dan visual simulasi antarmuka stasiun kerja Diagnova secara langsung."
-                : "Select any module below to inspect core clinical protocols, operational automations, and direct workstation interface telemetry."}
+                ? "Menjembatani temuan laboratorium yang kompleks menjadi wawasan yang mudah dipahami pasien, dengan kendali dan persetujuan penuh di tangan dokter penanggung jawab."
+                : "Transforming complex laboratory findings into clear, patient-friendly insights while keeping physicians in total diagnostic command."}
             </p>
           </div>
 
-          {/* 5 Sleek Capsule Tab Selector Buttons */}
-          <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar pb-3 mb-8 sm:mb-10">
-            {modules.map((m, idx) => {
-              const Icon = m.icon;
-              const isActive = selectedModule === idx;
-              return (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => setSelectedModule(idx)}
-                  className={cn(
-                    "inline-flex items-center gap-2.5 px-4.5 sm:px-5.5 py-3 rounded-full text-xs sm:text-[13.5px] font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border",
-                    isActive
-                      ? "bg-[#2466CB] text-white border-[#2466CB] shadow-[0_4px_16px_rgba(36,102,203,0.24)]"
-                      : "bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300"
-                  )}
-                >
-                  <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-[#2466CB]")} />
-                  <span>{m.tabLabel}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Master Detail Focus Showcase Card */}
-          <div className="rounded-[28px] sm:rounded-[36px] bg-white border border-slate-200/90 p-6 sm:p-9 lg:p-12 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.06)] transition-all">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-14 items-center">
-              {/* Left Column: Clear Scannable Facts */}
-              <div className="lg:col-span-7 space-y-6">
-                <div>
-                  {/* Department Badge & Icon */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center shadow-2xs border border-blue-100">
-                      <CurrentIcon className="h-5.5 w-5.5" />
-                    </div>
-                    <span className="text-xs font-semibold text-[#1E5299] bg-blue-50 border border-blue-200/70 px-3 py-1 rounded-full">
-                      {current.targetDept}
-                    </span>
-                  </div>
-
-                  <h3 className="font-display text-2xl sm:text-3xl lg:text-[34px] font-bold text-slate-900 tracking-tight leading-[1.2]">
-                    {current.name}
+          {/* 2-Column LigoLab Architecture: Left 4 Value Rows + Right Dual-Mode Patient Report Card */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
+            {/* Left Column: 4 Clean Feature Rows with Icon Badge */}
+            <div className="lg:col-span-6 space-y-6 sm:space-y-7">
+              {/* Item 1 */}
+              <div className="flex items-start gap-4 sm:gap-5 group">
+                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
+                  <FileCheck2 className="h-6 w-6 stroke-[1.8]" />
+                </div>
+                <div className="space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Pemahaman Jelas atas Temuan Kunci" : "Clear Understanding of Key Findings"}
                   </h3>
-                  <p className="mt-2 text-sm sm:text-base font-semibold text-[#2466CB] leading-relaxed">
-                    {current.tagline}
-                  </p>
-                  <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                    {current.description}
-                  </p>
-                </div>
-
-                {/* 3 Core Highlights (Easily Scannable) */}
-                <div className="space-y-3 pt-1">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    {language === "ID" ? "Kapabilitas Utama & Regulasi:" : "Core Capabilities & Compliance:"}
-                  </h4>
-                  <div className="space-y-2.5">
-                    {current.highlights.map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#F8FBFE] border border-blue-100/80 shadow-2xs"
-                      >
-                        <CheckCircle2 className="h-4 w-4 text-[#2466CB] shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs sm:text-[13.5px] font-semibold text-slate-900">
-                            {h.title}
-                          </p>
-                          <p className="text-xs text-slate-600 font-normal mt-0.5 leading-relaxed">
-                            {h.desc}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CTA Action with continuous shine */}
-                <div className="pt-2 flex flex-wrap items-center gap-4">
-                  <Link
-                    href="/request-demo"
-                    className="group relative inline-flex items-center gap-2 rounded-full bg-[#2466CB] hover:bg-[#1E5299] text-white px-7 py-3.5 text-sm font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98] overflow-hidden"
-                  >
-                    <span className="animate-shine-continuous" />
-                    <span className="relative z-10">{language === "ID" ? "Minta Demo Modul Ini" : "Request Module Demo"}</span>
-                    <ArrowRight className="h-4 w-4 relative z-10 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                  <a
-                    href={`#${current.id}`}
-                    className="text-xs font-semibold text-slate-600 hover:text-[#2466CB] transition-colors"
-                  >
-                    {language === "ID" ? "Lihat Posisi di Katalog ↓" : "View in Catalog ↓"}
-                  </a>
+                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Menerjemahkan terminologi medis menjadi penjelasan yang mudah dipahami"
+                          : "Converts medical terminology into easy-to-understand explanations"}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Menyoroti hasil pemeriksaan paling penting beserta maknanya bagi pasien"
+                          : "Highlights the most important results and what they mean"}
+                      </span>
+                    </li>
+                  </ul>
                 </div>
               </div>
 
-              {/* Right Column: Clean High-Fidelity Software Workstation Preview */}
-              <div className="lg:col-span-5">
-                <ModuleWorkstationPreview moduleId={current.id} language={language} />
+              {/* Item 2 */}
+              <div className="flex items-start gap-4 sm:gap-5 group">
+                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
+                  <HeartPulse className="h-6 w-6 stroke-[1.8]" />
+                </div>
+                <div className="space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Rekomendasi Pola Hidup yang Aplikatif" : "Actionable Lifestyle Recommendations"}
+                  </h3>
+                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Menyajikan panduan kebugaran berbasis bukti (evidence-based) selaras hasil uji"
+                          : "Provides general, evidence-based wellness guidance aligned with results"}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Mendorong manajemen kesehatan yang proaktif dan preventif secara terarah"
+                          : "Encourages proactive health management"}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Item 3 */}
+              <div className="flex items-start gap-4 sm:gap-5 group">
+                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
+                  <Shuffle className="h-6 w-6 stroke-[1.8]" />
+                </div>
+                <div className="space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Panduan Roadmap \"Langkah Selanjutnya\"" : "Guided \"Next Steps\" Roadmap"}
+                  </h3>
+                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Merinci jadwal waktu tepat untuk konsultasi lanjutan dengan dokter spesialis"
+                          : "Outlines when to follow up with a physician"}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Menyarankan daftar pertanyaan penting yang dapat diajukan kepada dokter"
+                          : "Suggests appropriate questions patients may ask their provider"}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Item 4 */}
+              <div className="flex items-start gap-4 sm:gap-5 group">
+                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
+                  <UserCheck className="h-6 w-6 stroke-[1.8]" />
+                </div>
+                <div className="space-y-1.5 flex-1 pt-0.5">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                    {language === "ID" ? "Tervalidasi & Diawasi Dokter Spesialis" : "Doctor-Approved and Trustworthy"}
+                  </h3>
+                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Menjaga pengawasan dan validasi klinis mutlak dari dokter spesialis patologi"
+                          : "Maintains clinical oversight and approval"}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 select-none shrink-0">-</span>
+                      <span>
+                        {language === "ID"
+                          ? "Memastikan penjelasan medis akurat, bertanggung jawab, dan sesuai standar profesi"
+                          : "Ensures explanations remain accurate, responsible, and aligned with professional standards"}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: High-Fidelity Report Card with Interactive Mode Switcher */}
+            <div className="lg:col-span-6">
+              <div className="rounded-[28px] sm:rounded-[34px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.06)] relative flex flex-col justify-between">
+                {/* Card Header with Interactive Toggle Button */}
+                <div className="flex items-center justify-between pb-4 sm:pb-5 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="font-display text-base sm:text-lg font-bold text-slate-900">
+                      {isClinicalView
+                        ? (language === "ID" ? "Tampilan Klinis Dokter" : "Clinical Pathologist View")
+                        : "AI Patient Report"}
+                    </span>
+                  </div>
+
+                  {/* Mode Switcher Button */}
+                  <button
+                    type="button"
+                    onClick={() => setIsClinicalView(!isClinicalView)}
+                    className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white text-[11px] sm:text-xs font-bold font-mono tracking-wider shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+                  >
+                    <ArrowLeftRight className="h-3 w-3" />
+                    <span>{isClinicalView ? (language === "ID" ? "TAMPILAN PASIEN" : "PATIENT VIEW") : (language === "ID" ? "TAMPILAN KLINIS" : "CLINICAL VIEW")}</span>
+                  </button>
+                </div>
+
+                {/* 3 Stacked Cards (Matching Exact LigoLab Palette & Structure) */}
+                <div className="space-y-3.5 sm:space-y-4 pt-4 sm:pt-5">
+                  {/* Card 1: Blue Card - Results Summary */}
+                  <div className="rounded-2xl bg-[#EFF6FF] border border-blue-200/80 p-4 sm:p-5 transition-all">
+                    <div className="flex items-center gap-2 text-[#1E40AF] font-bold text-sm sm:text-[15px] mb-2">
+                      <FileText className="h-4.5 w-4.5" />
+                      <h4>
+                        {isClinicalView
+                          ? (language === "ID" ? "Temuan Histopatologi & Morfometrik" : "Histopathology & Microscopic Evaluation")
+                          : (language === "ID" ? "Ringkasan Hasil Anda" : "Your Results Summary")}
+                      </h4>
+                    </div>
+                    <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                      {isClinicalView
+                        ? (language === "ID"
+                            ? "Biopsi jaringan menunjukkan epitel skuamosa hiperplastik tanpa atipia sitologis atau invasi stroma. Indeks mitosis < 1/10 HPF. Batas sayatan bedah bebas sel tumor (> 2mm)."
+                            : "Tissue biopsy demonstrates hyperplastic squamous epithelium without cytological atypia or invasive stromal breach. Mitotic index < 1/10 HPF. Surgical margins clear (> 2mm).")
+                        : (language === "ID"
+                            ? "Sampel jaringan Anda menunjukkan sel-sel jinak (non-kanker). Ini adalah hasil yang sangat baik dan menandakan tidak ditemukan adanya sel ganas."
+                            : "Your tissue sample showed benign (non-cancerous) cells. This is a good result that means no cancer was detected.")}
+                    </p>
+                  </div>
+
+                  {/* Card 2: Green Card - What This Means */}
+                  <div className="rounded-2xl bg-[#F0FDF4] border border-emerald-200/80 p-4 sm:p-5 transition-all">
+                    <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm sm:text-[15px] mb-2">
+                      <Info className="h-4.5 w-4.5 text-emerald-700" />
+                      <h4>
+                        {isClinicalView
+                          ? (language === "ID" ? "Korelasi Diagnostik & Standar ICD-O-3" : "Diagnostic Classification & ICD-O-3")
+                          : (language === "ID" ? "Makna Hasil Pemeriksaan" : "What This Means")}
+                      </h4>
+                    </div>
+                    <p className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                      {isClinicalView
+                        ? (language === "ID"
+                            ? "Klasifikasi SNOMED: M-7200/0 (Alterasi fibrokistik jinak). Tidak teridentifikasi penanda displasia tingkat tinggi. Korelasi longitudinal delta biomarker stabil."
+                            : "SNOMED code M-7200/0 (Benign fibrocystic alteration). No high-grade dysplasia detected. Correlation with longitudinal delta-check confirms stable metabolic baseline.")
+                        : (language === "ID"
+                            ? "Pertumbuhan kecil jaringan yang diangkat tidak berbahaya. Tubuh Anda dalam kondisi sehat dan normal pada area pemeriksaan ini."
+                            : "The small growth that was removed is not harmful. Your body is healthy in this area.")}
+                    </p>
+                  </div>
+
+                  {/* Card 3: White Card - Next Steps */}
+                  <div className="rounded-2xl bg-white border border-slate-200/90 p-4 sm:p-5 shadow-2xs transition-all">
+                    <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-[15px] mb-2.5">
+                      <Sparkles className="h-4.5 w-4.5 text-[#2764B8]" />
+                      <h4>
+                        {isClinicalView
+                          ? (language === "ID" ? "Rekomendasi DPJP & Verifikasi Digital" : "Pathologist Sign-off & Follow-up Protocol")
+                          : (language === "ID" ? "Langkah Selanjutnya" : "Next Steps")}
+                      </h4>
+                    </div>
+                    <ul className="space-y-2 text-xs sm:text-[13.5px] text-slate-700">
+                      {isClinicalView ? (
+                        <>
+                          <li className="flex items-center gap-2">
+                            <Check className="h-4 w-4 text-emerald-600 shrink-0" />
+                            <span>
+                              {language === "ID"
+                                ? "Jadwal USG / Mammografi pengawasan rutin pada interval 6 bulan"
+                                : "Surveillance ultrasound/mammography at standard 6-month interval"}
+                            </span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Check className="h-4 w-4 text-emerald-600 shrink-0" />
+                            <span>
+                              {language === "ID"
+                                ? "Tanda tangan digital terverifikasi: dr. Rahadian, Sp.PA (STR Aktif ✓)"
+                                : "Digital verification complete: dr. Rahadian, Sp.PA (Active License ✓)"}
+                            </span>
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li className="flex items-center gap-2">
+                            <span className="text-slate-800 font-bold shrink-0">✓</span>
+                            <span>
+                              {language === "ID"
+                                ? "Lakukan konsultasi tindak lanjut dengan dokter Anda dalam 6 bulan"
+                                : "Follow up with your doctor in 6 months"}
+                            </span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-slate-800 font-bold shrink-0">✓</span>
+                            <span>
+                              {language === "ID"
+                                ? "Tanyakan mengenai jadwal skrining pemeriksaan rutin"
+                                : "Ask about routine screening schedule"}
+                            </span>
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -959,30 +728,12 @@ export default function ModulesPage() {
                   </div>
 
                   <div className="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
-                    {!isCustom ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedModule(idx);
-                          const lenis = typeof window !== "undefined" ? (window as unknown as { lenis?: { scrollTo: (y: number, opts: unknown) => void } }).lenis : null;
-                          if (lenis) {
-                            lenis.scrollTo(350, { duration: 1 });
-                          } else {
-                            window.scrollTo({ top: 350, behavior: "smooth" });
-                          }
-                        }}
-                        className="text-xs font-semibold text-[#2466CB] hover:text-[#1E5299] transition-colors cursor-pointer"
-                      >
-                        {language === "ID" ? "Buka di Explorer ↑" : "Open in Explorer ↑"}
-                      </button>
-                    ) : (
-                      <span className="text-xs font-semibold text-[#2466CB]">
-                        {language === "ID" ? "Kustomisasi Bebas" : "Tailored Architecture"}
-                      </span>
-                    )}
+                    <span className="text-xs font-semibold text-[#2466CB]">
+                      {isCustom ? (language === "ID" ? "Kustomisasi Bebas" : "Tailored Architecture") : m.tabLabel}
+                    </span>
 
                     <Link
-                      href={isCustom ? "/request-demo?module=custom" : "/request-demo"}
+                      href={isCustom ? "/request-demo?module=custom" : `/request-demo?module=${m.id}`}
                       className={cn(
                         "inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full transition-all",
                         isCustom
