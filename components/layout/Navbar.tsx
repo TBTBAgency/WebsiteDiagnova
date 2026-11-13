@@ -772,91 +772,48 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu — Instant 1-tap direct page links (no heavy blur or nested accordions) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden max-h-[calc(100vh-80px)] overflow-y-auto border-t border-slate-200/80 bg-white/95 backdrop-blur-xl px-4 py-4 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
-          <div className="space-y-2">
+        <div className="lg:hidden border-t border-slate-200/80 bg-white px-5 py-4 shadow-xl">
+          <nav className="space-y-1.5" aria-label="Mobile Navigation">
             {navItems.map((item) => {
-              const isOpen = mobileOpenSection === item.label;
+              const isActive =
+                pathname === item.href || pathname.startsWith(item.href + "/");
               return (
-                <div
-                  key={item.label}
-                  className="rounded-xl border border-slate-100 bg-slate-50/50 overflow-hidden"
-                >
-                  {item.children ? (
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setMobileOpenSection(isOpen ? null : item.label)
-                        }
-                        className="flex w-full items-center justify-between p-3.5 text-left text-sm font-semibold text-slate-800 transition-colors hover:text-diagnova-blue"
-                      >
-                        <span>{item.label}</span>
-                        <ChevronDown
-                          className={cn(
-                            "h-4 w-4 text-slate-400 transition-transform duration-200",
-                            isOpen && "rotate-180 text-diagnova-blue"
-                          )}
-                        />
-                      </button>
-                      {isOpen && (
-                        <div className="border-t border-slate-100 bg-white p-1.5 space-y-0.5">
-                          {item.children.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              onClick={() => handleNavClick(child.href)}
-                              className="block rounded-lg px-3 py-2 transition-colors hover:bg-slate-50"
-                            >
-                              <p className="text-xs font-medium text-slate-800">
-                                {child.title}
-                              </p>
-                              <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
-                                {child.description}
-                              </p>
-                            </Link>
-                          ))}
-                          <div className="pt-1 px-3 pb-1">
-                            <Link
-                              href={item.href}
-                              prefetch={true}
-                              onClick={() => handleNavClick(item.href)}
-                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-diagnova-blue"
-                            >
-                              <span>
-                                {language === "ID" ? "Buka Halaman" : "Open Page"} {item.label}
-                              </span>
-                              <ArrowRight className="h-3 w-3" />
-                            </Link>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      prefetch={true}
-                      onClick={() => handleNavClick(item.href)}
-                      className="block p-3.5 text-sm font-semibold text-slate-800 hover:text-diagnova-blue"
-                    >
-                      {item.label}
-                    </Link>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  prefetch={true}
+                  onClick={() => handleNavClick(item.href)}
+                  className={cn(
+                    "flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-semibold transition-colors active:scale-[0.99]",
+                    isActive
+                      ? "bg-[#EBF3FE] text-[#2764B8]"
+                      : "bg-slate-50/70 text-slate-800 hover:bg-slate-100 hover:text-[#2764B8]"
                   )}
-                </div>
+                >
+                  <span>{item.label}</span>
+                  <ChevronRight
+                    className={cn(
+                      "h-4 w-4",
+                      isActive ? "text-[#2764B8]" : "text-slate-400"
+                    )}
+                  />
+                </Link>
               );
             })}
+          </nav>
 
-            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
-              <LanguageSwitcher language={language} setLanguage={setLanguage} />
-              <Link
-                href="/request-demo"
-                className="inline-flex items-center justify-center gap-2 flex-1 rounded-full bg-[#2764B8] hover:bg-[#1E5299] py-2.5 text-center text-xs sm:text-sm font-semibold text-white shadow-sm"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
-              </Link>
-            </div>
+          <div className="mt-4 flex items-center justify-between gap-3 pt-4 border-t border-slate-100">
+            <LanguageSwitcher language={language} setLanguage={setLanguage} />
+            <Link
+              href="/request-demo"
+              prefetch={true}
+              className="inline-flex items-center justify-center gap-2 flex-1 rounded-full bg-[#2764B8] hover:bg-[#1E5299] py-3 text-center text-sm font-semibold text-white shadow-sm active:scale-[0.98]"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
+            </Link>
           </div>
         </div>
       )}
