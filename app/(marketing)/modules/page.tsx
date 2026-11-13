@@ -775,71 +775,364 @@ export default function ModulesPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          COMPLETE MODULE DIRECTORY (CLEAN 6-CARD 3x2 LIGOLAB GRID)
-          5 Core Modules + 1 Custom Specialty Gateway
+          COMPLETE MODULE DIRECTORY (2x2 ASYMMETRICAL BENTO SHOWCASE)
+          Matching Reference Architecture: 2-Column Header + 7/5 & 5/7 Bento Grid
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] py-14 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
-          {/* Header */}
-          <div className="max-w-3xl mb-10 sm:mb-14">
-            <div className="mb-3.5 sm:mb-4">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Katalog Modul Lengkap" : "Complete Module Catalog"}
-              </SectionBadge>
+          {/* 2-Column Split Header */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-end mb-10 sm:mb-14">
+            <div className="lg:col-span-6">
+              <div className="mb-3 sm:mb-3.5">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Katalog Modul Lengkap" : "Complete Module Catalog"}
+                </SectionBadge>
+              </div>
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[40px] font-bold leading-[1.16] tracking-tight text-slate-900">
+                {language === "ID" ? (
+                  <>
+                    Arsitektur 5 Modul Inti &amp; <br className="hidden sm:inline" />
+                    Gateway Laboratorium
+                  </>
+                ) : (
+                  <>
+                    Your Connected Suite of <br className="hidden sm:inline" />
+                    Clinical Modules.
+                  </>
+                )}
+              </h2>
             </div>
-            <h2 className="font-display text-2xl sm:text-3xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-900">
-              {language === "ID" ? (
-                <>Arsitektur 5 Modul Inti &amp; Gateway Khusus</>
-              ) : (
-                <>5 Core Clinical Modules &amp; Specialty Gateway</>
-              )}
-            </h2>
-            <p className="mt-2.5 sm:mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
-                ? "Daftar spesifikasi ringkas dan cakupan alur kerja untuk memudahkan evaluasi tim medis, kepala laboratorium, dan manajemen rumah sakit."
-                : "A structured overview designed for effortless evaluation by laboratory directors, medical specialists, and hospital IT leadership."}
-            </p>
+
+            <div className="lg:col-span-6 lg:pb-1">
+              <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-xl lg:ml-auto">
+                {language === "ID"
+                  ? "Diagnova mengotomatiskan setiap alur kerja laboratorium—mulai dari interfacing analyzer, kontrol reagen, pelacakan Bank Darah, hingga pelaporan patologi & mikrobiologi terpadu."
+                  : "Diagnova automates every mission-critical workflow across your laboratory — analyzer interfacing, reagent telemetry, blood bank safety, and specialized pathology & microbiology reporting."}
+              </p>
+            </div>
           </div>
 
-          {/* Symmetrical 3x2 Clean Grid (Matching Reference Spec) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-7 items-stretch">
-            {directoryItems.map((m) => {
-              const Icon = m.icon;
-              const isCustom = m.id === "custom-gateway";
+          {/* 2x2 Asymmetrical Bento Grid (7+5, 5+7) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+            {/* ── BENTO 1 (WIDE - 7 COLS): Routine & Hematology + Analyzer Workflow ── */}
+            <div
+              id="routine-hematology"
+              className="scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+            >
+              <div className="mb-6 sm:mb-8">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Otomasi Hematologi & Kimia Klinik" : "Routine Hematology & Clinical Chemistry"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Menghubungkan analyzer secara langsung tanpa entri data manual."
+                    : "Direct bidirectional ASTM/HL7 interfacing with zero manual transcription."}
+                </p>
+              </div>
 
-              return (
-                <div
-                  key={m.id}
-                  id={m.id}
-                  className="scroll-mt-32 rounded-2xl sm:rounded-[24px] bg-white hover:bg-[#FCFDFE] border border-slate-200/75 hover:border-blue-200/90 shadow-2xs p-6 sm:p-7 transition-all duration-200 flex flex-col group"
+              {/* Visual: Workflow Node Flow */}
+              <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 py-2">
+                {/* Left Core Hub Node */}
+                <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                  <Activity className="h-7 w-7 stroke-[2]" />
+                </div>
+
+                {/* Connector Lines (Desktop) */}
+                <svg
+                  className="hidden sm:block w-14 h-36 shrink-0 text-slate-300"
+                  viewBox="0 0 56 144"
+                  fill="none"
+                  aria-hidden="true"
                 >
-                  {/* Top Row: Icon Badge Left + Bold Title & Status Subtitle Right */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EBF3FE] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform duration-200">
-                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 stroke-[1.6]" />
-                    </div>
+                  <path d="M0 72 C24 72, 24 22, 56 22" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 72 L56 72" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 72 C24 72, 24 122, 56 122" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+
+                {/* Right Stacked Branch Cards */}
+                <div className="flex-1 w-full max-w-md space-y-2.5 sm:space-y-3">
+                  {/* Top Branch */}
+                  <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex items-center gap-2.5 text-xs">
+                    <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+                      <Zap className="h-3.5 w-3.5" />
+                    </span>
                     <div className="min-w-0">
-                      <h3 className="font-display text-base sm:text-[17px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                        {m.name}
-                      </h3>
-                      <p
-                        className={cn(
-                          "text-xs font-medium mt-0.5 truncate",
-                          isCustom ? "text-slate-500" : "text-[#0073FC]"
-                        )}
-                      >
-                        {m.targetDept}
+                      <p className="font-semibold text-slate-900 truncate">
+                        {language === "ID" ? "Worklist Otomatis Sysmex XN-1000" : "Auto-Worklist Sysmex XN-1000"}
+                      </p>
+                      <p className="text-[11px] text-slate-500 truncate">
+                        {language === "ID" ? "Order #LAB-8841 • ASTM Bidireksional" : "Order #LAB-8841 • Direct ASTM"}
                       </p>
                     </div>
                   </div>
 
-                  {/* Clean Description */}
-                  <p className="text-[13.5px] sm:text-sm text-slate-600 font-normal leading-relaxed">
-                    {m.description}
-                  </p>
+                  {/* Middle Branch (Multi-step Validation Card) */}
+                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-2.5 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-slate-900">
+                        {language === "ID" ? "Validasi QC Westgard" : "Westgard QC Verification"}
+                      </span>
+                      <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        In-Control ✓
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
+                      <span className="font-semibold text-slate-900">
+                        {language === "ID" ? "Delta Check Longitudinal" : "Longitudinal Delta Check"}
+                      </span>
+                      <span className="text-[10px] font-medium text-slate-500">08:14 WIB</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
+                      <span className="font-semibold text-slate-900">
+                        {language === "ID" ? "Rilis Hasil EMR & SATUSEHAT" : "Release to EMR & FHIR Sync"}
+                      </span>
+                      <span className="text-[10px] font-medium text-[#0073FC]">Auto-Sync</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Branch */}
+                  <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex items-center gap-2.5 text-xs">
+                    <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+                      <QrCode className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="font-semibold text-slate-900 truncate">
+                      {language === "ID" ? "Barcode Sampel 2D Bedside" : "2D Bedside Specimen Tracking"}
+                    </span>
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* ── BENTO 2 (NARROW - 5 COLS): Inventory & Reagent Telemetry ── */}
+            <div
+              id="inventory-reagent"
+              className="scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-6 px-6 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+            >
+              <div className="mb-6">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Inventori & Reagen Pintar" : "Smart Reagent Intelligence"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Pantau sisa stok lot & tanggal kedaluwarsa secara real-time."
+                    : "Real-time reagent depletion, lot tracking, and FEFO expiry alerts."}
+                </p>
+              </div>
+
+              {/* Visual: App Window + Floating KPI Card */}
+              <div className="relative mt-auto pt-4">
+                {/* Background Mockup Frame */}
+                <div className="ml-6 sm:ml-10 rounded-tl-2xl bg-white border-t border-l border-slate-200/90 shadow-sm pt-4 px-5 pb-6">
+                  <div className="flex items-center gap-2 mb-10">
+                    <span className="w-4 h-4 rounded-md bg-[#0073FC] flex items-center justify-center text-white text-[9px] font-bold">
+                      D
+                    </span>
+                    <span className="text-xs font-bold text-slate-800">Diagnova Telemetry</span>
+                  </div>
+
+                  {/* Subtle Area Chart SVG */}
+                  <svg className="w-full h-24 text-[#0073FC]" viewBox="0 0 240 80" fill="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="reagentGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#0073FC" stopOpacity="0.22" />
+                        <stop offset="100%" stopColor="#0073FC" stopOpacity="0.01" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12 L240 80 L0 80 Z"
+                      fill="url(#reagentGrad)"
+                    />
+                    <path
+                      d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12"
+                      stroke="#0073FC"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+
+                {/* Floating KPI Card */}
+                <div className="absolute top-12 left-0 w-[72%] sm:w-[68%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-[0_14px_30px_-10px_rgba(15,23,42,0.12)] group-hover:-translate-y-1 transition-transform duration-300">
+                  <p className="text-[11px] font-medium text-slate-500">
+                    {language === "ID" ? "Efisiensi Biaya Reagen" : "Reagent Cost Efficiency"}
+                  </p>
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <span className="font-display text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight">
+                      -24%
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-600">▲</span>
+                  </div>
+                  <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200/70">
+                    ✓ {language === "ID" ? "FEFO Terkendali" : "Zero Stockout"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ── BENTO 3 (NARROW - 5 COLS): Blood Bank (BDRS) Telemetry ── */}
+            <div
+              id="blood-bank"
+              className="scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-6 px-6 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+            >
+              <div className="mb-6">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Manajemen Bank Darah (BDRS)" : "Blood Bank & Transfusion (BDRS)"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Pantau stok golongan darah, suhu 2°–6°C, & crossmatch elektronik."
+                    : "Track ISBT-128 blood bags, cold-chain sensors, and electronic crossmatching."}
+                </p>
+              </div>
+
+              {/* Visual: Mini Dashboard Bar Chart Frame */}
+              <div className="mt-auto rounded-t-2xl bg-white border-t border-x border-slate-200/90 shadow-sm p-4 sm:p-5">
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-md bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center">
+                      <HeartPulse className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="text-xs font-bold text-slate-800">
+                      {language === "ID" ? "Stok BDRS Aktif" : "BDRS Live Inventory"}
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#EBF3FE] text-[#1E5299] text-[10px] font-semibold border border-blue-200/70">
+                    {language === "ID" ? "Suhu: 4.1°C Aman" : "Temp: 4.1°C Safe"}
+                  </span>
+                </div>
+
+                {/* Vertical Bar Chart */}
+                <div className="grid grid-cols-5 gap-3 items-end h-28 pt-2">
+                  {[
+                    { label: "O+", pct: "84%" },
+                    { label: "A+", pct: "68%" },
+                    { label: "B+", pct: "76%" },
+                    { label: "AB+", pct: "48%" },
+                    { label: "PRC", pct: "90%" },
+                  ].map((bar) => (
+                    <div key={bar.label} className="flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full h-full rounded-t-lg bg-slate-100 flex items-end overflow-hidden">
+                        <div
+                          className="w-full bg-[#0073FC] rounded-t-md transition-all duration-500 group-hover:bg-[#1E5299]"
+                          style={{ height: bar.pct }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-500">{bar.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* ── BENTO 4 (WIDE - 7 COLS): Pathology, Microbiology & Custom Gateway ── */}
+            <div
+              id="pathology"
+              className="scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
+            >
+              <div id="microbiology" className="mb-6 sm:mb-8">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID"
+                    ? "Patologi Anatomi, Mikrobiologi & Gateway"
+                    : "Pathology, Microbiology & Specialty Gateway"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Pelacakan kaset 2D, antibiogram CLSI/PPRA, hingga parser instrumen khusus."
+                    : "2D cassette tracking, CLSI antibiograms, and custom HL7/ASTM/molecular parsers."}
+                </p>
+              </div>
+
+              {/* Visual: Connected Multi-Specialty Registry */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 py-2">
+                {/* Left 2 Floating Module Cards */}
+                <div className="w-full sm:w-[44%] space-y-3">
+                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
+                        <Microscope className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="text-xs font-bold text-slate-900">
+                        {language === "ID" ? "Patologi Anatomi" : "Anatomical Pathology"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      {language === "ID" ? "Kaset 2D • Sinoptik ICD-O-3" : "2D Cassettes • ICD-O-3 Synoptic"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 sm:ml-6 group-hover:-translate-x-0.5 transition-transform duration-300">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
+                        <FlaskConical className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="text-xs font-bold text-slate-900">
+                        {language === "ID" ? "Mikrobiologi PPRA" : "Microbiology & AST"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      {language === "ID" ? "Antibiogram CLSI • Alert MDRO" : "CLSI Antibiogram • MDRO Alert"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Connector SVG */}
+                <svg
+                  className="hidden sm:block w-10 h-24 shrink-0 text-slate-300"
+                  viewBox="0 0 40 96"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path d="M0 24 C18 24, 18 48, 40 48" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 72 C18 72, 18 48, 40 48" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+
+                {/* Right Unified Registry Card */}
+                <div
+                  id="custom-gateway"
+                  className="w-full sm:w-[46%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm space-y-2.5"
+                >
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    {language === "ID" ? "Ekosistem Terhubung" : "Connected Modules"}
+                  </p>
+
+                  {[
+                    {
+                      icon: Microscope,
+                      title: language === "ID" ? "Histopatologi & Sitologi" : "Histopathology & Cytology",
+                      tag: "ICD-O-3",
+                    },
+                    {
+                      icon: FlaskConical,
+                      title: language === "ID" ? "Kultur & Antibiogram" : "Culture & Antibiogram",
+                      tag: "CLSI",
+                    },
+                    {
+                      icon: Cpu,
+                      title: language === "ID" ? "Gateway Instrumen Khusus" : "Custom Specialty Gateway",
+                      tag: "500+ Alat",
+                    },
+                  ].map((row, rIdx) => {
+                    const RowIcon = row.icon;
+                    return (
+                      <div
+                        key={rIdx}
+                        className="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0 first:pt-0 text-xs"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="w-6 h-6 rounded-full bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
+                            <RowIcon className="h-3.5 w-3.5" />
+                          </span>
+                          <span className="font-semibold text-slate-800 truncate">{row.title}</span>
+                        </div>
+                        <span className="text-[10px] font-medium text-[#0073FC] bg-blue-50 px-2 py-0.5 rounded-full shrink-0">
+                          {row.tag}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
