@@ -120,8 +120,8 @@ export function AboutSection({ initialData }: AboutSectionProps = {}) {
     >
       <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 items-center gap-8 sm:gap-10 lg:grid-cols-12 lg:gap-16">
-          {/* Left Column: DNA 3D Visual with Organic Floating Motion & Subtle Glow (Order 2 on mobile, Order 1 on desktop) */}
-          <div className="flex justify-center lg:justify-start lg:col-span-5 order-2 lg:order-1">
+          {/* Left Column: DNA 3D Visual with Organic Floating Motion & Subtle Glow (Desktop only) */}
+          <div className="hidden lg:flex justify-start lg:col-span-5 lg:order-1">
             <div className="relative w-full max-w-[240px] sm:max-w-[320px] lg:max-w-[440px] aspect-[4/5] flex items-center justify-center">
               {/* Ambient Radial Medical Glow */}
               <div className="absolute inset-0 rounded-full bg-nova-blue/15 blur-3xl animate-dna-glow pointer-events-none" />
