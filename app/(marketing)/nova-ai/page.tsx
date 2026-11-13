@@ -350,29 +350,9 @@ export default function NovaAIPage() {
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          REFINED REGULATORY NOTICE BAR (Subtle & High-Legibility)
-          ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FAFBFD] border-y border-slate-200/70 py-3 px-4 sm:px-6">
-        <div className="mx-auto max-w-[1560px] flex items-center justify-center gap-2.5 text-xs sm:text-[13px] font-medium text-center">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EBF3FE] text-[#0073FC] text-[11px] font-semibold shrink-0">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            <span>CDSS</span>
-          </span>
-          <span className="text-slate-600 leading-relaxed">
-            <strong className="text-slate-900 font-semibold">
-              {language === "ID" ? "Standar Tata Kelola Klinis:" : "Clinical Governance Standard:"}
-            </strong>{" "}
-            {language === "ID"
-              ? "Beroperasi sesuai UU Kesehatan No. 17/2023 & Permenkes No. 24/2022. Seluruh keputusan diagnosis tetap berada pada kewenangan dokter."
-              : "Conforms to national health regulations. All definitive diagnostic and therapeutic decisions remain under attending physician authority."}
-          </span>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════
           SECTION 1: SYSTEM OF RECORD VS SYSTEM OF ACTION
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-b border-slate-200/60">
+      <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-y border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
