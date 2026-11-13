@@ -65,14 +65,13 @@ export function ScrollRevealProvider({
       el.setAttribute("data-revealed", "true");
     };
 
-    // Immediately reveal elements already visible or above the viewport
-    const viewportCutoff = window.innerHeight * 0.96;
+    // Only immediately reveal elements that were already scrolled past (e.g. anchor links / browser scroll restore)
     const pending: HTMLElement[] = [];
 
     targets.forEach((el) => {
       const rect = el.getBoundingClientRect();
-      if (rect.top <= viewportCutoff) {
-        requestAnimationFrame(() => revealElement(el));
+      if (rect.bottom < 80) {
+        revealElement(el);
       } else {
         pending.push(el);
       }
@@ -93,8 +92,8 @@ export function ScrollRevealProvider({
         });
       },
       {
-        threshold: 0.06,
-        rootMargin: "0px 0px -36px 0px",
+        threshold: 0.14,
+        rootMargin: "0px 0px -12% 0px",
       }
     );
 
@@ -107,3 +106,4 @@ export function ScrollRevealProvider({
 
   return <>{children}</>;
 }
+
