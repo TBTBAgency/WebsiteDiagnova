@@ -272,7 +272,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 290px, 320px"
                   className="object-cover object-center"
-                  loading="lazy"
+                  loading="eager"
                 />
                 {/* Subtle soft gradient overlay */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0E234B]/20 via-transparent to-white/10" />

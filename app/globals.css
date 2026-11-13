@@ -209,10 +209,9 @@ html.lenis body {
   perspective: 1000px;
 }
 
-/* Performance booster for off-screen sections: Skips paint until near viewport */
+/* Eager section rendering (no delayed paint / lazy-render stutter) */
 .content-auto {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 750px;
+  contain: layout style;
 }
 
 @keyframes fadeSlideUp {

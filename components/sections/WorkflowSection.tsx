@@ -447,7 +447,7 @@ export function WorkflowSection({ initialData }: WorkflowSectionProps = {}) {
                 src="/images/dna-workflow.webp"
                 alt="Diagnova 3D DNA Workflow"
                 fill
-                loading="lazy"
+                loading="eager"
                 className="object-contain object-bottom pointer-events-none select-none gpu-layer"
                 sizes="100vw"
               />
@@ -618,6 +618,7 @@ export function WorkflowSection({ initialData }: WorkflowSectionProps = {}) {
               src="/images/dna-workflow.webp"
               alt="Diagnova DNA Workflow"
               fill
+              loading="eager"
               className="object-contain object-bottom pointer-events-none translate-y-[6%] scale-[1.03] opacity-90"
               sizes="100vw"
             />

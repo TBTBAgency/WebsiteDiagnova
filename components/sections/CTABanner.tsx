@@ -144,7 +144,7 @@ export function CTABanner({
                   width={1200}
                   height={960}
                   className="w-full h-auto object-contain object-bottom select-none pointer-events-none drop-shadow-[0_10px_24px_rgba(30,64,120,0.14)] lg:drop-shadow-none"
-                  loading="lazy"
+                  loading="eager"
                 />
               </div>
             </div>

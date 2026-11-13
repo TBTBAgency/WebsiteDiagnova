@@ -206,8 +206,8 @@ export function Hero({ initialData }: HeroProps = {}) {
                 src={slide.image}
                 alt={slide.alt}
                 fill
-                priority={index === 0}
-                loading={index === 0 ? "eager" : "lazy"}
+                priority
+                loading="eager"
                 className={cn(
                   "object-cover",
                   slide.objectPosition || "object-center"

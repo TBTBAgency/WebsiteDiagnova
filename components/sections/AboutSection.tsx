@@ -132,6 +132,7 @@ export function AboutSection({ initialData }: AboutSectionProps = {}) {
                   alt="Diagnova DNA Intelligence Structure"
                   width={500}
                   height={600}
+                  loading="eager"
                   className="w-full h-auto object-contain drop-shadow-md select-none"
                 />
               </div>

@@ -97,6 +97,7 @@ function TrustMarquee({ language }: { language: "ID" | "EN" }) {
                 alt="Partner Trust Logo"
                 width={140}
                 height={40}
+                loading="eager"
                 className="h-6 sm:h-7 md:h-8 w-auto object-contain brightness-0 invert"
               />
             </div>
