@@ -737,42 +737,313 @@ export default function NovaAIPage() {
             </p>
           </div>
 
-          {/* 4 Connected Pipeline Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {workflowPipeline.map((item) => {
-              const IconComponent = item.icon;
-              return (
-                <div
-                  key={item.title}
-                  className="group rounded-[24px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-[0_6px_20px_-10px_rgba(15,23,42,0.06)] hover:border-blue-200/90 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
+          {/* 2x2 Asymmetrical Bento Showcase (Matches Modules Page Layout) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+            {/* BENTO 1 (Wide Left - 7 cols): Interfacing Dua Arah Analyzer */}
+            <div className="lg:col-span-7 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
+              <div className="mb-6">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Interfacing Dua Arah Analyzer" : "Bi-Directional Analyzer Interfacing"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Data hasil uji dari 500+ instrumen ditransmisikan langsung tanpa entri manual."
+                    : "Direct telemetry ingestion from 500+ instruments with zero manual entry."}
+                </p>
+              </div>
+
+              {/* Visual: Workflow Node Flow */}
+              <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
+                {/* Left Core Hub Node */}
+                <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                  <Server className="h-7 w-7 stroke-[2]" />
+                </div>
+
+                {/* Connector Lines (Desktop) */}
+                <svg
+                  className="hidden sm:block w-14 h-[212px] shrink-0 text-slate-300"
+                  viewBox="0 0 56 212"
+                  fill="none"
+                  aria-hidden="true"
                 >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="h-11 w-11 rounded-2xl bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                        <IconComponent className="h-5 w-5" />
-                      </div>
-                      <span className="font-mono text-xs font-bold text-[#0073FC] bg-[#EBF3FE] px-3 py-1 rounded-full">
-                        {language === "ID" ? `Tahap ${item.stepLabel}` : `Phase ${item.stepLabel}`}
+                  <path d="M0 106 C24 106, 24 27, 56 27" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 106 L56 106" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 106 C24 106, 24 188, 56 188" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+
+                {/* Right Stacked Branch Cards */}
+                <div className="w-full sm:w-[320px] space-y-3">
+                  {/* Top Branch */}
+                  <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+                      <Activity className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 truncate">
+                        {language === "ID" ? "ASTM E1381 & HL7 v2" : "ASTM E1381 & HL7 v2"}
+                      </p>
+                      <p className="text-[11px] text-slate-500 truncate">Sysmex XN-1000 • Cobas c501</p>
+                    </div>
+                  </div>
+
+                  {/* Center Branch (Telemetry Summary Card) */}
+                  <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-slate-800">
+                        {language === "ID" ? "Auto-QC Westgard" : "Auto-QC Westgard"}
+                      </span>
+                      <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        In-Control ✓
                       </span>
                     </div>
-
-                    <div>
-                      <h3 className="font-display text-lg font-bold text-slate-900 leading-snug">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs sm:text-[13px] text-slate-600 font-normal leading-relaxed mt-2">
-                        {item.desc}
-                      </p>
+                    <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
+                      <span className="font-semibold text-slate-800">
+                        {language === "ID" ? "Parser Bi-Directional" : "Bi-Directional Parser"}
+                      </span>
+                      <span className="text-[11px] text-slate-400">&lt; 200ms</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs border-t border-slate-100 pt-2">
+                      <span className="font-semibold text-slate-800">
+                        {language === "ID" ? "Zero Manual Entry" : "Zero Manual Entry"}
+                      </span>
+                      <span className="text-[10px] font-semibold text-[#0073FC]">100% Valid</span>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-6 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] font-medium text-slate-500">
-                    <span className="truncate">{item.protocol}</span>
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                  {/* Bottom Branch */}
+                  <div className="rounded-xl bg-white border border-slate-200/80 px-4 py-3 shadow-xs flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <p className="text-xs font-bold text-slate-900 truncate">
+                      {language === "ID" ? "Normalisasi LOINC & FHIR R4" : "LOINC & FHIR R4 Normalization"}
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* BENTO 2 (Narrow Right - 5 cols): Mesin Delta-Check Longitudinal */}
+            <div className="lg:col-span-5 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
+              <div className="mb-5">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Mesin Delta-Check Longitudinal" : "Longitudinal Delta-Check Engine"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Deteksi deviasi biomarker serial antar-kunjungan secara real-time."
+                    : "Real-time serial biomarker deviation detection across patient visits."}
+                </p>
+              </div>
+
+              {/* Visual: App Window + Floating KPI Card */}
+              <div className="relative mt-auto pt-4">
+                {/* Background Mockup Frame */}
+                <div className="ml-6 sm:ml-10 rounded-tl-2xl bg-white border-t border-l border-slate-200/90 shadow-sm pt-4 px-5 pb-6">
+                  <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-md bg-[#0073FC] flex items-center justify-center text-white text-[9px] font-bold">
+                        N
+                      </span>
+                      <span className="text-xs font-bold text-slate-800">Nova CDSS Engine</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-400">Z-Score</span>
+                  </div>
+
+                  {/* Subtle Area Chart SVG */}
+                  <svg className="w-full h-24 text-[#0073FC]" viewBox="0 0 240 80" fill="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="novaDeltaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#0073FC" stopOpacity="0.22" />
+                        <stop offset="100%" stopColor="#0073FC" stopOpacity="0.01" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="20" x2="240" y2="20" stroke="#F1F5F9" strokeWidth="1" />
+                    <line x1="0" y1="45" x2="240" y2="45" stroke="#F1F5F9" strokeWidth="1" />
+                    <line x1="0" y1="70" x2="240" y2="70" stroke="#F1F5F9" strokeWidth="1" />
+                    <path
+                      d="M0 64 L48 52 L96 58 L150 28 L195 34 L240 12 L240 80 L0 80 Z"
+                      fill="url(#novaDeltaGrad)"
+                    />
+                    <path
+                      d="M0 64 L48 52 L96 58 L150 28 L195 34 L240 12"
+                      stroke="#0073FC"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+
+                {/* Floating KPI Card */}
+                <div className="absolute top-16 left-0 w-[64%] sm:w-[60%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-[0_14px_30px_-10px_rgba(15,23,42,0.12)] group-hover:-translate-y-1 transition-transform duration-300">
+                  <p className="text-[11px] font-medium text-slate-500">
+                    {language === "ID" ? "Kecepatan Kalkulasi Delta" : "Delta-Check Latency"}
+                  </p>
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <span className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                      &lt; 3 Detik
+                    </span>
+                    <span className="text-[11px] font-bold text-emerald-600">▲</span>
+                  </div>
+                  <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/70 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                    <span>✓ {language === "ID" ? "Anomali Serial Terdeteksi" : "Serial Shift Flagged"}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* BENTO 3 (Narrow Left - 5 cols): Draf Interpretasi & Triage Kritis */}
+            <div className="lg:col-span-5 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
+              <div className="mb-6">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Draf Interpretasi & Triage Kritis" : "Clinical Draft & Critical Triage"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "Narasi klinis terstandar & alarm nilai kritis < 15 menit."
+                    : "Standardized clinical drafts & panic value alerts < 15 mins."}
+                </p>
+              </div>
+
+              {/* Visual: Mini Dashboard Bar Chart Frame */}
+              <div className="mt-auto rounded-t-2xl bg-white border-t border-x border-slate-200/90 shadow-sm p-4 sm:p-5 pb-5 sm:pb-6">
+                <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-md bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center">
+                      <BellRing className="h-3 w-3" />
+                    </span>
+                    <span className="text-xs font-bold text-slate-800">
+                      {language === "ID" ? "Triage Nilai Kritis KARS" : "KARS Critical Triage"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EBF3FE] text-[#0073FC]">
+                    SLA &lt; 15m
+                  </span>
+                </div>
+
+                {/* Vertical Bar Chart */}
+                <div className="grid grid-cols-5 gap-3 items-end h-28 pt-2">
+                  {[
+                    { label: "Hb", h: "h-16" },
+                    { label: "PLT", h: "h-12" },
+                    { label: "K+", h: "h-20" },
+                    { label: "Cr", h: "h-10" },
+                    { label: "Glc", h: "h-22" },
+                  ].map((bar) => (
+                    <div key={bar.label} className="flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div className="w-full flex-1 flex items-end bg-slate-100/80 rounded-t-lg overflow-hidden">
+                        <div
+                          className={`w-full ${bar.h} rounded-t-lg bg-[#0073FC] group-hover:brightness-110 transition-all duration-300`}
+                        />
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-500">{bar.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* BENTO 4 (Wide Right - 7 cols): Otorisasi Dokter Sp.PK & E-Sign BSrE */}
+            <div className="lg:col-span-7 rounded-[28px] bg-[#F1F4F8] p-7 sm:p-8 flex flex-col justify-between overflow-hidden group">
+              <div className="mb-6">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                  {language === "ID" ? "Otorisasi Dokter Sp.PK & E-Sign BSrE" : "Pathologist Sign-Off & BSrE E-Sign"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                  {language === "ID"
+                    ? "100% kendali verifikasi medis dengan tanda tangan digital resmi."
+                    : "100% physician verification sovereignty with certified digital signatures."}
+                </p>
+              </div>
+
+              {/* Visual: Connected Multi-Step Sign-Off Flow */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
+                {/* Left 2 Floating Verification Cards */}
+                <div className="w-full sm:w-[42%] space-y-3">
+                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
+                        <Stethoscope className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="text-xs font-bold text-slate-900">
+                        {language === "ID" ? "Review Narasi Klinis" : "Clinical Narrative Review"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      {language === "ID" ? "Sunting & Validasi dr. Sp.PK" : "Edit & Verify by Pathologist"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="text-xs font-bold text-slate-900">
+                        {language === "ID" ? "Korelasi Anamnesis" : "Clinical Correlation"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      {language === "ID" ? "100% Otoritas Medis DPJP" : "100% Attending Authority"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Connector SVG */}
+                <svg
+                  className="hidden sm:block w-12 h-32 shrink-0 text-slate-300"
+                  viewBox="0 0 48 128"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path d="M0 30 C22 30, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M0 98 C22 98, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+
+                {/* Right Unified Sign-Off Card */}
+                <div className="w-full sm:w-[46%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm space-y-2.5">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    {language === "ID" ? "Otorisasi & Rilis Resmi" : "Official Sign-Off"}
+                  </p>
+
+                  {[
+                    {
+                      icon: BadgeCheck,
+                      title: language === "ID" ? "Tanda Tangan BSrE" : "BSrE Digital E-Sign",
+                      tag: "Valid",
+                    },
+                    {
+                      icon: FileCheck2,
+                      title: language === "ID" ? "Rilis ke SIMRS" : "EMR Release",
+                      tag: "Auto",
+                    },
+                    {
+                      icon: Server,
+                      title: language === "ID" ? "Kirim SATUSEHAT" : "SATUSEHAT Sync",
+                      tag: "FHIR R4",
+                    },
+                  ].map((item) => {
+                    const ItemIcon = item.icon;
+                    return (
+                      <div
+                        key={item.title}
+                        className="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0 first:pt-0"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="w-6 h-6 rounded-full bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+                            <ItemIcon className="h-3.5 w-3.5" />
+                          </span>
+                          <span className="text-xs font-semibold text-slate-800 truncate">{item.title}</span>
+                        </div>
+                        <span className="text-[10px] font-semibold text-[#0073FC] bg-[#EBF3FE] px-2 py-0.5 rounded-full shrink-0">
+                          {item.tag}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
