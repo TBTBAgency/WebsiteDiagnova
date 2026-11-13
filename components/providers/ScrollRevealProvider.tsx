@@ -59,6 +59,13 @@ export function ScrollRevealProvider({
           const cls = child.className?.toString() || "";
           if (cls.includes("border") && cls.includes("rounded")) {
             child.classList.add("ll-card-interactive");
+            const innerStage = child.querySelector(
+              ":scope > div.rounded-2xl"
+            ) as HTMLElement | null;
+            if (innerStage && innerStage.offsetHeight >= 110) {
+              child.classList.add("ll-card-has-stage");
+              innerStage.classList.add("ll-card-stage");
+            }
           }
 
           targets.push(child);

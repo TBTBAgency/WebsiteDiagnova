@@ -362,6 +362,42 @@ html.lenis body {
   .ll-card-interactive:hover::after {
     opacity: 1;
   }
+
+  /* When a card has an inner visual stage, move the dot matrix into the inner stage only */
+  .ll-card-interactive.ll-card-has-stage::before {
+    display: none;
+  }
+
+  .ll-card-stage {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .ll-card-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: radial-gradient(
+      rgba(100, 116, 139, 0.22) 1px,
+      transparent 1px
+    );
+    background-size: 16px 16px;
+    transition: opacity 0.38s ease, background-image 0.38s ease;
+    z-index: -1;
+  }
+
+  .ll-card-interactive:hover .ll-card-stage::before {
+    opacity: 0.9;
+    background-image: radial-gradient(
+      rgba(0, 115, 252, 0.26) 1px,
+      transparent 1px
+    );
+    animation: llDotDrift 14s linear infinite;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
