@@ -1006,9 +1006,9 @@ export default function PlatformPage() {
                         {/* Satellite Nodes */}
                         {[
                           { pos: "-top-3 left-1/2 -translate-x-1/2", label: "IGD" },
-                          { pos: "top-1/2 -right-8 -translate-y-1/2", label: "PA" },
+                          { pos: "top-1/2 -right-6 sm:-right-8 -translate-y-1/2", label: "PA" },
                           { pos: "-bottom-3 left-1/2 -translate-x-1/2", label: "BDRS" },
-                          { pos: "top-1/2 -left-10 -translate-y-1/2", label: "SATU" },
+                          { pos: "top-1/2 -left-7 sm:-left-10 -translate-y-1/2", label: "SATU" },
                         ].map((node, idx) => (
                           <div
                             key={idx}

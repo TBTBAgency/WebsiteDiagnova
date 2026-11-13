@@ -142,26 +142,26 @@ export function AnnouncementBar({
       aria-label="Interactive Goal Navigator"
       className="relative w-full bg-[#2764B8] text-white select-none overflow-hidden border-b border-[#1E5299]/60 shadow-sm"
     >
-      <div className="mx-auto max-w-[1560px] px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-2 lg:gap-4 relative pr-8 lg:pr-10">
-          {/* Prompt Headline */}
-          <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto shrink-0">
-            <p className="text-xs sm:text-[13px] font-normal text-white/95 text-center lg:text-left tracking-normal leading-tight">
+      <div className="mx-auto max-w-[1560px] px-4 sm:px-8 lg:px-10 py-2 sm:py-2.5">
+        <div className="flex flex-row items-center justify-between gap-2 lg:gap-4 relative pr-8 lg:pr-10">
+          {/* Prompt Headline (Desktop/Tablet) */}
+          <div className="hidden lg:flex items-center justify-start w-auto shrink-0">
+            <p className="text-[13px] font-normal text-white/95 text-left tracking-normal leading-tight">
               {language === "ID"
                 ? "Pilih kebutuhan laboratorium Anda untuk memulai. Saya ingin..."
                 : "Select your laboratory goal to get started. I want to..."}
             </p>
           </div>
 
-          {/* Interactive Goal Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          {/* Interactive Goal Pills (Single-line horizontal scroll on mobile, centered wrap on desktop) */}
+          <div className="flex flex-nowrap sm:flex-wrap items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide w-full lg:w-auto">
             {goals.map((goal) => (
               <button
                 key={goal.id}
                 type="button"
                 onClick={() => handleGoalClick(goal.targetId, goal.href)}
                 className={cn(
-                  "inline-flex items-center justify-center px-3 sm:px-3.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider",
+                  "shrink-0 whitespace-nowrap inline-flex items-center justify-center px-3 sm:px-3.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider",
                   "bg-white/20 hover:bg-white text-white hover:text-[#2764B8] border border-white/30",
                   "transition-all duration-200 ease-out cursor-pointer active:scale-95 shadow-sm hover:shadow"
                 )}

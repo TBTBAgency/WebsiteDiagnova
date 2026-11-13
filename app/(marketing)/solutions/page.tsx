@@ -926,14 +926,14 @@ export default function SolutionsPage() {
                       </div>
                     </div>
 
-                    <div className="inline-flex rounded-full bg-white border border-slate-200 p-1">
+                    <div className="inline-flex flex-nowrap overflow-x-auto max-w-full scrollbar-hide rounded-full bg-white border border-slate-200 p-1">
                       {(["pre", "analytic", "post"] as const).map((key) => (
                         <button
                           key={key}
                           type="button"
                           onClick={() => setActiveEfficiencyPhase(key)}
                           className={cn(
-                            "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
+                            "shrink-0 whitespace-nowrap px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-all cursor-pointer",
                             activeEfficiencyPhase === key
                               ? "bg-[#0073FC] text-white shadow-xs"
                               : "text-slate-600 hover:text-slate-900"
@@ -957,9 +957,9 @@ export default function SolutionsPage() {
 
                   {/* Rising Curve Visual Canvas */}
                   <div className="relative mt-8 pt-4 pb-2">
-                    <div className="grid grid-cols-2 gap-4 relative z-10 mb-6">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 relative z-10 mb-6">
                       {/* Baseline Metric */}
-                      <div className="self-end pt-12 sm:pt-16">
+                      <div className="self-end pt-4 sm:pt-16">
                         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-slate-600 mb-2">
                           <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
                           {language === "ID" ? "Sebelum Diagnova" : "Before Diagnova"}
@@ -1064,7 +1064,7 @@ export default function SolutionsPage() {
                   ].map((row, idx) => (
                     <div key={idx} className="py-3.5 first:pt-0 last:pb-0">
                       <div className="text-xs font-semibold text-slate-900 mb-2">{row.title}</div>
-                      <div className="grid grid-cols-2 gap-3 text-[12px]">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-[12px]">
                         <div className="rounded-xl bg-slate-50 border border-slate-200/70 px-3 py-2 text-slate-500">
                           <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
                             Manual
@@ -1166,7 +1166,26 @@ export default function SolutionsPage() {
 
             return (
               <div className="rounded-[28px] border border-slate-200/90 bg-white p-6 sm:p-8 shadow-2xs">
-                {/* 4-Column Week Header */}
+                {/* Mobile Week Pill Switcher */}
+                <div className="flex md:hidden items-center gap-2 overflow-x-auto scrollbar-hide pb-3.5 mb-4 border-b border-slate-200/80">
+                  {ganttPhases.map((p, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveGanttWeek(idx)}
+                      className={cn(
+                        "shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer",
+                        activeGanttWeek === idx
+                          ? "bg-[#0073FC] text-white"
+                          : "bg-slate-100 text-slate-600"
+                      )}
+                    >
+                      {p.week}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 4-Column Week Header (Desktop) */}
                 <div className="hidden md:grid grid-cols-4 gap-4 border-b border-slate-200/80 pb-4 mb-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
                   {ganttPhases.map((p, idx) => (
                     <button
