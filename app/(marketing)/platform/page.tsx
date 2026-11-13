@@ -632,293 +632,191 @@ export default function PlatformPage() {
             </p>
           </div>
 
-          {/* 3 Modern Clinical Intelligence Cards with Distinct Micro-UI Stages */}
+          {/* 3 LigoLab-Standard Intelligence Cards (Clean Icon Badge + Bold Blue Title + Bullet Points) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {/* Card 1: TAT Real-Time & Bottleneck Heatmap */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
-              {/* Top Stage: Live TAT Velocity & Bottleneck Heatmap Micro-UI */}
-              <div className="h-48 sm:h-52 w-full rounded-2xl bg-gradient-to-b from-[#F8FAFD] via-[#F2F7FD] to-[#EDF4FC] border border-blue-100/70 relative p-3.5 sm:p-4 flex flex-col justify-between overflow-hidden mb-6 group-hover:scale-[1.01] transition-transform duration-300">
-                {/* Subtle Micro Dot Grid */}
-                <div
-                  className="absolute inset-0 opacity-[0.22] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
-                    backgroundSize: "14px 14px",
-                  }}
-                />
-                <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-blue-400/15 blur-xl pointer-events-none" />
-
-                {/* Stage Header */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-slate-200/80 shadow-2xs">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                    </span>
-                    <span className="text-[10px] font-mono font-bold tracking-wider text-slate-700 uppercase">
-                      {language === "ID" ? "TAT Real-Time" : "Real-Time TAT"}
-                    </span>
-                  </div>
-                  <div className="bg-emerald-50 border border-emerald-200/80 text-emerald-700 px-2 py-0.5 rounded-md text-[10.5px] font-mono font-bold flex items-center gap-1">
-                    <TrendingDown className="h-3 w-3" />
-                    <span>18m (-42% SLA)</span>
-                  </div>
+            {/* Card 1: TAT Real-Time & Bottleneck Detection */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+              {/* Header: Icon Badge + Blue Title */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
+                  <Clock className="h-6 w-6 stroke-[1.8]" />
                 </div>
-
-                {/* Department Velocity Rows */}
-                <div className="relative z-10 space-y-2 my-auto">
-                  {/* Row 1: Hematology */}
-                  <div className="bg-white/95 backdrop-blur-xs p-2 rounded-xl border border-slate-200/70 shadow-2xs">
-                    <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#2764B8]" />
-                        {language === "ID" ? "Hematologi (CBC)" : "Hematology (CBC)"}
-                      </span>
-                      <span className="font-mono font-bold text-[#2764B8]">
-                        14m <span className="text-slate-400 font-normal">/ 30m</span>
-                      </span>
-                    </div>
-                    {/* Heatmap Micro Blocks */}
-                    <div className="grid grid-cols-10 gap-1 h-2">
-                      {[...Array(10)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            "rounded-xs transition-colors",
-                            i < 4
-                              ? "bg-emerald-500"
-                              : i < 5
-                              ? "bg-emerald-400"
-                              : "bg-slate-200/70"
-                          )}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Row 2: Kimia Klinik */}
-                  <div className="bg-white/95 backdrop-blur-xs p-2 rounded-xl border border-slate-200/70 shadow-2xs">
-                    <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#56ADE2]" />
-                        {language === "ID" ? "Kimia Klinik" : "Clinical Chemistry"}
-                      </span>
-                      <span className="font-mono font-bold text-slate-700">
-                        24m <span className="text-slate-400 font-normal">/ 45m</span>
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-10 gap-1 h-2">
-                      {[...Array(10)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            "rounded-xs transition-colors",
-                            i < 5
-                              ? "bg-[#2764B8]"
-                              : i < 6
-                              ? "bg-[#56ADE2]"
-                              : "bg-slate-200/70"
-                          )}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom Status Ribbon */}
-                <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-600 bg-white/70 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-slate-200/60 font-mono">
-                  <span className="flex items-center gap-1.5 font-medium text-slate-700">
-                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                    {language === "ID" ? "0 Antrean Tertunda" : "0 Overdue Specimen"}
-                  </span>
-                  <span className="text-emerald-600 font-bold">100% On-Track</span>
-                </div>
-              </div>
-
-              {/* Bottom Content */}
-              <div>
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mb-2 leading-snug group-hover:text-[#2764B8] transition-colors">
-                  {language === "ID" ? "TAT Real-Time & Bottleneck Heatmap" : "TAT Real-Time & Bottleneck Heatmap"}
+                <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
+                  {language === "ID" ? (
+                    <>
+                      TAT Real-Time &amp; <br />
+                      Deteksi Bottleneck
+                    </>
+                  ) : (
+                    <>
+                      Real-Time TAT &amp; <br />
+                      Bottleneck Detection
+                    </>
+                  )}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                  {language === "ID"
-                    ? "Diagnova menghubungkan setiap alur pemeriksaan untuk memantau durasi sampel per shift secara live, mengeliminasi antrean sebelum mempengaruhi waktu tunggu pasien."
-                    : "Diagnova monitors specimen velocity across shifts in real time, exposing bottlenecks and ensuring tight turnaround times across all departments."}
-                </p>
               </div>
+
+              {/* Bullet Points */}
+              <ul className="space-y-3.5 text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Prediksi waktu tunggu (predictive TAT) otomatis sebelum sampel memasuki antrean analis"
+                      : "Predictive turnaround time scoring before specimens enter analyzer queues"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Heatmap operasional live per departemen untuk mendeteksi penumpukan tabung seketika"
+                      : "Operational real-time heatmaps to instantly pinpoint departmental specimen bottlenecks"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Pemicu alarm dini sebelum spesimen melewati batas SLA rumah sakit yang disepakati"
+                      : "Early alert triggers before specimens breach hospital SLA turnaround thresholds"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Pelacakan kecepatan alur spesimen per shift guna mengoptimalkan alokasi staf laboratorium"
+                      : "Specimen velocity tracking across shifts to optimize laboratory staffing allocation"}
+                  </span>
+                </li>
+              </ul>
             </div>
 
-            {/* Card 2: Analyzer Load & Reagent Tracking */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
-              {/* Top Stage: Analyzer Load Balancing & Reagent Telemetry Micro-UI */}
-              <div className="h-48 sm:h-52 w-full rounded-2xl bg-gradient-to-b from-[#F8FAFD] via-[#F2F7FD] to-[#EDF4FC] border border-blue-100/70 relative p-3.5 sm:p-4 flex flex-col justify-between overflow-hidden mb-6 group-hover:scale-[1.01] transition-transform duration-300">
-                {/* Micro dot grid */}
-                <div
-                  className="absolute inset-0 opacity-[0.22] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
-                    backgroundSize: "14px 14px",
-                  }}
-                />
-                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-cyan-400/15 blur-xl pointer-events-none" />
-
-                {/* Stage Header: Workload Routing Status */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-slate-200/80 shadow-2xs">
-                    <Cpu className="h-3 w-3 text-[#2764B8]" />
-                    <span className="text-[10px] font-mono font-bold tracking-wider text-slate-700 uppercase">
-                      {language === "ID" ? "Beban Instrumen" : "Analyzer Load"}
-                    </span>
-                  </div>
-                  <div className="bg-blue-50 border border-blue-200/80 text-[#2764B8] px-2 py-0.5 rounded-md text-[10.5px] font-mono font-bold flex items-center gap-1">
-                    <Zap className="h-3 w-3 text-amber-500 fill-amber-500" />
-                    <span>Auto-Balance</span>
-                  </div>
+            {/* Card 2: Analyzer Workload & Reagent Tracking */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+              {/* Header: Icon Badge + Blue Title */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
+                  <Cpu className="h-6 w-6 stroke-[1.8]" />
                 </div>
-
-                {/* Dual Analyzer Workload Bars */}
-                <div className="relative z-10 space-y-2 my-auto">
-                  {/* Unit 01 */}
-                  <div className="bg-white/95 backdrop-blur-xs p-2 rounded-xl border border-slate-200/70 shadow-2xs">
-                    <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                        Cobas 6000 #01
-                      </span>
-                      <span className="font-mono text-[10.5px] font-bold text-slate-700">
-                        82% <span className="font-normal text-slate-400">(Peak Load)</span>
-                      </span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-gradient-to-r from-[#2764B8] to-amber-500 h-full rounded-full w-[82%]" />
-                    </div>
-                  </div>
-
-                  {/* Unit 02 - Dynamic Auto Routing */}
-                  <div className="bg-white/95 backdrop-blur-xs p-2 rounded-xl border border-slate-200/70 shadow-2xs">
-                    <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        Cobas 6000 #02
-                      </span>
-                      <span className="font-mono text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                        {language === "ID" ? "+42 Tabung Dialihkan" : "+42 Tubes Rerouted"}
-                      </span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-gradient-to-r from-emerald-400 to-[#2764B8] h-full rounded-full w-[44%]" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom: Reagent Telemetry Capsule */}
-                <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-700 bg-white/80 backdrop-blur-xs px-2.5 py-1.5 rounded-xl border border-slate-200/70 font-mono shadow-2xs">
-                  <div className="flex items-center gap-1.5 font-semibold">
-                    <FlaskConical className="h-3.5 w-3.5 text-[#2764B8]" />
-                    <span>Troponin-I Hs (Kit #04)</span>
-                  </div>
-                  <span className="font-bold text-[#2764B8] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/70 text-[9.5px]">
-                    {language === "ID" ? "186/200 Uji (93%)" : "186/200 Tests (93%)"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Bottom Content */}
-              <div>
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mb-2 leading-snug group-hover:text-[#2764B8] transition-colors">
-                  {language === "ID" ? "Beban Instrumen & Utilisasi Reagen" : "Analyzer Load & Reagent Tracking"}
+                <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
+                  {language === "ID" ? (
+                    <>
+                      Beban Instrumen &amp; <br />
+                      Utilisasi Reagen
+                    </>
+                  ) : (
+                    <>
+                      Analyzer Load &amp; <br />
+                      Reagent Tracking
+                    </>
+                  )}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                  {language === "ID"
-                    ? "Diagnova dapat dikonfigurasi secara leluasa untuk menghitung volume tes per reagen, mengotomatisasi rotasi instrumen, dan memastikan nol pemborosan operasional."
-                    : "Infinitely configurable rules automatically distribute workload across analyzers, track reagent consumption, and eliminate wastage entirely."}
-                </p>
               </div>
+
+              {/* Bullet Points */}
+              <ul className="space-y-3.5 text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Distribusi otomatis beban kerja sampel antar instrumen medis (dynamic workload balancing)"
+                      : "Dynamic workload balancing to distribute specimen tubes across available analyzers"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Pemantauan sisa volume dan laju pemakaian reagen secara real-time untuk mencegah kehabisan"
+                      : "Real-time monitoring of reagent volume and consumption rates to prevent stockouts"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Peringatan dini tanggal kedaluwarsa dan nomor lot reagen guna menihilkan pemborosan (zero wastage)"
+                      : "Expiration date and lot number alerts to eliminate discarded inventory and operational waste"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Penjadwalan otomatis rotasi instrumen dan QC terencana tanpa mengganggu alur tes aktif"
+                      : "Scheduled auto-calibration and QC runs without interrupting live diagnostic workflows"}
+                  </span>
+                </li>
+              </ul>
             </div>
 
-            {/* Card 3: Nova AI Clinical Delta Check */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col justify-between group">
-              {/* Top Stage: Nova AI Longitudinal Delta Anomaly Detector Micro-UI */}
-              <div className="h-48 sm:h-52 w-full rounded-2xl bg-gradient-to-b from-[#F8FAFD] via-[#F2F7FD] to-[#EDF4FC] border border-blue-100/70 relative p-3.5 sm:p-4 flex flex-col justify-between overflow-hidden mb-6 group-hover:scale-[1.01] transition-transform duration-300">
-                {/* Micro dot grid */}
-                <div
-                  className="absolute inset-0 opacity-[0.22] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#2764B8 0.75px, transparent 0.75px)",
-                    backgroundSize: "14px 14px",
-                  }}
-                />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full bg-indigo-400/15 blur-2xl pointer-events-none" />
-
-                {/* Stage Header: Patient ID & Biomarker */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-slate-200/80 shadow-2xs">
-                    <Sparkles className="h-3 w-3 text-[#2764B8]" />
-                    <span className="text-[10px] font-mono font-bold tracking-wider text-slate-700 uppercase">
-                      Nova AI Delta-Check
-                    </span>
-                  </div>
-                  <div className="text-[10px] font-mono text-slate-500 bg-white/80 px-2 py-0.5 rounded border border-slate-200">
-                    RM #8492-B · Creatinine
-                  </div>
+            {/* Card 3: Nova AI & Clinical Intelligence */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-7 sm:p-9 shadow-xs hover:shadow-lg hover:border-blue-200/90 transition-all duration-300 flex flex-col justify-start group">
+              {/* Header: Icon Badge + Blue Title */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#EBF3FB] border border-blue-100/70 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 transition-transform">
+                  <BarChart3 className="h-6 w-6 stroke-[1.8]" />
                 </div>
-
-                {/* Comparative Delta Capsules */}
-                <div className="relative z-10 grid grid-cols-2 gap-2 my-auto">
-                  {/* Previous Result */}
-                  <div className="bg-white/95 backdrop-blur-xs p-2 rounded-xl border border-slate-200/80 shadow-2xs">
-                    <span className="block text-[9.5px] font-mono text-slate-400 mb-0.5">
-                      {language === "ID" ? "14 Hari Lalu" : "14 Days Ago"}
-                    </span>
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-sm font-mono font-bold text-slate-700">0.9</span>
-                      <span className="text-[10px] font-mono text-slate-400">mg/dL</span>
-                    </div>
-                    <span className="inline-block mt-1 text-[9px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-100">
-                      Normal
-                    </span>
-                  </div>
-
-                  {/* Current Live Result with Critical Delta */}
-                  <div className="bg-amber-50/70 backdrop-blur-xs p-2 rounded-xl border border-amber-200/90 shadow-2xs relative overflow-hidden">
-                    <span className="block text-[9.5px] font-mono text-amber-700 font-semibold mb-0.5 flex items-center justify-between">
-                      <span>{language === "ID" ? "Hasil Hari Ini" : "Today Live"}</span>
-                      <AlertCircle className="h-3 w-3 text-amber-600" />
-                    </span>
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-sm font-mono font-bold text-amber-900">2.4</span>
-                      <span className="text-[10px] font-mono text-amber-700">mg/dL</span>
-                    </div>
-                    <span className="inline-block mt-1 text-[9px] font-mono font-bold text-amber-700 bg-amber-100/80 px-1.5 py-0.2 rounded border border-amber-300">
-                      ▲ +166% Shift
-                    </span>
-                  </div>
-                </div>
-
-                {/* Bottom AI Verification Banner */}
-                <div className="relative z-10 flex items-center justify-between text-[10px] bg-white/95 backdrop-blur-xs px-2.5 py-1.5 rounded-xl border border-blue-200/80 shadow-2xs">
-                  <span className="flex items-center gap-1.5 font-semibold text-slate-800">
-                    <Activity className="h-3.5 w-3.5 text-[#2764B8]" />
-                    {language === "ID" ? "Auto-Flagging DPJP" : "Flagged for Attending MD"}
-                  </span>
-                  <span className="text-[#2764B8] font-bold font-mono text-[9.5px] flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                    Ready Review
-                  </span>
-                </div>
-              </div>
-
-              {/* Bottom Content */}
-              <div>
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 mb-2 leading-snug group-hover:text-[#2764B8] transition-colors">
-                  {language === "ID" ? "Nova AI Clinical Delta Check" : "Nova AI Clinical Delta Check"}
+                <h3 className="font-display text-lg sm:text-[19px] font-bold text-[#2764B8] leading-tight group-hover:text-[#1B4B9C] transition-colors">
+                  {language === "ID" ? (
+                    <>
+                      Nova AI &amp; <br />
+                      Clinical Intelligence
+                    </>
+                  ) : (
+                    <>
+                      Nova AI &amp; <br />
+                      Clinical Intelligence
+                    </>
+                  )}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                  {language === "ID"
-                    ? "Nova AI menyatukan database riwayat pasien untuk menghitung deviasi longitudinal, membunyikan alarm kritis secara otomatis, dengan otoritas diagnosis mutlak pada dokter."
-                    : "Nova AI leverages unified database intelligence to run longitudinal delta-checks, reducing human error while keeping pathologists in total command."}
-                </p>
               </div>
+
+              {/* Bullet Points */}
+              <ul className="space-y-3.5 text-sm sm:text-[14.5px] text-slate-600 leading-relaxed font-normal">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Komparasi deviasi longitudinal (delta-check) otomatis terhadap riwayat pemeriksaan pasien"
+                      : "Automated longitudinal delta-checks comparing results against patient historical baselines"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Deteksi anomali klinis seketika saat terjadi lonjakan biomarker kritis sebelum rilis hasil"
+                      : "Real-time clinical anomaly detection for critical biomarker shifts prior to result release"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Validasi aturan klinis lintas-parameter untuk mencegah eror dan hasil yang kontradiktif"
+                      : "Cross-parameter clinical rule validation to prevent contradictory or implausible findings"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Rekomendasi kontekstual untuk DPJP dengan otoritas dan kendali diagnosis mutlak pada dokter"
+                      : "Context-aware clinical recommendations while keeping attending physicians in total command"}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-slate-900 font-bold shrink-0 mt-0.5 select-none">•</span>
+                  <span>
+                    {language === "ID"
+                      ? "Beroperasi dari satu sumber data terpadu (single source of truth) untuk mutu & operasional"
+                      : "Operate from a single source of truth across operations, diagnostic quality, and outcomes"}
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
