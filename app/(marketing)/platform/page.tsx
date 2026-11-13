@@ -581,13 +581,13 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        {/* LigoLab-Identical 3D Glassmorphic Ambient Canvas & Specular Orbs
-            Renders true 3D volumetric spheres, specular rim lighting, and overlapping glass arcs */}
+        {/* LigoLab-Identical 3D Ambient Canvas & Pure Smooth Orbs
+            Renders true 3D volumetric spheres with ultra-smooth smootherstep C2 fade opacity */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none overflow-hidden bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/images/ambient-platform-orbs.webp')",
+            backgroundImage: "url('/images/ambient-platform-orbs.webp?v=pure')",
             maskImage:
               "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
             WebkitMaskImage:
