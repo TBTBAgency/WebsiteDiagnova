@@ -344,33 +344,11 @@ export default function ModulesPage() {
           ══════════════════════════════════════════════════════════════ */}
       <section
         id="modules-explorer"
-        className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
+        className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24"
       >
-        {/* Ambient Smooth Orbs Background (Pure Soft Diffusion) */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none overflow-hidden bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/images/ambient-platform-orbs.webp?v=pure')",
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-          }}
-        >
-          {/* Subtle Ambient Dot Grid Pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.14]"
-            style={{
-              backgroundImage: "radial-gradient(rgba(52, 93, 171, 0.18) 1.25px, transparent 1.25px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
-          <div className="max-w-2xl mb-12 sm:mb-16">
+          <div className="max-w-2xl mb-12 sm:mb-14">
             <div className="mb-3.5">
               <SectionBadge variant="blue">
                 {language === "ID" ? "Workstation Interaktif" : "Interactive Station"}
@@ -389,20 +367,20 @@ export default function ModulesPage() {
           </div>
 
           {/* 2-Column LigoLab Architecture: Left 4 Value Rows + Right Dual-Mode Patient Report Card */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
-            {/* Left Column: 4 Clean Feature Rows with Icon Badge */}
-            <div className="lg:col-span-6 space-y-6 sm:space-y-7">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-20 items-center">
+            {/* Left Column: 4 Clean Feature Rows with Larger Icon Badge */}
+            <div className="lg:col-span-6 space-y-7 sm:space-y-8">
               {/* Item 1 */}
-              <div className="flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
-                  <FileCheck2 className="h-6 w-6 stroke-[1.8]" />
+              <div className="flex items-start gap-5 sm:gap-6 group">
+                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <FileCheck2 className="h-8 w-8 stroke-[1.6]" />
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Pemahaman Jelas atas Temuan Kunci" : "Clear Understanding of Key Findings"}
                   </h3>
-                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5">
+                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -410,7 +388,7 @@ export default function ModulesPage() {
                           : "Converts medical terminology into easy-to-understand explanations"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-1.5">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -423,16 +401,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Item 2 */}
-              <div className="flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
-                  <HeartPulse className="h-6 w-6 stroke-[1.8]" />
+              <div className="flex items-start gap-5 sm:gap-6 group">
+                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <HeartPulse className="h-8 w-8 stroke-[1.6]" />
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Rekomendasi Pola Hidup yang Aplikatif" : "Actionable Lifestyle Recommendations"}
                   </h3>
-                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5">
+                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -440,7 +418,7 @@ export default function ModulesPage() {
                           : "Provides general, evidence-based wellness guidance aligned with results"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-1.5">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -453,16 +431,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Item 3 */}
-              <div className="flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
-                  <Shuffle className="h-6 w-6 stroke-[1.8]" />
+              <div className="flex items-start gap-5 sm:gap-6 group">
+                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <Shuffle className="h-8 w-8 stroke-[1.6]" />
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Panduan Roadmap \"Langkah Selanjutnya\"" : "Guided \"Next Steps\" Roadmap"}
                   </h3>
-                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5">
+                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -470,7 +448,7 @@ export default function ModulesPage() {
                           : "Outlines when to follow up with a physician"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-1.5">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -483,16 +461,16 @@ export default function ModulesPage() {
               </div>
 
               {/* Item 4 */}
-              <div className="flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-[#EFF6FF] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#E5F0FF] transition-all shadow-2xs">
-                  <UserCheck className="h-6 w-6 stroke-[1.8]" />
+              <div className="flex items-start gap-5 sm:gap-6 group">
+                <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                  <UserCheck className="h-8 w-8 stroke-[1.6]" />
                 </div>
                 <div className="space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                  <h3 className="font-display text-lg sm:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
                     {language === "ID" ? "Tervalidasi & Diawasi Dokter Spesialis" : "Doctor-Approved and Trustworthy"}
                   </h3>
-                  <ul className="space-y-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5">
+                  <ul className="space-y-1 text-sm text-slate-600 leading-relaxed font-normal">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -500,7 +478,7 @@ export default function ModulesPage() {
                           : "Maintains clinical oversight and approval"}
                       </span>
                     </li>
-                    <li className="flex items-start gap-1.5">
+                    <li className="flex items-start gap-2">
                       <span className="text-slate-400 select-none shrink-0">-</span>
                       <span>
                         {language === "ID"
@@ -515,11 +493,11 @@ export default function ModulesPage() {
 
             {/* Right Column: High-Fidelity Report Card with Interactive Mode Switcher */}
             <div className="lg:col-span-6">
-              <div className="rounded-[28px] sm:rounded-[34px] bg-white border border-slate-200/90 p-5 sm:p-7 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.06)] relative flex flex-col justify-between">
+              <div className="rounded-[28px] sm:rounded-[32px] bg-[#FAFBFD] border border-slate-200/90 p-6 sm:p-8 shadow-[0_10px_35px_-15px_rgba(15,23,42,0.05)] relative flex flex-col justify-between">
                 {/* Card Header with Interactive Toggle Button */}
-                <div className="flex items-center justify-between pb-4 sm:pb-5 border-b border-slate-100">
+                <div className="flex items-center justify-between mb-5 sm:mb-6">
                   <div className="flex items-center gap-2">
-                    <span className="font-display text-base sm:text-lg font-bold text-slate-900">
+                    <span className="font-display text-lg sm:text-xl font-bold text-slate-900">
                       {isClinicalView
                         ? (language === "ID" ? "Tampilan Klinis Dokter" : "Clinical Pathologist View")
                         : "AI Patient Report"}
@@ -530,15 +508,15 @@ export default function ModulesPage() {
                   <button
                     type="button"
                     onClick={() => setIsClinicalView(!isClinicalView)}
-                    className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white text-[11px] sm:text-xs font-bold font-mono tracking-wider shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0073FC] hover:bg-[#0060D6] text-white font-sans text-xs font-bold tracking-wide shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
                   >
-                    <ArrowLeftRight className="h-3 w-3" />
+                    <ArrowLeftRight className="h-3.5 w-3.5" />
                     <span>{isClinicalView ? (language === "ID" ? "TAMPILAN PASIEN" : "PATIENT VIEW") : (language === "ID" ? "TAMPILAN KLINIS" : "CLINICAL VIEW")}</span>
                   </button>
                 </div>
 
                 {/* 3 Stacked Cards (Matching Exact LigoLab Palette & Structure) */}
-                <div className="space-y-3.5 sm:space-y-4 pt-4 sm:pt-5">
+                <div className="space-y-4">
                   {/* Card 1: Blue Card - Results Summary */}
                   <div className="rounded-2xl bg-[#EFF6FF] border border-blue-200/80 p-4 sm:p-5 transition-all">
                     <div className="flex items-center gap-2 text-[#1E40AF] font-bold text-sm sm:text-[15px] mb-2">
