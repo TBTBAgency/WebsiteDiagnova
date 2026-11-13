@@ -1248,14 +1248,15 @@ export default function ModulesPage() {
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <Link
                     href="/request-demo"
-                    className="inline-flex items-center gap-2 rounded-full bg-slate-900 hover:bg-[#0073FC] text-white px-6 py-3 text-sm font-semibold transition-colors"
+                    className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98] overflow-hidden"
                   >
-                    <span>{language === "ID" ? "Jadwalkan Demo" : "Book a Demo"}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <span className="animate-shine-continuous" />
+                    <span className="relative z-10">{language === "ID" ? "Jadwalkan Demo" : "Book a Demo"}</span>
+                    <ArrowRight className="relative z-10 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
                   <Link
                     href="/solutions"
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white hover:border-slate-300 text-slate-800 px-5 py-3 text-sm font-semibold transition-colors"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-colors shadow-xs"
                   >
                     <span>{language === "ID" ? "Lihat Paket Solusi" : "Explore Solutions"}</span>
                   </Link>
