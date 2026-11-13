@@ -228,8 +228,8 @@ export function Hero({ initialData }: HeroProps = {}) {
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A4B8C]/95 via-[#225FA8]/75 to-transparent sm:w-4/5 lg:w-3/4 pointer-events-none z-[4]" />
 
         {/* Left Hero Content: Centered 2XL Grid Wrapper aligned with Navbar & Sections */}
-        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 my-auto flex items-center">
-          <div className="w-full max-w-[95%] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-6 sm:px-8 lg:px-10 my-auto flex items-center">
+          <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white flex flex-col justify-center">
           {/* Static Badge with subtle entrance transition */}
           <div
             className={cn(

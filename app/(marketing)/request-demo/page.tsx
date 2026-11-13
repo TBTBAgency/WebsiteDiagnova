@@ -584,8 +584,8 @@ export default function RequestDemoPage() {
       }}
       className="relative w-full lg:h-[100dvh] min-h-[660px] bg-[#F4F6F9] flex flex-col justify-center transition-[padding-top] duration-300 ease-in-out"
     >
-      {/* Outer Card with Exact Standard Width max-w-[1560px] px-4 sm:px-6 lg:px-10 Matching Navbar & Site Content */}
-      <div className="mx-auto w-full max-w-[1560px] px-4 sm:px-6 lg:px-10 h-full flex flex-col justify-center">
+      {/* Outer Card with Exact Standard Width max-w-[1560px] px-5 sm:px-6 lg:px-10 Matching Navbar & Site Content */}
+      <div className="mx-auto w-full max-w-[1560px] px-5 sm:px-6 lg:px-10 h-full flex flex-col justify-center">
         <div className="w-full h-full bg-white rounded-[24px] sm:rounded-[32px] p-3 sm:p-4 lg:p-5 xl:p-6 shadow-[0_12px_40px_-15px_rgba(15,23,42,0.07)] border border-slate-200/80 flex flex-col justify-center overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 xl:gap-8 h-full items-stretch">
 

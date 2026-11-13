@@ -66,7 +66,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
       <div className="absolute top-1/3 -right-32 w-[520px] h-[520px] rounded-full bg-[#56ADE2]/[0.07] blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 -left-32 w-[400px] h-[400px] rounded-full bg-[#345DAB]/[0.05] blur-[100px] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+      <div className="relative z-10 mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
 
         {/* ═══ HEADER ═══ */}
         <div

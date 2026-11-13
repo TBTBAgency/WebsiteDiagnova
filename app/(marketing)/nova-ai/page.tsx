@@ -353,7 +353,7 @@ export default function NovaAIPage() {
           SECTION 1: SYSTEM OF RECORD VS SYSTEM OF ACTION
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-y border-slate-200/60">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl">
@@ -447,7 +447,7 @@ export default function NovaAIPage() {
           (3x2 Flat Card Grid on Pure White Background)
           ══════════════════════════════════════════════════════════════ */}
       <section id="workstation-demo" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl">
@@ -569,7 +569,7 @@ export default function NovaAIPage() {
         id="how-it-works"
         className="scroll-mt-28 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 sm:mb-14">
             <div className="max-w-2xl">
@@ -1025,7 +1025,7 @@ export default function NovaAIPage() {
         id="ai-doctor"
         className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full space-y-10 sm:space-y-12">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full space-y-10 sm:space-y-12">
           {/* Split Header (Left-Aligned) */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="max-w-2xl">

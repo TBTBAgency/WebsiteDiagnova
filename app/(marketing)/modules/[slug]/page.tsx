@@ -40,7 +40,7 @@ export default function ModuleDetailPage({ params }: Props) {
           DETAIL HERO SECTION: Sesuai Design System Home & Platform Page
           ══════════════════════════════════════════════════════════════ */}
       <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 lg:pt-44 pb-14 sm:pb-16 lg:pb-20 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           <Link
             href="/modules"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2764B8] hover:text-[#1E5299] mb-6 transition-colors"
@@ -66,7 +66,7 @@ export default function ModuleDetailPage({ params }: Props) {
       {/* ══════════════════════════════════════════════════════════════
           MAIN DETAILS & SPECIFICATIONS
           ══════════════════════════════════════════════════════════════ */}
-      <section className="py-16 sm:py-20 max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 w-full">
+      <section className="py-16 sm:py-20 max-w-[1560px] mx-auto px-5 sm:px-6 lg:px-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
           {/* Main Column */}
           <div className="lg:col-span-8 space-y-10">

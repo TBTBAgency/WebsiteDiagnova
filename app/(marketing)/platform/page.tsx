@@ -116,7 +116,7 @@ export default function PlatformPage() {
         id="automation"
         className="scroll-mt-28 w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
           <div className="mb-10 sm:mb-14">
             <div className="mb-4">
@@ -328,7 +328,7 @@ export default function PlatformPage() {
         id="reporting"
         className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             {/* Left Column: Context & Accreditation Details (Original Style) */}
             <div className="lg:col-span-6 flex flex-col justify-center">
@@ -589,7 +589,7 @@ export default function PlatformPage() {
         id="analytics"
         className="relative scroll-mt-28 w-full bg-[#FAFBFD] border-t border-slate-200/60 py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="relative z-10 mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
           <div className="mb-10 sm:mb-14">
             <div className="mb-4">
@@ -809,7 +809,7 @@ export default function PlatformPage() {
           SECTION 5: 24/7 SLA, ROADMAP & MULTI-SITE NETWORK BENTO (Ref 2)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] border-t border-slate-200/70 py-16 sm:py-24">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl space-y-3">

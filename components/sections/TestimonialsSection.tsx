@@ -174,7 +174,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
       className="relative w-full bg-white pt-14 sm:pt-18 lg:pt-20 pb-16 sm:pb-20 lg:pb-24 select-none overflow-x-hidden content-auto"
       aria-label="Customer Testimonials"
     >
-      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+      <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
         {/* ═══ SECTION HEADER ═══ */}
         <div
           className={cn(
@@ -203,14 +203,14 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
       {/* ═══ SCROLLABLE CARD TRACK ═══ */}
       <div className="relative">
         {/* Left Fade Gradient Mask (Matching TrustedByBar style) */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 sm:w-28 md:w-36 lg:w-48 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-5 sm:w-24 md:w-36 lg:w-48 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
 
         {/* Right Fade Gradient Mask (Matching TrustedByBar style) */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 sm:w-28 md:w-36 lg:w-48 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-5 sm:w-24 md:w-36 lg:w-48 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
 
       <div
         ref={scrollContainerRef}
-        className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-4 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
+        className="flex gap-5 lg:gap-8 items-stretch py-5 -my-5 pl-5 sm:pl-6 lg:pl-[max(2.5rem,calc((100vw-1560px)/2+2.5rem))] pr-5 sm:pr-8 lg:pr-16 overflow-x-auto lg:cursor-grab scroll-smooth snap-x snap-mandatory lg:snap-none scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -286,7 +286,7 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
     </div>
 
       {/* ═══ NAVIGATION BUTTONS ═══ */}
-      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+      <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
         <div className="flex items-center justify-end gap-2.5 pt-6 sm:pt-8">
           <button
             type="button"

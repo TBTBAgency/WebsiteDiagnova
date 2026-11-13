@@ -43,22 +43,22 @@ export function PageHero({
   return (
     <section
       className={cn(
-        // Exact same outer dimensions as Home Hero: full viewport 100dvh, flex flex-col, same padding
-        "relative w-full h-[100dvh] min-h-[700px] lg:min-h-[760px] pb-3 sm:pb-4 px-4 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
+        // Exact same outer dimensions as Home Hero on desktop, auto-height breathable layout on mobile
+        "relative w-full min-h-[600px] lg:h-[100dvh] lg:min-h-[760px] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
         className
       )}
       style={{
-        paddingTop: "calc(88px + var(--announcement-bar-height, 0px))",
+        paddingTop: "calc(80px + var(--announcement-bar-height, 0px))",
       }}
     >
       {/* ─── Framed Hero Card with Exact Same Dimensions & Rounded Corners as Home Hero ─── */}
-      <div className="relative w-full h-full rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white border border-slate-200/90 shadow-xs flex items-center justify-center p-6 sm:p-8 lg:p-12">
+      <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white border border-slate-200/90 shadow-xs flex items-center justify-center px-5 py-9 sm:p-8 lg:p-12">
         {/* Subtle Ambient Soft Glow */}
         <div className="absolute -top-32 right-1/4 w-[480px] h-[480px] rounded-full bg-blue-100/35 blur-[120px] pointer-events-none z-0" />
         <div className="absolute -bottom-32 left-1/4 w-[420px] h-[420px] rounded-full bg-blue-50/50 blur-[100px] pointer-events-none z-0" />
 
         {/* Centered Content Wrapper: Perfectly balanced vertically with ample breathing room on top & bottom */}
-        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10 my-auto flex flex-col items-center justify-center text-center">
+        <div className="relative z-10 w-full max-w-[1560px] mx-auto px-0 sm:px-4 lg:px-10 my-auto flex flex-col items-center justify-center text-center">
           <div className="max-w-4xl mx-auto flex flex-col items-center w-full">
             {/* Section Badge */}
             <div className="mb-4 sm:mb-6 animate-ll-hero" style={{ animationDelay: "0ms" }}>

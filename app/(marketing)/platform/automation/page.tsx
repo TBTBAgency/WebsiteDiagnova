@@ -14,7 +14,7 @@ export default function PlatformAutomationPage() {
   return (
     <div className="pt-28 pb-20">
       <section className="bg-gradient-to-br from-diagnova-deep via-diagnova-navy to-diagnova-blue py-16 text-white text-center">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 max-w-3xl space-y-4">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 max-w-3xl space-y-4">
           <SectionBadge variant="dark">Automation Core</SectionBadge>
           <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-white">
             100% Otomatisasi &amp; Direct Analyzer Interfacing
@@ -25,7 +25,7 @@ export default function PlatformAutomationPage() {
         </div>
       </section>
 
-      <section className="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="py-16 max-w-5xl mx-auto px-5 sm:px-6 lg:px-8 space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="rounded-2xl border border-slate-200 p-6 bg-white shadow-sm space-y-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-nova-blue/20 text-diagnova-blue font-bold">

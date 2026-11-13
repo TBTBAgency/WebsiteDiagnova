@@ -496,7 +496,7 @@ export default function ModulesPage() {
         id="modules-explorer"
         className="relative scroll-mt-24 w-full bg-white py-12 sm:py-16 lg:py-24"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Section Header */}
           <div className="max-w-2xl mb-8 sm:mb-12 lg:mb-14">
             <div className="mb-3 sm:mb-3.5">
@@ -779,7 +779,7 @@ export default function ModulesPage() {
           Matching Reference Architecture: 2-Column Header + 7/5 & 5/7 Bento Grid
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] py-14 sm:py-20 lg:py-24 border-t border-slate-200/60">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* 2-Column Split Header */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 items-end mb-10 sm:mb-14">
             <div className="lg:col-span-6">
@@ -1147,7 +1147,7 @@ export default function ModulesPage() {
           SECTION 3: ARCHITECTURE (UNIFIED DATA, NO SILOS)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="lg:col-span-5 space-y-4">
               <SectionBadge variant="blue">
@@ -1227,7 +1227,7 @@ export default function ModulesPage() {
           SECTION 4: STEPPED MODULE PERFORMANCE COMPARISON (Ref 4 Midas)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#F7F9FC] border-t border-slate-200/70 py-16 sm:py-24 overflow-hidden">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <div className="rounded-[32px] border border-slate-200/90 bg-white p-7 sm:p-10 lg:p-14 shadow-2xs">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
               {/* Left Editorial Column */}

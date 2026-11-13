@@ -39,7 +39,7 @@ export default function IntegrationDetailPage({ params }: Props) {
     <div className="w-full bg-white text-slate-800">
       {/* Subpage Hero Header (Consistent with modern medical enterprise design) */}
       <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#F2F6FA] via-[#F8FBFE] to-white pt-36 sm:pt-40 pb-16 sm:pb-20 border-b border-slate-100">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <Link
             href={`/integration#${integ.slug}`}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2764B8] hover:text-[#1E5299] mb-6 transition-colors group"
@@ -61,7 +61,7 @@ export default function IntegrationDetailPage({ params }: Props) {
       </section>
 
       {/* Main Details */}
-      <section className="py-16 sm:py-20 max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-10">
+      <section className="py-16 sm:py-20 max-w-[1560px] mx-auto px-5 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-8">

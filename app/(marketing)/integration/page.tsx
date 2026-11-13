@@ -358,7 +358,7 @@ export default function IntegrationPage() {
         id="integration-explorer"
         className="w-full py-16 sm:py-24 bg-[#FAFBFD] border-y border-slate-200/70 scroll-mt-20"
       >
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
             <div className="max-w-2xl">
@@ -682,7 +682,7 @@ export default function IntegrationPage() {
           SECTION 2: GRADEWITHAI-STYLE ARCHITECTURAL HAIRLINE GRID (#architecture)
           ══════════════════════════════════════════════════════════════ */}
       <section id="architecture" className="w-full py-16 sm:py-24 bg-white border-b border-slate-200/70">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
             <div className="max-w-2xl">
@@ -899,7 +899,7 @@ export default function IntegrationPage() {
           SECTION 3: ENTERPRISE ANALYZER COMPATIBILITY DIRECTORY
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full py-16 sm:py-24 bg-[#FAFBFD] border-b border-slate-200/70">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
             <div className="max-w-2xl">
               <div className="mb-3.5">
@@ -1035,7 +1035,7 @@ export default function IntegrationPage() {
           SECTION 4: REGULATORY & SECURITY COMPLIANCE
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full py-16 sm:py-20 bg-white">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <div className="rounded-[28px] bg-[#F1F4F8] p-7 sm:p-10 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-6 space-y-3">

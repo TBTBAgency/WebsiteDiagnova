@@ -67,7 +67,7 @@ export function TrustedByBar({ initialData }: TrustedByBarProps = {}) {
       `}</style>
 
       {/* Centered Heading Label */}
-      <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 text-center mb-6 sm:mb-8">
+      <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 text-center mb-6 sm:mb-8">
         <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
           {headingLabel}
         </p>

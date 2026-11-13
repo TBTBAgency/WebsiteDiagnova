@@ -86,42 +86,42 @@ export function CTABanner({
       {/* Background biru footer di bagian bawah dibuat tipis pas di area lengkungan sudut bawah saja */}
       <div className="absolute inset-x-0 bottom-0 h-8 sm:h-10 lg:h-12 bg-[#2568BA] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
-        {/* Main Rounded CTA Container (Ukuran Asli max-w-7xl, tanpa inline stroke) */}
-        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-r from-[#EBF3FB] via-[#E4EFF9] to-[#D5E6F7] shadow-[0_10px_40px_-15px_rgba(40,90,165,0.07)] gpu-layer">
+      <div className="relative z-10 mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
+        {/* Main Rounded CTA Container */}
+        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] bg-gradient-to-br from-[#F0F6FC] via-[#E4EFFA] to-[#CFE2F7] border border-blue-200/60 shadow-[0_14px_40px_-14px_rgba(37,104,186,0.16)] gpu-layer">
           {/* Ambient Glow Orb */}
           <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#56ADE2]/20 blur-[80px] pointer-events-none animate-dna-glow" />
 
           {/* Subtle white gradient fade at top edge */}
           <div className="absolute inset-x-0 top-0 h-24 sm:h-32 lg:h-40 bg-gradient-to-b from-white/90 via-white/35 to-transparent pointer-events-none z-10" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center min-h-[400px] lg:min-h-[440px]">
-            {/* Left Column: Heading, Subtitle & Email Input Form (Lapisan Depan z-20) */}
-            <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center relative z-20">
-              <h2 className="font-display text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.18] sm:leading-[1.22] mb-3 sm:mb-5">
+          <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-12 lg:items-center lg:min-h-[440px]">
+            {/* Left/Top Column: Heading, Subtitle & Email Input Form */}
+            <div className="lg:col-span-7 px-6 pt-8 pb-5 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-center items-center text-center lg:items-start lg:text-left relative z-20">
+              <h2 className="font-display text-[24px] sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.2] sm:leading-[1.22] mb-3 sm:mb-4">
                 {titleText}
               </h2>
 
-              <p className="text-slate-600 text-xs sm:text-base lg:text-lg leading-relaxed max-w-lg mb-6 sm:mb-10 font-normal">
+              <p className="text-slate-600 text-[13.5px] sm:text-base lg:text-lg leading-relaxed max-w-md lg:max-w-lg mb-6 sm:mb-8 font-normal">
                 {subtitleText}
               </p>
 
-              {/* White Pill Input Container (Adaptive: stacked card on tiny screens, sleek pill on sm+) */}
+              {/* Form: Clean stacked input + full-width button on mobile, unified sleek pill on sm+ */}
               <form
                 onSubmit={handleSubmit}
-                className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-white rounded-2xl sm:rounded-full p-2 sm:p-2 pl-4 sm:pl-7 shadow-[0_8px_30px_rgba(40,90,165,0.08)] border border-blue-100/90 max-w-lg w-full transition-all focus-within:ring-2 focus-within:ring-[#2E68B4]/30 focus-within:border-[#2E68B4] focus-within:shadow-[0_12px_36px_rgba(46,104,180,0.18)] gap-2.5 sm:gap-0"
+                className="relative flex flex-col sm:flex-row items-stretch sm:items-center sm:bg-white sm:rounded-full sm:p-2 sm:pl-6 sm:shadow-[0_8px_30px_rgba(40,90,165,0.08)] sm:border sm:border-blue-100/90 max-w-md sm:max-w-lg w-full transition-all sm:focus-within:ring-2 sm:focus-within:ring-[#2E68B4]/30 sm:focus-within:border-[#2E68B4] gap-2.5 sm:gap-0"
               >
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={placeholderText}
-                  className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder-slate-400 outline-none pr-3 py-1.5 sm:py-0"
+                  className="w-full bg-white sm:bg-transparent rounded-xl sm:rounded-none border border-blue-100/90 sm:border-0 px-4 py-3 sm:px-0 sm:pr-3 sm:py-0 shadow-sm sm:shadow-none text-sm sm:text-base text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-[#2E68B4]/25 sm:focus:ring-0"
                   required
                 />
                 <button
                   type="submit"
-                  className="group relative inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white font-semibold px-5 sm:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm shrink-0 transition-all duration-200 shadow-sm cursor-pointer active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/25 overflow-hidden"
+                  className="group relative inline-flex items-center justify-center gap-1.5 rounded-xl sm:rounded-full bg-[#2764B8] hover:bg-[#1E5299] text-white font-semibold px-5 sm:px-7 py-3.5 sm:py-3.5 text-sm shrink-0 transition-all duration-200 shadow-md sm:shadow-sm cursor-pointer active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/25 overflow-hidden"
                 >
                   <span className="animate-shine-continuous" />
                   <span className="relative z-10 flex items-center gap-2">
@@ -132,18 +132,18 @@ export function CTABanner({
               </form>
             </div>
 
-            {/* Right Column: Official CTA Image (Responsive & Flexible across mobile, tablet, desktop) */}
+            {/* Right/Bottom Column: Official CTA Image */}
             <div
               id="cta-image-container"
-              className="lg:col-span-5 relative w-full h-[220px] sm:h-[300px] lg:h-full min-h-[220px] sm:min-h-[300px] lg:min-h-[440px] self-stretch flex items-end justify-center lg:justify-end pointer-events-none overflow-hidden"
+              className="lg:col-span-5 relative w-full lg:h-full lg:min-h-[440px] self-stretch flex items-end justify-center lg:justify-end pointer-events-none overflow-hidden px-5 pt-1 pb-0 lg:p-0"
             >
-              <div className="relative lg:absolute right-0 bottom-0 w-full max-w-[340px] sm:max-w-[480px] lg:max-w-[659px] flex items-end justify-center lg:justify-end translate-x-0 sm:translate-x-0.5 lg:translate-x-1 z-10 px-4 sm:px-0">
+              <div className="relative lg:absolute right-0 bottom-0 w-full max-w-[330px] sm:max-w-[440px] lg:max-w-[659px] flex items-end justify-center lg:justify-end lg:translate-x-1 z-10">
                 <Image
                   src="/images/CTA-image.webp"
                   alt="Diagnova Platform on Laptop"
                   width={1200}
                   height={960}
-                  className="w-full h-auto max-h-[320px] lg:max-h-none object-contain object-bottom select-none pointer-events-none"
+                  className="w-full h-auto object-contain object-bottom select-none pointer-events-none drop-shadow-[0_10px_24px_rgba(30,64,120,0.14)] lg:drop-shadow-none"
                   loading="lazy"
                 />
               </div>

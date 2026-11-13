@@ -125,7 +125,7 @@ export default function SolutionsPage() {
         id="facility-solutions"
         className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
       >
-        <div className="relative z-10 mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
+        <div className="relative z-10 mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Section Header (Left-aligned with SectionBadge like other sections) */}
           <div className="max-w-3xl mb-10 sm:mb-12">
             <div className="mb-3.5">
@@ -500,7 +500,7 @@ export default function SolutionsPage() {
           FACILITY FIT MATRIX (ONE-SCREEN VIEWPORT SCALE - ZERO OVERFLOW)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#FAFBFD] border-t border-slate-200/60 min-h-screen lg:h-screen lg:max-h-[1020px] flex flex-col justify-center py-2 sm:py-3 lg:py-4 overflow-hidden">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full relative">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full relative">
           {/* Blue Framed Container Pod with Request-Demo Gradient & Orbs */}
           <div className="relative rounded-[30px] sm:rounded-[38px] bg-gradient-to-br from-[#2F77E3] via-[#2466CB] to-[#1A54B0] pt-12 sm:pt-16 lg:pt-20 pb-32 sm:pb-36 lg:pb-40 px-6 sm:px-10 lg:px-14 shadow-[0_20px_50px_-12px_rgba(26,84,176,0.32)] overflow-hidden">
             {/* Ambient Glowing Orbs */}
@@ -571,7 +571,7 @@ export default function SolutionsPage() {
           </div>
 
           {/* 3 Floating White Cards (Exact Halo Tag Wrapper Architecture - Fits 100% On Screen) */}
-          <div className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-28 grid grid-cols-1 md:grid-cols-3 gap-3.5 lg:gap-4.5 max-w-[1240px] mx-auto items-stretch px-4 sm:px-6">
+          <div className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-28 grid grid-cols-1 md:grid-cols-3 gap-3.5 lg:gap-4.5 max-w-[1240px] mx-auto items-stretch px-5 sm:px-6">
             {/* Card 1: Tier 1 - Hospital Systems */}
             <div className="relative p-[36px_6px_6px] rounded-[28px] transition-colors duration-200 hover:bg-[#EBF3FB] focus-within:bg-[#EBF3FB] group/plan">
               {/* Top Tag */}
@@ -849,7 +849,7 @@ export default function SolutionsPage() {
           SECTION 3: EFFICIENCY TRAJECTORY & MANUAL VS DIAGNOVA EDGE
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-white border-t border-slate-200/70 py-16 sm:py-24">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl space-y-3">
@@ -1099,7 +1099,7 @@ export default function SolutionsPage() {
           SECTION 4: 4-WEEK GO-LIVE GANTT TIMELINE (Ref 5/6)
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-[#F7F9FC] border-t border-slate-200/70 py-16 sm:py-24">
-        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl space-y-3">
