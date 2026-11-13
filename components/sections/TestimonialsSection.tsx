@@ -265,7 +265,8 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
                   alt={`${item.name} - silhouette`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 290px, 320px"
-                  className="object-cover object-top md:object-center"
+                  className="object-cover object-top md:object-center select-none pointer-events-none"
+                  draggable={false}
                   loading="eager"
                 />
                 {/* Subtle soft gradient overlay */}
