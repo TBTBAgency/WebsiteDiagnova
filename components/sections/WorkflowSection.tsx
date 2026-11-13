@@ -7,10 +7,6 @@ import {
   Cpu,
   Activity,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Pause,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -218,11 +214,6 @@ export function WorkflowSection({ initialData }: WorkflowSectionProps = {}) {
   ]);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
-  // Active step for responsive slider/stepper (on medium/mobile screens)
-  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [showAllStagesMobile, setShowAllStagesMobile] = useState<boolean>(false);
-
   // Scroll detection for header and initial reveals with rAF throttling
   useEffect(() => {
     let ticking = false;
@@ -276,19 +267,6 @@ export function WorkflowSection({ initialData }: WorkflowSectionProps = {}) {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Auto-play stepper on mobile/tablet when in view and playing
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const interval = setInterval(() => {
-      setCurrentStepIndex((prev) => (prev + 1) % workflowSteps.length);
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [isPlaying, workflowSteps.length]);
-
-  const activeStep = workflowSteps[currentStepIndex];
 
   return (
     <section
@@ -585,187 +563,40 @@ export function WorkflowSection({ initialData }: WorkflowSectionProps = {}) {
           })}
         </div>
 
-        {/* ═══ 2. MOBILE & TABLET VIEWPORT (< 1024px / lg) ═══ */}
+        {/* ═══ 2. MOBILE & TABLET VIEWPORT (< 1024px / lg) — Clean Vertical Connected Timeline ═══ */}
         <div className="block lg:hidden w-full">
-          {/* Interactive Stepper Bar */}
-          <div className="grid grid-cols-4 gap-1.5 mb-5 p-1.5 rounded-2xl bg-[#0F2C59]/35 backdrop-blur-md border border-white/20">
-            {workflowSteps.map((step, idx) => {
-              const isActive = currentStepIndex === idx;
-              return (
-                <button
-                  key={step.id}
-                  type="button"
-                  onClick={() => {
-                    setCurrentStepIndex(idx);
-                    setIsPlaying(false);
-                  }}
-                  className={cn(
-                    "py-2 px-1 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-center gap-0.5",
-                    isActive
-                      ? "bg-white text-[#1E4F9C] shadow-md font-bold"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                  )}
-                >
-                  <span className="font-mono text-[11px] tracking-tight">{step.number}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Sleek DNA Visual Track */}
-          <div className="relative w-full h-36 sm:h-48 rounded-2xl overflow-hidden mb-5 bg-gradient-to-b from-[#174A8B]/45 to-[#0F2C59]/55 border border-white/20 shadow-inner">
-            <Image
-              src="/images/dna-workflow.webp"
-              alt="Diagnova DNA Workflow"
-              fill
-              loading="eager"
-              className="object-contain object-bottom pointer-events-none translate-y-[6%] scale-[1.03] opacity-90"
-              sizes="100vw"
-            />
-            {/* Soft bottom vignette for contrast */}
-            <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0F2C59]/60 to-transparent pointer-events-none" />
-
-            {/* Glowing Active Step Node + Label Pill */}
+          <div className="relative pl-11 sm:pl-13">
+            {/* Vertical Timeline Connector Rail */}
             <div
-              className="absolute bottom-[26%] -translate-x-1/2 pointer-events-none transition-all duration-500 ease-out flex flex-col items-center"
-              style={{ left: `${activeStep.dnaPercentX}%` }}
-            >
-              <span className="mb-2 px-2.5 py-0.5 rounded-full bg-white text-[#1E4F9C] text-[10px] font-bold shadow-md whitespace-nowrap">
-                {activeStep.shortTitle}
-              </span>
-              <div className="relative flex items-center justify-center">
-                <span className="absolute w-7 h-7 rounded-full bg-white/45 animate-ping" />
-                <span className="w-3.5 h-3.5 rounded-full bg-white border-2 border-[#2568BA] shadow-[0_0_12px_white]" />
-              </div>
-            </div>
-          </div>
+              className="absolute left-[15px] sm:left-[17px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-white/85 via-white/50 to-white/20 rounded-full"
+              aria-hidden="true"
+            />
 
-          {/* High-Contrast Solid White Stage Card */}
-          <div className="relative rounded-3xl bg-white text-slate-900 p-5 sm:p-6 shadow-[0_20px_50px_rgba(10,31,68,0.22)] border border-white/90 mb-5 transition-all">
-            <div className="flex items-start justify-between gap-3 mb-3.5">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="h-10 w-10 rounded-xl bg-[#EBF3FE] text-[#2568BA] flex items-center justify-center shrink-0 border border-blue-100">
-                  {getStepIcon(activeStep.iconName, "h-5 w-5")}
-                </div>
-                <div className="min-w-0">
-                  <span className="text-[11px] uppercase font-mono font-bold tracking-wider text-[#2568BA] block">
-                    {language === "ID" ? "Tahap" : "Stage"} {activeStep.number} / 04
-                  </span>
-                  <h3 className="font-display font-bold text-slate-900 text-base sm:text-lg leading-snug">
-                    {activeStep.title}
-                  </h3>
-                </div>
-              </div>
+            <div className="space-y-4">
+              {workflowSteps.map((step) => (
+                <div key={step.id} className="relative">
+                  {/* Numbered Step Node on Rail */}
+                  <div className="absolute -left-11 sm:-left-13 top-4 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white text-[#1E4F9C] font-mono text-xs font-bold shadow-[0_6px_16px_rgba(12,35,75,0.22)] ring-4 ring-white/20">
+                    {step.number}
+                  </div>
 
-              <button
-                type="button"
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-full shrink-0 transition-colors cursor-pointer"
-                title={isPlaying ? "Jeda Otomatis" : "Putar Otomatis"}
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="h-3 w-3" />
-                    <span>Auto</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3 w-3" />
-                    <span>Play</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            <p className="text-[13.5px] sm:text-sm text-slate-600 font-normal leading-relaxed mb-4">
-              {activeStep.description}
-            </p>
-
-            {/* Step Progress Track */}
-            <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden mb-4">
-              <div
-                className="h-full rounded-full bg-[#2568BA] transition-all duration-300 ease-out"
-                style={{ width: `${((currentStepIndex + 1) / workflowSteps.length) * 100}%` }}
-              />
-            </div>
-
-            {/* Interactive Stage Controls */}
-            <div className="flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentStepIndex(
-                    (prev) =>
-                      (prev - 1 + workflowSteps.length) % workflowSteps.length
-                  );
-                  setIsPlaying(false);
-                }}
-                className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-xl active:scale-[0.98] transition-all cursor-pointer"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                <span>{language === "ID" ? "Sebelumnya" : "Previous"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentStepIndex(
-                    (prev) => (prev + 1) % workflowSteps.length
-                  );
-                  setIsPlaying(false);
-                }}
-                className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#2568BA] hover:bg-[#1D5499] px-4 py-2.5 rounded-xl shadow-sm active:scale-[0.98] transition-all cursor-pointer"
-              >
-                <span>{language === "ID" ? "Berikutnya" : "Next"}</span>
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* View All Stages Toggle */}
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setShowAllStagesMobile(!showAllStagesMobile)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0F2C59]/35 hover:bg-[#0F2C59]/50 border border-white/25 text-xs font-semibold text-white transition-all cursor-pointer"
-            >
-              {showAllStagesMobile
-                ? language === "ID"
-                  ? "Sembunyikan Daftar Penuh ↑"
-                  : "Hide Full List ↑"
-                : language === "ID"
-                ? "Lihat Semua 4 Tahapan Sekaligus ↓"
-                : "View All 4 Stages Below ↓"}
-            </button>
-
-            {/* Expandable Connected Vertical Timeline (High-Contrast White Cards) */}
-            {showAllStagesMobile && (
-              <div className="relative pl-6 mt-5 text-left animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="absolute left-[11px] top-4 bottom-4 w-[2px] bg-white/40 rounded-full" />
-                <div className="space-y-3">
-                  {workflowSteps.map((step) => (
-                    <div key={step.id} className="relative">
-                      <div className="absolute -left-[19px] top-4 flex items-center justify-center">
-                        <span className="w-3 h-3 rounded-full bg-white border-2 border-[#2568BA] shadow-sm" />
+                  {/* High-Contrast Step Card */}
+                  <div className="rounded-2xl bg-white p-5 shadow-[0_14px_34px_rgba(12,35,75,0.16)] border border-white/90">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="h-9 w-9 rounded-xl bg-[#EBF3FE] text-[#2568BA] flex items-center justify-center shrink-0 border border-blue-100/80">
+                        {getStepIcon(step.iconName, "h-4.5 w-4.5")}
                       </div>
-                      <div className="rounded-2xl bg-white/95 p-4 text-slate-900 shadow-md border border-white">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <h4 className="font-display font-bold text-[13px] text-slate-900">
-                            {step.title}
-                          </h4>
-                          <span className="font-mono text-[10px] font-bold text-[#2568BA] bg-[#EBF3FE] px-2 py-0.5 rounded-full shrink-0">
-                            {step.number}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-600 font-normal leading-relaxed">
-                          {step.description}
-                        </p>
-                      </div>
+                      <h3 className="font-display font-bold text-[15.5px] sm:text-base text-slate-900 leading-snug">
+                        {step.title}
+                      </h3>
                     </div>
-                  ))}
+                    <p className="text-[13px] sm:text-sm text-slate-600 font-normal leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
         </div>
       </div>
