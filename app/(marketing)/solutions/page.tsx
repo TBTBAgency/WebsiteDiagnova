@@ -172,52 +172,31 @@ export default function SolutionsPage() {
             {/* ROW 1: 3 EQUAL VERTICAL CARDS (Hospital, Clinical/MCU, Pathology) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
               {/* Card 1: Central Hospital Laboratory */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col group">
-                {/* Top Visual Stage: Soft Warm Canvas with 3 Live Status Pills */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FFF6EE] via-[#FFFAF6] to-white border border-orange-100/80 h-[220px] flex flex-col justify-center gap-2.5 mb-5 shadow-2xs">
-                  {/* Floating Pill 1 */}
-                  <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] text-xs font-semibold text-slate-800">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-6 w-6 rounded-lg bg-[#FFEFE6] text-amber-600 flex items-center justify-center shrink-0">
-                        <Building2 className="h-3.5 w-3.5" />
-                      </div>
-                      <span className="truncate">
-                        {language === "ID" ? "Bridging SIMRS & RME" : "HIS & EMR Bridging"}
-                      </span>
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
+                {/* Top Visual Stage: Soft Peach/Orange Canvas with 3 Floating Status Pills */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FFF5ED] via-[#FFF9F5] to-white border border-orange-100/80 h-[215px] flex flex-col justify-center gap-2.5 mb-5 shadow-2xs">
+                  {/* Floating Pill 1: Automated HIS & EMR Bridging */}
+                  <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                    <div className="h-6 w-6 rounded-lg bg-[#FFEFE6] text-amber-600 flex items-center justify-center shrink-0">
+                      <Building2 className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/70 shrink-0">
-                      HL7/FHIR
-                    </span>
+                    <span className="truncate">Automated HIS &amp; EMR Bridging</span>
                   </div>
 
-                  {/* Floating Pill 2 */}
-                  <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] text-xs font-semibold text-slate-800">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-6 w-6 rounded-lg bg-[#FEECEB] text-rose-500 flex items-center justify-center shrink-0">
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                      </div>
-                      <span className="truncate">
-                        {language === "ID" ? "Alert Kritis IGD & ICU" : "ER & ICU Panic Alerts"}
-                      </span>
+                  {/* Floating Pill 2: ER & ICU Panic Alerts < 25m */}
+                  <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                    <div className="h-6 w-6 rounded-lg bg-[#FEECEB] text-rose-500 flex items-center justify-center shrink-0">
+                      <AlertTriangle className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-[10px] font-mono font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/70 shrink-0">
-                      &lt; 25m
-                    </span>
+                    <span className="truncate">ER &amp; ICU Panic Alerts &lt; 25m</span>
                   </div>
 
-                  {/* Floating Pill 3 */}
-                  <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] text-xs font-semibold text-slate-800">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-6 w-6 rounded-lg bg-[#FEF6E6] text-amber-500 flex items-center justify-center shrink-0">
-                        <Zap className="h-3.5 w-3.5" />
-                      </div>
-                      <span className="truncate">
-                        {language === "ID" ? "Barcode Flebotomi Bedside" : "Bedside Phlebotomy"}
-                      </span>
+                  {/* Floating Pill 3: Bedside Phlebotomy Barcode */}
+                  <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-xs font-semibold text-slate-800">
+                    <div className="h-6 w-6 rounded-lg bg-[#FEF6E6] text-amber-500 flex items-center justify-center shrink-0">
+                      <Zap className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/70 shrink-0">
-                      2D Scan
-                    </span>
+                    <span className="truncate">Bedside Phlebotomy Barcode</span>
                   </div>
                 </div>
 
@@ -233,31 +212,21 @@ export default function SolutionsPage() {
               </div>
 
               {/* Card 2: Clinical & Reference Labs */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col group">
-                {/* Top Visual Stage: Soft Blue Canvas with Corporate MCU Intake Box */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EFF7FF] via-[#F7FBFF] to-white border border-blue-100/80 h-[220px] flex flex-col justify-between mb-5 shadow-2xs">
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
+                {/* Top Visual Stage: Soft Cyan/Blue Canvas with Corporate MCU Intake Box */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EFF8FF] via-[#F6FAFF] to-white border border-blue-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                       Batch Ingested
                     </span>
-                    <span className="text-[10px] font-mono font-bold text-slate-700 bg-white px-2 py-0.5 rounded-md border border-slate-200/70">
-                      PT Telkom (450 Pax)
-                    </span>
+                    <span className="text-[10px] font-mono font-bold text-slate-700">PT Telkom (450 Pax)</span>
                   </div>
 
                   {/* Corporate MCU Roster Box */}
-                  <div className="p-3.5 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-bold text-xs sm:text-sm text-slate-900">Corporate MCU Roster</h4>
-                      <span className="text-[10px] font-mono font-bold text-[#0073FC]">100%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                      <div className="h-full w-full rounded-full bg-[#0073FC]" />
-                    </div>
-                    <p className="text-[10px] font-mono text-slate-500">
-                      {language === "ID" ? "450 Barcode Terbit • 0.4s / Peserta" : "450 Barcodes Issued • 0.4s / Pax"}
-                    </p>
+                  <div className="p-3 rounded-xl bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-1">
+                    <h4 className="font-bold text-xs sm:text-sm text-slate-900">Corporate MCU Roster</h4>
+                    <p className="text-[10px] font-mono text-slate-500">450 Barcode Terbit • 0.4s / Peserta</p>
                   </div>
 
                   {/* Bottom Avatar Initials + WhatsApp Delivery */}
@@ -274,12 +243,10 @@ export default function SolutionsPage() {
                           C
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-medium">
-                        {language === "ID" ? "+447 Lainnya" : "+447 Others"}
-                      </span>
+                      <span className="text-[10px] text-slate-500 font-medium">+447 Lainnya</span>
                     </div>
 
-                    <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-[#2764B8] bg-blue-50/90 px-2.5 py-1 rounded-full border border-blue-200/70">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2764B8]">
                       <Send className="h-3 w-3" />
                       WhatsApp PDF
                     </span>
@@ -298,54 +265,55 @@ export default function SolutionsPage() {
               </div>
 
               {/* Card 3: Anatomical Pathology */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col group">
+              <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Soft Mint/Green Canvas with 5-Step Pipeline & Action Buttons */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#ECF9F1] via-[#F5FCF8] to-white border border-emerald-100/80 h-[220px] flex flex-col justify-between mb-5 shadow-2xs">
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#EDFAF2] via-[#F5FCF7] to-white border border-emerald-100/80 h-[215px] flex flex-col justify-between mb-5 shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800">
-                      {language === "ID" ? "Alur Kaset & Slide" : "Cassette & Slide Flow"}
-                    </span>
+                    <span className="text-xs font-bold text-slate-800">Alur Kaset &amp; Slide</span>
                     <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
                       Zero Mix-Up
                     </span>
                   </div>
 
-                  {/* 5-Step Progress Boxes with Connecting Track */}
-                  <div className="relative">
-                    <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-0.5 bg-emerald-200/80 pointer-events-none" />
-                    <div className="relative z-10 grid grid-cols-5 gap-1.5 text-center text-[10px] font-mono">
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-700 font-bold shadow-2xs">
-                        G
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-700 font-bold shadow-2xs">
-                        E
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-700 font-bold shadow-2xs">
-                        M
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-700 font-bold shadow-2xs">
-                        S
-                      </div>
-                      <div className="bg-emerald-600 text-white p-1.5 rounded-lg font-bold shadow-2xs flex items-center justify-center">
-                        <Check className="h-3.5 w-3.5" />
-                      </div>
+                  {/* 5-Step Progress Boxes [ G ] [ E ] [ M ] [ S ] [ ✓ ] */}
+                  <div className="grid grid-cols-5 gap-1.5 text-center text-[10px] font-mono">
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-600 font-bold shadow-2xs">
+                      G
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-600 font-bold shadow-2xs">
+                      E
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-600 font-bold shadow-2xs">
+                      M
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-slate-600 font-bold shadow-2xs">
+                      S
+                    </div>
+                    <div className="bg-emerald-600 text-white p-1.5 rounded-lg font-bold shadow-2xs flex items-center justify-center">
+                      <Check className="h-3.5 w-3.5" />
                     </div>
                   </div>
 
                   {/* Sample ID & ICD-O Standard */}
-                  <div className="flex items-center justify-between text-[10px] font-mono bg-white/80 px-2.5 py-1.5 rounded-lg border border-slate-200/60">
-                    <span className="text-slate-500">#PA-24-0982 ({language === "ID" ? "Biopsi" : "Biopsy"})</span>
-                    <span className="text-slate-800 font-bold">ICD-O 8500/3</span>
+                  <div className="flex items-center justify-between text-[10px] font-mono">
+                    <span className="text-slate-500">#PA-24-0982 (Biopsi)</span>
+                    <span className="text-slate-700 font-bold">ICD-O 8500/3</span>
                   </div>
 
                   {/* 2 Bottom Action Buttons */}
                   <div className="grid grid-cols-2 gap-2">
-                    <span className="px-2 py-1.5 rounded-lg bg-white border border-slate-200 text-[10px] font-semibold text-slate-700 shadow-2xs text-center">
-                      {language === "ID" ? "Arsip Blok" : "Block Archive"}
-                    </span>
-                    <span className="px-2 py-1.5 rounded-lg bg-[#0F172A] text-[10px] font-semibold text-white shadow-2xs text-center">
-                      {language === "ID" ? "Validasi Sp.PA" : "Pathologist Sign"}
-                    </span>
+                    <button
+                      type="button"
+                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-[10px] font-medium text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
+                    >
+                      Arsip Blok
+                    </button>
+                    <button
+                      type="button"
+                      className="px-2 py-1 rounded-lg bg-[#0F172A] text-[10px] font-semibold text-white shadow-2xs hover:bg-slate-800 transition-colors"
+                    >
+                      Validasi Sp.PA
+                    </button>
                   </div>
                 </div>
 
@@ -364,41 +332,41 @@ export default function SolutionsPage() {
             {/* ══════════════════════════════════════════════════════════════
                 ROW 2: 2 BALANCED CARDS (Microbiology Stewardship & Nova AI)
                 ══════════════════════════════════════════════════════════════ */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7">
               {/* Card 4: Microbiology Stewardship & Blood Bank (Wide 7-col) */}
-              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col group">
+              <div className="lg:col-span-7 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Workstation Telemetry & AST Sensitivity Table */}
-                <div className="flex-1 p-4 sm:p-5 rounded-2xl bg-[#F4F7FB] border border-slate-200/80 mb-5 flex flex-col justify-between gap-4 shadow-2xs">
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#F6F9FD] via-[#FAFBFD] to-white border border-slate-200/90 mb-5 space-y-3.5 shadow-2xs">
                   {/* Top Bar with Tab Switcher & Status Badge */}
-                  <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-200/80">
+                  <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-200/70">
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => setActiveSubTab("micro")}
                         className={cn(
-                          "px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer",
+                          "px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer",
                           activeSubTab === "micro"
-                            ? "bg-[#0073FC] text-white shadow-xs"
-                            : "text-slate-600 hover:text-slate-900 bg-white/80 border border-slate-200/70"
+                            ? "bg-[#2764B8] text-white shadow-2xs"
+                            : "text-slate-600 hover:text-slate-900 bg-transparent"
                         )}
                       >
-                        {language === "ID" ? "Kultur Mikrobiologi PPRA" : "Microbiology & AST"}
+                        Kultur Mikrobiologi PPRA
                       </button>
                       <button
                         type="button"
                         onClick={() => setActiveSubTab("blood")}
                         className={cn(
-                          "px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer",
+                          "px-3 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer",
                           activeSubTab === "blood"
-                            ? "bg-[#0073FC] text-white shadow-xs"
-                            : "text-slate-600 hover:text-slate-900 bg-white/80 border border-slate-200/70"
+                            ? "bg-[#2764B8] text-white shadow-2xs font-semibold"
+                            : "text-slate-600 hover:text-slate-900 bg-transparent"
                         )}
                       >
-                        {language === "ID" ? "Bank Darah (BDRS)" : "Blood Bank (ISBT)"}
+                        Bank Darah (BDRS)
                       </button>
                     </div>
 
-                    <span className="text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <span className="text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       Real-Time Telemetry
                     </span>
@@ -406,11 +374,9 @@ export default function SolutionsPage() {
 
                   {activeSubTab === "micro" ? (
                     /* 3 Telemetry Columns (Microbiology Mode) */
-                    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 bg-white rounded-xl border border-slate-200/80 p-3 text-xs">
-                      <div className="px-2 py-1.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">
-                          {language === "ID" ? "Isolat Kuman" : "Pathogen Isolate"}
-                        </span>
+                    <div className="grid grid-cols-3 divide-x divide-slate-100 bg-white rounded-xl border border-slate-200/80 p-2 text-xs">
+                      <div className="px-2 py-1">
+                        <span className="text-[10px] text-slate-400 font-mono block">Isolat Kuman</span>
                         <span className="font-bold text-slate-900 text-xs sm:text-sm font-mono truncate block mt-0.5">
                           S. aureus (18h)
                         </span>
@@ -418,10 +384,8 @@ export default function SolutionsPage() {
                           VITEK-2 Ingested
                         </span>
                       </div>
-                      <div className="px-2 sm:px-3 py-1.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">
-                          {language === "ID" ? "Sensitivitas Utama" : "Primary Susceptible"}
-                        </span>
+                      <div className="px-2.5 py-1">
+                        <span className="text-[10px] text-slate-400 font-mono block">Sensitivitas Utama</span>
                         <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono block mt-0.5">
                           Vancomycin (S)
                         </span>
@@ -429,10 +393,8 @@ export default function SolutionsPage() {
                           MIC &le; 0.5 &micro;g/mL
                         </span>
                       </div>
-                      <div className="px-2 sm:px-3 py-1.5">
-                        <span className="text-[10px] text-red-500 font-mono block font-bold">
-                          {language === "ID" ? "Resistensi Terdeteksi" : "Resistance Flagged"}
-                        </span>
+                      <div className="px-2.5 py-1">
+                        <span className="text-[10px] text-red-500 font-mono block font-bold">Resistensi Terdeteksi</span>
                         <span className="font-bold text-red-700 text-xs sm:text-sm font-mono block mt-0.5">
                           Cefoxitin / MRSA (R)
                         </span>
@@ -443,35 +405,29 @@ export default function SolutionsPage() {
                     </div>
                   ) : (
                     /* 3 Telemetry Columns (Blood Bank Mode) */
-                    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 bg-white rounded-xl border border-slate-200/80 p-3 text-xs">
-                      <div className="px-2 py-1.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">
-                          {language === "ID" ? "Uji Silang Serasi" : "Crossmatch Status"}
-                        </span>
+                    <div className="grid grid-cols-3 divide-x divide-slate-100 bg-white rounded-xl border border-slate-200/80 p-2 text-xs">
+                      <div className="px-2 py-1">
+                        <span className="text-[10px] text-slate-400 font-mono block">Uji Silang Serasi</span>
                         <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono truncate block mt-0.5">
-                          {language === "ID" ? "Mayor & Minor (OK)" : "Major & Minor (OK)"}
+                          Mayor &amp; Minor (OK)
                         </span>
                         <span className="text-[10px] font-mono text-slate-500 block mt-0.5">
                           #ID-0892 &times; Ny. Mariam
                         </span>
                       </div>
-                      <div className="px-2 sm:px-3 py-1.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">
-                          {language === "ID" ? "Suhu Kulkas BDRS" : "Cold-Chain Temp"}
-                        </span>
+                      <div className="px-2.5 py-1">
+                        <span className="text-[10px] text-slate-400 font-mono block">Suhu Kulkas BDRS</span>
                         <span className="font-bold text-[#2764B8] text-xs sm:text-sm font-mono block mt-0.5">
-                          3.8&deg;C ({language === "ID" ? "Aman" : "Optimal"})
+                          3.8&deg;C (Aman)
                         </span>
                         <span className="text-[10px] font-mono text-slate-500 block mt-0.5">
-                          {language === "ID" ? "Rentang 2°C - 6°C" : "Range 2°C - 6°C"}
+                          Rentang 2&deg;C - 6&deg;C
                         </span>
                       </div>
-                      <div className="px-2 sm:px-3 py-1.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">
-                          {language === "ID" ? "Rotasi FEFO Stok" : "FEFO Stock Rotation"}
-                        </span>
+                      <div className="px-2.5 py-1">
+                        <span className="text-[10px] text-slate-400 font-mono block">Rotasi FEFO Stok</span>
                         <span className="font-bold text-emerald-700 text-xs sm:text-sm font-mono block mt-0.5">
-                          {language === "ID" ? "Sisa 24 Hari" : "24 Days Left"}
+                          Sisa 24 Hari
                         </span>
                         <span className="text-[10px] font-mono text-emerald-600 font-semibold block mt-0.5">
                           ISBT-128 Verified
@@ -481,18 +437,16 @@ export default function SolutionsPage() {
                   )}
 
                   {/* Interactive Search Pill Bar */}
-                  <div className="flex items-center justify-between gap-2 p-2 pl-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="text-[11px] text-slate-400 font-normal truncate">
-                        {language === "ID"
-                          ? "Cari riwayat kultur kuman atau pola resistensi antibiogram..."
-                          : "Search pathogen culture history or CLSI antibiogram patterns..."}
-                      </span>
-                    </div>
-                    <span className="px-3.5 py-1.5 rounded-lg bg-[#0073FC] text-white font-semibold text-[10.5px] shadow-2xs shrink-0">
-                      {language === "ID" ? "Cari" : "Search"}
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
+                    <span className="text-[11px] text-slate-400 font-normal px-1 truncate">
+                      Cari riwayat kultur kuman atau pola resistensi antibiogram...
                     </span>
+                    <button
+                      type="button"
+                      className="px-3.5 py-1 rounded-full bg-[#FF5A1F] hover:bg-[#E04B14] text-white font-bold text-[10px] shadow-2xs transition-colors shrink-0"
+                    >
+                      Enter
+                    </button>
                   </div>
                 </div>
 
@@ -510,45 +464,30 @@ export default function SolutionsPage() {
               </div>
 
               {/* Card 5: Nova AI Clinical Summaries (Compact 5-col) */}
-              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-lg hover:border-blue-200/80 transition-all duration-300 flex flex-col group">
+              <div className="lg:col-span-5 rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(31,45,93,0.04)] hover:shadow-md transition-all duration-300 flex flex-col group">
                 {/* Top Visual Stage: Nova AI Clinical Narrative Summary */}
-                <div className="flex-1 p-4 sm:p-5 rounded-2xl bg-[#F4F7FB] border border-slate-200/80 mb-5 flex flex-col justify-between gap-3 shadow-2xs">
-                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-[#FAFBFD] via-[#F8FAFD] to-white border border-slate-200/90 mb-5 space-y-2.5 shadow-2xs">
+                  <div className="flex items-center justify-between border-b border-slate-200/70 pb-2">
                     <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-[#0073FC]" />
+                      <Sparkles className="h-3.5 w-3.5 text-[#2764B8]" />
                       Summary Nova AI
                     </span>
-                    <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 font-bold">
+                    <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
                       Delta Check
                     </span>
                   </div>
 
-                  {/* 3 Narrative Summary Cards with Status Icons */}
-                  <div className="space-y-2 text-[11px] text-slate-600 leading-relaxed font-normal my-auto">
-                    <div className="p-2.5 rounded-xl bg-white border border-slate-200/70 shadow-2xs flex items-start gap-2.5">
-                      <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                      <span>
-                        {language === "ID"
-                          ? "Terdeteksi lonjakan biomarker serum Kreatinin (+115% vs baseline 3 bulan lalu)."
-                          : "Detected serum Creatinine spike (+115% vs. 3-month baseline)."}
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-white border border-slate-200/70 shadow-2xs flex items-start gap-2.5">
-                      <Activity className="h-4 w-4 text-[#0073FC] shrink-0 mt-0.5" />
-                      <span>
-                        {language === "ID"
-                          ? "Rekomendasi DPJP: Evaluasi Acute Kidney Injury (AKI) sebelum peresepan nefrotoksik."
-                          : "MD Advisory: Evaluate Acute Kidney Injury (AKI) prior to nephrotoxic therapy."}
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-emerald-50/90 border border-emerald-200/80 text-emerald-900 font-medium flex items-start gap-2.5">
-                      <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>
-                        {language === "ID"
-                          ? "Otorisasi Klinis: Keputusan diagnostik dan tindakan 100% di tangan dokter spesialis."
-                          : "Clinical Authority: Final diagnostic decisions remain 100% with the specialist."}
-                      </span>
-                    </div>
+                  {/* 3 Narrative Summary Cards */}
+                  <div className="space-y-1.5 text-[11px] text-slate-600 leading-relaxed font-normal">
+                    <p className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+                      Terdeteksi lonjakan biomarker serum Kreatinin (+115% vs baseline 3 bulan lalu).
+                    </p>
+                    <p className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+                      Rekomendasi DPJP: Lakukan evaluasi Acute Kidney Injury (AKI) sebelum memulai peresepan nefrotoksik.
+                    </p>
+                    <p className="p-2 rounded-lg bg-emerald-50/70 border border-emerald-100 text-emerald-800 font-medium">
+                      Otorisasi Klinis: Keputusan diagnostik dan tindakan medis 100% di tangan dokter spesialis.
+                    </p>
                   </div>
                 </div>
 
@@ -919,7 +858,7 @@ export default function SolutionsPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#FAFBFD]" topColor="#FAFBFD" />
+      <CTABanner bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
     </div>
   );
 }
