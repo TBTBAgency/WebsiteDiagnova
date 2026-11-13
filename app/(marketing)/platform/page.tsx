@@ -27,6 +27,8 @@ import {
   ChevronDown,
   TrendingDown,
   FlaskConical,
+  Headphones,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -37,6 +39,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 
 export default function PlatformPage() {
   const { language } = useLanguage();
+  const [activeSlaSlot, setActiveSlaSlot] = useState<number>(1);
 
   return (
     <div className="w-full bg-white text-slate-800">
@@ -793,6 +796,245 @@ export default function PlatformPage() {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          SECTION 5: 24/7 SLA, ROADMAP & MULTI-SITE NETWORK BENTO (Ref 2)
+          ══════════════════════════════════════════════════════════════ */}
+      <section className="w-full bg-[#FAFBFD] border-t border-slate-200/70 py-16 sm:py-24">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+          {/* Split Header */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl space-y-3">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Keandalan Enterprise" : "Enterprise Reliability"}
+              </SectionBadge>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.15]">
+                {language === "ID"
+                  ? "Dukungan 24/7, Peta Jalan AI & Jaringan Multi-Unit"
+                  : "24/7 Support SLA, AI Roadmap & Multi-Site Network"}
+              </h2>
+            </div>
+            <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
+              {language === "ID"
+                ? "Dirancang untuk operasional laboratorium rumah sakit yang tidak pernah berhenti—lengkap dengan eskalasi teknis instan dan sinkronisasi lintas cabang."
+                : "Engineered for non-stop hospital diagnostics with instant engineering escalation and unified multi-branch synchronization."}
+            </p>
+          </div>
+
+          {(() => {
+            const slaSlots = [
+              {
+                window: language === "ID" ? "00:00 – 08:00" : "00:00 – 08:00",
+                shift: language === "ID" ? "Shift Malam IGD" : "ER Night Shift",
+                sla: "< 10 mnt",
+                detail:
+                  language === "ID"
+                    ? "Monitoring proaktif analyzer CITO & antrean HL7 IGD tanpa jeda."
+                    : "Proactive CITO analyzer & ER HL7 queue monitoring.",
+              },
+              {
+                window: language === "ID" ? "24 / 7 / 365" : "24 / 7 / 365",
+                shift: language === "ID" ? "Prioritas SLA 99.9%" : "99.9% Priority SLA",
+                sla: "< 15 mnt",
+                detail:
+                  language === "ID"
+                    ? "Akses langsung ke Clinical Integration Engineer untuk insiden kritis."
+                    : "Direct hotline to Clinical Integration Engineers for critical issues.",
+              },
+              {
+                window: language === "ID" ? "08:00 – 20:00" : "08:00 – 20:00",
+                shift: language === "ID" ? "Jam Puncak Poliklinik" : "Peak Outpatient",
+                sla: "Real-Time",
+                detail:
+                  language === "ID"
+                    ? "Pendampingan on-site & tuning throughput ribuan sampel per jam."
+                    : "Live throughput tuning for thousands of outpatient samples/hour.",
+              },
+            ];
+            const currentSlot = slaSlots[activeSlaSlot];
+
+            return (
+              <div className="space-y-6">
+                {/* Wide Top Bento Card: 24/7/365 Support SLA */}
+                <div className="rounded-[28px] border border-slate-200/90 bg-white p-6 sm:p-9 shadow-2xs grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-5 space-y-4">
+                    <div className="inline-flex items-center gap-2 rounded-xl bg-[#EBF3FF] px-3 py-1.5 text-xs font-semibold text-[#0073FC]">
+                      <Headphones className="h-4 w-4" />
+                      <span>{language === "ID" ? "Pusat Dukungan Klinis" : "Clinical Support Command"}</span>
+                    </div>
+                    <h3 className="font-display text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight leading-snug">
+                      {language === "ID"
+                        ? "Akses dukungan teknis berstandar rumah sakit 24/7/365"
+                        : "Access hospital-grade technical support 24/7/365"}
+                    </h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {currentSlot.detail}
+                    </p>
+                    <div className="pt-1 flex items-center gap-4 text-xs text-slate-500">
+                      <span>
+                        {language === "ID" ? "Respons Target:" : "Target Response:"}{" "}
+                        <strong className="text-slate-900">{currentSlot.sla}</strong>
+                      </span>
+                      <span className="h-3 w-px bg-slate-200" />
+                      <span>
+                        {language === "ID" ? "Uptime:" : "Uptime:"}{" "}
+                        <strong className="text-[#0073FC]">99.95%</strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Interactive Vertical Wheel / Selector */}
+                  <div className="lg:col-span-7 flex flex-col items-center justify-center relative py-2">
+                    <div className="w-full max-w-lg space-y-2.5">
+                      {slaSlots.map((slot, idx) => {
+                        const isSelected = activeSlaSlot === idx;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setActiveSlaSlot(idx)}
+                            className={cn(
+                              "w-full rounded-2xl border px-5 py-3.5 transition-all flex items-center justify-between gap-4 cursor-pointer",
+                              isSelected
+                                ? "bg-white border-[#0073FC] shadow-md scale-[1.02]"
+                                : "bg-slate-50/70 border-slate-200/60 opacity-65 hover:opacity-100"
+                            )}
+                          >
+                            <div className="flex items-center gap-3 sm:gap-5 text-left">
+                              <span
+                                className={cn(
+                                  "font-display text-sm sm:text-base font-bold tabular-nums",
+                                  isSelected ? "text-slate-900" : "text-slate-500"
+                                )}
+                              >
+                                {slot.window}
+                              </span>
+                              <span className="h-4 w-px bg-slate-200" />
+                              <span
+                                className={cn(
+                                  "text-xs sm:text-sm font-medium",
+                                  isSelected ? "text-slate-700" : "text-slate-500"
+                                )}
+                              >
+                                {slot.shift}
+                              </span>
+                            </div>
+                            <span
+                              className={cn(
+                                "px-3 py-1 rounded-full text-xs font-semibold shrink-0 transition-colors",
+                                isSelected
+                                  ? "bg-[#0073FC] text-white"
+                                  : "bg-white border border-slate-200 text-slate-600"
+                              )}
+                            >
+                              {isSelected
+                                ? language === "ID"
+                                  ? "Aktif"
+                                  : "Active"
+                                : slot.sla}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2 Bottom Bento Cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Bottom Left Card: Connected LIS & AI Strategy Roadmap */}
+                  <div className="rounded-[28px] border border-slate-200/90 bg-white p-6 sm:p-8 shadow-2xs flex flex-col justify-between">
+                    {/* Milestone Visual */}
+                    <div className="relative h-44 rounded-2xl bg-[#FAFBFD] border border-slate-200/70 p-5 overflow-hidden mb-6 flex items-center justify-center">
+                      <svg
+                        viewBox="0 0 420 120"
+                        className="w-full h-full overflow-visible"
+                        aria-hidden="true"
+                      >
+                        <line x1="20" y1="88" x2="145" y2="54" stroke="#93C5FD" strokeWidth="2" />
+                        <line x1="145" y1="54" x2="265" y2="72" stroke="#93C5FD" strokeWidth="2" />
+                        <line x1="265" y1="72" x2="395" y2="26" stroke="#0073FC" strokeWidth="2" />
+                        <circle cx="20" cy="88" r="5" fill="#0073FC" />
+                        <circle cx="145" cy="54" r="6" fill="#0073FC" />
+                        <circle cx="265" cy="72" r="5.5" fill="#0073FC" />
+                        <circle cx="395" cy="26" r="6.5" fill="#0073FC" />
+                      </svg>
+                      <div className="absolute top-5 left-12 sm:left-20 rounded-full bg-white border border-slate-200/90 shadow-xs px-3.5 py-1.5 text-xs font-semibold text-slate-800">
+                        {language === "ID" ? "Auto-Bridging HL7" : "HL7 Auto-Bridging"}
+                      </div>
+                      <div className="absolute bottom-5 right-8 sm:right-14 rounded-full bg-white border border-blue-200 shadow-xs px-3.5 py-1.5 text-xs font-semibold text-[#0073FC]">
+                        {language === "ID" ? "Otomatisasi Nova AI" : "Nova AI Automations"}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <h3 className="font-display text-xl font-bold text-slate-900">
+                        {language === "ID"
+                          ? "Peta Jalan AI & Otomatisasi LIS"
+                          : "LIS Automation & AI Roadmapping"}
+                      </h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {language === "ID"
+                          ? "Pembaruan berkala tanpa mengganggu operasional: mulai dari aturan delta-check adaptif hingga analitik utilisasi reagen."
+                          : "Non-disruptive platform evolution from adaptive delta-check rules to automated reagent consumption forecasting."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bottom Right Card: Multi-Site Hospital Network Orbital Ring */}
+                  <div className="rounded-[28px] border border-slate-200/90 bg-white p-6 sm:p-8 shadow-2xs flex flex-col justify-between">
+                    {/* Orbital Network Visual */}
+                    <div className="relative h-44 rounded-2xl bg-[#FAFBFD] border border-slate-200/70 p-4 overflow-hidden mb-6 flex items-center justify-center">
+                      <div className="relative h-32 w-32 rounded-full border border-dashed border-blue-200 flex items-center justify-center">
+                        <div className="h-20 w-20 rounded-full bg-white border-2 border-[#0073FC]/30 shadow-sm flex flex-col items-center justify-center text-center">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0073FC]">
+                            Diagnova
+                          </span>
+                          <span className="text-[11px] font-semibold text-slate-800">
+                            {language === "ID" ? "Hub Pusat" : "Core Hub"}
+                          </span>
+                        </div>
+
+                        {/* Satellite Nodes */}
+                        {[
+                          { pos: "-top-3 left-1/2 -translate-x-1/2", label: "IGD" },
+                          { pos: "top-1/2 -right-8 -translate-y-1/2", label: "PA" },
+                          { pos: "-bottom-3 left-1/2 -translate-x-1/2", label: "BDRS" },
+                          { pos: "top-1/2 -left-10 -translate-y-1/2", label: "SATU" },
+                        ].map((node, idx) => (
+                          <div
+                            key={idx}
+                            className={cn(
+                              "absolute px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-[10px] font-bold text-slate-700 flex items-center gap-1",
+                              node.pos
+                            )}
+                          >
+                            <Building2 className="h-3 w-3 text-[#0073FC]" />
+                            <span>{node.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <h3 className="font-display text-xl font-bold text-slate-900">
+                        {language === "ID"
+                          ? "Jaringan Multi-Rumah Sakit & Lab Rujukan"
+                          : "Multi-Hospital & Reference Lab Network"}
+                      </h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {language === "ID"
+                          ? "Hubungkan lab satelit, klinik satelit, dan rumah sakit rujukan dalam satu konsol pemantauan sampel lintas lokasi."
+                          : "Unify satellite clinics, inpatient wards, and reference labs inside one cross-site sample tracking console."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 

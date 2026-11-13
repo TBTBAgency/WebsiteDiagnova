@@ -40,6 +40,9 @@ import {
   Video,
   Share2,
   RefreshCw,
+  Clock,
+  CheckCircle2,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -52,6 +55,8 @@ export default function SolutionsPage() {
   const [activeSubTab, setActiveSubTab] = useState<"micro" | "blood">("micro");
   const [deploymentMode, setDeploymentMode] = useState<"cloud" | "onprem">("cloud");
   const [hoveredButton, setHoveredButton] = useState<number | null>(null);
+  const [activeEfficiencyPhase, setActiveEfficiencyPhase] = useState<"pre" | "analytic" | "post">("analytic");
+  const [activeGanttWeek, setActiveGanttWeek] = useState<number>(0);
 
   return (
     <div className="w-full bg-[#FAFBFD] text-slate-800">
@@ -829,6 +834,424 @@ export default function SolutionsPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          SECTION 3: EFFICIENCY TRAJECTORY & MANUAL VS DIAGNOVA EDGE
+          ══════════════════════════════════════════════════════════════ */}
+      <section className="w-full bg-white border-t border-slate-200/70 py-16 sm:py-24">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+          {/* Split Header */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl space-y-3">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Dampak Terukur" : "Measurable Impact"}
+              </SectionBadge>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.15]">
+                {language === "ID"
+                  ? "Transformasi Efisiensi Operasional Laboratorium"
+                  : "Transforming Laboratory Operational Efficiency"}
+              </h2>
+            </div>
+            <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
+              {language === "ID"
+                ? "Bandingkan alur kerja manual berbasis entri ulang dengan otomatisasi end-to-end Diagnova di setiap tahapan pemeriksaan."
+                : "Compare manual re-entry bottlenecks against end-to-end Diagnova automation across every diagnostic stage."}
+            </p>
+          </div>
+
+          {/* 12-Col Asymmetric Grid: Left Curve (7) + Right Comparison (5) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+            {/* Left 7 Cols: Rising Efficiency Trajectory (Ref 1) */}
+            {(() => {
+              const phaseData = {
+                pre: {
+                  label: language === "ID" ? "Pre-Analitik" : "Pre-Analytic",
+                  before: "35%",
+                  after: "92%",
+                  beforeSub:
+                    language === "ID"
+                      ? "Entri order & pelabelan manual saat audit awal"
+                      : "Manual order entry & labeling at initial audit",
+                  afterSub:
+                    language === "ID"
+                      ? "Efisiensi setelah barcode & bridging order otomatis"
+                      : "Efficiency with automated barcode & order bridging",
+                  tat: language === "ID" ? "22 mnt -> 3 mnt" : "22 min -> 3 min",
+                },
+                analytic: {
+                  label: language === "ID" ? "Analitik & QC" : "Analytic & QC",
+                  before: "39%",
+                  after: "94%",
+                  beforeSub:
+                    language === "ID"
+                      ? "Rata-rata efisiensi staf pada alur manual & entri ulang"
+                      : "Baseline staff efficiency with manual transcription",
+                  afterSub:
+                    language === "ID"
+                      ? "Efisiensi rata-rata dengan auto-bridging & Westgard QC"
+                      : "Average efficiency with auto-bridging & Westgard QC",
+                  tat: language === "ID" ? "118 mnt -> 24 mnt" : "118 min -> 24 min",
+                },
+                post: {
+                  label: language === "ID" ? "Pasca-Analitik" : "Post-Analytic",
+                  before: "42%",
+                  after: "96%",
+                  beforeSub:
+                    language === "ID"
+                      ? "Verifikasi manual & pengiriman hasil ke unit klinis"
+                      : "Manual sign-off & ward result distribution",
+                  afterSub:
+                    language === "ID"
+                      ? "Auto-verifikasi delta-check & alert nilai kritis instan"
+                      : "Auto-verification delta-checks & instant critical alerts",
+                  tat: language === "ID" ? "45 mnt -> 4 mnt" : "45 min -> 4 min",
+                },
+              }[activeEfficiencyPhase];
+
+              return (
+                <div className="lg:col-span-7 rounded-[28px] border border-slate-200/90 bg-[#FAFBFD] p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+                  {/* Top Controls */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 relative z-10">
+                    <div>
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0073FC]">
+                        {language === "ID" ? "Kurva Efisiensi Alur Kerja" : "Workflow Efficiency Trajectory"}
+                      </span>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                        <Clock className="h-3.5 w-3.5 text-[#0073FC]" />
+                        <span>
+                          TAT: <strong className="text-slate-900">{phaseData.tat}</strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex rounded-full bg-white border border-slate-200 p-1">
+                      {(["pre", "analytic", "post"] as const).map((key) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setActiveEfficiencyPhase(key)}
+                          className={cn(
+                            "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
+                            activeEfficiencyPhase === key
+                              ? "bg-[#0073FC] text-white shadow-xs"
+                              : "text-slate-600 hover:text-slate-900"
+                          )}
+                        >
+                          {key === "pre"
+                            ? language === "ID"
+                              ? "Pre-Analitik"
+                              : "Pre-Analytic"
+                            : key === "analytic"
+                            ? language === "ID"
+                              ? "Analitik & QC"
+                              : "Analytic & QC"
+                            : language === "ID"
+                            ? "Pasca-Analitik"
+                            : "Post-Analytic"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Rising Curve Visual Canvas */}
+                  <div className="relative mt-8 pt-4 pb-2">
+                    <div className="grid grid-cols-2 gap-4 relative z-10 mb-6">
+                      {/* Baseline Metric */}
+                      <div className="self-end pt-12 sm:pt-16">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-slate-600 mb-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                          {language === "ID" ? "Sebelum Diagnova" : "Before Diagnova"}
+                        </div>
+                        <div className="font-display text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+                          {phaseData.before}
+                        </div>
+                        <p className="mt-1.5 text-xs sm:text-[13px] text-slate-500 max-w-[26ch] leading-relaxed">
+                          {phaseData.beforeSub}
+                        </p>
+                      </div>
+
+                      {/* Post-Implementation Metric */}
+                      <div className="text-right flex flex-col items-end">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#EBF3FF] border border-blue-200 text-[11px] font-semibold text-[#0073FC] mb-2">
+                          <TrendingUp className="h-3 w-3" />
+                          {language === "ID" ? "Dengan Diagnova" : "With Diagnova"}
+                        </div>
+                        <div className="font-display text-4xl sm:text-5xl font-bold text-[#0073FC] tracking-tight">
+                          {phaseData.after}
+                        </div>
+                        <p className="mt-1.5 text-xs sm:text-[13px] text-slate-600 max-w-[28ch] leading-relaxed">
+                          {phaseData.afterSub}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Smooth Rising SVG Trajectory */}
+                    <div className="w-full h-36 sm:h-44 relative">
+                      <svg
+                        viewBox="0 0 640 160"
+                        preserveAspectRatio="none"
+                        className="w-full h-full overflow-visible"
+                        aria-hidden="true"
+                      >
+                        <defs>
+                          <linearGradient id="diagnovaCurveFill" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stopColor="#0073FC" stopOpacity="0.06" />
+                            <stop offset="60%" stopColor="#0073FC" stopOpacity="0.18" />
+                            <stop offset="100%" stopColor="#0073FC" stopOpacity="0.34" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d="M 0 132 L 175 132 C 250 132, 315 24, 395 24 L 640 24 L 640 160 L 0 160 Z"
+                          fill="url(#diagnovaCurveFill)"
+                        />
+                        <path
+                          d="M 0 132 L 175 132 C 250 132, 315 24, 395 24 L 640 24"
+                          fill="none"
+                          stroke="#0073FC"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                        />
+                        <circle cx="90" cy="132" r="5" fill="#FFFFFF" stroke="#64748B" strokeWidth="2.5" />
+                        <circle cx="430" cy="24" r="5.5" fill="#FFFFFF" stroke="#0073FC" strokeWidth="3" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Right 5 Cols: Manual vs Diagnova Enterprise Edge */}
+            <div className="lg:col-span-5 rounded-[28px] border border-slate-200/90 bg-white p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                  <div>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                      {language === "ID" ? "Perbandingan Operasional" : "Operational Comparison"}
+                    </span>
+                    <h3 className="font-display text-lg font-bold text-slate-900 mt-0.5">
+                      {language === "ID" ? "Alur Manual vs Diagnova" : "Manual Workflow vs Diagnova"}
+                    </h3>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-[#EBF3FF] text-[#0073FC] text-[11px] font-semibold">
+                    Zero Re-entry
+                  </span>
+                </div>
+
+                <div className="divide-y divide-slate-100">
+                  {[
+                    {
+                      title: language === "ID" ? "Entri Order & Barcode" : "Order Entry & Barcoding",
+                      manual: language === "ID" ? "Ketik ulang manual, rawan salah label" : "Manual re-typing, mislabeling risk",
+                      diagnova: language === "ID" ? "Sinkron HL7/FHIR & cetak barcode 1D/2D" : "HL7/FHIR sync & auto 1D/2D barcoding",
+                    },
+                    {
+                      title: language === "ID" ? "Validasi Westgard QC" : "Westgard QC Validation",
+                      manual: language === "ID" ? "Rekap spreadsheet harian terpisah" : "Separate daily spreadsheet logs",
+                      diagnova: language === "ID" ? "Levey-Jennings real-time & kunci rilis otomatis" : "Real-time Levey-Jennings & auto-lock",
+                    },
+                    {
+                      title: language === "ID" ? "Bridging SIMRS & SATUSEHAT" : "HIS & SATUSEHAT Bridging",
+                      manual: language === "ID" ? "Unggah PDF terpisah, tanpa LOINC" : "Manual PDF upload, unmapped LOINC",
+                      diagnova: language === "ID" ? "Bi-direksional terstandar LOINC & SNOMED" : "Bi-directional LOINC & SNOMED mapping",
+                    },
+                    {
+                      title: language === "ID" ? "Pelaporan Nilai Kritis" : "Critical Value Reporting",
+                      manual: language === "ID" ? "Telepon manual tanpa jejak waktu" : "Untracked manual phone calls",
+                      diagnova: language === "ID" ? "Eskalasi instan dengan audit trail waktu" : "Instant escalation with SLA timestamp",
+                    },
+                  ].map((row, idx) => (
+                    <div key={idx} className="py-3.5 first:pt-0 last:pb-0">
+                      <div className="text-xs font-semibold text-slate-900 mb-2">{row.title}</div>
+                      <div className="grid grid-cols-2 gap-3 text-[12px]">
+                        <div className="rounded-xl bg-slate-50 border border-slate-200/70 px-3 py-2 text-slate-500">
+                          <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
+                            Manual
+                          </span>
+                          {row.manual}
+                        </div>
+                        <div className="rounded-xl bg-[#F4F8FF] border border-blue-200/80 px-3 py-2 text-slate-800">
+                          <span className="block text-[10px] font-semibold uppercase tracking-wider text-[#0073FC] mb-0.5">
+                            Diagnova
+                          </span>
+                          {row.diagnova}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          SECTION 4: 4-WEEK GO-LIVE GANTT TIMELINE (Ref 5/6)
+          ══════════════════════════════════════════════════════════════ */}
+      <section className="w-full bg-[#F7F9FC] border-t border-slate-200/70 py-16 sm:py-24">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+          {/* Split Header */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl space-y-3">
+              <SectionBadge variant="blue">
+                {language === "ID" ? "Implementasi Terstruktur" : "Structured Rollout"}
+              </SectionBadge>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.15]">
+                {language === "ID"
+                  ? "Dari Audit Awal Hingga Go-Live dalam 4 Minggu"
+                  : "From Initial Audit to 24/7 Go-Live in 4 Weeks"}
+              </h2>
+            </div>
+            <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
+              {language === "ID"
+                ? "Metodologi deployment tanpa mengganggu layanan pasien aktif, lengkap dengan tim engineer khusus."
+                : "Zero-downtime deployment methodology led by dedicated clinical integration engineers."}
+            </p>
+          </div>
+
+          {(() => {
+            const ganttPhases = [
+              {
+                week: language === "ID" ? "Minggu 1" : "Week 1",
+                title: language === "ID" ? "Audit Alur & Katalog Parameter" : "Workflow Audit & Test Catalog",
+                tag: "HL7 / LOINC Mapping",
+                colStart: "md:col-start-1",
+                colSpan: "md:col-span-2",
+                deliverables:
+                  language === "ID"
+                    ? "Pemetaan kode LOINC, struktur unit layanan, hak akses DPJP & ATLM, serta kesiapan jaringan instrumen."
+                    : "LOINC catalog mapping, department routing, RBAC matrix for pathologists & techs, and analyzer readiness.",
+                owner: "Diagnova Solution Architect & Kepala Instalasi Lab",
+              },
+              {
+                week: language === "ID" ? "Minggu 2" : "Week 2",
+                title: language === "ID" ? "Bridging SIMRS & Driver Instrumen" : "HIS Bridging & Analyzer Drivers",
+                tag: "ASTM / HL7 TCP-IP",
+                colStart: "md:col-start-2",
+                colSpan: "md:col-span-2",
+                deliverables:
+                  language === "ID"
+                    ? "Integrasi bi-direksional SIMRS/EMR, SATUSEHAT FHIR, serta konektivitas serial/LAN ke seluruh analyzer."
+                    : "Bi-directional HIS/EMR integration, SATUSEHAT FHIR endpoints, and serial/LAN analyzer connectivity.",
+                owner: "Integration Engineer & Tim IT Rumah Sakit",
+              },
+              {
+                week: language === "ID" ? "Minggu 3" : "Week 3",
+                title: language === "ID" ? "Kalibrasi Westgard QC & UAT Klinis" : "Westgard QC & Clinical UAT",
+                tag: "Zero-Error Verification",
+                colStart: "md:col-start-3",
+                colSpan: "md:col-span-2",
+                deliverables:
+                  language === "ID"
+                    ? "Simulasi parallel-run, verifikasi aturan Westgard multi-level, pelatihan ATLM & validasi laporan PDF/digital."
+                    : "Parallel-run simulation, Westgard rule calibration, staff training, and clinical report sign-off verification.",
+                owner: "Clinical QA Specialist & Tim ATLM",
+              },
+              {
+                week: language === "ID" ? "Minggu 4" : "Week 4",
+                title: language === "ID" ? "Go-Live 24/7 & Pendampingan On-Site" : "24/7 Go-Live & On-Site Hypercare",
+                tag: "SLA 99.9% Active",
+                colStart: "md:col-start-3",
+                colSpan: "md:col-span-2",
+                deliverables:
+                  language === "ID"
+                    ? "Cutover penuh tanpa downtime, pemantauan transaksi real-time 24/7, dan serah terima ke dukungan SLA prioritas."
+                    : "Zero-downtime production cutover, 24/7 live transaction monitoring, and transition to priority SLA support.",
+                owner: "24/7 Command Center & On-Site Lead",
+              },
+            ];
+            const selected = ganttPhases[activeGanttWeek];
+
+            return (
+              <div className="rounded-[28px] border border-slate-200/90 bg-white p-6 sm:p-8 shadow-2xs">
+                {/* 4-Column Week Header */}
+                <div className="hidden md:grid grid-cols-4 gap-4 border-b border-slate-200/80 pb-4 mb-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  {ganttPhases.map((p, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveGanttWeek(idx)}
+                      className={cn(
+                        "text-left flex items-center justify-between px-3 py-1.5 rounded-lg transition-colors cursor-pointer",
+                        activeGanttWeek === idx
+                          ? "bg-[#EBF3FF] text-[#0073FC]"
+                          : "hover:bg-slate-50 text-slate-500"
+                      )}
+                    >
+                      <span>{p.week}</span>
+                      <span className="text-[10px] font-medium opacity-80">0{idx + 1}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Gantt Track Rows */}
+                <div className="space-y-3.5 relative">
+                  {ganttPhases.map((phase, idx) => {
+                    const isActive = activeGanttWeek === idx;
+                    return (
+                      <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
+                        <button
+                          type="button"
+                          onClick={() => setActiveGanttWeek(idx)}
+                          className={cn(
+                            phase.colStart,
+                            phase.colSpan,
+                            "w-full text-left rounded-2xl border px-4 py-3.5 transition-all flex items-center justify-between gap-4 cursor-pointer",
+                            isActive
+                              ? "bg-[#0073FC] border-[#0073FC] text-white shadow-sm"
+                              : "bg-[#FAFBFD] border-slate-200/90 text-slate-800 hover:border-blue-300"
+                          )}
+                        >
+                          <div className="min-w-0">
+                            <span
+                              className={cn(
+                                "block text-[11px] font-semibold uppercase tracking-wider",
+                                isActive ? "text-blue-100" : "text-[#0073FC]"
+                              )}
+                            >
+                              {phase.week}
+                            </span>
+                            <span className="block text-sm font-bold truncate mt-0.5">{phase.title}</span>
+                          </div>
+                          <span
+                            className={cn(
+                              "shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold",
+                              isActive
+                                ? "bg-white/20 text-white"
+                                : "bg-white border border-slate-200 text-slate-600"
+                            )}
+                          >
+                            {phase.tag}
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Active Phase Detail Strip */}
+                <div className="mt-7 pt-6 border-t border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1 max-w-3xl">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#0073FC]">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>
+                        {selected.week} — {selected.title}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">{selected.deliverables}</p>
+                  </div>
+                  <div className="shrink-0 rounded-2xl bg-[#FAFBFD] border border-slate-200/80 px-4 py-3 text-xs">
+                    <span className="block text-slate-400 font-medium">
+                      {language === "ID" ? "Penanggung Jawab" : "Phase Owner"}
+                    </span>
+                    <span className="block text-slate-900 font-semibold mt-0.5">{selected.owner}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 

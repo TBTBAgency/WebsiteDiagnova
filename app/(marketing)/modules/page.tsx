@@ -1224,9 +1224,123 @@ export default function ModulesPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
+          SECTION 4: STEPPED MODULE PERFORMANCE COMPARISON (Ref 4 Midas)
+          ══════════════════════════════════════════════════════════════ */}
+      <section className="w-full bg-[#F7F9FC] border-t border-slate-200/70 py-16 sm:py-24 overflow-hidden">
+        <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
+          <div className="rounded-[32px] border border-slate-200/90 bg-white p-7 sm:p-10 lg:p-14 shadow-2xs">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
+              {/* Left Editorial Column */}
+              <div className="lg:col-span-5 space-y-5 pb-2">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Skalabilitas Terbukti" : "Proven Scalability"}
+                </SectionBadge>
+                <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-[1.12]">
+                  {language === "ID"
+                    ? "Butuh akselerasi waktu rilis hasil?"
+                    : "Looking for faster diagnostic turnaround?"}
+                </h2>
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-md">
+                  {language === "ID"
+                    ? "Setiap modul Diagnova diskalakan sesuai kompleksitas fasilitas—mulai dari klinik pratama hingga jejaring rumah sakit rujukan nasional."
+                    : "Every Diagnova module scales to your facility's diagnostic volume—from primary clinics to national reference hospital chains."}
+                </p>
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/request-demo"
+                    className="inline-flex items-center gap-2 rounded-full bg-slate-900 hover:bg-[#0073FC] text-white px-6 py-3 text-sm font-semibold transition-colors"
+                  >
+                    <span>{language === "ID" ? "Jadwalkan Demo" : "Book a Demo"}</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    href="/solutions"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white hover:border-slate-300 text-slate-800 px-5 py-3 text-sm font-semibold transition-colors"
+                  >
+                    <span>{language === "ID" ? "Lihat Paket Solusi" : "Explore Solutions"}</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right 7 Cols: 3 Stepped Escalating Metric Bars (Ref 4) */}
+              <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-end pt-4">
+                {/* Step 1: 2.4x */}
+                <div className="rounded-3xl bg-[#F4F6F9] border border-slate-200/80 p-6 flex flex-col justify-between min-h-[190px] sm:h-[210px]">
+                  <div>
+                    <div className="font-display text-4xl sm:text-[42px] font-bold text-slate-800 tracking-tight leading-none">
+                      2.4x
+                    </div>
+                    <div className="mt-3 text-xs font-semibold text-slate-700">
+                      {language === "ID" ? "Klinik & Lab Pratama" : "Primary Clinics"}
+                    </div>
+                    <p className="mt-1 text-[11.5px] text-slate-500 leading-relaxed">
+                      {language === "ID"
+                        ? "Otomatisasi registrasi & rilis hasil hematologi dasar."
+                        : "Automated intake & routine hematology sign-off."}
+                    </p>
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-400">
+                    {language === "ID" ? "< 300 sampel/hari" : "< 300 samples/day"}
+                  </div>
+                </div>
+
+                {/* Step 2: 5.1x */}
+                <div className="rounded-3xl bg-[#EEF2F7] border border-slate-200/90 p-6 flex flex-col justify-between min-h-[240px] sm:h-[285px]">
+                  <div>
+                    <div className="font-display text-4xl sm:text-[46px] font-bold text-slate-900 tracking-tight leading-none">
+                      5.1x
+                    </div>
+                    <div className="mt-3 text-xs font-semibold text-slate-800">
+                      {language === "ID" ? "RS Tipe B & Tipe C" : "Regional Hospitals"}
+                    </div>
+                    <p className="mt-1 text-[11.5px] text-slate-600 leading-relaxed">
+                      {language === "ID"
+                        ? "Bridging SIMRS, Westgard QC, dan modul BDRS terintegrasi."
+                        : "HIS bridging, Westgard QC & integrated blood bank."}
+                    </p>
+                  </div>
+                  <div className="text-[11px] font-semibold text-slate-500">
+                    {language === "ID" ? "300–2.000 sampel/hari" : "300–2,000 samples/day"}
+                  </div>
+                </div>
+
+                {/* Step 3: 10x Bright Blue Hero Bar with Vertical Bar Texture */}
+                <div className="rounded-3xl bg-[#0073FC] text-white p-6 flex flex-col justify-between min-h-[290px] sm:h-[365px] relative overflow-hidden shadow-lg shadow-blue-600/20">
+                  <div className="relative z-10">
+                    <div className="font-display text-5xl sm:text-[54px] font-bold text-white tracking-tight leading-none">
+                      10x
+                    </div>
+                    <div className="mt-3 text-xs font-semibold text-blue-50">
+                      {language === "ID" ? "RS Rujukan & Lab Chain" : "Reference Lab Chains"}
+                    </div>
+                    <p className="mt-1 text-[11.5px] text-blue-100/90 leading-relaxed">
+                      {language === "ID"
+                        ? "Auto-verifikasi Nova AI, PA/Mikro & sinkronisasi multi-cabang."
+                        : "Nova AI auto-verification, PA/Micro & multi-site sync."}
+                    </p>
+                  </div>
+
+                  {/* Bottom Vertical Bar Texture (Ref 4) */}
+                  <div className="relative z-10 pt-6 flex items-end justify-between gap-1.5 h-24 opacity-90" aria-hidden="true">
+                    {[38, 62, 46, 84, 52, 92, 66, 76, 48, 88, 58, 72].map((h, idx) => (
+                      <span
+                        key={idx}
+                        className="w-1.5 rounded-full bg-white/85"
+                        style={{ height: `${h}%` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#FAFBFD] border-t border-slate-200/60" topColor="#FAFBFD" />
+      <CTABanner bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
     </div>
   );
 }
