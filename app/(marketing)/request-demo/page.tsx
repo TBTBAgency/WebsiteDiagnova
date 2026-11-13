@@ -580,7 +580,7 @@ export default function RequestDemoPage() {
   return (
     <main
       style={{
-        paddingTop: "calc(68px + var(--announcement-bar-height, 0px))",
+        paddingTop: "calc(60px + var(--announcement-bar-height, 0px))",
         paddingBottom: "20px",
       }}
       className="relative w-full lg:h-[100dvh] min-h-[660px] bg-[#F4F6F9] flex flex-col justify-center transition-[padding-top] duration-300 ease-in-out"
