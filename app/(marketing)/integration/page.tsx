@@ -56,8 +56,8 @@ export default function IntegrationPage() {
     {
       id: "simrs-his",
       icon: Network,
-      color: "#2764B8",
-      accentBg: "bg-blue-50 text-[#2764B8] border-blue-200/60",
+      color: "#0073FC",
+      accentBg: "bg-[#E8F1FD] text-[#0073FC] border-blue-200/60",
       tabLabel: "SIMRS / HIS",
       targetDept:
         language === "ID"
@@ -106,8 +106,8 @@ export default function IntegrationPage() {
     {
       id: "rme",
       icon: FileText,
-      color: "#345DAB",
-      accentBg: "bg-blue-50 text-[#345DAB] border-blue-200/60",
+      color: "#0073FC",
+      accentBg: "bg-[#E8F1FD] text-[#0073FC] border-blue-200/60",
       tabLabel: language === "ID" ? "Rekam Medis (RME)" : "EMR Integration",
       targetDept:
         language === "ID"
@@ -156,8 +156,8 @@ export default function IntegrationPage() {
     {
       id: "analyzer",
       icon: Cpu,
-      color: "#2764B8",
-      accentBg: "bg-blue-50 text-[#2764B8] border-blue-200/60",
+      color: "#0073FC",
+      accentBg: "bg-[#E8F1FD] text-[#0073FC] border-blue-200/60",
       tabLabel: "Direct Analyzer",
       targetDept:
         language === "ID"
@@ -256,8 +256,8 @@ export default function IntegrationPage() {
     {
       id: "connectivity",
       icon: Wifi,
-      color: "#2764B8",
-      accentBg: "bg-blue-50 text-[#2764B8] border-blue-200/60",
+      color: "#0073FC",
+      accentBg: "bg-[#E8F1FD] text-[#0073FC] border-blue-200/60",
       tabLabel: "Smart Gateway",
       targetDept:
         language === "ID"
@@ -434,21 +434,23 @@ export default function IntegrationPage() {
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: INTERACTIVE INTEGRATION EXPLORER (#integration-explorer)
           ══════════════════════════════════════════════════════════════ */}
-      <section id="integration-explorer" className="w-full py-16 sm:py-20 lg:py-24 bg-white border-b border-slate-200 scroll-mt-20">
+      <section id="integration-explorer" className="w-full py-16 sm:py-20 lg:py-24 bg-[#FAFBFD] border-y border-slate-200/60 scroll-mt-20">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
-          {/* Section Header */}
-          <div className="max-w-3xl mb-10 sm:mb-12">
-            <div className="mb-4">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Arsitektur Interoperabilitas" : "Interoperability Architecture"}
-              </SectionBadge>
+          {/* Split Header (Left-Aligned) */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl">
+              <div className="mb-3.5">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Arsitektur Interoperabilitas" : "Interoperability Architecture"}
+                </SectionBadge>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
+                {language === "ID"
+                  ? "Pilih Jalur Integrasi Sesuai Ekosistem IT Anda"
+                  : "Select the Integration Path Tailored to Your IT Ecosystem"}
+              </h2>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-900">
-              {language === "ID"
-                ? "Pilih Jalur Integrasi Sesuai Ekosistem IT Anda"
-                : "Select the Integration Path Tailored to Your IT Ecosystem"}
-            </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Klik tab di bawah untuk melihat spesifikasi protokol, alur pesan data medis, dan mekanisme keamanan masing-masing integrasi."
                 : "Click the tabs below to inspect protocol specs, medical message workflows, and resilience mechanisms for each pillar."}
@@ -456,7 +458,7 @@ export default function IntegrationPage() {
           </div>
 
           {/* Clean Segmented Tab Buttons */}
-          <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto pb-4 no-scrollbar mb-8 sm:mb-10">
+          <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto pb-4 no-scrollbar mb-6 sm:mb-8">
             {integrations.map((item, idx) => {
               const TabIcon = item.icon;
               const isSelected = selectedIntegration === idx;
@@ -470,11 +472,11 @@ export default function IntegrationPage() {
                   className={cn(
                     "flex items-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer shrink-0 border",
                     isSelected
-                      ? "bg-[#2764B8] text-white border-[#2764B8] shadow-sm"
-                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300"
+                      ? "bg-[#0073FC] text-white border-[#0073FC] shadow-[0_6px_18px_-6px_rgba(0,115,252,0.55)]"
+                      : "bg-white text-slate-700 border-slate-200/90 hover:bg-[#F7F9FC] hover:text-slate-900 hover:border-blue-200/80"
                   )}
                 >
-                  <TabIcon className={cn("h-4 w-4", isSelected ? "text-white" : "text-[#2764B8]")} />
+                  <TabIcon className={cn("h-4 w-4", isSelected ? "text-white" : "text-[#0073FC]")} />
                   <span>{item.tabLabel}</span>
                 </button>
               );
@@ -482,16 +484,16 @@ export default function IntegrationPage() {
           </div>
 
           {/* Master-Detail Card */}
-          <div className="rounded-[28px] sm:rounded-[32px] border border-slate-200 bg-[#FAFBFD] p-6 sm:p-8 lg:p-10 shadow-xs">
+          <div className="rounded-[28px] sm:rounded-[32px] border border-slate-200/75 bg-white p-6 sm:p-8 lg:p-10 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
               {/* Left Column: Details & Value Proposition */}
               <div className="lg:col-span-7 flex flex-col justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2.5 mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF3FB] text-[#2764B8] border border-blue-200/60">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#E8F1FD] text-[#0073FC]">
                       {current.targetDept}
                     </span>
-                    <span className="text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-full">
+                    <span className="text-xs font-semibold text-slate-600 bg-[#F7F9FC] border border-slate-200/80 px-3 py-1 rounded-full">
                       Pillar {selectedIntegration + 1} of {integrations.length}
                     </span>
                   </div>
@@ -499,7 +501,7 @@ export default function IntegrationPage() {
                   <h3 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-snug">
                     {current.name}
                   </h3>
-                  <p className="text-sm sm:text-base font-semibold text-[#2764B8] mt-1.5">
+                  <p className="text-sm sm:text-base font-semibold text-[#0073FC] mt-1.5">
                     {current.tagline}
                   </p>
                   <p className="text-sm sm:text-base text-slate-600 mt-4 leading-relaxed font-normal">
@@ -509,12 +511,12 @@ export default function IntegrationPage() {
                   {/* 3 Core Highlights */}
                   <div className="mt-6 sm:mt-8 space-y-3">
                     {current.highlights.map((h, i) => (
-                      <div key={i} className="flex items-start gap-3 bg-white p-4 rounded-2xl border border-slate-200">
-                        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#2764B8]">
-                          <Check className="h-3 w-3 stroke-[3]" />
+                      <div key={i} className="flex items-start gap-3.5 bg-[#F7F9FC] p-4 rounded-2xl border border-transparent hover:border-blue-200/70 transition-colors">
+                        <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#E8F1FD] text-[#0073FC]">
+                          <Check className="h-3.5 w-3.5 stroke-[2.75]" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">{h.title}</p>
+                          <p className="text-sm font-bold text-slate-900">{h.title}</p>
                           <p className="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal">{h.desc}</p>
                         </div>
                       </div>
@@ -529,7 +531,7 @@ export default function IntegrationPage() {
                     {current.protocols.map((p, i) => (
                       <span
                         key={i}
-                        className="rounded-lg bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 shadow-2xs"
+                        className="rounded-lg bg-[#F7F9FC] border border-slate-200/80 px-3 py-1 text-xs font-medium text-slate-700"
                       >
                         {p}
                       </span>
@@ -538,11 +540,11 @@ export default function IntegrationPage() {
                 </div>
 
                 {/* Footer Metrics & Direct CTA */}
-                <div className="mt-8 pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                <div className="mt-8 pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-6 sm:gap-8">
                     {current.metrics.map((m, idx) => (
                       <div key={idx}>
-                        <p className="font-display text-xl sm:text-2xl font-bold text-[#345DAB]">{m.val}</p>
+                        <p className="font-display text-xl sm:text-2xl font-bold text-[#0073FC]">{m.val}</p>
                         <p className="text-xs text-slate-600 font-medium">{m.label}</p>
                       </div>
                     ))}
@@ -550,7 +552,7 @@ export default function IntegrationPage() {
 
                   <Link
                     href="/request-demo"
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#2764B8] hover:text-[#1E5299] transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0073FC] hover:text-[#005DD1] transition-colors"
                   >
                     <span>{language === "ID" ? "Konsultasikan Integrasi Ini" : "Consult This Integration"}</span>
                     <ChevronRight className="h-4 w-4" />
@@ -560,16 +562,16 @@ export default function IntegrationPage() {
 
               {/* Right Column: Visual High-Fidelity Clinical & Technical Monitor */}
               <div className="lg:col-span-5 w-full">
-                <div className="rounded-[24px] border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+                <div className="rounded-[24px] border border-slate-200/80 bg-[#FAFBFD] p-5 sm:p-6 shadow-xs">
                   {/* Card Header */}
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-200/75">
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                       <span className="text-xs font-bold text-slate-800 tracking-wide uppercase">
                         {current.simulationBadge}
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200">
+                    <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/80">
                       LIVE STATUS
                     </span>
                   </div>
@@ -577,8 +579,8 @@ export default function IntegrationPage() {
                   {/* Simulation Body based on pillar type */}
                   <div className="mt-5">
                     {current.simulationType === "simrs" && (
-                      <div className="space-y-4">
-                        <div className="p-3.5 rounded-xl bg-[#F8FBFE] border border-slate-200 text-xs text-slate-700">
+                      <div className="space-y-3.5">
+                        <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-700">
                           <strong className="block text-slate-900 font-semibold mb-1">
                             {language === "ID" ? "Alur Transaksi Data Dua Arah (HIS ⇄ LIS):" : "Bidirectional Data Flow (HIS ⇄ LIS):"}
                           </strong>
@@ -587,22 +589,22 @@ export default function IntegrationPage() {
                             : "Patient state changes in hospital HIS are instantly synchronized to Diagnova worklists."}
                         </div>
 
-                        <div className="space-y-2.5">
+                        <div className="space-y-2">
                           {[
-                            { code: "ADT^A08", label: language === "ID" ? "Data Pasien & NIK Masuk dari Admisi" : "Patient Admission Demographic Ingested", time: "10:14:02", state: "Sukses" },
-                            { code: "ORM^O01", label: language === "ID" ? "Order Tes Dokter IGD Diterima" : "Emergency Physician Lab Order Ingested", time: "10:14:05", state: "Terkunci" },
-                            { code: "DFT^P03", label: language === "ID" ? "Validasi Klaim BPJS / Billing Selesai" : "Insurance & Billing Charge Validated", time: "10:14:07", state: "Valid" },
-                            { code: "ORU^R01", label: language === "ID" ? "Hasil Terverifikasi Dikirim ke Rekam Medis" : "Verified Result Posted to EMR", time: "10:32:18", state: "Rilis" },
+                            { code: "ADT^A08", label: language === "ID" ? "Data Pasien & NIK Masuk dari Admisi" : "Patient Admission Demographic Ingested", time: "10:14:02" },
+                            { code: "ORM^O01", label: language === "ID" ? "Order Tes Dokter IGD Diterima" : "Emergency Physician Lab Order Ingested", time: "10:14:05" },
+                            { code: "DFT^P03", label: language === "ID" ? "Validasi Klaim BPJS / Billing Selesai" : "Insurance & Billing Charge Validated", time: "10:14:07" },
+                            { code: "ORU^R01", label: language === "ID" ? "Hasil Terverifikasi Dikirim ke Rekam Medis" : "Verified Result Posted to EMR", time: "10:32:18" },
                           ].map((step, idx) => (
                             <div
                               key={idx}
-                              className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs"
+                              className="p-3 rounded-xl bg-white border border-slate-200/75 flex items-center justify-between gap-3 text-xs"
                             >
-                              <div className="flex items-center gap-2.5">
-                                <span className="font-mono font-bold text-[#2764B8] bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60 text-[11px]">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <span className="font-mono font-bold text-[#0073FC] bg-[#E8F1FD] px-2 py-0.5 rounded text-[11px] shrink-0">
                                   {step.code}
                                 </span>
-                                <span className="text-slate-800 font-medium text-xs">
+                                <span className="text-slate-800 font-medium text-xs truncate">
                                   {step.label}
                                 </span>
                               </div>
@@ -613,7 +615,7 @@ export default function IntegrationPage() {
                           ))}
                         </div>
 
-                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between font-medium">
+                        <div className="p-3 bg-emerald-50/90 rounded-xl border border-emerald-200/80 text-xs text-emerald-900 flex items-center justify-between font-medium">
                           <span>Queue State: 0 Pending • 100% Synced</span>
                           <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                         </div>
@@ -621,8 +623,8 @@ export default function IntegrationPage() {
                     )}
 
                     {current.simulationType === "rme" && (
-                      <div className="space-y-4">
-                        <div className="p-3.5 rounded-xl bg-[#F8FBFE] border border-slate-200 text-xs text-slate-700">
+                      <div className="space-y-3.5">
+                        <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-700">
                           <strong className="block text-slate-900 font-semibold mb-1">
                             {language === "ID" ? "Resource Rekam Medis Terstruktur (Permenkes 24/2022):" : "Structured EMR Resource (Permenkes 24/2022):"}
                           </strong>
@@ -631,18 +633,18 @@ export default function IntegrationPage() {
                             : "Laboratory observations rendered with LOINC semantic mappings and cryptographic digital signatures."}
                         </div>
 
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                        <div className="p-4 rounded-xl bg-white border border-slate-200/80 space-y-3 text-xs">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Resource:</span>
                             <span className="font-bold text-slate-900 font-mono">DiagnosticReport / Observation</span>
                           </div>
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Pasien & No. RM:</span>
                             <span className="font-bold text-slate-900">Tn. Hendra Wijaya (#0849201)</span>
                           </div>
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Pemeriksaan:</span>
-                            <span className="font-bold text-[#2764B8]">LOINC 57021-8 (CBC + Diff Count)</span>
+                            <span className="font-bold text-[#0073FC]">LOINC 57021-8 (CBC + Diff Count)</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500">Verifikator Sp.PK:</span>
@@ -650,7 +652,7 @@ export default function IntegrationPage() {
                           </div>
                         </div>
 
-                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between font-medium">
+                        <div className="p-3 bg-emerald-50/90 rounded-xl border border-emerald-200/80 text-xs text-emerald-900 flex items-center justify-between font-medium">
                           <span className="flex items-center gap-1.5">
                             <BadgeCheck className="h-4 w-4 text-emerald-600" />
                             <span>E-Sign BSrE: Tervalidasi SHA-256</span>
@@ -661,8 +663,8 @@ export default function IntegrationPage() {
                     )}
 
                     {current.simulationType === "analyzer" && (
-                      <div className="space-y-4">
-                        <div className="p-3.5 rounded-xl bg-[#F8FBFE] border border-slate-200 text-xs text-slate-700">
+                      <div className="space-y-3.5">
+                        <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-700">
                           <strong className="block text-slate-900 font-semibold mb-1">
                             {language === "ID" ? "Monitor Telemetri Instrumen Laboratorium:" : "Laboratory Instrument Telemetry Monitor:"}
                           </strong>
@@ -671,14 +673,14 @@ export default function IntegrationPage() {
                             : "Host Query connection transmits test profiles automatically as tube barcodes hit the rack."}
                         </div>
 
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                        <div className="p-4 rounded-xl bg-white border border-slate-200/80 space-y-3 text-xs">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Instrumen Aktif:</span>
-                            <span className="font-bold text-[#2764B8]">Sysmex XN-1000 & Roche Cobas c501</span>
+                            <span className="font-bold text-[#0073FC]">Sysmex XN-1000 & Roche Cobas c501</span>
                           </div>
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Barcode Spesimen:</span>
-                            <span className="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200">
+                            <span className="font-mono font-bold text-slate-900 bg-[#F7F9FC] px-2 py-0.5 rounded border border-slate-200">
                               #SP-20261030-08819
                             </span>
                           </div>
@@ -688,7 +690,7 @@ export default function IntegrationPage() {
                           </div>
                         </div>
 
-                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between font-medium">
+                        <div className="p-3 bg-emerald-50/90 rounded-xl border border-emerald-200/80 text-xs text-emerald-900 flex items-center justify-between font-medium">
                           <span>Quality Control: Westgard Rules Lolos</span>
                           <Check className="h-4 w-4 text-emerald-600" />
                         </div>
@@ -696,8 +698,8 @@ export default function IntegrationPage() {
                     )}
 
                     {current.simulationType === "satusehat" && (
-                      <div className="space-y-4">
-                        <div className="p-3.5 rounded-xl bg-[#F8FBFE] border border-slate-200 text-xs text-slate-700">
+                      <div className="space-y-3.5">
+                        <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-700">
                           <strong className="block text-slate-900 font-semibold mb-1">
                             {language === "ID" ? "Pertukaran Data Nasional SATUSEHAT FHIR:" : "National Health Exchange (SATUSEHAT FHIR):"}
                           </strong>
@@ -706,22 +708,22 @@ export default function IntegrationPage() {
                             : "Payload automatically validated against patient NIK and official MoH clinical dictionaries."}
                         </div>
 
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                        <div className="p-4 rounded-xl bg-white border border-slate-200/80 space-y-3 text-xs">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Autentikasi Gateway:</span>
                             <span className="font-semibold text-emerald-700">OAuth 2.0 Kemenkes (Valid)</span>
                           </div>
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">IHS Patient ID:</span>
                             <span className="font-mono font-bold text-slate-900">P-10029482103 (NIK Sesuai)</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500">Ontologi Medis:</span>
-                            <span className="font-semibold text-[#2764B8]">LOINC & SNOMED CT Terstandar</span>
+                            <span className="font-semibold text-[#0073FC]">LOINC & SNOMED CT Terstandar</span>
                           </div>
                         </div>
 
-                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between font-medium">
+                        <div className="p-3 bg-emerald-50/90 rounded-xl border border-emerald-200/80 text-xs text-emerald-900 flex items-center justify-between font-medium">
                           <span>Status Transmisi: HTTP 201 Created</span>
                           <ShieldCheck className="h-4 w-4 text-emerald-600" />
                         </div>
@@ -729,8 +731,8 @@ export default function IntegrationPage() {
                     )}
 
                     {current.simulationType === "gateway" && (
-                      <div className="space-y-4">
-                        <div className="p-3.5 rounded-xl bg-[#F8FBFE] border border-slate-200 text-xs text-slate-700">
+                      <div className="space-y-3.5">
+                        <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-700">
                           <strong className="block text-slate-900 font-semibold mb-1">
                             {language === "ID" ? "Ketahanan Jaringan Edge & Buffer Offline:" : "Edge Network Resilience & Offline Buffering:"}
                           </strong>
@@ -739,24 +741,24 @@ export default function IntegrationPage() {
                             : "Emergency Cito laboratory services proceed unhalted even during internet outages."}
                         </div>
 
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                        <div className="p-4 rounded-xl bg-white border border-slate-200/80 space-y-3 text-xs">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Mode Gateway Edge:</span>
                             <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
                               <Radio className="h-3 w-3 text-emerald-500" /> Operasional Aktif
                             </span>
                           </div>
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                             <span className="text-slate-500">Toleransi Offline:</span>
                             <span className="font-bold text-slate-900">Hingga 72 Jam Penyimpanan Lokal</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500">Rekonsiliasi Antrean:</span>
-                            <span className="font-semibold text-[#2764B8]">Prioritas Otomatis Sampel Cito IGD</span>
+                            <span className="font-semibold text-[#0073FC]">Prioritas Otomatis Sampel Cito IGD</span>
                           </div>
                         </div>
 
-                        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between font-medium">
+                        <div className="p-3 bg-emerald-50/90 rounded-xl border border-emerald-200/80 text-xs text-emerald-900 flex items-center justify-between font-medium">
                           <span>Zero Data Loss Guarantee • Uptime 99.9%</span>
                           <Check className="h-4 w-4 text-emerald-600" />
                         </div>
@@ -772,22 +774,24 @@ export default function IntegrationPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: END-TO-END 5-LAYER CONNECTIVITY PIPELINE
-          (Diagram Arsitektur Alur Data Faskes Terpadu)
           ══════════════════════════════════════════════════════════════ */}
-      <section id="architecture" className="w-full py-16 sm:py-20 lg:py-24 bg-[#F8FBFE] border-b border-slate-200">
+      <section id="architecture" className="w-full py-16 sm:py-20 lg:py-24 bg-white border-b border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
-          <div className="max-w-3xl mb-12 sm:mb-16">
-            <div className="mb-4">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Peta Arsitektur Terintegrasi" : "Integrated Architecture Map"}
-              </SectionBadge>
+          {/* Split Header (Left-Aligned) */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl">
+              <div className="mb-3.5">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Peta Arsitektur Terintegrasi" : "Integrated Architecture Map"}
+                </SectionBadge>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
+                {language === "ID"
+                  ? "Bagaimana Diagnova Menyatukan Seluruh Alur Data Laboratorium"
+                  : "How Diagnova Unifies the Complete Laboratory Data Pipeline"}
+              </h2>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-900">
-              {language === "ID"
-                ? "Bagaimana Diagnova Menyatukan Seluruh Alur Data Laboratorium"
-                : "How Diagnova Unifies the Complete Laboratory Data Pipeline"}
-            </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
                 ? "Dari pembacaan instrumen analitik di meja lab hingga pelaporan rekam medis nasional, setiap layer berkomunikasi tanpa hambatan format atau risiko kehilangan data."
                 : "From analytical instrument query to national electronic medical record reporting, every layer communicates seamlessly without format friction or packet loss."}
@@ -795,20 +799,20 @@ export default function IntegrationPage() {
           </div>
 
           {/* 5-Layer Connected Sequential Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
             {architectureLayers.map((layer) => {
               const LayerIcon = layer.icon;
               return (
                 <div
                   key={layer.step}
-                  className="rounded-[28px] bg-white border border-slate-200 p-6 sm:p-7 shadow-xs hover:border-[#2764B8] hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
+                  className="rounded-[24px] bg-[#F7F9FC] border border-transparent p-6 sm:p-7 transition-all duration-200 hover:bg-[#F1F5FA] hover:border-blue-200/70 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)] flex flex-col justify-between"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="h-12 w-12 rounded-2xl bg-[#EBF3FB] text-[#2764B8] flex items-center justify-center shadow-xs">
-                        <LayerIcon className="h-6 w-6" />
+                      <div className="h-11 w-11 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center">
+                        <LayerIcon className="h-5 w-5 stroke-[1.75]" />
                       </div>
-                      <span className="text-xs font-semibold text-[#2764B8] bg-blue-50 px-3 py-1 rounded-full border border-blue-200/50">
+                      <span className="text-[11px] font-bold text-[#0073FC] bg-white px-2.5 py-1 rounded-full border border-blue-200/70">
                         Layer {layer.step}
                       </span>
                     </div>
@@ -817,18 +821,18 @@ export default function IntegrationPage() {
                       <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug">
                         {layer.layerName}
                       </h3>
-                      <p className="text-xs font-semibold text-[#2764B8] mt-1">
+                      <p className="text-xs font-semibold text-[#0073FC] mt-1">
                         {layer.subtitle}
                       </p>
-                      <p className="text-xs text-slate-600 font-normal leading-relaxed mt-2.5">
+                      <p className="text-xs sm:text-[13px] text-slate-600 font-normal leading-relaxed mt-2.5">
                         {layer.desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-500">
+                  <div className="pt-4 mt-5 border-t border-slate-200/70 flex items-center justify-between text-xs font-medium text-slate-500">
                     <span>{language === "ID" ? "Terintegrasi Native" : "Native Bridge"}</span>
-                    <Check className="h-3.5 w-3.5 text-[#2764B8]" />
+                    <Check className="h-3.5 w-3.5 text-[#0073FC]" />
                   </div>
                 </div>
               );
@@ -840,56 +844,73 @@ export default function IntegrationPage() {
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: SUPPORTED GLOBAL ANALYZER BRANDS GRID
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full py-16 sm:py-20 lg:py-24 bg-white border-b border-slate-200">
+      <section className="w-full py-16 sm:py-20 lg:py-24 bg-[#FAFBFD] border-b border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <div className="mb-4 flex justify-center">
-              <SectionBadge variant="blue">
-                {language === "ID" ? "Kompatibilitas Hardware Universal" : "Universal Hardware Compatibility"}
-              </SectionBadge>
+          {/* Split Header (Left-Aligned) */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
+            <div className="max-w-2xl">
+              <div className="mb-3.5">
+                <SectionBadge variant="blue">
+                  {language === "ID" ? "Kompatibilitas Hardware Universal" : "Universal Hardware Compatibility"}
+                </SectionBadge>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
+                {language === "ID"
+                  ? "Kompatibel dengan 500+ Mesin Laboratorium Global"
+                  : "Compatible with 500+ Global Medical Analyzers"}
+              </h2>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold leading-[1.18] tracking-tight text-slate-900">
+            <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
               {language === "ID"
-                ? "Kompatibel dengan 500+ Mesin Laboratorium Global"
-                : "Compatible with 500+ Global Medical Analyzers"}
-            </h2>
-            <p className="mt-3 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
-                ? "Diagnova telah teruji di ratusan rumah sakit dan laboratorium klinik terkemuka dengan dukungan protokol standar internasional (ASTM E1381/E1394, HL7 v2.x, Serial RS-232, dan TCP/IP LAN)."
+                ? "Diagnova telah teruji di ratusan rumah sakit dan laboratorium klinik dengan dukungan protokol standar internasional (ASTM E1381/E1394, HL7 v2.x, Serial RS-232, dan TCP/IP LAN)."
                 : "Diagnova is proven across hundreds of healthcare facilities, supporting international protocols including ASTM E1381/E1394, HL7 v2.x, Serial RS-232, and TCP/IP LAN."}
             </p>
           </div>
 
           {/* Manufacturers Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
             {analyzerBrands.map((brand, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl border border-slate-200 bg-[#F8FBFE] p-5 sm:p-6 text-center hover:bg-white hover:border-[#2764B8] hover:shadow-xs transition-all duration-200"
+                className="rounded-[22px] border border-slate-200/75 bg-white p-5 sm:p-6 transition-all duration-200 hover:border-blue-200/80 hover:shadow-[0_10px_28px_-12px_rgba(0,115,252,0.14)] flex flex-col justify-between"
               >
-                <div className="flex h-11 w-11 mx-auto items-center justify-center rounded-xl bg-white border border-slate-200 text-[#2764B8] mb-3 shadow-2xs">
-                  <Cpu className="h-5 w-5" />
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F1FD] text-[#0073FC]">
+                      <Cpu className="h-5 w-5 stroke-[1.75]" />
+                    </div>
+                    <span className="rounded-full bg-[#F7F9FC] border border-slate-200/80 px-2.5 py-0.5 text-[11px] font-semibold text-[#0073FC]">
+                      {brand.protocols}
+                    </span>
+                  </div>
+                  <h4 className="font-display text-sm sm:text-base font-bold text-slate-900">
+                    {brand.name}
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-1 font-normal">
+                    {brand.category}
+                  </p>
                 </div>
-                <h4 className="font-display text-sm sm:text-base font-bold text-slate-900">
-                  {brand.name}
-                </h4>
-                <p className="text-xs text-slate-500 mt-1 font-normal">
-                  {brand.category}
-                </p>
-                <span className="inline-block mt-3 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-[#2764B8]">
-                  {brand.protocols}
-                </span>
               </div>
             ))}
           </div>
 
           {/* Custom Driver Guarantee Banner */}
-          <div className="mt-10 p-5 rounded-2xl bg-[#F8FBFE] border border-slate-200 text-center max-w-2xl mx-auto">
+          <div className="mt-8 p-5 sm:px-7 rounded-2xl bg-[#F1F4F8] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <p className="text-xs sm:text-sm text-slate-700 font-normal">
+              <strong className="font-semibold text-slate-900">
+                {language === "ID" ? "Butuh driver instrumen khusus?" : "Need a custom instrument driver?"}
+              </strong>{" "}
               {language === "ID"
-                ? "Mesin lab Anda belum tercantum di atas? Tim teknis kami dapat membangun driver instrumen kustom dalam 3-5 hari kerja tanpa biaya tambahan."
-                : "Don't see your specific analyzer model above? Our engineering team builds custom instrument drivers within 3-5 business days at no extra fee."}
+                ? "Tim teknis kami membangun konektor ASTM/HL7 kustom dalam 3–5 hari kerja tanpa biaya tambahan."
+                : "Our engineering team builds custom ASTM/HL7 drivers within 3–5 business days at no extra fee."}
             </p>
+            <Link
+              href="/request-demo"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0073FC] hover:text-[#005DD1] shrink-0 transition-colors"
+            >
+              <span>{language === "ID" ? "Cek Daftar Mesin" : "Request Driver Check"}</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -897,13 +918,14 @@ export default function IntegrationPage() {
       {/* ══════════════════════════════════════════════════════════════
           SECTION 4: REGULATORY & SECURITY COMPLIANCE STRIP
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full py-16 sm:py-20 bg-[#F2F6FA] border-b border-slate-200">
+      <section className="w-full py-16 sm:py-20 bg-white">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10">
-          <div className="rounded-[28px] sm:rounded-[32px] bg-white border border-slate-200 p-8 sm:p-10 lg:p-12 shadow-xs">
+          <div className="rounded-[28px] sm:rounded-[32px] bg-[#F1F4F8] p-7 sm:p-10 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-5 space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#2764B8]">
-                  {language === "ID" ? "Kepatuhan Regulasi & Privasi" : "Regulatory & Privacy Compliance"}
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#0073FC] text-[11px] font-bold uppercase tracking-wider border border-blue-200/70">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <span>{language === "ID" ? "Kepatuhan Regulasi & Privasi" : "Regulatory & Privacy Compliance"}</span>
                 </span>
                 <h3 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-snug">
                   {language === "ID"
@@ -937,10 +959,10 @@ export default function IntegrationPage() {
                 ].map((item, idx) => {
                   const ComplianceIcon = item.icon;
                   return (
-                    <div key={idx} className="p-5 rounded-2xl bg-[#F8FBFE] border border-slate-200 flex flex-col justify-between">
+                    <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200/80 flex flex-col justify-between shadow-2xs">
                       <div>
-                        <div className="h-10 w-10 rounded-xl bg-white border border-slate-200 text-[#2764B8] flex items-center justify-center mb-3 shadow-2xs">
-                          <ComplianceIcon className="h-5 w-5" />
+                        <div className="h-10 w-10 rounded-xl bg-[#E8F1FD] text-[#0073FC] flex items-center justify-center mb-3">
+                          <ComplianceIcon className="h-5 w-5 stroke-[1.75]" />
                         </div>
                         <p className="text-sm font-bold text-slate-900">{item.title}</p>
                         <p className="text-xs text-slate-600 mt-1 leading-relaxed font-normal">{item.desc}</p>
@@ -957,7 +979,7 @@ export default function IntegrationPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA BANNER
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />
+      <CTABanner bgClassName="bg-[#FAFBFD]" topColor="#FAFBFD" />
     </div>
   );
 }
