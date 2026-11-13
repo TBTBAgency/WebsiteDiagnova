@@ -778,7 +778,7 @@ export default function ModulesPage() {
           COMPLETE MODULE DIRECTORY (CLEAN 6-CARD 3x2 LIGOLAB GRID)
           5 Core Modules + 1 Custom Specialty Gateway
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-white py-14 sm:py-20 lg:py-24 border-t border-slate-200/60">
+      <section className="w-full bg-[#FAFBFD] py-14 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           {/* Header */}
           <div className="max-w-3xl mb-10 sm:mb-14">
@@ -811,7 +811,7 @@ export default function ModulesPage() {
                 <div
                   key={m.id}
                   id={m.id}
-                  className="scroll-mt-32 rounded-2xl sm:rounded-[24px] bg-[#F7F9FC] hover:bg-[#F3F7FD] border border-slate-200/50 hover:border-blue-200/80 p-6 sm:p-7 transition-all duration-200 flex flex-col group"
+                  className="scroll-mt-32 rounded-2xl sm:rounded-[24px] bg-white hover:bg-[#FCFDFE] border border-slate-200/75 hover:border-blue-200/90 shadow-2xs p-6 sm:p-7 transition-all duration-200 flex flex-col group"
                 >
                   {/* Top Row: Icon Badge Left + Bold Title & Status Subtitle Right */}
                   <div className="flex items-center gap-4 mb-4">
@@ -847,7 +847,7 @@ export default function ModulesPage() {
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: ARCHITECTURE (UNIFIED DATA, NO SILOS)
           ══════════════════════════════════════════════════════════════ */}
-      <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
+      <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-4 sm:px-6 lg:px-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="lg:col-span-5 space-y-4">
@@ -878,7 +878,7 @@ export default function ModulesPage() {
             </div>
 
             <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-              <div className="p-6 rounded-[24px] bg-white border border-slate-200/90 shadow-2xs space-y-3">
+              <div className="p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
                   <Database className="h-5.5 w-5.5" />
                 </div>
@@ -892,7 +892,7 @@ export default function ModulesPage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-white border border-slate-200/90 shadow-2xs space-y-3">
+              <div className="p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
                   <Cpu className="h-5.5 w-5.5" />
                 </div>
@@ -906,7 +906,7 @@ export default function ModulesPage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-white border border-slate-200/90 shadow-2xs space-y-3">
+              <div className="p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
                   <FileCheck2 className="h-5.5 w-5.5" />
                 </div>
@@ -927,7 +927,7 @@ export default function ModulesPage() {
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#FAFBFD]" topColor="#FAFBFD" />
+      <CTABanner bgClassName="bg-white" topColor="#FFFFFF" />
     </div>
   );
 }
