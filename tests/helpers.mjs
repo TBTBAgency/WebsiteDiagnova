@@ -7,6 +7,7 @@
 import { PrismaClient } from "@prisma/client";
 import { SignJWT } from "jose";
 import crypto from "node:crypto";
+import bcrypt from "bcryptjs";
 
 export const BASE = (process.env.TEST_BASE_URL || "").replace(/\/+$/, "");
 if (!BASE) throw new Error("TEST_BASE_URL wajib di-set");
@@ -46,7 +47,23 @@ export function sessionFromResponse(res) {
   return null;
 }
 
-export async function loginAdmin(email = "admin@diagnova.id", password = "Diagnova2026!") {
+// Akun ADMIN khusus test: dibuat/diperbarui di DB test dengan password acak per proses.
+// Tidak ada password tetap di repository.
+export const TEST_ADMIN_EMAIL = "admin-test@example.com";
+const TEST_ADMIN_PASSWORD = crypto.randomBytes(18).toString("base64url");
+
+export async function ensureTestAdmin() {
+  const role = await getRole("Super Admin");
+  const passwordHash = await bcrypt.hash(TEST_ADMIN_PASSWORD, 10);
+  return db.user.upsert({
+    where: { email: TEST_ADMIN_EMAIL },
+    update: { passwordHash, roleId: role.id, status: 1 },
+    create: { name: "Admin Test", email: TEST_ADMIN_EMAIL, passwordHash, roleId: role.id, status: 1 },
+  });
+}
+
+export async function loginAdmin(email = TEST_ADMIN_EMAIL, password = TEST_ADMIN_PASSWORD) {
+  if (email === TEST_ADMIN_EMAIL) await ensureTestAdmin();
   const res = await fetch(`${BASE}/api/auth/login`, {
     method: "POST",
     headers: { "content-type": "application/json" },

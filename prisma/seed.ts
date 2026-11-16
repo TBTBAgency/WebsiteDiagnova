@@ -6,12 +6,11 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding Diagnova initial data...");
 
-  // 1. Seed Roles
+  // 1. Seed Roles — hanya dua role yang berlaku: ADMIN ("Super Admin") & USER ("Demo User").
+  //    Role lama (Sales Admin, Lab Staff, Pathologist) tidak dibuat lagi dan tidak dihapus (OD-01).
   const roles = [
-    { name: "Super Admin", description: "Akses penuh seluruh sistem Diagnova LIS" },
-    { name: "Sales Admin", description: "Kelola permohonan demo & calon klien lab" },
-    { name: "Lab Staff", description: "Petugas analis laboratorium & pre-analitik" },
-    { name: "Pathologist", description: "Dokter Sp.PK untuk otorisasi klinis" },
+    { name: "Super Admin", description: "ADMIN — mengelola sistem dan permohonan demo" },
+    { name: "Demo User", description: "USER — akun demo calon klien (login via magic link)" },
   ];
 
   const roleMap: Record<string, string> = {};
@@ -25,48 +24,30 @@ async function main() {
   }
   console.log("Roles seeded successfully.");
 
-  // 2. Create Default Super Admin
-  const adminEmail = "admin@diagnova.id";
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash("Diagnova2026!", salt);
+  // 2. Akun ADMIN awal. Password WAJIB dari environment; tidak ada password default di repository
+  //    dan password tidak pernah dicetak ke log.
+  const adminEmail = (process.env.SEED_ADMIN_EMAIL || "admin@diagnova.id").toLowerCase().trim();
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
 
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {
-      name: "Diagnova Super Admin",
-      roleId: roleMap["Super Admin"],
-      status: 1,
-    },
-    create: {
-      name: "Diagnova Super Admin",
-      email: adminEmail,
-      passwordHash,
-      roleId: roleMap["Super Admin"],
-      status: 1,
-    },
-  });
-  console.log(`Default Super Admin ready: ${admin.email} (Password: Diagnova2026!)`);
-
-  // 3. Create Default Sales Admin
-  const salesEmail = "sales@diagnova.id";
-  const salesHash = await bcrypt.hash("Sales2026!", salt);
-
-  const sales = await prisma.user.upsert({
-    where: { email: salesEmail },
-    update: {
-      name: "Diagnova Lead Specialist",
-      roleId: roleMap["Sales Admin"],
-      status: 1,
-    },
-    create: {
-      name: "Diagnova Lead Specialist",
-      email: salesEmail,
-      passwordHash: salesHash,
-      roleId: roleMap["Sales Admin"],
-      status: 1,
-    },
-  });
-  console.log(`Default Sales Admin ready: ${sales.email} (Password: Sales2026!)`);
+  if (!existingAdmin) {
+    if (!adminPassword || adminPassword.length < 12) {
+      throw new Error("SEED_ADMIN_PASSWORD wajib diisi (minimal 12 karakter) untuk membuat akun ADMIN awal.");
+    }
+    await prisma.user.create({
+      data: {
+        name: "Diagnova Super Admin",
+        email: adminEmail,
+        passwordHash: await bcrypt.hash(adminPassword, 10),
+        roleId: roleMap["Super Admin"],
+        status: 1,
+      },
+    });
+    console.log(`ADMIN account created: ${adminEmail}`);
+  } else {
+    // Akun yang sudah ada tidak diubah (password tidak ditimpa)
+    console.log(`ADMIN account already exists: ${adminEmail} (unchanged)`);
+  }
 
   // 4. Seed Test Catalogs
   const catalogCount = await prisma.testCatalog.count();

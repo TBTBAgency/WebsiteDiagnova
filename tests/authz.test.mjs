@@ -1,6 +1,7 @@
 // Test otorisasi server-side untuk /api/admin/* dan /api/lis/*.
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
+import bcrypt from "bcryptjs";
 import { BASE, db, signSession, cookieHeader, loginAdmin, createUser, getRole, uid } from "./helpers.mjs";
 
 const GET_ENDPOINTS = [
@@ -119,11 +120,15 @@ test("User Management menolak roleId yang tidak ada", async () => {
   assert.equal(res.status, 400);
 });
 
-test("login password akun non-admin ditolak 403", async () => {
+test("login password akun non-admin (role lama) ditolak 403", async () => {
+  const password = `pw-${uid()}-${uid()}`;
+  const legacy = await createUser({ roleName: "Sales Admin" });
+  created.push(legacy.id);
+  await db.user.update({ where: { id: legacy.id }, data: { passwordHash: await bcrypt.hash(password, 10) } });
   const res = await fetch(`${BASE}/api/auth/login`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ email: "sales@diagnova.id", password: "Sales2026!" }),
+    body: JSON.stringify({ email: legacy.email, password }),
   });
   assert.equal(res.status, 403);
 });

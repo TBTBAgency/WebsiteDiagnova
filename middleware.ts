@@ -11,8 +11,38 @@ const SESSION_COOKIE_NAME = "diagnova_session";
  * Setiap route handler admin/LIS tetap memverifikasi ulang status & role ke database
  * melalui `requireAdmin()` di lib/authz.ts.
  */
+const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+
+/**
+ * Proteksi CSRF lapis kedua (selain cookie SameSite=Lax): request yang mengubah data
+ * dengan header Origin dari host lain ditolak.
+ */
+function isCrossOriginMutation(request: NextRequest): boolean {
+  if (SAFE_METHODS.has(request.method)) return false;
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  try {
+    return new URL(origin).host !== host;
+  } catch {
+    return true;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/api/") && isCrossOriginMutation(request)) {
+    return NextResponse.json(
+      { success: false, message: "Permintaan lintas origin ditolak." },
+      { status: 403 }
+    );
+  }
+
+  // API lain (publik/auth) hanya melalui pemeriksaan origin di atas
+  if (pathname.startsWith("/api/") && !pathname.startsWith("/api/admin") && !pathname.startsWith("/api/lis")) {
+    return NextResponse.next();
+  }
 
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   let sessionPayload: Record<string, any> | null = null;
@@ -91,5 +121,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/lis/:path*"],
+  matcher: ["/admin/:path*", "/api/:path*"],
 };

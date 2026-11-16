@@ -48,32 +48,6 @@ export async function findUserByEmail(email: string): Promise<UserWithPassword |
 }
 
 /**
- * Mencari user berdasarkan ID (aman, tanpa password hash)
- */
-export async function findUserById(id: string): Promise<SafeUser | null> {
-  const user = await db.user.findUnique({
-    where: { id },
-    include: { role: true },
-  });
-
-  if (!user) return null;
-
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    institution: user.institution,
-    jobTitle: user.jobTitle,
-    phone: user.phone,
-    roleId: user.roleId,
-    roleName: user.role?.name || "User",
-    role: user.role?.name || "User",
-    status: user.status ?? 1,
-    createdAt: user.createdAt.toISOString(),
-  };
-}
-
-/**
  * Mengambil semua roles dari tabel Role
  */
 export async function getAllRoles(): Promise<RoleRecord[]> {
@@ -125,14 +99,8 @@ export async function createUser(data: {
   roleId?: string;
   status?: number;
 }): Promise<SafeUser> {
-  let passwordHash = "";
-  if (data.password) {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash(data.password, salt);
-  } else {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash("Diagnova2026!", salt);
-  }
+  // Tanpa password default: akun tanpa password tidak dapat login via password (hanya magic link)
+  const passwordHash = data.password ? await bcrypt.hash(data.password, 10) : null;
 
   // Jika roleId tidak diberikan, cari role default
   let roleId = data.roleId;
@@ -173,79 +141,8 @@ export async function createUser(data: {
 }
 
 /**
- * Mencari atau membuat user dari pengajuan lead request demo
- */
-export async function findOrCreateUserForLead(data: {
-  name: string;
-  institution: string;
-  jobTitle: string;
-  email: string;
-  phone: string;
-}): Promise<string> {
-  const existing = await db.user.findUnique({
-    where: { email: data.email.toLowerCase().trim() },
-  });
-
-  if (existing) {
-    await db.user.update({
-      where: { id: existing.id },
-      data: {
-        name: data.name,
-        institution: data.institution,
-        jobTitle: data.jobTitle,
-        phone: data.phone,
-      },
-    });
-    return existing.id;
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash("LeadDemo2026!", salt);
-
-  const newUser = await db.user.create({
-    data: {
-      name: data.name,
-      email: data.email.toLowerCase().trim(),
-      passwordHash,
-      institution: data.institution,
-      jobTitle: data.jobTitle,
-      phone: data.phone,
-      status: 1,
-    },
-  });
-
-  return newUser.id;
-}
-
-/**
  * Verifikasi password user
  */
 export async function verifyPassword(plain: string, hash: string): Promise<boolean> {
   return bcrypt.compare(plain, hash);
-}
-
-/**
- * Menjamin adanya akun Super Admin default
- */
-export async function ensureDefaultAdmin(): Promise<SafeUser> {
-  const defaultEmail = "admin@diagnova.id";
-  const existing = await findUserByEmail(defaultEmail);
-  if (existing) {
-    return existing;
-  }
-
-  let role = await db.role.findFirst({ where: { name: "Super Admin" } });
-  if (!role) {
-    role = await db.role.create({
-      data: { name: "Super Admin", description: "Akses penuh seluruh sistem" },
-    });
-  }
-
-  return createUser({
-    name: "Diagnova Super Admin",
-    email: defaultEmail,
-    password: "Diagnova2026!",
-    roleId: role.id,
-    status: 1,
-  });
 }
