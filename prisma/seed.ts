@@ -6,12 +6,10 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding Diagnova initial data...");
 
-  // 1. Seed Roles
+  // 1. Seed Roles (Hanya ADMIN dan USER)
   const roles = [
-    { name: "Super Admin", description: "Akses penuh seluruh sistem Diagnova LIS" },
-    { name: "Sales Admin", description: "Kelola permohonan demo & calon klien lab" },
-    { name: "Lab Staff", description: "Petugas analis laboratorium & pre-analitik" },
-    { name: "Pathologist", description: "Dokter Sp.PK untuk otorisasi klinis" },
+    { name: "ADMIN", description: "Administrator pengelola sistem, website, dan otorisasi Diagnova" },
+    { name: "USER", description: "Pengguna terdaftar / pemohon akses demo Diagnova" },
   ];
 
   const roleMap: Record<string, string> = {};
@@ -23,9 +21,9 @@ async function main() {
     });
     roleMap[r.name] = roleRecord.id;
   }
-  console.log("Roles seeded successfully.");
+  console.log("Roles seeded successfully (ADMIN, USER).");
 
-  // 2. Create Default Super Admin
+  // 2. Create Default ADMIN
   const adminEmail = "admin@diagnova.id";
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash("Diagnova2026!", salt);
@@ -33,21 +31,21 @@ async function main() {
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {
-      name: "Diagnova Super Admin",
-      roleId: roleMap["Super Admin"],
+      name: "Diagnova Admin",
+      roleId: roleMap["ADMIN"],
       status: 1,
     },
     create: {
-      name: "Diagnova Super Admin",
+      name: "Diagnova Admin",
       email: adminEmail,
       passwordHash,
-      roleId: roleMap["Super Admin"],
+      roleId: roleMap["ADMIN"],
       status: 1,
     },
   });
-  console.log(`Default Super Admin ready: ${admin.email} (Password: Diagnova2026!)`);
+  console.log(`Default Admin ready: ${admin.email} (Password: Diagnova2026!)`);
 
-  // 3. Create Default Sales Admin
+  // 3. Create Default Sales Staff (role ADMIN)
   const salesEmail = "sales@diagnova.id";
   const salesHash = await bcrypt.hash("Sales2026!", salt);
 
@@ -55,18 +53,18 @@ async function main() {
     where: { email: salesEmail },
     update: {
       name: "Diagnova Lead Specialist",
-      roleId: roleMap["Sales Admin"],
+      roleId: roleMap["ADMIN"],
       status: 1,
     },
     create: {
       name: "Diagnova Lead Specialist",
       email: salesEmail,
       passwordHash: salesHash,
-      roleId: roleMap["Sales Admin"],
+      roleId: roleMap["ADMIN"],
       status: 1,
     },
   });
-  console.log(`Default Sales Admin ready: ${sales.email} (Password: Sales2026!)`);
+  console.log(`Sales Admin mapped to role ADMIN ready: ${sales.email}`);
 
   // 4. Seed Test Catalogs
   const catalogCount = await prisma.testCatalog.count();

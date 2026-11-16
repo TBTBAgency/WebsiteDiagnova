@@ -108,20 +108,20 @@ function AdminLoginForm() {
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700 mb-2">
               <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
-              <span>Portal Super Admin Diagnova</span>
+              <span>Portal Admin Diagnova</span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 font-display">Masuk ke Sistem</h1>
             <p className="text-xs text-slate-500 mt-1 max-w-xs">
-              Akses terpusat Super Admin Diagnova Laboratory Intelligence Platform.
+              Akses terpusat Administrator Diagnova Laboratory Intelligence Platform.
             </p>
           </div>
 
-          {/* Quick Super Admin Fill Box */}
+          {/* Quick Admin Fill Box */}
           <div className="mb-6 p-3.5 rounded-2xl bg-blue-50/60 border border-blue-200/80 text-xs">
             <div className="flex items-center justify-between text-slate-700 font-semibold mb-2">
               <span className="flex items-center gap-1.5 text-blue-950 font-bold text-[11px]">
                 <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
-                <span>Akun Akses Super Admin:</span>
+                <span>Akun Akses Admin:</span>
               </span>
               <span className="text-[10px] text-blue-600 font-semibold">Klik untuk isi otomatis</span>
             </div>
@@ -132,7 +132,7 @@ function AdminLoginForm() {
             >
               <div>
                 <span className="text-slate-900 font-bold block group-hover:text-blue-600 transition-colors">
-                  Super Admin
+                  Administrator (ADMIN)
                 </span>
                 <span className="text-[10px] text-slate-400 font-mono">admin@diagnova.id</span>
               </div>

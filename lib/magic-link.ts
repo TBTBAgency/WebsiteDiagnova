@@ -130,16 +130,16 @@ export async function verifyAndConsumeMagicLink(
     });
   }
 
-  // Jika belum ada user, buat akun user dengan role Demo User
+  // Jika belum ada user, buat akun user dengan role USER
   if (!user) {
-    let demoRole = await db.role.findFirst({
-      where: { name: "Demo User" },
+    let targetRole = await db.role.findFirst({
+      where: { name: "USER" },
     });
-    if (!demoRole) {
-      demoRole = await db.role.create({
+    if (!targetRole) {
+      targetRole = await db.role.create({
         data: {
-          name: "Demo User",
-          description: "Akses terbatas untuk akun uji coba / demo LIS",
+          name: "USER",
+          description: "Pengguna terdaftar / pemohon akses demo Diagnova",
         },
       });
     }
@@ -151,7 +151,7 @@ export async function verifyAndConsumeMagicLink(
         institution: magicRecord.lead.institution,
         jobTitle: magicRecord.lead.jobTitle,
         phone: magicRecord.lead.phone,
-        roleId: demoRole.id,
+        roleId: targetRole.id,
         status: 1,
       },
       include: { role: true },
@@ -210,7 +210,7 @@ export async function verifyAndConsumeMagicLink(
     userId: user.id,
     name: user.name,
     email: user.email,
-    role: user.role?.name || "Demo User",
+    role: user.role?.name || "USER",
     demoExpiresAt: demoExpiresAt ? demoExpiresAt.toISOString() : undefined,
   };
 
@@ -218,9 +218,9 @@ export async function verifyAndConsumeMagicLink(
 
   return {
     success: true,
-    message: "Autentikasi berhasil! Mengalihkan ke platform demo Diagnova...",
+    message: "Autentikasi berhasil! Sesi demo Anda telah aktif.",
     sessionPayload,
-    redirectUrl: "/admin/dashboard",
+    redirectUrl: "/",
   };
 }
 

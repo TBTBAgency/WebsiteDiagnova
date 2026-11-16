@@ -51,6 +51,7 @@ export interface AboutSectionProps {
 
 export function AboutSection({ initialData }: AboutSectionProps = {}) {
   const { language } = useLanguage();
+  const aboutImage = initialData?.section?.extraContent?.imageUrl || "/images/dna-about.webp";
 
   const dynamicStatement = language === "ID" ? initialData?.section?.titleId : initialData?.section?.titleEn;
   const headlineWords: string[] = dynamicStatement && dynamicStatement.trim().length > 0
@@ -128,7 +129,7 @@ export function AboutSection({ initialData }: AboutSectionProps = {}) {
 
               <div className="relative w-full h-full flex items-center justify-center animate-dna-float gpu-layer">
                 <Image
-                  src="/images/dna-about.webp"
+                  src={aboutImage}
                   alt="Diagnova DNA Intelligence Structure"
                   width={500}
                   height={600}

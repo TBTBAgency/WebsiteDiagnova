@@ -14,6 +14,7 @@ export interface CTABannerProps {
 
 export function CTABanner({ initialData }: CTABannerProps = {}) {
   const { language } = useLanguage();
+  const ctaImage = initialData?.section?.extraContent?.imageUrl || "/images/CTA-image.webp";
   const [email, setEmail] = useState("");
   const router = useRouter();
 
@@ -117,7 +118,7 @@ export function CTABanner({ initialData }: CTABannerProps = {}) {
             >
               <div className="relative lg:absolute right-0 bottom-0 w-full max-w-[340px] sm:max-w-[480px] lg:max-w-[659px] flex items-end justify-center lg:justify-end translate-x-0 sm:translate-x-0.5 lg:translate-x-1 z-10 px-4 sm:px-0">
                 <Image
-                  src="/images/CTA-image.webp"
+                  src={ctaImage}
                   alt="Diagnova Platform on Laptop"
                   width={1200}
                   height={960}

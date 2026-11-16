@@ -298,7 +298,7 @@ export async function approveLead(
     ? new Date(options.confirmedDemoDate)
     : currentLead.requestedDemoDate || currentLead.demoDate;
 
-  // 1. Dapatkan atau buat akun User dengan role "Demo User"
+  // 1. Dapatkan atau buat akun User dengan role "USER"
   let userId = currentLead.userId;
   let user = currentLead.user;
 
@@ -309,12 +309,12 @@ export async function approveLead(
   }
 
   if (!user) {
-    let demoRole = await db.role.findFirst({ where: { name: "Demo User" } });
-    if (!demoRole) {
-      demoRole = await db.role.create({
+    let targetRole = await db.role.findFirst({ where: { name: "USER" } });
+    if (!targetRole) {
+      targetRole = await db.role.create({
         data: {
-          name: "Demo User",
-          description: "Akses terbatas untuk akun uji coba / demo LIS",
+          name: "USER",
+          description: "Pengguna terdaftar / pemohon akses demo Diagnova",
         },
       });
     }
@@ -326,7 +326,7 @@ export async function approveLead(
         institution: currentLead.institution,
         jobTitle: currentLead.jobTitle,
         phone: currentLead.phone,
-        roleId: demoRole.id,
+        roleId: targetRole.id,
         status: 1,
         demoDurationDays: durationDays,
       },

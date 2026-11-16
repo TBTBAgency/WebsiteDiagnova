@@ -82,12 +82,24 @@ export type UpdateLeadStatusSchemaType = z.infer<typeof updateLeadStatusSchema>;
 export const createUserSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter"),
   email: z.string().email("Format email tidak valid"),
-  password: z.string().min(6, "Password minimal 6 karakter"),
-  institution: z.string().optional(),
-  jobTitle: z.string().optional(),
-  phone: z.string().optional(),
-  roleId: z.string().min(1, "Role wajib dipilih"),
+  password: z.string().min(6, "Password minimal 6 karakter").optional(),
+  institution: z.string().optional().nullable(),
+  jobTitle: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  roleId: z.string().optional().nullable(),
   status: z.coerce.number().default(1),
+  demoDurationDays: z.coerce.number().min(1).max(365).optional().default(7),
 });
 
 export type CreateUserSchemaType = z.infer<typeof createUserSchema>;
+
+export const updateUserSchema = z.object({
+  name: z.string().min(2, "Nama minimal 2 karakter").optional(),
+  institution: z.string().optional().nullable(),
+  jobTitle: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  status: z.coerce.number().min(0).max(1).optional(),
+  demoDurationDays: z.coerce.number().min(1).max(365).optional().nullable(),
+});
+
+export type UpdateUserSchemaType = z.infer<typeof updateUserSchema>;
