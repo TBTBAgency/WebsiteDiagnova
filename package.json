@@ -12,10 +12,13 @@
     "test:integration": "node --test --test-concurrency=1 tests/*.test.mjs",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
-    "db:drift-check": "prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url \"$SHADOW_DATABASE_URL\" --exit-code",
-    "db:seed": "npx --yes tsx prisma/seed.ts",
-    "db:seed:cms": "npx --yes tsx prisma/seed-cms.ts",
-    "test:unit": "npx --yes tsx --test tests/unit/*.test.ts"
+    "db:drift-check": "node scripts/db-drift-check.mjs",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:seed:cms": "tsx prisma/seed-cms.ts",
+    "test:unit": "tsx --test tests/unit/*.test.ts",
+    "db:baseline-check": "node scripts/db-baseline-check.mjs",
+    "db:seed:demo-lis": "tsx prisma/seed-demo-lis.ts",
+    "test:migration": "node tests/migration/run-fixtures.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -46,9 +49,10 @@
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
+    "tsx": "4.19.2",
     "typescript": "^5.7.3"
   },
   "prisma": {
-    "seed": "npx --yes tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   }
 }

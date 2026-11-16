@@ -117,12 +117,17 @@ test("endpoint stub /notes sudah dihapus (404 untuk admin)", async () => {
   assert.equal(res.status, 404);
 });
 
-test("audit_logs append-only: UPDATE/DELETE ditolak database", async () => {
+// Ditolak oleh trigger append-only (bila DB diakses sebagai pemilik/superuser, mis. lingkungan dev lama)
+// atau lebih awal oleh izin tabel (role aplikasi diagnova_app dari prisma/sql/db-roles.sql). Keduanya penolakan DB.
+const DENIED = /append-only|permission denied/;
+
+test("audit_logs append-only: UPDATE/DELETE/TRUNCATE ditolak database", async () => {
   const row = await db.auditLog.findFirst({ orderBy: { createdAt: "desc" } });
   assert.ok(row);
-  await assert.rejects(db.auditLog.update({ where: { id: row.id }, data: { action: "TAMPERED" } }), /append-only/);
-  await assert.rejects(db.auditLog.delete({ where: { id: row.id } }), /append-only/);
-  await assert.rejects(db.$executeRawUnsafe("TRUNCATE audit_logs"), /append-only/);
+  await assert.rejects(db.auditLog.update({ where: { id: row.id }, data: { action: "TAMPERED" } }), DENIED);
+  await assert.rejects(db.auditLog.delete({ where: { id: row.id } }), DENIED);
+  await assert.rejects(db.$executeRawUnsafe("TRUNCATE audit_logs"), DENIED);
+  assert.equal((await db.auditLog.findUnique({ where: { id: row.id } }))?.action, row.action, "baris audit tidak berubah");
 });
 
 test("form publik: honeypot terisi -> 400 & tidak tersimpan; 5 permohonan per IP per jam -> 429", async () => {

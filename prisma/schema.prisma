@@ -447,7 +447,7 @@ enum gender {
 
 model CmsSection {
   id            String    @id @default(cuid())
-  pageKey       String    @default("home") @map("page_key") @db.VarChar(50)
+  pageKey       String    @map("page_key") @db.VarChar(50)
   sectionKey    String    @map("section_key") @db.VarChar(50)
   label         String?   @db.VarChar(120)
   sortOrder     Int       @default(0) @map("sort_order")

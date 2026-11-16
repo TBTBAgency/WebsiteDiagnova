@@ -1,26 +1,49 @@
 -- =====================================================================================
--- Restrukturisasi Users, Leads, Demo Access & Magic Link (Phase 4, 16 Nov 2026)
--- Referensi: PHASE_2_REVISION_WORKFLOW_AND_DESIGN.md §6–7, PHASE_0_DOCUMENTATION_REVIEW.md (K-01..K-09)
+-- Restrukturisasi Users, Leads, Demo Access & Magic Link
+-- Phase 4 (16 Nov 2026), diperkeras Phase 8.1 (temuan H-02, H-03, M-01, M-02, L-04, L-09 di
+-- audit/execution/PHASE_8_DEEP_DATABASE_MIGRATION_AUDIT.md).
+-- Referensi desain: PHASE_2_REVISION_WORKFLOW_AND_DESIGN.md §6–7, PHASE_0_DOCUMENTATION_REVIEW.md
 --
 -- Prinsip:
 --  * Tidak ada DROP COLUMN / DROP TABLE. Kolom lama yang digantikan hanya DEPRECATE (tidak ditulis lagi).
 --  * Konversi tipe memakai ALTER ... TYPE ... USING (data dipetakan, bukan dibuang).
---  * Precheck menghentikan migration (tanpa perubahan apa pun) bila ada data yang tidak dapat
---    dipetakan dengan aman, mis. lead berstatus 4 (OD-21: wajib review manual).
---  * Seluruh file berjalan dalam satu transaksi (Prisma Migrate); gagal = rollback total.
+--  * FAIL-CLOSED: seluruh precheck (bagian 0) berjalan SEBELUM perubahan schema/data. Data yang tidak dapat
+--    dipetakan dengan aman -> RAISE EXCEPTION -> file ini dibatalkan utuh (transaksi per file migration).
+--    Catatan: atomisitas berlaku PER FILE. Migration sebelumnya yang sudah sukses tidak ikut dibatalkan.
+--  * Transformasi yang mengubah makna data dilaporkan dengan RAISE NOTICE (jumlah + id contoh).
+--    Prisma tidak selalu menampilkan NOTICE; jalankan prisma/sql/precheck-restructure.sql (read-only)
+--    sebelum migrasi untuk melihat laporan yang sama.
+--  * Pemetaan role (H-02) — eksplisit, berdasarkan nama role pada schema lama:
+--      'Super Admin'                          -> admin
+--      'Demo User'                            -> user
+--      'Sales Admin', 'Lab Staff', 'Pathologist' -> NULL (tanpa akses; sama dengan perilaku sejak hotfix
+--                                                otorisasi; keputusan akhir OD-01 masih PENDING)
+--      nama lain yang dipakai user            -> MIGRASI DIBATALKAN (butuh keputusan pemetaan)
 -- =====================================================================================
 
 -- ---------------------------------------------------------------------------
--- 0. Precheck
+-- 0. Precheck (tanpa perubahan apa pun)
 -- ---------------------------------------------------------------------------
 DO $$
-DECLARE n bigint;
+DECLARE
+  n bigint;
+  ids text;
 BEGIN
-  SELECT count(*) INTO n FROM leads WHERE status NOT IN (1, 2, 3);
-  IF n > 0 THEN
-    RAISE EXCEPTION 'Dibatalkan: % lead berstatus di luar 1..3. Status 4 (Selesai versi lama) tidak dapat dipastikan sebagai konfirmasi demo dan wajib direview manual (OD-21).', n;
+  -- 0.1 Zona waktu (H-03). Kolom `timestamp` lama diasumsikan berisi waktu UTC (Prisma menulis UTC;
+  --     DEFAULT CURRENT_TIMESTAMP mengikuti TimeZone server). Tanpa jaminan itu, konversi ke timestamptz
+  --     dapat menggeser waktu secara diam-diam.
+  IF current_setting('TimeZone') NOT IN ('UTC', 'Etc/UTC') THEN
+    RAISE EXCEPTION 'Dibatalkan (H-03): TimeZone sesi/server = %, bukan UTC. Konversi timestamp mengasumsikan data tersimpan dalam UTC. Verifikasi zona waktu data lama dan siapkan migration khusus sebelum melanjutkan.', current_setting('TimeZone');
   END IF;
 
+  -- 0.2 Status lead (OD-21)
+  SELECT count(*), string_agg(id, ', ') INTO n, ids FROM (SELECT id FROM leads WHERE status NOT IN (1, 2, 3) ORDER BY id LIMIT 20) x;
+  IF n > 0 THEN
+    SELECT count(*) INTO n FROM leads WHERE status NOT IN (1, 2, 3);
+    RAISE EXCEPTION 'Dibatalkan (OD-21): % lead berstatus di luar 1..3 (contoh id: %). Status 4 versi lama tidak dapat dipastikan sebagai konfirmasi demo dan wajib direview manual.', n, ids;
+  END IF;
+
+  -- 0.3 Status & email user
   SELECT count(*) INTO n FROM users WHERE status NOT IN (0, 1);
   IF n > 0 THEN
     RAISE EXCEPTION 'Dibatalkan: % user dengan status di luar 0/1.', n;
@@ -28,23 +51,132 @@ BEGIN
 
   SELECT count(*) INTO n FROM users WHERE email <> lower(email);
   IF n > 0 THEN
-    RAISE EXCEPTION 'Dibatalkan: % user dengan email bukan huruf kecil (CHECK baru akan gagal).', n;
+    RAISE EXCEPTION 'Dibatalkan: % user dengan email bukan huruf kecil (CHECK baru akan gagal). Normalisasi perlu keputusan (risiko duplikat).', n;
   END IF;
 
-  SELECT count(*) INTO n
-  FROM leads l
-  WHERE l.user_id IS NOT NULL
-    AND (l.approval_status = 'approved' OR EXISTS (SELECT 1 FROM demo_magic_links m WHERE m.lead_id = l.id))
-    AND l.demo_duration_days NOT IN (3, 7, 14, 30);
+  -- 0.4 Pemetaan role (H-02) — role tak dikenal yang DIPAKAI user -> batal
+  SELECT count(*), string_agg(DISTINCT r.name, ', ') INTO n, ids
+  FROM users u JOIN roles r ON r.id = u.role_id
+  WHERE r.name NOT IN ('Super Admin', 'Demo User', 'Sales Admin', 'Lab Staff', 'Pathologist');
   IF n > 0 THEN
-    RAISE EXCEPTION 'Dibatalkan: % lead dengan akses demo berdurasi di luar 3/7/14/30 hari (perlu keputusan manual).', n;
+    RAISE EXCEPTION 'Dibatalkan (H-02): % user memakai role yang tidak dikenali (%). Role tidak boleh dipetakan diam-diam; tetapkan pemetaan ke ADMIN/USER/tanpa akses (keputusan bisnis) lalu perbarui migration.', n, ids;
   END IF;
 
-  SELECT count(*) INTO n
-  FROM demo_magic_links m JOIN leads l ON l.id = m.lead_id
-  WHERE l.user_id IS NULL;
+  SELECT string_agg(name, ', ') INTO ids FROM roles
+  WHERE name NOT IN ('Super Admin', 'Demo User', 'Sales Admin', 'Lab Staff', 'Pathologist')
+    AND NOT EXISTS (SELECT 1 FROM users u WHERE u.role_id = roles.id);
+  IF ids IS NOT NULL THEN
+    RAISE NOTICE 'Info (H-02): role tak dikenal tanpa user dibiarkan tanpa kode (tanpa akses): %', ids;
+  END IF;
+
+  -- Minimal satu ADMIN yang benar-benar dapat login setelah migrasi (hanya bila tabel users berisi data)
+  IF EXISTS (SELECT 1 FROM users) THEN
+    SELECT count(*) INTO n
+    FROM users u JOIN roles r ON r.id = u.role_id
+    WHERE r.name = 'Super Admin' AND u.status = 1 AND u.password_hash IS NOT NULL AND u.password_hash <> '';
+    IF n = 0 THEN
+      RAISE EXCEPTION 'Dibatalkan (H-02): tidak ada user aktif ber-role "Super Admin" dengan password. Setelah migrasi tidak akan ada ADMIN yang dapat login.';
+    END IF;
+    RAISE NOTICE 'Info (H-02): % user aktif akan menjadi ADMIN.', n;
+  END IF;
+
+  SELECT count(*) INTO n FROM users u JOIN roles r ON r.id = u.role_id WHERE r.name IN ('Sales Admin', 'Lab Staff', 'Pathologist');
+  IF n > 0 THEN
+    RAISE NOTICE 'Info (OD-01): % user ber-role lama (Sales Admin/Lab Staff/Pathologist) tetap ada tanpa akses (code NULL).', n;
+  END IF;
+  SELECT count(*) INTO n FROM users WHERE role_id IS NULL;
+  IF n > 0 THEN
+    RAISE NOTICE 'Info: % user tanpa role (tidak memiliki akses sebelum maupun sesudah migrasi).', n;
+  END IF;
+
+  -- 0.5 Durasi akses lama
+  SELECT count(*), string_agg(id, ', ') INTO n, ids FROM (
+    SELECT l.id FROM leads l
+    WHERE l.user_id IS NOT NULL
+      AND (l.approval_status = 'approved' OR EXISTS (SELECT 1 FROM demo_magic_links m WHERE m.lead_id = l.id))
+      AND l.demo_duration_days NOT IN (3, 7, 14, 30)
+    ORDER BY l.id LIMIT 20) x;
+  IF n > 0 THEN
+    RAISE EXCEPTION 'Dibatalkan: lead dengan akses demo berdurasi di luar 3/7/14/30 hari (contoh id: %). Perlu keputusan manual.', ids;
+  END IF;
+
+  -- 0.6 Magic link (L-04)
+  SELECT count(*) INTO n FROM demo_magic_links m JOIN leads l ON l.id = m.lead_id WHERE l.user_id IS NULL;
   IF n > 0 THEN
     RAISE EXCEPTION 'Dibatalkan: % magic link milik lead tanpa akun USER (tidak dapat dipetakan ke demo_accesses).', n;
+  END IF;
+
+  SELECT count(*), string_agg('link ' || id || ' / lead ' || lead_id, '; ') INTO n, ids FROM (
+    SELECT m.id, m.lead_id FROM demo_magic_links m JOIN leads l ON l.id = m.lead_id
+    WHERE m.user_id IS NOT NULL AND m.user_id IS DISTINCT FROM l.user_id
+    ORDER BY m.id LIMIT 20) x;
+  IF n > 0 THEN
+    RAISE EXCEPTION 'Dibatalkan (L-04): magic link terikat ke user yang berbeda dari user lead (%). Setelah migrasi tautan akan login ke akun lead; telusuri sebelum melanjutkan.', ids;
+  END IF;
+
+  SELECT count(*) INTO n FROM demo_magic_links WHERE user_id IS NULL;
+  IF n > 0 THEN
+    RAISE NOTICE 'Info (L-04): % magic link tanpa user_id (akun terhapus); dipetakan ke akun pada lead terkait.', n;
+  END IF;
+
+  -- 0.7 Aktivasi demo lama tanpa lead kandidat (M-02) -> riwayat akses akan hilang -> batal
+  SELECT count(*), string_agg(id, ', ') INTO n, ids FROM (
+    SELECT u.id FROM users u
+    WHERE u.demo_activated_at IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1 FROM leads l
+        WHERE l.user_id = u.id
+          AND (l.approval_status = 'approved' OR EXISTS (SELECT 1 FROM demo_magic_links m WHERE m.lead_id = l.id)))
+    ORDER BY u.id LIMIT 20) x;
+  IF n > 0 THEN
+    RAISE EXCEPTION 'Dibatalkan (M-02): user dengan aktivasi demo lama tanpa lead yang dapat dipetakan (contoh user id: %). Riwayat akses tidak boleh hilang; tentukan lead terkait secara manual.', ids;
+  END IF;
+
+  -- 0.8 Masa berlaku lama vs hasil perhitungan ulang (M-02). Periode baru WAJIB activated_at + durasi*24 jam
+  --     (CHECK); bila masa berlaku lama berbeda, masa akses pengguna akan berubah -> batal.
+  SELECT count(*), string_agg('user ' || user_id || ' / lead ' || lead_id || ' selisih ' || delta, '; ') INTO n, ids FROM (
+    SELECT c.user_id, c.lead_id,
+           COALESCE((u.demo_expires_at - (u.demo_activated_at + make_interval(hours => c.duration_days * 24)))::text, 'expires NULL') AS delta
+    FROM (
+      SELECT l.id AS lead_id, l.user_id, l.demo_duration_days AS duration_days,
+             row_number() OVER (
+               PARTITION BY l.user_id
+               ORDER BY EXISTS (SELECT 1 FROM demo_magic_links m WHERE m.lead_id = l.id AND m.used_at IS NOT NULL) DESC,
+                        COALESCE(l.approved_at, l.updated_at) DESC
+             ) AS rn
+      FROM leads l
+      WHERE l.user_id IS NOT NULL
+        AND (l.approval_status = 'approved' OR EXISTS (SELECT 1 FROM demo_magic_links m WHERE m.lead_id = l.id))
+    ) c
+    JOIN users u ON u.id = c.user_id
+    WHERE c.rn = 1 AND u.demo_activated_at IS NOT NULL
+      AND u.demo_expires_at IS DISTINCT FROM u.demo_activated_at + make_interval(hours => c.duration_days * 24)
+    ORDER BY c.user_id LIMIT 20) x;
+  IF n > 0 THEN
+    RAISE EXCEPTION 'Dibatalkan (M-02): masa berlaku demo lama berbeda dari aktivasi + durasi (%). Tentukan masa berlaku yang benar secara manual.', ids;
+  END IF;
+
+  SELECT count(*) INTO n FROM users WHERE demo_activated_at IS NOT NULL;
+  IF n > 0 THEN
+    RAISE NOTICE 'Info (M-02): % aktivasi demo lama dipindahkan ke demo_accesses dengan masa berlaku identik.', n;
+  END IF;
+
+  -- 0.9 Laporan transformasi yang mengubah makna (M-01, L-09) — tidak membatalkan
+  SELECT count(*), string_agg(id, ', ') INTO n, ids FROM (
+    SELECT l.id FROM leads l LEFT JOIN users u ON u.id = l.user_id
+    WHERE l.status = 3 AND (u.id IS NULL OR u.demo_activated_at IS NULL)
+    ORDER BY l.id LIMIT 20) x;
+  IF n > 0 THEN
+    SELECT count(*) INTO n FROM leads l LEFT JOIN users u ON u.id = l.user_id
+    WHERE l.status = 3 AND (u.id IS NULL OR u.demo_activated_at IS NULL);
+    RAISE NOTICE 'Info (M-01): % lead berstatus 3 (Jadwal Demo versi lama) tanpa login demo -> menjadi Dihubungi (contoh id: %).', n, ids;
+  END IF;
+
+  SELECT count(*), string_agg(id, ', ') INTO n, ids FROM (
+    SELECT id FROM leads WHERE approval_status = 'approved' AND user_id IS NULL ORDER BY id LIMIT 20) x;
+  IF n > 0 THEN
+    SELECT count(*) INTO n FROM leads WHERE approval_status = 'approved' AND user_id IS NULL;
+    RAISE NOTICE 'Info (L-09): % lead berstatus approved tanpa akun USER; tidak dibuatkan periode akses dan tidak dibuatkan user otomatis (contoh id: %).', n, ids;
   END IF;
 END $$;
 
@@ -153,7 +285,7 @@ CREATE TABLE "demo_accesses" (
     CONSTRAINT "demo_accesses_duration_chk" CHECK ("duration_days" IN (3, 7, 14, 30)),
     CONSTRAINT "demo_accesses_activation_pair_chk" CHECK (("activated_at" IS NULL) = ("expires_at" IS NULL)),
     CONSTRAINT "demo_accesses_expiry_chk"
-      CHECK ("expires_at" IS NULL OR "expires_at" = "activated_at" + make_interval(days => "duration_days")),
+      CHECK ("expires_at" IS NULL OR "expires_at" = "activated_at" + make_interval(hours => "duration_days" * 24)),
     CONSTRAINT "demo_accesses_revoke_pair_chk" CHECK ("revoked_by_id" IS NULL OR "revoked_at" IS NOT NULL),
     CONSTRAINT "demo_accesses_not_self_extend_chk" CHECK ("extends_access_id" IS NULL OR "extends_access_id" <> "id")
 );
@@ -205,7 +337,7 @@ SELECT
   NULL,
   CASE WHEN c.rn = 1 THEN u."demo_activated_at" END,
   CASE WHEN c.rn = 1 AND u."demo_activated_at" IS NOT NULL
-       THEN u."demo_activated_at" + make_interval(days => c.duration_days) END,
+       THEN u."demo_activated_at" + make_interval(hours => c.duration_days * 24) END,
   c.revoked_at,
   CURRENT_TIMESTAMP,
   CURRENT_TIMESTAMP

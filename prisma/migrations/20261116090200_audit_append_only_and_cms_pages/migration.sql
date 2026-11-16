@@ -1,7 +1,19 @@
 -- =====================================================================================
--- Audit log append-only & CMS pusat seluruh halaman (Phase 4, 16 Nov 2026)
+-- Audit log append-only & CMS pusat seluruh halaman
+-- Phase 4 (16 Nov 2026), diperkeras Phase 8.1 (temuan H-03, H-06, L-07).
 -- Tidak ada DROP TABLE / DROP COLUMN. Tabel anak CMS lama hanya DEPRECATE (isi disalin ke JSON).
+-- Yang di-DROP: UNIQUE index lama cms_sections_section_key_key (diganti UNIQUE (page_key, section_key))
+-- dan DEFAULT sementara page_key (hanya untuk backfill baris lama).
+-- Atomisitas berlaku PER FILE: bila file ini gagal, migration sebelumnya tetap terpasang.
 -- =====================================================================================
+
+-- 0. Precheck zona waktu (H-03): konversi timestamp di bawah mengasumsikan data lama tersimpan dalam UTC.
+DO $$
+BEGIN
+  IF current_setting('TimeZone') NOT IN ('UTC', 'Etc/UTC') THEN
+    RAISE EXCEPTION 'Dibatalkan (H-03): TimeZone sesi/server = %, bukan UTC.', current_setting('TimeZone');
+  END IF;
+END $$;
 
 -- ---------------------------------------------------------------------------
 -- 1. audit_logs
@@ -16,18 +28,29 @@ ALTER TABLE "audit_logs"
 
 CREATE INDEX "audit_logs_action_created_at_idx" ON "audit_logs"("action", "created_at");
 
--- Append-only ditegakkan di database. Pemeliharaan resmi (mis. retensi OD-12) harus dilakukan DBA
--- secara eksplisit dalam transaksi dengan: SET LOCAL diagnova.audit_maintenance = 'on';
+-- Append-only di level database (H-06):
+--  * UPDATE dan TRUNCATE SELALU ditolak.
+--  * DELETE hanya diizinkan bagi sesi yang login sebagai anggota role database khusus
+--    "diagnova_audit_maintainer" (retensi OD-12). Bila role itu tidak ada, tidak ada pengecualian sama sekali.
+--  * Tidak ada bypass lewat GUC/SET yang dapat dipakai akun aplikasi.
+--  * Batasan: superuser dan PEMILIK tabel tetap dapat menonaktifkan/menghapus trigger. Karena itu role
+--    aplikasi WAJIB bukan superuser dan bukan pemilik tabel (lihat prisma/sql/db-roles.sql & DEPLOYMENT.md).
 CREATE FUNCTION "audit_logs_block_mutation"() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql
+SET search_path = pg_catalog, pg_temp
+AS $$
 BEGIN
-  IF current_setting('diagnova.audit_maintenance', true) = 'on' THEN
-    IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
-    RETURN NEW;
+  IF TG_OP = 'DELETE'
+     AND to_regrole('diagnova_audit_maintainer') IS NOT NULL
+     AND pg_has_role(session_user, 'diagnova_audit_maintainer', 'MEMBER') THEN
+    RETURN OLD;
   END IF;
   RAISE EXCEPTION 'audit_logs bersifat append-only: % ditolak', TG_OP;
 END;
 $$;
+
+COMMENT ON FUNCTION "audit_logs_block_mutation"() IS
+  'Append-only audit_logs: UPDATE/TRUNCATE ditolak; DELETE hanya untuk anggota role diagnova_audit_maintainer.';
 
 CREATE TRIGGER "audit_logs_append_only_row"
   BEFORE UPDATE OR DELETE ON "audit_logs"
@@ -69,6 +92,9 @@ UPDATE "cms_sections" SET "sort_order" = CASE "section_key"
 DROP INDEX "cms_sections_section_key_key";
 CREATE UNIQUE INDEX "cms_sections_page_key_section_key_key" ON "cms_sections"("page_key", "section_key");
 CREATE INDEX "cms_sections_page_key_sort_order_idx" ON "cms_sections"("page_key", "sort_order");
+
+-- DEFAULT 'home' hanya untuk mengisi baris lama; baris baru WAJIB menyebut page_key (L-07)
+ALTER TABLE "cms_sections" ALTER COLUMN "page_key" DROP DEFAULT;
 
 ALTER TABLE "cms_sections" ADD CONSTRAINT "cms_sections_deleted_by_id_fkey"
   FOREIGN KEY ("deleted_by_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
