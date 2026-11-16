@@ -242,7 +242,7 @@ export default function AdminLeadsPage() {
         setSelectedLead(json.data.lead);
         setGeneratedMagicLink(json.data.magicLinkUrl);
         setActionSuccessMessage(
-          `Permohonan demo berhasil DISETUJUI. Tautan Magic Link akses aktif selama 24 jam.`
+          `Permohonan demo DISETUJUI. Tautan Magic Link berlaku 24 jam dan hanya ditampilkan sekali — salin atau kirim sekarang. Status berubah menjadi Jadwal Demo saat client pertama kali login.`
         );
         fetchLeads();
       } else {
@@ -1119,6 +1119,39 @@ export default function AdminLeadsPage() {
                         • Durasi akses demo: <strong>{selectedLead.demoDurationDays || 7} Hari</strong>
                       </p>
                     </div>
+
+                    {/* Status tautan terakhir (URL hanya ditampilkan sekali saat dibuat) */}
+                    {!generatedMagicLink && (
+                      <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                            <LinkIcon className="h-3.5 w-3.5 text-slate-500" />
+                            <span>Tautan Akses (Magic Link)</span>
+                          </span>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700 border border-slate-300">
+                            {selectedLead.magicLinkStatus === "ACTIVE"
+                              ? "Aktif"
+                              : selectedLead.magicLinkStatus === "USED"
+                              ? "Sudah digunakan"
+                              : selectedLead.magicLinkStatus === "EXPIRED"
+                              ? "Kedaluwarsa"
+                              : "Belum ada"}
+                          </span>
+                        </div>
+                        <p className="text-slate-600">
+                          Demi keamanan, tautan hanya ditampilkan satu kali saat dibuat dan tidak disimpan. Buat tautan baru
+                          untuk menyalin atau mengirim ulang; tautan lama yang belum dipakai otomatis tidak berlaku.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleApprove}
+                          disabled={isApproving}
+                          className="py-2 px-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors disabled:opacity-50"
+                        >
+                          {isApproving ? "Membuat tautan..." : "Buat Tautan Baru"}
+                        </button>
+                      </div>
+                    )}
 
                     {/* Kartu Tautan Magic Link */}
                     {(generatedMagicLink || selectedLead.magicLinkUrl) && (

@@ -1,5 +1,10 @@
 import { DemoRequestRecord } from "@/types";
 
+/** Token magic link adalah kredensial: jangan pernah ditulis ke log. */
+function redactToken(url: string): string {
+  return url.replace(/token=[^&\s#]+/g, "token=[DISEMBUNYIKAN]");
+}
+
 export interface SendEmailResult {
   success: boolean;
   messageId?: string;
@@ -72,7 +77,7 @@ Rincian Akses Demo Anda:
 
 Silakan klik tautan di bawah ini untuk langsung mengakses sistem demo tanpa perlu memasukkan password:
 🔗 TAUTAN MASUK LANGSUNG (MAGIC LINK):
-${magicLinkUrl}
+${redactToken(magicLinkUrl)}
 
 Catatan Keamanan:
 Demi menjaga integritas sistem laboratorium, tautan ini bersifat sekali pakai (single-use) dan hanya ditujukan untuk pihak yang berwenang pada ${lead.institution}.

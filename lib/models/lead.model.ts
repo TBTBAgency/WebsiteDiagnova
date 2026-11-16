@@ -11,7 +11,20 @@ import {
   LeadApprovalStatus as PrismaLeadApprovalStatus,
   Prisma,
 } from "@prisma/client";
-import { createDemoMagicLink } from "@/lib/magic-link";
+import { getMagicLinkStatus, issueMagicLink } from "@/lib/magic-link";
+import { DEMO_ROLE_NAME, isDemoRole } from "@/lib/roles";
+import { DEFAULT_DEMO_DURATION_DAYS, isValidDemoDuration } from "@/lib/demo-constants";
+
+/** Error bisnis yang pesannya aman ditampilkan ke admin. */
+export class LeadWorkflowError extends Error {
+  constructor(
+    message: string,
+    public readonly httpStatus: number = 409
+  ) {
+    super(message);
+    this.name = "LeadWorkflowError";
+  }
+}
 
 export const institutionTypeToPrisma: Record<InstitutionType, PrismaInstitutionType> = {
   hospital: PrismaInstitutionType.HOSPITAL,
@@ -106,8 +119,11 @@ function formatLeadRecord(record: any): DemoRequestRecord {
     demoDurationDays: record.demoDurationDays || 3,
     voucherCode: record.voucherCode ?? null,
     voucherExpiry: record.voucherExpiry ? record.voucherExpiry.toISOString() : null,
-    magicLinkUrl: latestMagicLink ? `http://localhost:3000/auth/verify-magic-link?token=${latestMagicLink.tokenHash}` : null,
+    // Token mentah tidak disimpan (hanya hash), sehingga URL tidak dapat direkonstruksi dari DB.
+    // URL hanya dikembalikan sekali saat dibuat (approve); di sini hanya status tautan terakhir.
+    magicLinkUrl: null,
     magicLinkExpiry: latestMagicLink ? latestMagicLink.expiresAt.toISOString() : null,
+    magicLinkStatus: latestMagicLink ? getMagicLinkStatus(latestMagicLink) : null,
     createdAt: record.createdAt.toISOString(),
   };
 }
@@ -125,17 +141,15 @@ function generateVoucherCode(): string {
 }
 
 /**
- * Menyimpan lead baru dari form publik Request Demo
- * (TIDAK membuat user dummy secara prematur; hanya mengaitkan jika email sudah pernah terdaftar)
+ * Menyimpan lead baru dari form publik Request Demo.
+ *
+ * Lead TIDAK dikaitkan ke akun mana pun di sini: email pada form publik belum terverifikasi,
+ * sehingga mengaitkan berdasarkan email memungkinkan pihak lain menempel ke akun orang lain
+ * (termasuk akun admin). Relasi lead -> akun demo dibuat saat admin menyetujui permohonan.
  */
 export async function createLead(input: DemoRequestInput): Promise<DemoRequestRecord> {
   const prismaInstitution =
     institutionTypeToPrisma[input.institutionType] ?? PrismaInstitutionType.HOSPITAL;
-
-  // Cek apakah email pemohon sudah pernah ada di database pengguna
-  const existingUser = await db.user.findUnique({
-    where: { email: input.email.toLowerCase().trim() },
-  });
 
   const requestedDate = input.requestedDemoDate
     ? new Date(input.requestedDemoDate)
@@ -145,7 +159,7 @@ export async function createLead(input: DemoRequestInput): Promise<DemoRequestRe
 
   const record = await db.lead.create({
     data: {
-      userId: existingUser ? existingUser.id : null,
+      userId: null,
       name: input.name,
       institution: input.institution,
       jobTitle: input.jobTitle,
@@ -270,7 +284,15 @@ export async function getLeadById(id: string): Promise<DemoRequestRecord | null>
 }
 
 /**
- * Menyetujui permohonan demo, menyiapkan akun demo, dan menghasilkan Magic Link
+ * Menyetujui permohonan demo, menyiapkan akun demo, dan menerbitkan Magic Link baru.
+ *
+ * - Status CRM TIDAK diubah di sini. "Jadwal Demo" hanya terjadi saat client berhasil login
+ *   pertama kali (lihat consumeMagicLink).
+ * - Email pemohon yang sudah dipakai akun non-demo (mis. admin) ditolak agar tautan tidak
+ *   pernah dapat dipakai untuk masuk ke akun tersebut.
+ * - Seluruh langkah berada dalam satu transaksi; baris lead dikunci (FOR UPDATE) sehingga
+ *   approve paralel untuk lead yang sama berjalan berurutan dan hanya tautan terakhir yang aktif.
+ * - URL mentah dikembalikan sekali ke admin dan tidak pernah disimpan.
  */
 export async function approveLead(
   leadId: string,
@@ -284,101 +306,100 @@ export async function approveLead(
   magicLinkUrl: string;
   expiresAt: string;
 }> {
-  const currentLead = await db.lead.findUnique({
-    where: { id: leadId },
-    include: { user: true },
-  });
+  if (options.durationDays !== undefined && !isValidDemoDuration(options.durationDays)) {
+    throw new LeadWorkflowError("Durasi demo tidak valid.", 400);
+  }
+  const durationDays = options.durationDays ?? DEFAULT_DEMO_DURATION_DAYS;
 
-  if (!currentLead) {
-    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan.`);
+  let confirmedFromInput: Date | null = null;
+  if (options.confirmedDemoDate) {
+    confirmedFromInput = new Date(options.confirmedDemoDate);
+    if (isNaN(confirmedFromInput.getTime())) {
+      throw new LeadWorkflowError("Format jadwal demo tidak valid.", 400);
+    }
   }
 
-  const durationDays = options.durationDays ? Math.max(1, options.durationDays) : 7;
-  const confirmedDate = options.confirmedDemoDate
-    ? new Date(options.confirmedDemoDate)
-    : currentLead.requestedDemoDate || currentLead.demoDate;
-
-  // 1. Dapatkan atau buat akun User dengan role "Demo User"
-  let userId = currentLead.userId;
-  let user = currentLead.user;
-
-  if (!user) {
-    user = await db.user.findUnique({
-      where: { email: currentLead.email.toLowerCase().trim() },
-    });
-  }
-
-  if (!user) {
-    let demoRole = await db.role.findFirst({ where: { name: "Demo User" } });
-    if (!demoRole) {
-      demoRole = await db.role.create({
-        data: {
-          name: "Demo User",
-          description: "Akses terbatas untuk akun uji coba / demo LIS",
-        },
-      });
+  const issued = await db.$transaction(async (tx) => {
+    const locked = await tx.$queryRaw<{ id: string }[]>`SELECT id FROM leads WHERE id = ${leadId} FOR UPDATE`;
+    if (locked.length === 0) {
+      throw new LeadWorkflowError("Permohonan demo tidak ditemukan.", 404);
     }
 
-    user = await db.user.create({
+    const lead = await tx.lead.findUniqueOrThrow({ where: { id: leadId } });
+    const email = lead.email.toLowerCase().trim();
+
+    // 1. Akun demo: pakai akun demo yang sudah ada untuk email ini, atau buat baru
+    const existing = await tx.user.findUnique({ where: { email }, include: { role: true } });
+    let userId: string;
+    let userDemoExpiresAt: Date | null = null;
+
+    if (existing) {
+      if (!isDemoRole(existing.role?.name)) {
+        throw new LeadWorkflowError(
+          "Email pemohon sudah terdaftar sebagai akun non-demo. Akses demo tidak dapat dibuat untuk email ini."
+        );
+      }
+      if (existing.status !== 1) {
+        throw new LeadWorkflowError(
+          "Akun demo untuk email ini sedang dinonaktifkan. Aktifkan akun terlebih dahulu sebelum mengirim tautan baru."
+        );
+      }
+      if (existing.demoExpiresAt && existing.demoExpiresAt <= new Date()) {
+        throw new LeadWorkflowError(
+          "Masa demo akun untuk email ini sudah berakhir. Perpanjangan masa demo belum tersedia."
+        );
+      }
+      userId = existing.id;
+      userDemoExpiresAt = existing.demoExpiresAt;
+    } else {
+      const demoRole = await tx.role.upsert({
+        where: { name: DEMO_ROLE_NAME },
+        update: {},
+        create: { name: DEMO_ROLE_NAME, description: "Akses terbatas untuk akun uji coba / demo LIS" },
+      });
+      const created = await tx.user.create({
+        data: {
+          name: lead.name,
+          email,
+          institution: lead.institution,
+          jobTitle: lead.jobTitle,
+          phone: lead.phone,
+          roleId: demoRole.id,
+          status: 1,
+        },
+      });
+      userId = created.id;
+    }
+
+    // 2. Terbitkan tautan baru (tautan lama yang belum dipakai otomatis dicabut)
+    const link = await issueMagicLink(tx, { leadId, email, userId });
+
+    // 3. Tandai disetujui. Masa berlaku demo baru diisi saat aktivasi (login pertama).
+    const confirmedDate = confirmedFromInput ?? lead.requestedDemoDate ?? lead.demoDate;
+    await tx.lead.update({
+      where: { id: leadId },
       data: {
-        name: currentLead.name,
-        email: currentLead.email.toLowerCase().trim(),
-        institution: currentLead.institution,
-        jobTitle: currentLead.jobTitle,
-        phone: currentLead.phone,
-        roleId: demoRole.id,
-        status: 1,
+        userId,
+        approvalStatus: PrismaLeadApprovalStatus.APPROVED,
+        approvedAt: new Date(),
+        approvedBy: options.approvedBy || "Admin Diagnova",
+        rejectionReason: null,
+        confirmedDemoDate: confirmedDate,
+        demoDate: confirmedDate,
         demoDurationDays: durationDays,
+        voucherCode: lead.voucherCode || generateVoucherCode(),
+        voucherExpiry: userDemoExpiresAt,
       },
     });
-    userId = user.id;
-  } else {
-    userId = user.id;
-    // Perbarui durasi demo pada user yang sudah ada
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        demoDurationDays: durationDays,
-        status: 1,
-      },
-    });
-  }
 
-  // 2. Generate token Magic Link berkekuatan tinggi (masa berlaku token link: 24 jam)
-  const magicLinkResult = await createDemoMagicLink(
-    leadId,
-    currentLead.email,
-    userId,
-    24
-  );
-
-  // 3. Update data lead: disetujui, sinkron status Jadwal Demo (3)
-  const voucherCode = currentLead.voucherCode || generateVoucherCode();
-  const voucherExpiry = new Date();
-  voucherExpiry.setDate(voucherExpiry.getDate() + durationDays);
-
-  await db.lead.update({
-    where: { id: leadId },
-    data: {
-      userId,
-      approvalStatus: PrismaLeadApprovalStatus.APPROVED,
-      approvedAt: new Date(),
-      approvedBy: options.approvedBy || "Admin Diagnova",
-      rejectionReason: null,
-      confirmedDemoDate: confirmedDate,
-      demoDate: confirmedDate,
-      demoDurationDays: durationDays,
-      voucherCode,
-      voucherExpiry,
-      status: 3, // Otomatis sync dengan status Jadwal Demo di CRM
-    },
+    return link;
   });
 
   const updatedLead = (await getLeadById(leadId))!;
   return {
     lead: updatedLead,
-    magicLinkUrl: magicLinkResult.magicLinkUrl,
-    expiresAt: magicLinkResult.expiresAt.toISOString(),
+    magicLinkUrl: issued.magicLinkUrl,
+    expiresAt: issued.expiresAt.toISOString(),
   };
 }
 
@@ -419,9 +440,9 @@ export async function updateLeadStatus(
   voucherDays: number = 3,
   demoDate?: string | Date | null
 ): Promise<DemoRequestRecord> {
-  const currentLead = await db.lead.findUnique({ where: { id: leadId } });
+  const currentLead = await db.lead.findUnique({ where: { id: leadId }, include: { user: true } });
   if (!currentLead) {
-    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan`);
+    throw new LeadWorkflowError("Permohonan demo tidak ditemukan.", 404);
   }
 
   const updateData: Prisma.LeadUpdateInput = {
@@ -430,18 +451,20 @@ export async function updateLeadStatus(
 
   if (demoDate !== undefined) {
     const targetDate = demoDate ? new Date(demoDate) : null;
+    if (targetDate && isNaN(targetDate.getTime())) {
+      throw new LeadWorkflowError("Format jadwal demo tidak valid.", 400);
+    }
     updateData.confirmedDemoDate = targetDate;
     updateData.demoDate = targetDate;
   }
 
   if (newStatus === 3) {
-    const days = Math.max(3, voucherDays);
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + days);
-
     updateData.voucherCode = currentLead.voucherCode || generateVoucherCode();
-    updateData.voucherExpiry = expiry;
-    updateData.demoDurationDays = days;
+    // Masa berlaku demo dimiliki akun (users.demo_expires_at) dan ditetapkan saat login pertama.
+    // Durasi hanya boleh diubah selama akun demo belum diaktifkan.
+    if (!currentLead.user?.demoActivatedAt && isValidDemoDuration(voucherDays)) {
+      updateData.demoDurationDays = voucherDays;
+    }
   }
 
   await db.lead.update({

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEMO_DURATION_OPTIONS, isValidDemoDuration } from "@/lib/demo-constants";
 
 export const institutionTypeEnum = z.enum(
   [
@@ -50,9 +51,15 @@ export const demoRequestSchema = z.object({
 
 export type DemoRequestSchemaType = z.infer<typeof demoRequestSchema>;
 
+const demoDurationSchema = z.coerce
+  .number()
+  .refine((v) => isValidDemoDuration(v), {
+    message: `Durasi demo harus salah satu dari: ${DEMO_DURATION_OPTIONS.join(", ")} hari`,
+  });
+
 export const approveLeadSchema = z.object({
   confirmedDemoDate: z.string().optional().nullable(),
-  durationDays: z.coerce.number().min(1).max(90).default(7),
+  durationDays: demoDurationSchema.default(7),
   notes: z.string().optional(),
 });
 
@@ -73,7 +80,7 @@ export type LoginSchemaType = z.infer<typeof loginSchema>;
 
 export const updateLeadStatusSchema = z.object({
   status: z.coerce.number().min(1).max(4),
-  voucherDays: z.coerce.number().min(3).optional().default(3),
+  voucherDays: demoDurationSchema.optional().default(3),
   demoDate: z.string().optional().nullable(),
 });
 

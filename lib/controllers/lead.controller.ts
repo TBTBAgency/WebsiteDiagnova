@@ -8,6 +8,7 @@ import {
   approveLead,
   rejectLead,
   STATUS_LABELS,
+  LeadWorkflowError,
 } from "@/lib/models/lead.model";
 import {
   updateLeadStatusSchema,
@@ -178,6 +179,12 @@ export async function approveLeadController(
       { status: 200 }
     );
   } catch (error: any) {
+    if (error instanceof LeadWorkflowError) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: error.message },
+        { status: error.httpStatus }
+      );
+    }
     console.error("approveLeadController error:", error);
     return NextResponse.json<ApiResponse>(
       { success: false, message: publicErrorMessage(error, "Gagal menyetujui permohonan demo.") },
@@ -281,6 +288,12 @@ export async function updateLeadStatusController(
       { status: 200 }
     );
   } catch (error) {
+    if (error instanceof LeadWorkflowError) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: error.message },
+        { status: error.httpStatus }
+      );
+    }
     console.error("updateLeadStatusController error:", error);
     return NextResponse.json<ApiResponse>(
       { success: false, message: "Gagal memperbarui status lead." },

@@ -10,11 +10,14 @@ const SESSION_DURATION_HOURS = 24;
 /**
  * Membuat JWT token untuk sesi pengguna
  */
-export async function signSessionToken(payload: AuthSessionPayload): Promise<string> {
+export async function signSessionToken(
+  payload: AuthSessionPayload,
+  maxAgeSeconds: number = SESSION_DURATION_HOURS * 60 * 60
+): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(`${SESSION_DURATION_HOURS}h`)
+    .setExpirationTime(`${Math.max(1, Math.floor(maxAgeSeconds))}s`)
     .sign(getSessionSecret());
 }
 
@@ -33,8 +36,18 @@ export async function verifySessionToken(token: string): Promise<AuthSessionPayl
 /**
  * Menyimpan sesi login ke dalam HTTP-Only Cookie yang aman
  */
-export async function setSessionCookie(payload: AuthSessionPayload): Promise<void> {
-  const token = await signSessionToken(payload);
+export async function setSessionCookie(
+  payload: AuthSessionPayload,
+  options: { notAfter?: Date } = {}
+): Promise<void> {
+  // Sesi tidak pernah berlaku lebih lama dari 24 jam maupun dari batas `notAfter` (mis. akhir masa demo)
+  let maxAgeSeconds = SESSION_DURATION_HOURS * 60 * 60;
+  if (options.notAfter) {
+    const remaining = Math.floor((options.notAfter.getTime() - Date.now()) / 1000);
+    maxAgeSeconds = Math.max(1, Math.min(maxAgeSeconds, remaining));
+  }
+
+  const token = await signSessionToken(payload, maxAgeSeconds);
   const cookieStore = cookies();
 
   cookieStore.set(SESSION_COOKIE_NAME, token, {
@@ -42,7 +55,7 @@ export async function setSessionCookie(payload: AuthSessionPayload): Promise<voi
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: SESSION_DURATION_HOURS * 60 * 60,
+    maxAge: maxAgeSeconds,
   });
 }
 
