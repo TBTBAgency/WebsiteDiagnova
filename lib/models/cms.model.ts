@@ -1,574 +1,347 @@
 import { db } from "@/lib/db";
-import { recordAuditLog } from "@/lib/models/audit.model";
 import { Prisma } from "@prisma/client";
+import { recordAuditLogTx, type AuditActor } from "@/lib/models/audit.model";
+import { CMS_DEFINITIONS } from "@/lib/cms/definitions";
+import { HOME_COLUMN_SECTIONS } from "@/content/pages/home";
+import { isPlainObject, mergeWithDefaults, sanitizePublicContent } from "@/lib/cms/content-utils";
+import { validateSectionContent } from "@/lib/cms/validate";
+import { CMS_PAGES } from "@/lib/cms/types";
 
-export interface CmsHomepageData {
-  hero: {
-    section: any;
-    slides: any[];
-  };
-  trustedBy: {
-    section: any;
-    partners: any[];
-  };
-  about: {
-    section: any;
-  };
-  comparison: {
-    section: any;
-    items: any[];
-  };
-  workflow: {
-    section: any;
-  };
-  infrastructure: {
-    section: any;
-  };
-  testimonials: {
-    section: any;
-    items: any[];
-  };
-  cta: {
-    section: any;
-  };
+/** Error CMS yang pesannya aman ditampilkan ke admin. */
+export class CmsError extends Error {
+  constructor(message: string, public readonly httpStatus = 400, public readonly details?: string[]) {
+    super(message);
+    this.name = "CmsError";
+  }
 }
 
+type CmsRow = Prisma.CmsSectionGetPayload<{ include: { updatedByUser: { select: { name: true } } } }>;
+
+// ---------------------------------------------------------------------------
+// Konversi baris <-> konten editor
+// ---------------------------------------------------------------------------
+
+/** Konten editor = JSON extra_content; untuk section Home lama, badge/title/subtitle berasal dari kolom. */
+function rowToContent(pageKey: string, row: Pick<CmsRow, "sectionKey" | "badgeId" | "badgeEn" | "titleId" | "titleEn" | "subtitleId" | "subtitleEn" | "extraContent">) {
+  const extra = isPlainObject(row.extraContent) ? row.extraContent : {};
+  if (pageKey === "home" && HOME_COLUMN_SECTIONS.has(row.sectionKey)) {
+    return {
+      badge: { id: row.badgeId ?? "", en: row.badgeEn ?? "" },
+      title: { id: row.titleId ?? "", en: row.titleEn ?? "" },
+      subtitle: { id: row.subtitleId ?? "", en: row.subtitleEn ?? "" },
+      ...extra,
+    } as Record<string, unknown>;
+  }
+  return extra as Record<string, unknown>;
+}
+
+function contentToColumns(pageKey: string, sectionKey: string, content: Record<string, unknown>) {
+  if (pageKey === "home" && HOME_COLUMN_SECTIONS.has(sectionKey)) {
+    const { badge, title, subtitle, ...extra } = content as Record<string, { id?: string; en?: string } | unknown>;
+    const loc = (v: unknown) => (isPlainObject(v) ? v : {}) as { id?: string; en?: string };
+    return {
+      badgeId: loc(badge).id ?? null,
+      badgeEn: loc(badge).en ?? null,
+      titleId: loc(title).id ?? null,
+      titleEn: loc(title).en ?? null,
+      subtitleId: loc(subtitle).id ?? null,
+      subtitleEn: loc(subtitle).en ?? null,
+      extraContent: extra as Prisma.InputJsonValue,
+    };
+  }
+  return { extraContent: content as Prisma.InputJsonValue };
+}
+
+function getDefinition(pageKey: string, sectionKey?: string) {
+  const def = CMS_DEFINITIONS[pageKey];
+  if (!def) throw new CmsError("Halaman CMS tidak dikenal.", 404);
+  if (sectionKey === undefined) return { def, section: undefined };
+  const section = def.sections[sectionKey];
+  if (!section) throw new CmsError("Section tidak dikenal untuk halaman ini.", 404);
+  return { def, section };
+}
+
+// ---------------------------------------------------------------------------
+// Publik: Home
+// ---------------------------------------------------------------------------
+
+/** Bentuk lama yang dipakai komponen homepage (section = baris kolom, item = baris "tabel anak"). */
+export interface CmsHomepageData {
+  hero?: { section: any; slides: any[] } | null;
+  trustedBy?: { section: any; partners: any[] } | null;
+  about?: { section: any } | null;
+  comparison?: { section: any; items: any[] } | null;
+  workflow?: { section: any } | null;
+  infrastructure?: { section: any } | null;
+  testimonials?: { section: any; items: any[] } | null;
+  cta?: { section: any } | null;
+  faq?: Record<string, unknown> | null;
+}
+
+const asRows = (items: unknown) =>
+  (Array.isArray(items) ? items : []).map((item, index) => ({ ...(item as object), isActive: true, sortOrder: index }));
+
 /**
- * Mengambil seluruh data CMS Homepage untuk render frontend maupun form admin
+ * Konten homepage untuk render publik.
+ * `null` = section disembunyikan/dihapus di CMS (tidak dirender); `undefined` = DB tidak tersedia (komponen
+ * memakai fallback statisnya sendiri).
  */
 export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
-  const sections = await db.cmsSection.findMany({
-    include: {
-      heroSlides: {
-        orderBy: { sortOrder: "asc" },
-      },
-      comparisonItems: {
-        orderBy: { sortOrder: "asc" },
-      },
-      testimonials: {
-        orderBy: { sortOrder: "asc" },
-      },
-      partners: {
-        orderBy: { sortOrder: "asc" },
-      },
-    },
-  });
+  const rows = await db.cmsSection.findMany({ where: { pageKey: "home" } });
+  const def = CMS_DEFINITIONS.home;
+  const byKey = new Map(rows.map((r) => [r.sectionKey, r]));
 
-  const sectionMap = new Map<string, (typeof sections)[0]>();
-  for (const s of sections) {
-    sectionMap.set(s.sectionKey, s);
-  }
+  const resolve = (key: string) => {
+    const row = byKey.get(key);
+    const defaults = def.sections[key]?.content ?? {};
+    if (!row) return { visible: true, content: sanitizePublicContent(defaults), row: null };
+    if (row.deletedAt || !row.isPublished) return { visible: false, content: null, row };
+    return { visible: true, content: sanitizePublicContent(mergeWithDefaults(defaults, rowToContent("home", row))), row };
+  };
 
-  const heroSec = sectionMap.get("hero");
-  const trustedSec = sectionMap.get("trusted_by");
-  const aboutSec = sectionMap.get("about");
-  const compSec = sectionMap.get("comparison");
-  const workSec = sectionMap.get("workflow");
-  const infraSec = sectionMap.get("infrastructure");
-  const testiSec = sectionMap.get("testimonials");
-  const ctaSec = sectionMap.get("cta");
+  const sectionShape = (key: string) => {
+    const r = resolve(key);
+    if (!r.visible || !r.content) return null;
+    const c = r.content as Record<string, any>;
+    const { badge, title, subtitle, ...extra } = c;
+    return {
+      content: c,
+      section: {
+        sectionKey: key,
+        badgeId: badge?.id ?? null,
+        badgeEn: badge?.en ?? null,
+        titleId: title?.id ?? null,
+        titleEn: title?.en ?? null,
+        subtitleId: subtitle?.id ?? null,
+        subtitleEn: subtitle?.en ?? null,
+        extraContent: extra,
+        isPublished: true,
+      },
+    };
+  };
+
+  const hero = sectionShape("hero");
+  const trusted = sectionShape("trusted_by");
+  const about = sectionShape("about");
+  const comparison = sectionShape("comparison");
+  const workflow = sectionShape("workflow");
+  const infra = sectionShape("infrastructure");
+  const testimonials = sectionShape("testimonials");
+  const cta = sectionShape("cta");
+  const faq = resolve("faq");
 
   return {
-    hero: {
-      section: heroSec ?? null,
-      slides: heroSec?.heroSlides ?? [],
-    },
-    trustedBy: {
-      section: trustedSec ?? null,
-      partners: trustedSec?.partners ?? [],
-    },
-    about: {
-      section: aboutSec ?? null,
-    },
-    comparison: {
-      section: compSec ?? null,
-      items: compSec?.comparisonItems ?? [],
-    },
-    workflow: {
-      section: workSec ?? null,
-    },
-    infrastructure: {
-      section: infraSec ?? null,
-    },
-    testimonials: {
-      section: testiSec ?? null,
-      items: testiSec?.testimonials ?? [],
-    },
-    cta: {
-      section: ctaSec ?? null,
-    },
+    hero: hero && { section: hero.section, slides: asRows(hero.content.slides) },
+    trustedBy: trusted && { section: trusted.section, partners: asRows(trusted.content.partners) },
+    about: about && { section: about.section },
+    comparison: comparison && { section: comparison.section, items: asRows(comparison.content.items) },
+    workflow: workflow && { section: workflow.section },
+    infrastructure: infra && { section: infra.section },
+    testimonials: testimonials && { section: testimonials.section, items: asRows(testimonials.content.items) },
+    cta: cta && { section: cta.section },
+    faq: faq.visible ? (faq.content as Record<string, unknown>) : null,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Admin
+// ---------------------------------------------------------------------------
+
+export interface CmsSectionSummary {
+  pageKey: string;
+  sectionKey: string;
+  label: string;
+  sortOrder: number;
+  exists: boolean;
+  isPublished: boolean;
+  deletedAt: string | null;
+  version: number;
+  updatedAt: string | null;
+  updatedBy: string | null;
+}
+
+export async function listCmsPages(): Promise<{ key: string; label: string; sections: CmsSectionSummary[] }[]> {
+  const rows = await db.cmsSection.findMany({ include: { updatedByUser: { select: { name: true } } } });
+  return CMS_PAGES.map((page) => {
+    const def = CMS_DEFINITIONS[page.key];
+    const pageRows = rows.filter((r) => r.pageKey === page.key);
+    const defKeys = Object.keys(def?.sections ?? {});
+    const sections: CmsSectionSummary[] = defKeys.map((key, index) => {
+      const row = pageRows.find((r) => r.sectionKey === key);
+      return {
+        pageKey: page.key,
+        sectionKey: key,
+        label: row?.label ?? def.sections[key].label,
+        sortOrder: row?.sortOrder ?? (index + 1) * 10,
+        exists: !!row,
+        isPublished: row?.isPublished ?? true,
+        deletedAt: row?.deletedAt?.toISOString() ?? null,
+        version: row?.version ?? 0,
+        updatedAt: row?.updatedAt.toISOString() ?? null,
+        updatedBy: row?.updatedByUser?.name ?? null,
+      };
+    });
+    sections.sort((a, b) => a.sortOrder - b.sortOrder);
+    return { key: page.key, label: page.label, sections };
+  });
+}
+
+export async function getCmsSectionForEdit(pageKey: string, sectionKey: string) {
+  const { section } = getDefinition(pageKey, sectionKey);
+  const row = await db.cmsSection.findUnique({
+    where: { pageKey_sectionKey: { pageKey, sectionKey } },
+    include: { updatedByUser: { select: { name: true } } },
+  });
+  const stored = row ? rowToContent(pageKey, row) : undefined;
+  return {
+    pageKey,
+    sectionKey,
+    label: row?.label ?? section!.label,
+    exists: !!row,
+    isPublished: row?.isPublished ?? true,
+    deletedAt: row?.deletedAt?.toISOString() ?? null,
+    version: row?.version ?? 0,
+    updatedAt: row?.updatedAt.toISOString() ?? null,
+    updatedBy: row?.updatedByUser?.name ?? null,
+    // Konten lengkap untuk editor (termasuk item hidden/soft-deleted agar dapat dipulihkan)
+    content: mergeWithDefaults(section!.content, stored),
+    defaults: section!.content,
   };
 }
 
 /**
- * Memperbarui metadata dan konten sebuah section CMS
+ * Menyimpan konten section dengan optimistic lock (`version`). Baris dibuat bila belum ada (expectedVersion = 0).
+ * Audit CMS_SECTION_UPDATED ditulis di transaksi yang sama.
  */
-export async function updateCmsSection(
+export async function saveCmsSection(
+  pageKey: string,
   sectionKey: string,
-  data: {
-    badgeId?: string | null;
-    badgeEn?: string | null;
-    titleId?: string | null;
-    titleEn?: string | null;
-    subtitleId?: string | null;
-    subtitleEn?: string | null;
-    extraContent?: Record<string, any> | null;
-    isPublished?: boolean;
-  },
-  userId?: string
+  input: { content: unknown; expectedVersion: number; isPublished?: boolean },
+  actor: AuditActor & { userId: string }
 ) {
-  const existing = await db.cmsSection.findUnique({
-    where: { sectionKey },
+  const { def, section } = getDefinition(pageKey, sectionKey);
+  const errors = validateSectionContent(input.content, section!.content);
+  if (errors.length > 0) throw new CmsError("Konten tidak valid.", 400, errors);
+  const content = input.content as Record<string, unknown>;
+  const columns = contentToColumns(pageKey, sectionKey, content);
+
+  await db.$transaction(async (tx) => {
+    const existing = await tx.cmsSection.findUnique({ where: { pageKey_sectionKey: { pageKey, sectionKey } } });
+
+    if (!existing) {
+      if (input.expectedVersion !== 0) throw new CmsError("Section telah dihapus permanen atau belum dibuat. Muat ulang halaman.", 409);
+      const index = Object.keys(def.sections).indexOf(sectionKey);
+      await tx.cmsSection.create({
+        data: {
+          pageKey,
+          sectionKey,
+          label: section!.label,
+          sortOrder: (index + 1) * 10,
+          isPublished: input.isPublished ?? true,
+          updatedById: actor.userId,
+          ...columns,
+        },
+      });
+    } else {
+      if (existing.deletedAt) throw new CmsError("Section sedang dihapus. Pulihkan terlebih dahulu.", 409);
+      const updated = await tx.cmsSection.updateMany({
+        where: { id: existing.id, version: input.expectedVersion },
+        data: {
+          ...columns,
+          ...(input.isPublished !== undefined ? { isPublished: input.isPublished } : {}),
+          version: { increment: 1 },
+          updatedById: actor.userId,
+        },
+      });
+      if (updated.count !== 1) {
+        throw new CmsError("Konten sudah diubah admin lain sejak Anda membukanya. Muat ulang untuk melihat versi terbaru.", 409);
+      }
+    }
+
+    await recordAuditLogTx(tx, {
+      actor,
+      action: "CMS_SECTION_UPDATED",
+      entity: "cms_sections",
+      recordId: `${pageKey}/${sectionKey}`,
+      oldValue: existing ? { version: existing.version, isPublished: existing.isPublished, content: rowToContent(pageKey, existing) } : null,
+      newValue: { version: existing ? existing.version + 1 : 1, isPublished: input.isPublished ?? existing?.isPublished ?? true, content },
+    });
   });
 
-  if (!existing) {
-    throw new Error(`Section CMS dengan kunci '${sectionKey}' tidak ditemukan.`);
-  }
+  return getCmsSectionForEdit(pageKey, sectionKey);
+}
 
-  const updated = await db.cmsSection.update({
-    where: { sectionKey },
-    data: {
-      ...(data.badgeId !== undefined && { badgeId: data.badgeId }),
-      ...(data.badgeEn !== undefined && { badgeEn: data.badgeEn }),
-      ...(data.titleId !== undefined && { titleId: data.titleId }),
-      ...(data.titleEn !== undefined && { titleEn: data.titleEn }),
-      ...(data.subtitleId !== undefined && { subtitleId: data.subtitleId }),
-      ...(data.subtitleEn !== undefined && { subtitleEn: data.subtitleEn }),
-      ...(data.extraContent !== undefined && {
-        extraContent: data.extraContent ? (data.extraContent as Prisma.InputJsonValue) : Prisma.JsonNull,
-      }),
-      ...(data.isPublished !== undefined && { isPublished: data.isPublished }),
-      ...(userId && { updatedBy: userId }),
-    },
+/** Soft delete section: baris tetap ada (dapat dipulihkan), halaman publik tidak merender section ini. */
+export async function softDeleteCmsSection(pageKey: string, sectionKey: string, actor: AuditActor & { userId: string }) {
+  getDefinition(pageKey, sectionKey);
+  await db.$transaction(async (tx) => {
+    const row = await tx.cmsSection.findUnique({ where: { pageKey_sectionKey: { pageKey, sectionKey } } });
+    if (!row) {
+      // Section yang belum pernah disimpan dibuat dulu dari default agar penghapusannya tercatat
+      const { section, def } = getDefinition(pageKey, sectionKey);
+      await tx.cmsSection.create({
+        data: {
+          pageKey,
+          sectionKey,
+          label: section!.label,
+          sortOrder: (Object.keys(def.sections).indexOf(sectionKey) + 1) * 10,
+          deletedAt: new Date(),
+          deletedById: actor.userId,
+          updatedById: actor.userId,
+          ...contentToColumns(pageKey, sectionKey, section!.content as Record<string, unknown>),
+        },
+      });
+    } else {
+      if (row.deletedAt) throw new CmsError("Section sudah dihapus.", 409);
+      await tx.cmsSection.update({
+        where: { id: row.id },
+        data: { deletedAt: new Date(), deletedById: actor.userId, version: { increment: 1 } },
+      });
+    }
+    await recordAuditLogTx(tx, { actor, action: "CMS_SECTION_DELETED", entity: "cms_sections", recordId: `${pageKey}/${sectionKey}` });
   });
+}
 
-  await recordAuditLog({
-    userId,
-    action: "UPDATE_CMS_SECTION",
-    entity: "cms_sections",
-    recordId: sectionKey,
-    oldValue: existing as unknown as Record<string, unknown>,
-    newValue: updated as unknown as Record<string, unknown>,
+export async function restoreCmsSection(pageKey: string, sectionKey: string, actor: AuditActor & { userId: string }) {
+  getDefinition(pageKey, sectionKey);
+  await db.$transaction(async (tx) => {
+    const row = await tx.cmsSection.findUnique({ where: { pageKey_sectionKey: { pageKey, sectionKey } } });
+    if (!row?.deletedAt) throw new CmsError("Section tidak dalam keadaan terhapus.", 409);
+    await tx.cmsSection.update({
+      where: { id: row.id },
+      data: { deletedAt: null, deletedById: null, version: { increment: 1 }, updatedById: actor.userId },
+    });
+    await recordAuditLogTx(tx, { actor, action: "CMS_SECTION_RESTORED", entity: "cms_sections", recordId: `${pageKey}/${sectionKey}` });
   });
-
-  return updated;
 }
 
-/**
- * Simpan atau perbarui Hero Slide
- */
-export async function saveHeroSlide(
-  slide: {
-    id?: string;
-    sectionId?: string;
-    titleId: string;
-    titleEn: string;
-    subtitleId?: string | null;
-    subtitleEn?: string | null;
-    badgeId?: string | null;
-    badgeEn?: string | null;
-    ctaPrimaryTextId?: string | null;
-    ctaPrimaryTextEn?: string | null;
-    ctaPrimaryUrl?: string | null;
-    ctaSecondaryTextId?: string | null;
-    ctaSecondaryTextEn?: string | null;
-    ctaSecondaryUrl?: string | null;
-    imageUrl: string;
-    imageAlt?: string | null;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
-  let heroSectionId = slide.sectionId;
-  if (!heroSectionId) {
-    const heroSec = await db.cmsSection.findUnique({ where: { sectionKey: "hero" } });
-    heroSectionId = heroSec?.id;
+/** Mengurutkan section (urutan tampil di admin; halaman publik memakai tata letak tetap per section). */
+export async function reorderCmsSections(pageKey: string, order: string[], actor: AuditActor & { userId: string }) {
+  const { def } = getDefinition(pageKey);
+  const keys = Object.keys(def.sections);
+  if (order.length !== keys.length || !order.every((k) => keys.includes(k)) || new Set(order).size !== order.length) {
+    throw new CmsError("Urutan section tidak valid.");
   }
-
-  if (slide.id) {
-    const existing = await db.cmsHeroSlide.findUnique({ where: { id: slide.id } });
-    const updated = await db.cmsHeroSlide.update({
-      where: { id: slide.id },
-      data: {
-        titleId: slide.titleId,
-        titleEn: slide.titleEn,
-        subtitleId: slide.subtitleId,
-        subtitleEn: slide.subtitleEn,
-        badgeId: slide.badgeId,
-        badgeEn: slide.badgeEn,
-        ctaPrimaryTextId: slide.ctaPrimaryTextId,
-        ctaPrimaryTextEn: slide.ctaPrimaryTextEn,
-        ctaPrimaryUrl: slide.ctaPrimaryUrl,
-        ctaSecondaryTextId: slide.ctaSecondaryTextId,
-        ctaSecondaryTextEn: slide.ctaSecondaryTextEn,
-        ctaSecondaryUrl: slide.ctaSecondaryUrl,
-        imageUrl: slide.imageUrl,
-        imageAlt: slide.imageAlt,
-        sortOrder: slide.sortOrder ?? 0,
-        isActive: slide.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_HERO_SLIDE",
-      entity: "cms_hero_slides",
-      recordId: slide.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
-  } else {
-    const created = await db.cmsHeroSlide.create({
-      data: {
-        sectionId: heroSectionId,
-        titleId: slide.titleId,
-        titleEn: slide.titleEn,
-        subtitleId: slide.subtitleId,
-        subtitleEn: slide.subtitleEn,
-        badgeId: slide.badgeId,
-        badgeEn: slide.badgeEn,
-        ctaPrimaryTextId: slide.ctaPrimaryTextId,
-        ctaPrimaryTextEn: slide.ctaPrimaryTextEn,
-        ctaPrimaryUrl: slide.ctaPrimaryUrl,
-        ctaSecondaryTextId: slide.ctaSecondaryTextId,
-        ctaSecondaryTextEn: slide.ctaSecondaryTextEn,
-        ctaSecondaryUrl: slide.ctaSecondaryUrl,
-        imageUrl: slide.imageUrl,
-        imageAlt: slide.imageAlt,
-        sortOrder: slide.sortOrder ?? 0,
-        isActive: slide.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_HERO_SLIDE",
-      entity: "cms_hero_slides",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
-  }
-}
-
-/**
- * Hapus Hero Slide
- */
-export async function deleteHeroSlide(slideId: string, userId?: string) {
-  const existing = await db.cmsHeroSlide.findUnique({ where: { id: slideId } });
-  if (!existing) return null;
-
-  await db.cmsHeroSlide.delete({ where: { id: slideId } });
-
-  await recordAuditLog({
-    userId,
-    action: "DELETE_CMS_HERO_SLIDE",
-    entity: "cms_hero_slides",
-    recordId: slideId,
-    oldValue: existing as unknown as Record<string, unknown>,
+  await db.$transaction(async (tx) => {
+    for (let index = 0; index < order.length; index++) {
+      const sectionKey = order[index];
+      const sortOrder = (index + 1) * 10;
+      const row = await tx.cmsSection.findUnique({ where: { pageKey_sectionKey: { pageKey, sectionKey } } });
+      if (row) {
+        await tx.cmsSection.update({ where: { id: row.id }, data: { sortOrder } });
+      } else {
+        await tx.cmsSection.create({
+          data: {
+            pageKey,
+            sectionKey,
+            label: def.sections[sectionKey].label,
+            sortOrder,
+            updatedById: actor.userId,
+            ...contentToColumns(pageKey, sectionKey, def.sections[sectionKey].content as Record<string, unknown>),
+          },
+        });
+      }
+    }
+    await recordAuditLogTx(tx, { actor, action: "CMS_SECTIONS_REORDERED", entity: "cms_sections", recordId: pageKey, newValue: { order } });
   });
-
-  return existing;
 }
-
-/**
- * Simpan atau perbarui Testimonial
- */
-export async function saveTestimonial(
-  testimonial: {
-    id?: string;
-    sectionId?: string;
-    name: string;
-    roleId: string;
-    roleEn?: string | null;
-    institution: string;
-    quoteId: string;
-    quoteEn: string;
-    avatarUrl?: string;
-    rating?: number;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
-  let sectionId = testimonial.sectionId;
-  if (!sectionId) {
-    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "testimonials" } });
-    sectionId = sec?.id;
-  }
-
-  if (testimonial.id) {
-    const existing = await db.cmsTestimonial.findUnique({ where: { id: testimonial.id } });
-    const updated = await db.cmsTestimonial.update({
-      where: { id: testimonial.id },
-      data: {
-        name: testimonial.name,
-        roleId: testimonial.roleId,
-        roleEn: testimonial.roleEn,
-        institution: testimonial.institution,
-        quoteId: testimonial.quoteId,
-        quoteEn: testimonial.quoteEn,
-        avatarUrl: testimonial.avatarUrl ?? "/images/testimonial-silhouette-female.jpg",
-        rating: testimonial.rating ?? 5,
-        sortOrder: testimonial.sortOrder ?? 0,
-        isActive: testimonial.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_TESTIMONIAL",
-      entity: "cms_testimonials",
-      recordId: testimonial.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
-  } else {
-    const created = await db.cmsTestimonial.create({
-      data: {
-        sectionId,
-        name: testimonial.name,
-        roleId: testimonial.roleId,
-        roleEn: testimonial.roleEn,
-        institution: testimonial.institution,
-        quoteId: testimonial.quoteId,
-        quoteEn: testimonial.quoteEn,
-        avatarUrl: testimonial.avatarUrl ?? "/images/testimonial-silhouette-female.jpg",
-        rating: testimonial.rating ?? 5,
-        sortOrder: testimonial.sortOrder ?? 0,
-        isActive: testimonial.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_TESTIMONIAL",
-      entity: "cms_testimonials",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
-  }
-}
-
-/**
- * Hapus Testimonial
- */
-export async function deleteTestimonial(id: string, userId?: string) {
-  const existing = await db.cmsTestimonial.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  await db.cmsTestimonial.delete({ where: { id } });
-
-  await recordAuditLog({
-    userId,
-    action: "DELETE_CMS_TESTIMONIAL",
-    entity: "cms_testimonials",
-    recordId: id,
-    oldValue: existing as unknown as Record<string, unknown>,
-  });
-
-  return existing;
-}
-
-/**
- * Simpan atau perbarui Comparison Item
- */
-export async function saveComparisonItem(
-  item: {
-    id?: string;
-    sectionId?: string;
-    number: string;
-    conventionalTitleId: string;
-    conventionalTitleEn: string;
-    conventionalDescId: string;
-    conventionalDescEn: string;
-    diagnovaTitleId: string;
-    diagnovaTitleEn: string;
-    diagnovaDescId: string;
-    diagnovaDescEn: string;
-    impactMetric: string;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
-  let sectionId = item.sectionId;
-  if (!sectionId) {
-    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "comparison" } });
-    sectionId = sec?.id;
-  }
-
-  if (item.id) {
-    const existing = await db.cmsComparisonItem.findUnique({ where: { id: item.id } });
-    const updated = await db.cmsComparisonItem.update({
-      where: { id: item.id },
-      data: {
-        number: item.number,
-        conventionalTitleId: item.conventionalTitleId,
-        conventionalTitleEn: item.conventionalTitleEn,
-        conventionalDescId: item.conventionalDescId,
-        conventionalDescEn: item.conventionalDescEn,
-        diagnovaTitleId: item.diagnovaTitleId,
-        diagnovaTitleEn: item.diagnovaTitleEn,
-        diagnovaDescId: item.diagnovaDescId,
-        diagnovaDescEn: item.diagnovaDescEn,
-        impactMetric: item.impactMetric,
-        sortOrder: item.sortOrder ?? 0,
-        isActive: item.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_COMPARISON_ITEM",
-      entity: "cms_comparison_items",
-      recordId: item.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
-  } else {
-    const created = await db.cmsComparisonItem.create({
-      data: {
-        sectionId,
-        number: item.number,
-        conventionalTitleId: item.conventionalTitleId,
-        conventionalTitleEn: item.conventionalTitleEn,
-        conventionalDescId: item.conventionalDescId,
-        conventionalDescEn: item.conventionalDescEn,
-        diagnovaTitleId: item.diagnovaTitleId,
-        diagnovaTitleEn: item.diagnovaTitleEn,
-        diagnovaDescId: item.diagnovaDescId,
-        diagnovaDescEn: item.diagnovaDescEn,
-        impactMetric: item.impactMetric,
-        sortOrder: item.sortOrder ?? 0,
-        isActive: item.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_COMPARISON_ITEM",
-      entity: "cms_comparison_items",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
-  }
-}
-
-/**
- * Hapus Comparison Item
- */
-export async function deleteComparisonItem(id: string, userId?: string) {
-  const existing = await db.cmsComparisonItem.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  await db.cmsComparisonItem.delete({ where: { id } });
-
-  await recordAuditLog({
-    userId,
-    action: "DELETE_CMS_COMPARISON_ITEM",
-    entity: "cms_comparison_items",
-    recordId: id,
-    oldValue: existing as unknown as Record<string, unknown>,
-  });
-
-  return existing;
-}
-
-/**
- * Simpan atau perbarui Partner Logo
- */
-export async function savePartner(
-  partner: {
-    id?: string;
-    sectionId?: string;
-    name: string;
-    logoUrl: string;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
-  let sectionId = partner.sectionId;
-  if (!sectionId) {
-    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "trusted_by" } });
-    sectionId = sec?.id;
-  }
-
-  if (partner.id) {
-    const existing = await db.cmsPartner.findUnique({ where: { id: partner.id } });
-    const updated = await db.cmsPartner.update({
-      where: { id: partner.id },
-      data: {
-        name: partner.name,
-        logoUrl: partner.logoUrl,
-        sortOrder: partner.sortOrder ?? 0,
-        isActive: partner.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_PARTNER",
-      entity: "cms_partners",
-      recordId: partner.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
-  } else {
-    const created = await db.cmsPartner.create({
-      data: {
-        sectionId,
-        name: partner.name,
-        logoUrl: partner.logoUrl,
-        sortOrder: partner.sortOrder ?? 0,
-        isActive: partner.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_PARTNER",
-      entity: "cms_partners",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
-  }
-}
-
-/**
- * Hapus Partner Logo
- */
-export async function deletePartner(id: string, userId?: string) {
-  const existing = await db.cmsPartner.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  await db.cmsPartner.delete({ where: { id } });
-
-  await recordAuditLog({
-    userId,
-    action: "DELETE_CMS_PARTNER",
-    entity: "cms_partners",
-    recordId: id,
-    oldValue: existing as unknown as Record<string, unknown>,
-  });
-
-  return existing;
-}
-

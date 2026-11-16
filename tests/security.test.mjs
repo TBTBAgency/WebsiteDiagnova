@@ -2,18 +2,17 @@
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import bcrypt from "bcryptjs";
-import { BASE, db, uid, getRole, signSession, cookieHeader, loginAdmin } from "./helpers.mjs";
+import { BASE, db, uid, getRoleByCode, signSession, cookieHeader, loginAdmin, ipHeader } from "./helpers.mjs";
 
 const created = [];
 after(async () => {
-  await db.auditLog.deleteMany({ where: { recordId: { in: created } } });
   await db.user.deleteMany({ where: { id: { in: created } } });
   await db.$disconnect();
 });
 
-async function makeAdmin({ status = 1 } = {}) {
+async function makeAdmin({ status = "ACTIVE" } = {}) {
   const password = `pw-${uid()}-${uid()}`;
-  const role = await getRole("Super Admin");
+  const role = await getRoleByCode("ADMIN");
   const user = await db.user.create({
     data: {
       name: "Sec Test",
@@ -30,7 +29,7 @@ async function makeAdmin({ status = 1 } = {}) {
 const login = (email, password, headers = {}) =>
   fetch(`${BASE}/api/auth/login`, {
     method: "POST",
-    headers: { "content-type": "application/json", ...headers },
+    headers: { "content-type": "application/json", ...ipHeader(), ...headers },
     body: JSON.stringify({ email, password }),
   });
 
@@ -44,7 +43,7 @@ test("email tidak terdaftar & password salah -> pesan & status identik (tanpa en
 });
 
 test("akun nonaktif + password salah -> 401 (status akun tidak dibocorkan); password benar -> 403", async () => {
-  const { user, password } = await makeAdmin({ status: 0 });
+  const { user, password } = await makeAdmin({ status: "INACTIVE" });
   assert.equal((await login(user.email, "wrong-password-2")).status, 401);
   assert.equal((await login(user.email, password)).status, 403);
 });
@@ -58,15 +57,14 @@ test("5 kegagalan per akun -> percobaan berikutnya 429 walau password benar", as
 });
 
 test("20 kegagalan per IP (X-Forwarded-For) -> 429", async () => {
-  const ip = `203.0.113.${Math.floor(Math.random() * 200) + 1}`;
-  await db.auditLog.deleteMany({ where: { ipAddress: ip } });
+  // IP unik per run (audit log append-only, tidak dibersihkan)
+  const ip = `198.18.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250) + 1}`;
   for (let i = 0; i < 20; i++) {
     const r = await login(`ip-${uid()}@example.com`, "x-wrong-pass", { "x-forwarded-for": ip });
     assert.equal(r.status, 401);
   }
   const r = await login(`ip-${uid()}@example.com`, "x-wrong-pass", { "x-forwarded-for": ip });
   assert.equal(r.status, 429);
-  await db.auditLog.deleteMany({ where: { ipAddress: ip } });
 });
 
 test("POST lintas origin ke API ditolak 403; origin sama tetap diproses", async () => {
@@ -93,8 +91,8 @@ test("header keamanan terpasang di halaman publik & admin", async () => {
 });
 
 test("/api/auth/me memverifikasi DB: JWT valid milik akun nonaktif -> 401", async () => {
-  const { user } = await makeAdmin({ status: 0 });
-  const token = await signSession({ userId: user.id, role: "Super Admin" });
+  const { user } = await makeAdmin({ status: "INACTIVE" });
+  const token = await signSession({ userId: user.id, role: "ADMIN" });
   const res = await fetch(`${BASE}/api/auth/me`, { headers: cookieHeader(token) });
   assert.equal(res.status, 401);
 });
@@ -104,7 +102,9 @@ test("/api/auth/me mengembalikan role dari DB, bukan dari JWT", async () => {
   const token = await signSession({ userId: user.id, role: "Role Palsu" });
   const res = await fetch(`${BASE}/api/auth/me`, { headers: cookieHeader(token) });
   assert.equal(res.status, 200);
-  assert.equal((await res.json()).data.role, "Super Admin");
+  const data = (await res.json()).data;
+  assert.equal(data.role, "ADMIN");
+  assert.equal(data.roleName, "Super Admin");
 });
 
 test("endpoint stub /notes sudah dihapus (404 untuk admin)", async () => {
@@ -115,4 +115,31 @@ test("endpoint stub /notes sudah dihapus (404 untuk admin)", async () => {
     body: "{}",
   });
   assert.equal(res.status, 404);
+});
+
+test("audit_logs append-only: UPDATE/DELETE ditolak database", async () => {
+  const row = await db.auditLog.findFirst({ orderBy: { createdAt: "desc" } });
+  assert.ok(row);
+  await assert.rejects(db.auditLog.update({ where: { id: row.id }, data: { action: "TAMPERED" } }), /append-only/);
+  await assert.rejects(db.auditLog.delete({ where: { id: row.id } }), /append-only/);
+  await assert.rejects(db.$executeRawUnsafe("TRUNCATE audit_logs"), /append-only/);
+});
+
+test("form publik: honeypot terisi -> 400 & tidak tersimpan; 5 permohonan per IP per jam -> 429", async () => {
+  const ip = `198.19.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250) + 1}`;
+  const body = (extra = {}) => JSON.stringify({
+    name: "Rate Test", institution: "RS Uji", jobTitle: "Kepala Lab", email: `rate-${uid()}@example.com`,
+    phone: "081234567890", institutionType: "hospital", notes: "", ...extra,
+  });
+  const post = (b) => fetch(`${BASE}/api/request-demo`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": ip }, body: b });
+  const bot = await post(body({ website: "http://spam.example" }));
+  assert.equal(bot.status, 400);
+  const ids = [];
+  for (let i = 0; i < 5; i++) {
+    const r = await post(body());
+    assert.equal(r.status, 201);
+    ids.push((await r.json()).data.id);
+  }
+  assert.equal((await post(body())).status, 429);
+  await db.lead.deleteMany({ where: { id: { in: ids } } });
 });

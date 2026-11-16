@@ -21,6 +21,12 @@ if (!/test/i.test(dbName)) {
 export const db = new PrismaClient();
 
 export const uid = () => crypto.randomBytes(6).toString("hex");
+
+// IP klien unik per proses test: Next.js mengisi X-Forwarded-For dari koneksi, sehingga tanpa header ini
+// seluruh test berbagi satu IP dan terkena pembatas laju (perilaku produksi yang memang diinginkan).
+export const TEST_IP = `10.${crypto.randomInt(1, 250)}.${crypto.randomInt(1, 250)}.${crypto.randomInt(1, 250)}`;
+export const ipHeader = (ip = TEST_IP) => ({ "x-forwarded-for": ip });
+export const randomIp = () => `10.${crypto.randomInt(1, 250)}.${crypto.randomInt(1, 250)}.${crypto.randomInt(1, 250)}`;
 export const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 
 export async function signSession(payload) {
@@ -52,13 +58,25 @@ export function sessionFromResponse(res) {
 export const TEST_ADMIN_EMAIL = "admin-test@example.com";
 const TEST_ADMIN_PASSWORD = crypto.randomBytes(18).toString("base64url");
 
+/** Role berdasarkan KODE (ADMIN/USER). */
+export async function getRoleByCode(code) {
+  const role = await db.role.findUnique({ where: { code } });
+  if (!role) throw new Error(`Role ${code} belum ada (jalankan migration)`);
+  return role;
+}
+
+/** Role berdasarkan nama (dipakai untuk role lama tanpa kode, mis. "Sales Admin"). */
+export async function getRole(name) {
+  return db.role.upsert({ where: { name }, update: {}, create: { name, description: `${name} (test)` } });
+}
+
 export async function ensureTestAdmin() {
-  const role = await getRole("Super Admin");
+  const role = await getRoleByCode("ADMIN");
   const passwordHash = await bcrypt.hash(TEST_ADMIN_PASSWORD, 10);
   return db.user.upsert({
     where: { email: TEST_ADMIN_EMAIL },
-    update: { passwordHash, roleId: role.id, status: 1 },
-    create: { name: "Admin Test", email: TEST_ADMIN_EMAIL, passwordHash, roleId: role.id, status: 1 },
+    update: { passwordHash, roleId: role.id, status: "ACTIVE", deletedAt: null },
+    create: { name: "Admin Test", email: TEST_ADMIN_EMAIL, passwordHash, roleId: role.id, status: "ACTIVE" },
   });
 }
 
@@ -66,7 +84,7 @@ export async function loginAdmin(email = TEST_ADMIN_EMAIL, password = TEST_ADMIN
   if (email === TEST_ADMIN_EMAIL) await ensureTestAdmin();
   const res = await fetch(`${BASE}/api/auth/login`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...ipHeader() },
     body: JSON.stringify({ email, password }),
   });
   const token = sessionFromResponse(res);
@@ -74,27 +92,35 @@ export async function loginAdmin(email = TEST_ADMIN_EMAIL, password = TEST_ADMIN
   return token;
 }
 
-export async function getRole(name) {
-  const role = await db.role.upsert({
-    where: { name },
-    update: {},
-    create: { name, description: `${name} (test)` },
-  });
-  return role;
-}
-
-/** Membuat user langsung di DB untuk skenario test. */
-export async function createUser({ roleName, status = 1, ...rest } = {}) {
-  const role = roleName ? await getRole(roleName) : null;
+/** Membuat user langsung di DB. roleCode: "ADMIN" | "USER"; roleName untuk role lama. */
+export async function createUser({ roleCode, roleName, status = "ACTIVE", ...rest } = {}) {
+  const role = roleCode ? await getRoleByCode(roleCode) : roleName ? await getRole(roleName) : null;
   return db.user.create({
     data: {
       name: rest.name ?? `Test ${uid()}`,
-      email: rest.email ?? `user-${uid()}@test.local`,
+      email: rest.email ?? `user-${uid()}@example.com`,
       roleId: role?.id ?? null,
       status,
-      demoActivatedAt: rest.demoActivatedAt ?? null,
-      demoExpiresAt: rest.demoExpiresAt ?? null,
-      demoDurationDays: rest.demoDurationDays ?? null,
+      passwordHash: rest.passwordHash ?? null,
+      deletedAt: rest.deletedAt ?? null,
     },
   });
 }
+
+/** Membersihkan data test sesuai urutan FK (audit log append-only tidak dihapus). */
+export async function cleanup({ leadIds = [], userIds = [] } = {}) {
+  const accessWhere = { OR: [{ leadId: { in: leadIds } }, { userId: { in: userIds } }] };
+  await db.demoMagicLink.deleteMany({ where: { demoAccess: accessWhere } });
+  await db.demoAccess.deleteMany({ where: { extendsAccessId: { not: null }, ...accessWhere } });
+  await db.demoAccess.deleteMany({ where: accessWhere });
+  await db.lead.deleteMany({ where: { OR: [{ id: { in: leadIds } }, { userId: { in: userIds } }] } });
+  await db.user.deleteMany({ where: { id: { in: userIds } } });
+}
+
+export const json = (method, path, token, body) =>
+  fetch(`${BASE}${path}`, {
+    method,
+    headers: { "content-type": "application/json", ...ipHeader(), ...(token ? cookieHeader(token) : {}) },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    redirect: "manual",
+  });

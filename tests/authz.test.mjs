@@ -15,18 +15,28 @@ const GET_ENDPOINTS = [
   "/api/admin/users",
   "/api/admin/roles",
   "/api/admin/audit-logs",
-  "/api/admin/cms/homepage",
+  "/api/admin/cms/pages",
+  "/api/admin/cms/pages/home/hero",
 ];
 
 // Endpoint dengan parameter / method lain. Semua harus tertolak sebelum menyentuh data.
 const OTHER_ENDPOINTS = [
   ["GET", "/api/admin/leads/some-id"],
   ["PATCH", "/api/admin/leads/some-id"],
-  ["POST", "/api/admin/leads/some-id/approve"],
+  ["POST", "/api/admin/leads/some-id/access"],
+  ["POST", "/api/admin/leads/some-id/access/link"],
+  ["POST", "/api/admin/leads/some-id/access/extend"],
+  ["POST", "/api/admin/leads/some-id/access/revoke"],
   ["POST", "/api/admin/leads/some-id/reject"],
-  ["POST", "/api/admin/leads/some-id/notes"],
+  ["POST", "/api/admin/leads/some-id/complete"],
   ["POST", "/api/admin/users"],
-  ["PUT", "/api/admin/cms/homepage"],
+  ["PATCH", "/api/admin/users/some-id"],
+  ["DELETE", "/api/admin/users/some-id"],
+  ["POST", "/api/admin/users/some-id/restore"],
+  ["PUT", "/api/admin/cms/pages/home/hero"],
+  ["DELETE", "/api/admin/cms/pages/home/hero"],
+  ["POST", "/api/admin/cms/pages/home/reorder"],
+  ["POST", "/api/admin/cms/upload"],
   ["POST", "/api/lis/patients"],
   ["POST", "/api/lis/orders"],
   ["GET", "/api/lis/orders/some-id"],
@@ -59,31 +69,31 @@ test("tanpa sesi -> 401 di seluruh endpoint sensitif", async () => {
   for (const [m, p] of OTHER_ENDPOINTS) assert.equal((await req(m, p)).status, 401, `${m} ${p}`);
 });
 
-test("sesi Demo User -> 403 di seluruh endpoint sensitif", async () => {
-  const demo = await createUser({ roleName: "Demo User" });
+test("sesi USER (akun demo) -> 403 di seluruh endpoint sensitif", async () => {
+  const demo = await createUser({ roleCode: "USER" });
   created.push(demo.id);
-  const h = cookieHeader(await signSession({ userId: demo.id, role: "Demo User" }));
+  const h = cookieHeader(await signSession({ userId: demo.id, role: "USER" }));
   for (const p of GET_ENDPOINTS) assert.equal((await req("GET", p, h)).status, 403, p);
   for (const [m, p] of OTHER_ENDPOINTS) assert.equal((await req(m, p, h)).status, 403, `${m} ${p}`);
 });
 
-test("klaim role palsu di cookie (DB = Sales Admin) -> 403 dari pengecekan database", async () => {
+test("klaim role palsu di cookie (DB = role lama Sales Admin) -> 403 dari pengecekan database", async () => {
   const sales = await createUser({ roleName: "Sales Admin" });
   created.push(sales.id);
-  const h = cookieHeader(await signSession({ userId: sales.id, role: "Super Admin" }));
+  const h = cookieHeader(await signSession({ userId: sales.id, role: "ADMIN" }));
   for (const p of GET_ENDPOINTS) assert.equal((await req("GET", p, h)).status, 403, p);
 });
 
 test("admin yang dinonaktifkan -> sesi lama 401", async () => {
-  const admin = await createUser({ roleName: "Super Admin", status: 0 });
+  const admin = await createUser({ roleCode: "ADMIN", status: "INACTIVE" });
   created.push(admin.id);
-  const h = cookieHeader(await signSession({ userId: admin.id, role: "Super Admin" }));
+  const h = cookieHeader(await signSession({ userId: admin.id, role: "ADMIN" }));
   for (const p of GET_ENDPOINTS) assert.equal((await req("GET", p, h)).status, 401, p);
 });
 
 test("user yang sudah dihapus -> sesi lama 401", async () => {
-  const admin = await createUser({ roleName: "Super Admin" });
-  const h = cookieHeader(await signSession({ userId: admin.id, role: "Super Admin" }));
+  const admin = await createUser({ roleCode: "ADMIN" });
+  const h = cookieHeader(await signSession({ userId: admin.id, role: "ADMIN" }));
   assert.equal((await req("GET", "/api/admin/roles", h)).status, 200, "sebelum dihapus harus 200");
   await db.user.delete({ where: { id: admin.id } });
   for (const p of GET_ENDPOINTS) assert.equal((await req("GET", p, h)).status, 401, p);
@@ -99,25 +109,32 @@ test("admin asli -> 200 di seluruh GET", async () => {
   for (const p of GET_ENDPOINTS) assert.equal((await req("GET", p, h)).status, 200, p);
 });
 
-test("User Management menolak pembuatan akun Super Admin (privilege escalation)", async () => {
-  const superRole = await getRole("Super Admin");
-  const email = `esc-${uid()}@test.local`;
-  const res = await fetch(`${BASE}/api/admin/users`, {
-    method: "POST",
-    headers: { "content-type": "application/json", ...cookieHeader(adminToken) },
-    body: JSON.stringify({ name: "Escalation", email, password: "secret123", roleId: superRole.id }),
-  });
-  assert.equal(res.status, 403);
+test("User Management menolak field role/password (privilege escalation) -> 400, tidak ada user tercipta", async () => {
+  const adminRole = await db.role.findUnique({ where: { code: "ADMIN" } });
+  const email = `esc-${uid()}@example.com`;
+  for (const extra of [{ roleId: adminRole.id }, { password: "secret123" }, { role: "ADMIN" }]) {
+    const res = await fetch(`${BASE}/api/admin/users`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...cookieHeader(adminToken) },
+      body: JSON.stringify({ name: "Escalation", email, ...extra }),
+    });
+    assert.equal(res.status, 400, JSON.stringify(extra));
+  }
   assert.equal(await db.user.count({ where: { email } }), 0, "tidak boleh ada user yang tercipta");
 });
 
-test("User Management menolak roleId yang tidak ada", async () => {
+test("akun yang dibuat lewat User Management selalu USER tanpa password", async () => {
+  const email = `mgmt-${uid()}@example.com`;
   const res = await fetch(`${BASE}/api/admin/users`, {
     method: "POST",
     headers: { "content-type": "application/json", ...cookieHeader(adminToken) },
-    body: JSON.stringify({ name: "Bad", email: `bad-${uid()}@test.local`, password: "secret123", roleId: "nope" }),
+    body: JSON.stringify({ name: "Klien Demo", email }),
   });
-  assert.equal(res.status, 400);
+  assert.equal(res.status, 201);
+  const u = await db.user.findUnique({ where: { email }, include: { role: true } });
+  created.push(u.id);
+  assert.equal(u.role.code, "USER");
+  assert.equal(u.passwordHash, null);
 });
 
 test("login password akun non-admin (role lama) ditolak 403", async () => {
@@ -134,10 +151,10 @@ test("login password akun non-admin (role lama) ditolak 403", async () => {
 });
 
 test("sesi non-admin membuka halaman /admin -> redirect login + cookie dihapus", async () => {
-  const demo = await createUser({ roleName: "Demo User" });
+  const demo = await createUser({ roleCode: "USER" });
   created.push(demo.id);
-  const h = cookieHeader(await signSession({ userId: demo.id, role: "Demo User" }));
-  for (const p of ["/admin/dashboard", "/admin/leads", "/admin/orders", "/admin/users", "/admin/cms/homepage"]) {
+  const h = cookieHeader(await signSession({ userId: demo.id, role: "USER" }));
+  for (const p of ["/admin/dashboard", "/admin/leads", "/admin/orders", "/admin/users", "/admin/cms"]) {
     const res = await req("GET", p, h);
     assert.equal(res.status, 307, p);
     assert.match(res.headers.get("location") || "", /\/admin\/login/, p);

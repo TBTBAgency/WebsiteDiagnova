@@ -20,20 +20,25 @@ import {
   CheckCircle2,
   FileSpreadsheet,
   Layers,
+  CalendarClock,
+  History,
 } from "lucide-react";
 import { MetricCard } from "@/components/admin/MetricCard";
 import { InteractiveChart } from "@/components/admin/InteractiveChart";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { cn } from "@/lib/utils";
+import { LEAD_STAGE_LABELS } from "@/lib/demo-constants";
+import type { AuditLogRecord, LeadStatus } from "@/types";
 
 interface OverviewData {
   summary: {
     leads: {
       total: number;
-      new: number;
       contacted: number;
       scheduled: number;
       completed: number;
+      upcomingThisMonth: number;
+      awaitingCompletion: number;
     };
     orders: {
       total: number;
@@ -69,7 +74,8 @@ interface OverviewData {
     email: string;
     phone: string;
     institutionType: string;
-    status: string;
+    status: LeadStatus;
+    statusLabel?: string;
     createdAt: string;
   }[];
   recentOrders: {
@@ -85,13 +91,7 @@ interface OverviewData {
     specimensCount: number;
     receivedSpecimensCount: number;
   }[];
-  recentAuditLogs: {
-    id: string;
-    action: string;
-    entity: string;
-    userName: string;
-    createdAt: string;
-  }[];
+  recentAuditLogs: AuditLogRecord[];
 }
 
 const INSTITUTION_NAMES: Record<string, string> = {
@@ -106,12 +106,16 @@ const INSTITUTION_NAMES: Record<string, string> = {
 export default function AdminOverviewDashboard() {
   const [data, setData] = useState<OverviewData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"leads" | "orders">("leads");
+  const [activeTab, setActiveTab] = useState<"leads" | "orders" | "audit">("leads");
 
   const fetchOverview = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/overview");
+      const res = await fetch("/api/admin/overview", { cache: "no-store" });
+      if (res.status === 401) {
+        window.location.href = "/admin/login";
+        return;
+      }
       const json = await res.json();
       if (res.ok && json.success && json.data) {
         setData(json.data);
@@ -177,48 +181,55 @@ export default function AdminOverviewDashboard() {
       {/* 2. Key Metrics Overview (KPI Cards) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Baru"
-          value={data?.summary.leads.new ?? 0}
-          subtitle="Prospek baru menunggu respon"
-          icon={Users}
+          title="Jadwal Terdekat di Bulan Ini"
+          value={data?.summary.leads.upcomingThisMonth ?? 0}
+          subtitle="Presentasi terkonfirmasi s.d. akhir bulan"
+          icon={CalendarClock}
           iconBg="bg-blue-50"
           iconColor="text-[#087BEE]"
           badge={{
-            text: (data?.summary.leads.new ?? 0) > 0 ? "Perlu Respon" : "Terkendali",
-            variant: (data?.summary.leads.new ?? 0) > 0 ? "warning" : "success",
+            text: (data?.summary.leads.upcomingThisMonth ?? 0) > 0 ? "Siapkan Demo" : "Kosong",
+            variant: (data?.summary.leads.upcomingThisMonth ?? 0) > 0 ? "warning" : "default",
           }}
         />
 
         <MetricCard
           title="Dihubungi"
           value={data?.summary.leads.contacted ?? 0}
-          subtitle="Prospek dalam tahap komunikasi"
+          subtitle="Form masuk, belum login demo"
           icon={Phone}
           iconBg="bg-amber-50"
           iconColor="text-[#E5A23B]"
           badge={{
-            text: (data?.summary.leads.contacted ?? 0) > 0 ? "Follow-up" : "Selesai",
-            variant: "warning",
+            text: (data?.summary.leads.contacted ?? 0) > 0 ? "Follow-up" : "Terkendali",
+            variant: (data?.summary.leads.contacted ?? 0) > 0 ? "warning" : "success",
           }}
         />
 
         <MetricCard
           title="Jadwal Demo"
           value={data?.summary.leads.scheduled ?? 0}
-          subtitle="Jadwal presentasi teknis aktif"
+          subtitle="Sudah login demo"
           icon={Calendar}
           iconBg="bg-purple-50"
           iconColor="text-purple-600"
-          badge={{
-            text: (data?.summary.leads.scheduled ?? 0) > 0 ? "Terjadwal" : "Aman",
-            variant: (data?.summary.leads.scheduled ?? 0) > 0 ? "purple" : "default",
-          }}
+          badge={
+            (data?.summary.leads.awaitingCompletion ?? 0) > 0
+              ? {
+                  text: `${data?.summary.leads.awaitingCompletion ?? 0} menunggu konfirmasi selesai`,
+                  variant: "warning",
+                }
+              : {
+                  text: (data?.summary.leads.scheduled ?? 0) > 0 ? "Berjalan" : "Aman",
+                  variant: (data?.summary.leads.scheduled ?? 0) > 0 ? "purple" : "default",
+                }
+          }
         />
 
         <MetricCard
           title="Selesai"
           value={data?.summary.leads.completed ?? 0}
-          subtitle="Permohonan demo yang telah selesai"
+          subtitle="Demo dikonfirmasi selesai oleh admin"
           icon={CheckCircle2}
           iconBg="bg-emerald-50"
           iconColor="text-[#16A374]"
@@ -274,25 +285,19 @@ export default function AdminOverviewDashboard() {
               <div className="space-y-2">
                 {[
                   {
-                    label: "Baru",
-                    count: data?.summary.leads.new || 0,
-                    color: "bg-[#087BEE]",
-                    total: data?.summary.leads.total || 1,
-                  },
-                  {
-                    label: "Dihubungi",
+                    label: LEAD_STAGE_LABELS.CONTACTED,
                     count: data?.summary.leads.contacted || 0,
                     color: "bg-[#E5A23B]",
                     total: data?.summary.leads.total || 1,
                   },
                   {
-                    label: "Jadwal Demo",
+                    label: LEAD_STAGE_LABELS.SCHEDULED,
                     count: data?.summary.leads.scheduled || 0,
                     color: "bg-purple-500",
                     total: data?.summary.leads.total || 1,
                   },
                   {
-                    label: "Selesai",
+                    label: LEAD_STAGE_LABELS.COMPLETED,
                     count: data?.summary.leads.completed || 0,
                     color: "bg-[#16A374]",
                     total: data?.summary.leads.total || 1,
@@ -398,6 +403,18 @@ export default function AdminOverviewDashboard() {
             >
               Lab Orders ({data?.recentOrders.length || 0})
             </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("audit")}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
+                activeTab === "audit"
+                  ? "bg-white text-[#087BEE] shadow-2xs font-semibold"
+                  : "text-[#747B86] hover:text-[#17191D]"
+              )}
+            >
+              Log Audit ({data?.recentAuditLogs?.length || 0})
+            </button>
           </div>
         </div>
 
@@ -443,13 +460,17 @@ export default function AdminOverviewDashboard() {
                       </td>
                       <td className="px-5 py-4 text-[#747B86]">
                         {new Date(lead.createdAt).toLocaleDateString("id-ID", {
+                          timeZone: "Asia/Jakarta",
                           day: "numeric",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
                       <td className="px-5 py-4">
-                        <StatusBadge type={lead.status} />
+                        <StatusBadge
+                          type={lead.status}
+                          label={lead.statusLabel ?? LEAD_STAGE_LABELS[lead.status] ?? lead.status}
+                        />
                       </td>
                       <td className="px-5 py-4 text-right">
                         <Link
@@ -531,6 +552,75 @@ export default function AdminOverviewDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Content Tab 3: Recent Audit Logs */}
+        {activeTab === "audit" && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F5F6F8]/60 border-b border-[#E8EBEF] text-[#747B86] font-semibold uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th className="px-5 py-3.5">Waktu</th>
+                  <th className="px-5 py-3.5">Pelaku</th>
+                  <th className="px-5 py-3.5">Aksi</th>
+                  <th className="px-5 py-3.5">Entitas</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E8EBEF]">
+                {data?.recentAuditLogs && data.recentAuditLogs.length > 0 ? (
+                  data.recentAuditLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-[#F5F6F8]/40 transition-colors">
+                      <td className="px-5 py-4 text-[#747B86] whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5">
+                          <History className="h-3.5 w-3.5" />
+                          <span>
+                            {new Date(log.createdAt).toLocaleString("id-ID", {
+                              timeZone: "Asia/Jakarta",
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}{" "}
+                            WIB
+                          </span>
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="font-semibold text-[#17191D]">
+                          {log.actorEmail || log.userName || "Sistem"}
+                        </div>
+                        {(log.actorRole || log.actorType) && (
+                          <div className="text-[11px] text-[#747B86]">{log.actorRole || log.actorType}</div>
+                        )}
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#F5F6F8] border border-[#E8EBEF] font-mono text-[11px] text-[#17191D]">
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-[#747B86] font-mono text-[11px]">{log.entity}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="text-center py-8 text-[#747B86]">
+                      Belum ada aktivitas audit yang tercatat.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <div className="px-5 py-3 border-t border-[#E8EBEF] text-right">
+              <Link
+                href="/admin/audit-logs"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#087BEE] hover:underline"
+              >
+                <span>Lihat seluruh log audit</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
           </div>
         )}
       </div>

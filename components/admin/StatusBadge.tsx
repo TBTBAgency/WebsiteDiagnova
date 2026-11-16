@@ -30,49 +30,10 @@ const BADGE_MAP: Record<
   string,
   { label: string; bg: string; text: string; border: string; dot: string }
 > = {
-  // Leads (Integer Status: 1 = Baru, 2 = Dihubungi, 3 = Jadwal Demo, 4 = Selesai)
-  "1": {
-    label: "Baru",
-    bg: "bg-blue-50/80",
-    text: "text-blue-700",
-    border: "border-blue-200/60",
-    dot: "bg-blue-600",
-  },
-  "2": {
-    label: "Dihubungi",
-    bg: "bg-amber-50/80",
-    text: "text-amber-700",
-    border: "border-amber-200/60",
-    dot: "bg-amber-500",
-  },
-  "3": {
-    label: "Jadwal Demo",
-    bg: "bg-purple-50/80",
-    text: "text-purple-700",
-    border: "border-purple-200/60",
-    dot: "bg-purple-500",
-  },
-  "4": {
-    label: "Selesai",
-    bg: "bg-emerald-50/80",
-    text: "text-emerald-700",
-    border: "border-emerald-200/60",
-    dot: "bg-emerald-500",
-  },
-  lead_new: {
-    label: "Baru",
-    bg: "bg-blue-50/80",
-    text: "text-blue-700",
-    border: "border-blue-200/60",
-    dot: "bg-blue-600",
-  },
-  new: {
-    label: "Baru",
-    bg: "bg-blue-50/80",
-    text: "text-blue-700",
-    border: "border-blue-200/60",
-    dot: "bg-blue-600",
-  },
+  // Leads (enum lead_stage). Tidak ada status "Baru" (OD-03).
+  CONTACTED: { label: "Dihubungi", bg: "bg-amber-50/80", text: "text-amber-700", border: "border-amber-200/60", dot: "bg-amber-500" },
+  SCHEDULED: { label: "Jadwal Demo", bg: "bg-purple-50/80", text: "text-purple-700", border: "border-purple-200/60", dot: "bg-purple-500" },
+  COMPLETED: { label: "Selesai", bg: "bg-emerald-50/80", text: "text-emerald-700", border: "border-emerald-200/60", dot: "bg-emerald-500" },
   lead_contacted: {
     label: "Dihubungi",
     bg: "bg-amber-50/80",

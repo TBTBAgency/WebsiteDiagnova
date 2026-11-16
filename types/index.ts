@@ -6,17 +6,18 @@ export type InstitutionType =
   | "blood-bank"
   | "other";
 
-export type LeadStatus = number; // 1: Baru, 2: Dihubungi, 3: Jadwal Demo, 4: Selesai
+export type LeadStatus = "CONTACTED" | "SCHEDULED" | "COMPLETED"; // Dihubungi, Jadwal Demo, Selesai
 
 export type LeadApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export type UserRole = string;
 
-export type UserStatus = number; // 1: Aktif, 0: Nonaktif
+export type UserStatus = "ACTIVE" | "INACTIVE";
 
 export interface RoleRecord {
   id: string;
   name: string;
+  code?: "ADMIN" | "USER" | null;
   description?: string | null;
   createdAt?: string;
 }
@@ -39,7 +40,14 @@ export interface DemoRequestRecord extends DemoRequestInput {
   userId?: string | null;
   user?: UserRecord | null;
   createdAt: string;
-  status: number; // 1: Baru, 2: Dihubungi, 3: Jadwal Demo, 4: Selesai
+  status: LeadStatus;
+  demoStartedAt?: string | null;
+  demoCompletedAt?: string | null;
+  demoCompletedBy?: { id: string; name: string; email: string } | null;
+  demoCompletionNote?: string | null;
+  accesses?: DemoAccessRecord[];
+  currentAccess?: DemoAccessRecord | null;
+  accessEnded?: boolean;
   approvalStatus: LeadApprovalStatus;
   approvedAt?: string | null;
   approvedBy?: string | null;
@@ -50,7 +58,20 @@ export interface DemoRequestRecord extends DemoRequestInput {
   demoDate?: string | null;
   magicLinkUrl?: string | null;
   magicLinkExpiry?: string | null;
-  magicLinkStatus?: "ACTIVE" | "USED" | "EXPIRED" | null;
+  magicLinkStatus?: "ACTIVE" | "USED" | "EXPIRED" | "REVOKED" | null;
+}
+
+export interface DemoAccessRecord {
+  id: string;
+  durationDays: number;
+  grantedAt: string;
+  grantedBy?: { id: string; name: string } | null;
+  activatedAt?: string | null;
+  expiresAt?: string | null;
+  revokedAt?: string | null;
+  extendsAccessId?: string | null;
+  state: "PENDING_ACTIVATION" | "QUEUED" | "ACTIVE" | "EXPIRED" | "REVOKED";
+  latestLink?: { expiresAt: string; usedAt?: string | null; revokedAt?: string | null; state: "ACTIVE" | "USED" | "EXPIRED" | "REVOKED" } | null;
 }
 
 export interface DemoMagicLinkRecord {
@@ -74,7 +95,8 @@ export interface UserRecord {
   roleId?: string | null;
   roleName?: string | null;
   role?: RoleRecord | string | null;
-  status: number; // 1: Aktif, 0: Nonaktif
+  status: UserStatus;
+  deletedAt?: string | null;
   demoDurationDays?: number | null;
   demoActivatedAt?: string | null;
   demoExpiresAt?: string | null;
@@ -85,7 +107,9 @@ export interface AuthSessionPayload {
   userId: string;
   name: string;
   email: string;
+  /** Kode role: "ADMIN" | "USER" */
   role: string;
+  roleName?: string | null;
   demoExpiresAt?: string;
 }
 
@@ -93,6 +117,9 @@ export interface AuditLogRecord {
   id: string;
   userId?: string | null;
   userName?: string | null;
+  actorType?: string | null;
+  actorEmail?: string | null;
+  actorRole?: string | null;
   action: string;
   entity: string;
   recordId?: string | null;
@@ -104,7 +131,7 @@ export interface AuditLogRecord {
 }
 
 export interface LeadFilterQuery {
-  status?: number | "all";
+  status?: LeadStatus | "all";
   institutionType?: InstitutionType | "all";
   search?: string;
   startDate?: string;

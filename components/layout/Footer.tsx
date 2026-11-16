@@ -3,105 +3,21 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useCmsText, visibleItems } from "@/lib/cms/text";
+import type { FooterContent } from "@/content/pages/global";
 
-const footerSectionsID = [
-  {
-    title: "Platform",
-    links: [
-      { label: "Gambaran Platform", href: "/platform" },
-      { label: "Alur Kerja", href: "/platform/workflow" },
-      { label: "100% Otomasi", href: "/platform/automation" },
-      { label: "Pelaporan & Audit", href: "/platform/reporting" },
-      { label: "Analitik Lab", href: "/platform/analytics" },
-      { label: "Nova AI Copilot", href: "/nova-ai" },
-    ],
-  },
-  {
-    title: "Solusi",
-    links: [
-      { label: "Gambaran Solusi", href: "/solutions" },
-      { label: "Laboratorium Rumah Sakit", href: "/solutions/hospital-laboratory" },
-      { label: "Laboratorium Klinik", href: "/solutions/clinical-laboratory" },
-      { label: "Pusat Medical Check Up", href: "/solutions/health-screening" },
-      { label: "Laboratorium Multi-Cabang", href: "/solutions/multi-branch" },
-      { label: "Cara Kerja Nova AI", href: "/nova-ai/how-it-works" },
-    ],
-  },
-  {
-    title: "Modul",
-    links: [  
-      { label: "Gambaran Modul", href: "/modules" },
-      { label: "Rutin & Hematologi", href: "/modules/routine-hematology" },
-      { label: "Kimia Klinik", href: "/modules/clinical-chemistry" },
-      { label: "Manajemen Bank Darah", href: "/modules/blood-bank" },
-      { label: "Inventaris & Reagen", href: "/modules/inventory-reagent" },
-      { label: "Patologi Anatomi", href: "/modules/pathology" },
-    ],
-  },
-  {
-    title: "Integrasi",
-    links: [
-      { label: "Gambaran Integrasi", href: "/integration" },
-      { label: "Bridging SIMRS / HIS", href: "/integration/simrs-his" },
-      { label: "Rekam Medis (RME)", href: "/integration/rme" },
-      { label: "500+ Analyzer Medis", href: "/integration/analyzer" },
-      { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-      { label: "Portal Admin LIS", href: "/admin/login" },
-    ],
-  },
-];
+interface FooterProps {
+  /** Konten CMS section `global.footer` (`null` = footer tidak dirender). */
+  content: FooterContent | null;
+}
 
-const footerSectionsEN = [
-  {
-    title: "Platform",
-    links: [
-      { label: "Overview", href: "/platform" },
-      { label: "Workflow", href: "/platform/workflow" },
-      { label: "100% Automation", href: "/platform/automation" },
-      { label: "Reporting & Audit", href: "/platform/reporting" },
-      { label: "Lab Analytics", href: "/platform/analytics" },
-      { label: "Nova AI Copilot", href: "/nova-ai" },
-    ],
-  },
-  {
-    title: "Solutions",
-    links: [
-      { label: "Overview", href: "/solutions" },
-      { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
-      { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
-      { label: "Health Screening Center", href: "/solutions/health-screening" },
-      { label: "Multi-branch Laboratory", href: "/solutions/multi-branch" },
-      { label: "How Nova AI Works", href: "/nova-ai/how-it-works" },
-    ],
-  },
-  {
-    title: "Modules",
-    links: [
-      { label: "Overview", href: "/modules" },
-      { label: "Routine & Hematology", href: "/modules/routine-hematology" },
-      { label: "Clinical Chemistry", href: "/modules/clinical-chemistry" },
-      { label: "Blood Bank Management", href: "/modules/blood-bank" },
-      { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
-      { label: "Anatomical Pathology", href: "/modules/pathology" },
-    ],
-  },
-  {
-    title: "Integration",
-    links: [
-      { label: "Overview", href: "/integration" },
-      { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
-      { label: "Electronic Medical Record (EMR)", href: "/integration/rme" },
-      { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
-      { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-      { label: "LIS Admin Portal", href: "/admin/login" },
-    ],
-  },
-];
+export function Footer({ content }: FooterProps) {
+  const t = useCmsText();
 
-export function Footer() {
-  const { language } = useLanguage();
-  const footerSections = language === "ID" ? footerSectionsID : footerSectionsEN;
+  if (!content) return null;
+
+  const footerSections = visibleItems(content.columns);
+  const legalLinks = visibleItems(content.legalLinks);
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
@@ -111,31 +27,34 @@ export function Footer() {
           {/* Col Left: Brand Logo at Top & Legal / Copyright aligned at Bottom */}
           <div className="flex flex-col justify-between space-y-8 lg:space-y-0 min-h-[210px] sm:min-h-[230px] shrink-0 lg:w-88 xl:w-[380px]">
             <div className="flex items-center">
+              {content.logoUrl && (
               <Link
-                href="/"
+                href={content.logoHref || "/"}
                 className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-0.5 sm:-translate-x-1 lg:-translate-x-1.5"
               >
                 <Image
-                  src="/images/logo-diagnova.svg"
-                  alt="Diagnova"
+                  src={content.logoUrl}
+                  alt={content.logoAlt}
                   width={270}
                   height={75}
                   className="h-11 sm:h-12 md:h-13 lg:h-[52px] xl:h-[54px] w-auto brightness-0 invert object-contain"
                   priority
                 />
               </Link>
+              )}
             </div>
 
             <div className="space-y-1 text-[11px] sm:text-xs text-white/80 font-normal leading-relaxed sm:translate-x-2 lg:translate-x-2.5">
-              <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
+              <p>{t(content.copyright)}</p>
               <p className="flex items-center gap-1.5 text-white/70">
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  {language === "ID" ? "Syarat & Ketentuan" : "Terms of Service"}
-                </Link>
-                <span className="text-white/40">|</span>
-                <Link href="/platform/reporting" className="hover:text-white transition-colors">
-                  {language === "ID" ? "Kebijakan Privasi" : "Privacy Policy"}
-                </Link>
+                {legalLinks.map((link, idx) => (
+                  <React.Fragment key={link.id}>
+                    {idx > 0 && <span className="text-white/40">|</span>}
+                    <Link href={link.href} className="hover:text-white transition-colors">
+                      {t(link.label)}
+                    </Link>
+                  </React.Fragment>
+                ))}
               </p>
             </div>
           </div>
@@ -143,18 +62,18 @@ export function Footer() {
           {/* Col Right: 4 Nav Link Columns */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-11 xl:gap-14 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
             {footerSections.map((section) => (
-              <div key={section.title} className="space-y-3.5">
+              <div key={section.id} className="space-y-3.5">
                 <h4 className="font-semibold text-white text-[15px] sm:text-base tracking-normal">
-                  {section.title}
+                  {t(section.title)}
                 </h4>
                 <ul className="space-y-2.5 text-[13.5px] sm:text-sm text-white/80 font-normal">
-                  {section.links.map((link, idx) => (
-                    <li key={idx}>
+                  {visibleItems(section.links).map((link) => (
+                    <li key={link.id}>
                       <Link
                         href={link.href}
                         className="hover:text-white transition-colors inline-block hover:translate-x-0.5 duration-150"
                       >
-                        {link.label}
+                        {t(link.label)}
                       </Link>
                     </li>
                   ))}
@@ -177,13 +96,15 @@ export function Footer() {
                 "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.06) 90%, transparent 100%)",
             }}
           >
+            {content.watermarkUrl && (
             <Image
-              src="/images/logo-diagnova.svg"
-              alt="Diagnova Brand Watermark"
+              src={content.watermarkUrl}
+              alt={content.watermarkAlt}
               fill
               className="object-contain object-top brightness-0 invert opacity-90"
               priority
             />
+            )}
           </div>
 
           <div

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { consumeMagicLink, ConsumeFailureCode } from "@/lib/magic-link";
-import { setSessionCookie } from "@/lib/auth-session";
+import { setSessionCookieToken } from "@/lib/auth-session";
 import { recordAuditLog } from "@/lib/models/audit.model";
+import { getClientIp, getUserAgent } from "@/lib/request-meta";
 import { ApiResponse } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,10 @@ const FAILURES: Record<ConsumeFailureCode, { status: number; message: string; re
     status: 410,
     message: "Tautan ini sudah kedaluwarsa. Silakan minta tautan baru kepada tim Diagnova.",
   },
+  REVOKED: {
+    status: 410,
+    message: "Tautan ini sudah tidak berlaku karena telah diganti tautan baru atau aksesnya dicabut. Silakan hubungi tim Diagnova.",
+  },
   ACCOUNT_INACTIVE: {
     status: 403,
     message: "Akun demo Anda sedang dinonaktifkan. Silakan hubungi tim Diagnova.",
@@ -30,6 +35,8 @@ const FAILURES: Record<ConsumeFailureCode, { status: number; message: string; re
   },
 };
 
+const NO_STORE = { "Cache-Control": "no-store" };
+
 /**
  * POST /api/auth/magic-link/consume  { token }
  *
@@ -37,9 +44,8 @@ const FAILURES: Record<ConsumeFailureCode, { status: number; message: string; re
  * GET ke halaman tautan tidak pernah mengubah data. Token tidak pernah dicatat ke log.
  */
 export async function POST(request: NextRequest) {
-  const ipAddress =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || null;
-  const userAgent = request.headers.get("user-agent");
+  const ipAddress = getClientIp(request);
+  const userAgent = getUserAgent(request);
 
   let token: unknown;
   try {
@@ -54,8 +60,8 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       const failure = FAILURES[result.code];
       await recordAuditLog({
-        userId: result.userId ?? null,
-        action: "MAGIC_LINK_REJECTED",
+        actor: result.userId ? { type: "USER", userId: result.userId } : { type: "ANONYMOUS" },
+        action: "DEMO_LOGIN_FAILED",
         entity: "demo_magic_links",
         recordId: result.leadId ?? null,
         newValue: { reason: result.code },
@@ -63,26 +69,13 @@ export async function POST(request: NextRequest) {
         userAgent,
       });
       return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: failure.message,
-          data: { code: result.code, redirectUrl: failure.redirectUrl ?? null },
-        },
-        { status: failure.status, headers: { "Cache-Control": "no-store" } }
+        { success: false, message: failure.message, data: { code: result.code, redirectUrl: failure.redirectUrl ?? null } },
+        { status: failure.status, headers: NO_STORE }
       );
     }
 
-    await setSessionCookie(result.session, { notAfter: result.demoExpiresAt });
-
-    await recordAuditLog({
-      userId: result.session.userId,
-      action: result.firstLogin ? "DEMO_FIRST_LOGIN" : "MAGIC_LINK_LOGIN",
-      entity: "leads",
-      recordId: result.leadId,
-      newValue: { demoExpiresAt: result.demoExpiresAt.toISOString() },
-      ipAddress,
-      userAgent,
-    });
+    // Token sesi sudah ditandatangani di dalam transaksi; di sini hanya menyetel header cookie.
+    setSessionCookieToken(result.sessionToken, result.sessionMaxAgeSeconds);
 
     return NextResponse.json<ApiResponse>(
       {
@@ -90,14 +83,14 @@ export async function POST(request: NextRequest) {
         message: "Autentikasi berhasil.",
         data: { redirectUrl: "/demo", demoExpiresAt: result.demoExpiresAt.toISOString() },
       },
-      { status: 200, headers: { "Cache-Control": "no-store" } }
+      { status: 200, headers: NO_STORE }
     );
   } catch (error) {
     // Token mentah tidak pernah diteruskan ke query (hanya hash-nya), jadi aman dicatat apa adanya.
     console.error("Magic link consume error:", error);
     return NextResponse.json<ApiResponse>(
       { success: false, message: "Terjadi kesalahan saat memverifikasi tautan. Silakan coba lagi." },
-      { status: 500, headers: { "Cache-Control": "no-store" } }
+      { status: 500, headers: NO_STORE }
     );
   }
 }

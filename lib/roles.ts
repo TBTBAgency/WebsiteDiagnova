@@ -1,19 +1,25 @@
 /**
- * Definisi role yang berhak mengelola dashboard admin.
+ * Role yang berlaku: ADMIN dan USER (kolom `roles.code`).
  *
  * Modul ini sengaja tidak mengimpor Prisma agar aman dipakai di middleware (Edge runtime).
- * Saat ini role disimpan sebagai nama bebas di tabel `roles`; daftar ini menjadi satu-satunya
- * sumber kebenaran otorisasi admin sampai restrukturisasi role ADMIN/USER (Phase 2+).
+ * Otorisasi memakai KODE role, bukan nama tampilan, sehingga mengganti nama role tidak memengaruhi akses.
+ * Role lama (Sales Admin, Lab Staff, Pathologist) memiliki code NULL -> tidak punya akses apa pun (OD-01).
  */
-export const ADMIN_ROLE_NAMES: readonly string[] = ["Super Admin"];
+export type RoleCode = "ADMIN" | "USER";
 
-/** Role akun client/demo (calon USER pada desain final). */
-export const DEMO_ROLE_NAME = "Demo User";
+export const ADMIN_ROLE: RoleCode = "ADMIN";
+export const USER_ROLE: RoleCode = "USER";
 
-export function isAdminRole(roleName: string | null | undefined): boolean {
-  return !!roleName && ADMIN_ROLE_NAMES.includes(roleName);
+/** Nama tampilan default (dipakai seed & pembuatan akun USER). */
+export const ROLE_DISPLAY_NAMES: Record<RoleCode, string> = {
+  ADMIN: "Super Admin",
+  USER: "Demo User",
+};
+
+export function isAdminRole(code: string | null | undefined): boolean {
+  return code === ADMIN_ROLE;
 }
 
-export function isDemoRole(roleName: string | null | undefined): boolean {
-  return roleName === DEMO_ROLE_NAME;
+export function isUserRole(code: string | null | undefined): boolean {
+  return code === USER_ROLE;
 }

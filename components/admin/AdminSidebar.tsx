@@ -46,15 +46,20 @@ const NAV_ITEMS: NavItem[] = [
     name: "Pengguna (Users)",
     href: "/admin/users",
     icon: UserCheck,
-    badge: "Role",
+    badge: "USER",
     badgeVariant: "purple",
   },
   {
-    name: "CMS Homepage",
-    href: "/admin/cms/homepage",
+    name: "CMS Konten",
+    href: "/admin/cms",
     icon: Globe,
     badge: "CMS",
     badgeVariant: "blue",
+  },
+  {
+    name: "Audit Log",
+    href: "/admin/audit-logs",
+    icon: ShieldCheck,
   },
 ];
 

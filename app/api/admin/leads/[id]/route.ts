@@ -1,24 +1,18 @@
 import { NextRequest } from "next/server";
-import {
-  getLeadDetailController,
-  updateLeadStatusController,
-} from "@/lib/controllers/lead.controller";
+import { getLeadDetailController, updateLeadScheduleController } from "@/lib/controllers/lead.controller";
 import { requireAdmin } from "@/lib/authz";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export const dynamic = "force-dynamic";
+
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
-  return getLeadDetailController(request, params.id);
+  return getLeadDetailController(params.id);
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+/** Hanya jadwal presentasi (confirmedDemoDate). Status Lead tidak dapat diubah di sini. */
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
-  return updateLeadStatusController(request, params.id);
+  return updateLeadScheduleController(request, params.id, guard.actor);
 }

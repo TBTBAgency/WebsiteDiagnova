@@ -4,6 +4,8 @@ import React, { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { pickText, visibleItems } from "@/lib/cms/text";
+import type { AnnouncementContent } from "@/content/pages/global";
 
 interface GoalItem {
   id: string;
@@ -13,12 +15,15 @@ interface GoalItem {
 }
 
 interface AnnouncementBarProps {
+  /** Konten CMS section `global.announcement`. */
+  content: AnnouncementContent;
   language?: "ID" | "EN";
   onHeightChange?: (_height: number) => void;
   onDismiss?: () => void;
 }
 
 export function AnnouncementBar({
+  content,
   language = "EN",
   onHeightChange,
   onDismiss,
@@ -77,64 +82,12 @@ export function AnnouncementBar({
     }
   };
 
-  const goals: GoalItem[] =
-    language === "ID"
-      ? [
-          {
-            id: "demo",
-            label: "Request Demo",
-            targetId: "cta-banner",
-            href: "/request-demo",
-          },
-          {
-            id: "workflow",
-            label: "Lihat Workflow Lab",
-            targetId: "workflow",
-          },
-          {
-            id: "analyzers",
-            label: "Koneksi 500+ Alat",
-            targetId: "infrastructure",
-          },
-          {
-            id: "satusehat",
-            label: "Integrasi SATUSEHAT",
-            targetId: "infrastructure",
-          },
-          {
-            id: "comparison",
-            label: "Kenapa Diagnova",
-            targetId: "comparison",
-          },
-        ]
-      : [
-          {
-            id: "demo",
-            label: "Request a Demo",
-            targetId: "cta-banner",
-            href: "/request-demo",
-          },
-          {
-            id: "workflow",
-            label: "Explore Lab Workflow",
-            targetId: "workflow",
-          },
-          {
-            id: "analyzers",
-            label: "500+ Analyzers",
-            targetId: "infrastructure",
-          },
-          {
-            id: "satusehat",
-            label: "SATUSEHAT Bridging",
-            targetId: "infrastructure",
-          },
-          {
-            id: "comparison",
-            label: "Why Choose Diagnova",
-            targetId: "comparison",
-          },
-        ];
+  const goals: GoalItem[] = visibleItems(content.items).map((item) => ({
+    id: item.id,
+    label: pickText(language, item.label),
+    targetId: item.targetId,
+    href: item.href || undefined,
+  }));
 
   return (
     <aside
@@ -147,9 +100,7 @@ export function AnnouncementBar({
           {/* Prompt Headline (Desktop/Tablet) */}
           <div className="hidden lg:flex items-center justify-start w-auto shrink-0">
             <p className="text-[13px] font-normal text-white/95 text-left tracking-normal leading-tight">
-              {language === "ID"
-                ? "Pilih kebutuhan laboratorium Anda untuk memulai. Saya ingin..."
-                : "Select your laboratory goal to get started. I want to..."}
+              {pickText(language, content.prompt)}
             </p>
           </div>
 

@@ -9,16 +9,16 @@ async function main() {
   // 1. Seed Roles — hanya dua role yang berlaku: ADMIN ("Super Admin") & USER ("Demo User").
   //    Role lama (Sales Admin, Lab Staff, Pathologist) tidak dibuat lagi dan tidak dihapus (OD-01).
   const roles = [
-    { name: "Super Admin", description: "ADMIN — mengelola sistem dan permohonan demo" },
-    { name: "Demo User", description: "USER — akun demo calon klien (login via magic link)" },
+    { name: "Super Admin", description: "ADMIN — mengelola sistem dan permohonan demo", code: "ADMIN" as const },
+    { name: "Demo User", description: "USER — akun demo calon klien (login via magic link)", code: "USER" as const },
   ];
 
   const roleMap: Record<string, string> = {};
   for (const r of roles) {
     const roleRecord = await prisma.role.upsert({
       where: { name: r.name },
-      update: { description: r.description },
-      create: { name: r.name, description: r.description },
+      update: { description: r.description, code: r.code },
+      create: { name: r.name, description: r.description, code: r.code },
     });
     roleMap[r.name] = roleRecord.id;
   }
@@ -40,7 +40,7 @@ async function main() {
         email: adminEmail,
         passwordHash: await bcrypt.hash(adminPassword, 10),
         roleId: roleMap["Super Admin"],
-        status: 1,
+        status: "ACTIVE",
       },
     });
     console.log(`ADMIN account created: ${adminEmail}`);

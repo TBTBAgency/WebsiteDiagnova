@@ -97,13 +97,13 @@ export async function loginController(request: NextRequest): Promise<NextRespons
       return json({ success: false, message: INVALID_CREDENTIALS }, 401);
     }
 
-    if (user.status !== 1) {
+    if (user.status !== "ACTIVE" || user.deletedAt) {
       await recordAuditLog({ userId: user.id, action: "LOGIN_DENIED_INACTIVE", entity: "User", recordId: user.id, ipAddress, userAgent });
       return json({ success: false, message: "Akun Anda sedang dinonaktifkan. Silakan hubungi administrator." }, 403);
     }
 
     // Hanya ADMIN yang boleh login ke dashboard via password
-    if (!isAdminRole(user.roleName)) {
+    if (!isAdminRole(user.roleCode)) {
       await recordAuditLog({ userId: user.id, action: "LOGIN_DENIED_ROLE", entity: "User", recordId: user.id, ipAddress, userAgent });
       return json({ success: false, message: "Akun ini tidak memiliki akses ke dashboard admin." }, 403);
     }
@@ -112,7 +112,8 @@ export async function loginController(request: NextRequest): Promise<NextRespons
       userId: user.id,
       name: user.name,
       email: user.email,
-      role: user.roleName || "",
+      role: "ADMIN",
+      roleName: user.roleName ?? null,
     };
 
     await setSessionCookie(sessionPayload);
@@ -166,10 +167,10 @@ export async function getMeController(): Promise<NextResponse<ApiResponse>> {
 
   const user = await db.user.findUnique({
     where: { id: session.userId },
-    select: { id: true, name: true, email: true, status: true, role: { select: { name: true } } },
+    select: { id: true, name: true, email: true, status: true, deletedAt: true, role: { select: { name: true, code: true } } },
   });
 
-  if (!user || user.status !== 1) {
+  if (!user || user.status !== "ACTIVE" || user.deletedAt || !user.role?.code) {
     await removeSessionCookie();
     return json({ success: false, message: "Sesi tidak valid atau akun telah dinonaktifkan." }, 401);
   }
@@ -178,7 +179,8 @@ export async function getMeController(): Promise<NextResponse<ApiResponse>> {
     userId: user.id,
     name: user.name,
     email: user.email,
-    role: user.role?.name ?? "",
+    role: user.role.code,
+    roleName: user.role.name,
   };
 
   return NextResponse.json<ApiResponse<AuthSessionPayload>>(

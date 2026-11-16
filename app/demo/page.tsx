@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { ShieldCheck, Clock } from "lucide-react";
 import { getCurrentSession } from "@/lib/auth-session";
 import { db } from "@/lib/db";
-import { isDemoRole } from "@/lib/roles";
+import { isUserRole } from "@/lib/roles";
+import { getUserAccessWindow } from "@/lib/demo-access";
 import { DemoLogoutButton } from "./DemoLogoutButton";
 
 export const dynamic = "force-dynamic";
@@ -16,8 +17,8 @@ export const metadata: Metadata = {
 /**
  * Halaman tujuan akun demo (USER) setelah login magic link.
  *
- * Akses diverifikasi ulang ke database pada setiap request: akun harus ada, ber-role demo,
- * aktif, dan masa demonya belum berakhir. Isi halaman sengaja minimal; cakupan fitur yang
+ * Akses diverifikasi ulang ke database pada setiap request: akun harus ada, ber-role USER,
+ * aktif, tidak dihapus, dan memiliki periode akses demo yang sedang berjalan (demo_accesses). Isi halaman sengaja minimal; cakupan fitur yang
  * boleh diakses akun demo menunggu keputusan desain (Phase 3).
  */
 export default async function DemoHomePage() {
@@ -30,15 +31,16 @@ export default async function DemoHomePage() {
       name: true,
       institution: true,
       status: true,
-      demoExpiresAt: true,
-      role: { select: { name: true } },
+      deletedAt: true,
+      role: { select: { code: true } },
     },
   });
 
-  if (!user || !isDemoRole(user.role?.name) || user.status !== 1) redirect("/");
-  if (!user.demoExpiresAt || user.demoExpiresAt <= new Date()) redirect("/demo-expired");
+  if (!user || !isUserRole(user.role?.code) || user.status !== "ACTIVE" || user.deletedAt) redirect("/");
+  const window = await getUserAccessWindow(db, session.userId);
+  if (!window) redirect("/demo-expired");
 
-  const expiresLabel = user.demoExpiresAt.toLocaleString("id-ID", {
+  const expiresLabel = window.coverageEnd.toLocaleString("id-ID", {
     timeZone: "Asia/Jakarta",
     weekday: "long",
     day: "numeric",

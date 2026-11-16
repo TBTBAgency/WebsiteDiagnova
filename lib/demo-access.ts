@@ -1,21 +1,45 @@
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { LEAD_STATUS } from "@/lib/demo-constants";
 
-export * from "@/lib/demo-constants";
+type Client = Prisma.TransactionClient | typeof db;
+
+export interface AccessWindow {
+  /** Periode yang sedang berjalan saat `now` */
+  currentAccessId: string;
+  /** Akhir cakupan akses berturut-turut (termasuk perpanjangan yang sudah terjadwal tepat setelahnya) */
+  coverageEnd: Date;
+}
 
 /**
- * Menandai lead "Jadwal Demo" yang masa demo akunnya sudah berakhir menjadi "Selesai".
- *
- * Idempoten: hanya lead berstatus Jadwal Demo yang diubah, sehingga menjalankan ulang
- * (cron berulang, request ganda) tidak mengubah apa pun dan tidak pernah menurunkan status.
+ * Menghitung jendela akses demo efektif seorang USER pada waktu `now`.
+ * Hanya periode yang sudah diaktifkan dan tidak dicabut yang dihitung. Status periode tidak disimpan;
+ * semuanya diturunkan dari timestamp sehingga tidak dibutuhkan job terjadwal (cron).
  */
-export async function expireDemoLeads(now: Date = new Date()): Promise<number> {
-  const result = await db.lead.updateMany({
-    where: {
-      status: LEAD_STATUS.SCHEDULED,
-      user: { is: { demoExpiresAt: { lte: now } } },
-    },
-    data: { status: LEAD_STATUS.COMPLETED },
+export async function getUserAccessWindow(
+  client: Client,
+  userId: string,
+  now: Date = new Date()
+): Promise<AccessWindow | null> {
+  const periods = await client.demoAccess.findMany({
+    where: { userId, revokedAt: null, activatedAt: { not: null }, expiresAt: { gt: now } },
+    orderBy: { activatedAt: "asc" },
+    select: { id: true, activatedAt: true, expiresAt: true },
   });
-  return result.count;
+
+  const current = periods.find((p) => p.activatedAt! <= now && p.expiresAt! > now);
+  if (!current) return null;
+
+  let coverageEnd = current.expiresAt!;
+  for (const p of periods) {
+    if (p.activatedAt! <= coverageEnd && p.expiresAt! > coverageEnd) coverageEnd = p.expiresAt!;
+  }
+  return { currentAccessId: current.id, coverageEnd };
+}
+
+/** Periode terakhir (tidak dicabut) milik sebuah lead, beserta tautan terbarunya. */
+export async function getLatestOpenAccessForLead(client: Client, leadId: string) {
+  return client.demoAccess.findFirst({
+    where: { leadId, revokedAt: null },
+    orderBy: { grantedAt: "desc" },
+  });
 }

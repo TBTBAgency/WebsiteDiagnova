@@ -1,14 +1,12 @@
 import crypto from "crypto";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { AuthSessionPayload } from "@/types";
 import { getAppBaseUrl } from "@/lib/app-url";
-import { DEMO_ROLE_NAME, isDemoRole } from "@/lib/roles";
-import {
-  DEFAULT_DEMO_DURATION_DAYS,
-  LEAD_STATUS,
-  isValidDemoDuration,
-} from "@/lib/demo-constants";
+import { isUserRole } from "@/lib/roles";
+import { signSessionToken, SESSION_DURATION_HOURS } from "@/lib/auth-session";
+import { getUserAccessWindow } from "@/lib/demo-access";
+import { recordAuditLogTx } from "@/lib/models/audit.model";
+import { AuthSessionPayload } from "@/types";
 
 /** Masa berlaku tautan (bukan masa demo). */
 export const MAGIC_LINK_TTL_HOURS = 24;
@@ -30,30 +28,18 @@ export function buildMagicLinkUrl(rawToken: string): string {
   return `${getAppBaseUrl()}/auth/verify-magic-link#token=${rawToken}`;
 }
 
-export type MagicLinkStatus = "ACTIVE" | "USED" | "EXPIRED";
-
-export function getMagicLinkStatus(
-  link: { usedAt: Date | null; expiresAt: Date },
-  now: Date = new Date()
-): MagicLinkStatus {
-  if (link.usedAt) return "USED";
-  if (link.expiresAt <= now) return "EXPIRED";
-  return "ACTIVE";
-}
-
 /**
- * Membuat token baru untuk sebuah lead di dalam transaksi pemanggil.
- * Semua token lama yang belum dipakai untuk lead tersebut dicabut (expiresAt = now)
- * sehingga hanya tautan terbaru yang berlaku.
+ * Menerbitkan tautan baru untuk satu periode akses di dalam transaksi pemanggil.
+ * Tautan lama periode tersebut yang belum dipakai dicabut (revoked_at) — TTL aslinya tetap tersimpan.
  */
 export async function issueMagicLink(
   tx: Prisma.TransactionClient,
-  params: { leadId: string; email: string; userId: string },
+  params: { demoAccessId: string; email: string },
   now: Date = new Date()
-): Promise<{ rawToken: string; magicLinkUrl: string; expiresAt: Date }> {
-  await tx.demoMagicLink.updateMany({
-    where: { leadId: params.leadId, usedAt: null, expiresAt: { gt: now } },
-    data: { expiresAt: now },
+): Promise<{ magicLinkUrl: string; expiresAt: Date; revokedCount: number }> {
+  const revoked = await tx.demoMagicLink.updateMany({
+    where: { demoAccessId: params.demoAccessId, usedAt: null, revokedAt: null, expiresAt: { gt: now } },
+    data: { revokedAt: now },
   });
 
   const rawToken = crypto.randomBytes(32).toString("hex");
@@ -63,25 +49,27 @@ export async function issueMagicLink(
     data: {
       tokenHash: hashMagicToken(rawToken),
       email: params.email.toLowerCase().trim(),
-      leadId: params.leadId,
-      userId: params.userId,
+      demoAccessId: params.demoAccessId,
       expiresAt,
     },
   });
 
-  return { rawToken, magicLinkUrl: buildMagicLinkUrl(rawToken), expiresAt };
+  return { magicLinkUrl: buildMagicLinkUrl(rawToken), expiresAt, revokedCount: revoked.count };
 }
 
 export type ConsumeFailureCode =
   | "INVALID" // token tidak dikenal / format salah / tidak berhak
   | "USED"
   | "EXPIRED"
+  | "REVOKED" // tautan diganti tautan yang lebih baru, atau akses dicabut admin
   | "ACCOUNT_INACTIVE"
   | "DEMO_EXPIRED";
 
 export type ConsumeResult =
   | {
       success: true;
+      sessionToken: string;
+      sessionMaxAgeSeconds: number;
       session: AuthSessionPayload;
       leadId: string;
       firstLogin: boolean;
@@ -89,19 +77,28 @@ export type ConsumeResult =
     }
   | { success: false; code: ConsumeFailureCode; leadId?: string; userId?: string };
 
+class ConsumeAbort extends Error {
+  constructor(public readonly code: ConsumeFailureCode, public readonly leadId?: string, public readonly userId?: string) {
+    super(code);
+  }
+}
+
+type SessionSigner = (payload: AuthSessionPayload, maxAgeSeconds: number) => Promise<string>;
+
 /**
- * Memvalidasi lalu mengonsumsi magic link secara atomik.
- *
- * Seluruh validasi dilakukan SEBELUM token ditandai terpakai; bila ada validasi yang gagal
- * token tetap utuh. Klaim token memakai UPDATE bersyarat (used_at IS NULL) di dalam transaksi
- * sehingga dua request bersamaan tidak mungkin sama-sama berhasil. Aktivasi akun demo dan
- * perubahan status lead terjadi dalam transaksi yang sama (all-or-nothing).
- *
- * Fungsi ini tidak menyetel cookie; pemanggil (Route Handler) yang membuat sesi.
+ * Memvalidasi lalu mengonsumsi magic link secara atomik (all-or-nothing):
+ *  1. validasi token, akun, dan periode akses — gagal = tidak ada perubahan apa pun;
+ *  2. klaim token (UPDATE bersyarat used_at IS NULL) — dua request bersamaan tidak mungkin sama-sama berhasil;
+ *  3. aktivasi periode akses bila belum aktif;
+ *  4. transisi Lead Dihubungi -> Jadwal Demo HANYA pada login pertama (demo_started_at IS NULL);
+ *  5. audit transisi & login di transaksi yang sama;
+ *  6. JWT sesi ditandatangani SEBELUM commit — bila gagal, seluruh langkah di atas dibatalkan (GW-04).
+ * Cookie disetel oleh Route Handler memakai token yang sudah jadi (operasi header, tidak dapat gagal parsial).
  */
 export async function consumeMagicLink(
   rawToken: unknown,
-  meta: { ipAddress?: string | null; userAgent?: string | null } = {}
+  meta: { ipAddress?: string | null; userAgent?: string | null } = {},
+  signer: SessionSigner = signSessionToken
 ): Promise<ConsumeResult> {
   if (typeof rawToken !== "string" || !MAGIC_TOKEN_PATTERN.test(rawToken)) {
     return { success: false, code: "INVALID" };
@@ -110,98 +107,125 @@ export async function consumeMagicLink(
   const tokenHash = hashMagicToken(rawToken);
   const now = new Date();
 
-  return db.$transaction(async (tx): Promise<ConsumeResult> => {
-    const link = await tx.demoMagicLink.findUnique({
-      where: { tokenHash },
-      include: { lead: true, user: { include: { role: true } } },
-    });
-
-    if (!link) return { success: false, code: "INVALID" };
-
-    const base = { leadId: link.leadId, userId: link.userId ?? undefined };
-
-    if (link.usedAt) return { success: false, code: "USED", ...base };
-    if (link.expiresAt <= now) return { success: false, code: "EXPIRED", ...base };
-
-    // Permohonan harus masih berstatus disetujui
-    if (link.lead.approvalStatus !== "APPROVED") return { success: false, code: "INVALID", ...base };
-
-    // Tautan terikat ke satu akun demo sejak dibuat. Tidak ada pencarian berdasarkan email,
-    // sehingga tautan tidak dapat dipakai untuk masuk ke akun lain (mis. akun admin).
-    const user = link.user;
-    if (!user) return { success: false, code: "INVALID", ...base };
-    if (!isDemoRole(user.role?.name)) return { success: false, code: "INVALID", ...base };
-    if (user.email.toLowerCase() !== link.email.toLowerCase()) {
-      return { success: false, code: "INVALID", ...base };
-    }
-    if (user.status !== 1) return { success: false, code: "ACCOUNT_INACTIVE", ...base };
-    if (user.demoExpiresAt && user.demoExpiresAt <= now) {
-      return { success: false, code: "DEMO_EXPIRED", ...base };
-    }
-
-    // Klaim atomik: hanya satu request yang mendapatkan count = 1
-    const claimed = await tx.demoMagicLink.updateMany({
-      where: { id: link.id, usedAt: null, expiresAt: { gt: now } },
-      data: {
-        usedAt: now,
-        ipAddress: meta.ipAddress ? meta.ipAddress.substring(0, 50) : null,
-        userAgent: meta.userAgent ? meta.userAgent.substring(0, 255) : null,
-      },
-    });
-    if (claimed.count !== 1) return { success: false, code: "USED", ...base };
-
-    // Aktivasi masa demo saat login pertama
-    let demoExpiresAt = user.demoExpiresAt;
-    let firstLogin = false;
-
-    if (!user.demoActivatedAt) {
-      const duration = isValidDemoDuration(link.lead.demoDurationDays)
-        ? link.lead.demoDurationDays
-        : DEFAULT_DEMO_DURATION_DAYS;
-      const expiry = new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
-
-      const activated = await tx.user.updateMany({
-        where: { id: user.id, demoActivatedAt: null },
-        data: { demoActivatedAt: now, demoExpiresAt: expiry, demoDurationDays: duration },
+  try {
+    return await db.$transaction(async (tx): Promise<ConsumeResult> => {
+      const link = await tx.demoMagicLink.findUnique({
+        where: { tokenHash },
+        include: {
+          demoAccess: {
+            include: {
+              lead: { select: { id: true, status: true, approvalStatus: true } },
+              user: { include: { role: { select: { code: true } } } },
+            },
+          },
+        },
       });
 
-      if (activated.count === 1) {
-        firstLogin = true;
-        demoExpiresAt = expiry;
-      } else {
-        // Diaktifkan oleh request lain (tautan berbeda) pada saat bersamaan
-        const fresh = await tx.user.findUnique({ where: { id: user.id } });
-        demoExpiresAt = fresh?.demoExpiresAt ?? expiry;
+      if (!link) throw new ConsumeAbort("INVALID");
+
+      const access = link.demoAccess;
+      const user = access.user;
+      const leadId = access.leadId;
+      const fail = (code: ConsumeFailureCode) => new ConsumeAbort(code, leadId, user.id);
+
+      if (link.usedAt) throw fail("USED");
+      if (link.revokedAt || access.revokedAt) throw fail("REVOKED");
+      if (link.expiresAt <= now) throw fail("EXPIRED");
+      if (access.lead.approvalStatus === "REJECTED") throw fail("REVOKED");
+
+      // Tautan terikat ke satu akun USER sejak dibuat; tidak ada pencarian berdasarkan email.
+      if (!isUserRole(user.role?.code)) throw fail("INVALID");
+      if (user.email.toLowerCase() !== link.email.toLowerCase()) throw fail("INVALID");
+      if (user.status !== "ACTIVE" || user.deletedAt) throw fail("ACCOUNT_INACTIVE");
+
+      // Periode yang sudah aktif harus masih berlaku (atau tercakup perpanjangan)
+      if (access.activatedAt && access.expiresAt && access.expiresAt <= now) {
+        const window = await getUserAccessWindow(tx, user.id, now);
+        if (!window) throw fail("DEMO_EXPIRED");
       }
-    }
 
-    if (!demoExpiresAt) {
-      throw new Error("Masa demo tidak dapat ditentukan.");
-    }
+      // Klaim atomik
+      const claimed = await tx.demoMagicLink.updateMany({
+        where: { id: link.id, usedAt: null, revokedAt: null, expiresAt: { gt: now } },
+        data: {
+          usedAt: now,
+          ipAddress: meta.ipAddress ? meta.ipAddress.substring(0, 50) : null,
+          userAgent: meta.userAgent ? meta.userAgent.substring(0, 255) : null,
+        },
+      });
+      if (claimed.count !== 1) throw fail("USED");
 
-    // Status lead -> Jadwal Demo, hanya dari Baru/Dihubungi (tidak pernah mundur, idempoten)
-    await tx.lead.updateMany({
-      where: { id: link.leadId, status: { in: [LEAD_STATUS.NEW, LEAD_STATUS.CONTACTED] } },
-      data: { status: LEAD_STATUS.SCHEDULED },
-    });
-    // Cerminan masa berlaku demo pada lead (satu nilai: users.demo_expires_at)
-    await tx.lead.update({
-      where: { id: link.leadId },
-      data: { userId: user.id, voucherExpiry: demoExpiresAt },
-    });
+      // Aktivasi periode pada login pertama periode ini
+      if (!access.activatedAt) {
+        await tx.demoAccess.updateMany({
+          where: { id: access.id, activatedAt: null },
+          data: {
+            activatedAt: now,
+            expiresAt: new Date(now.getTime() + access.durationDays * 24 * 60 * 60 * 1000),
+          },
+        });
+      }
 
-    return {
-      success: true,
-      leadId: link.leadId,
-      firstLogin,
-      demoExpiresAt,
-      session: {
+      const window = await getUserAccessWindow(tx, user.id, now);
+      if (!window) throw fail("DEMO_EXPIRED");
+
+      // Transisi Lead: hanya sekali, hanya dari Dihubungi
+      const transitioned = await tx.lead.updateMany({
+        where: { id: leadId, status: "CONTACTED", demoStartedAt: null },
+        data: { status: "SCHEDULED", demoStartedAt: now },
+      });
+      const firstLogin = transitioned.count === 1;
+
+      const actor = { type: "USER" as const, userId: user.id, email: user.email, role: "USER" };
+      if (firstLogin) {
+        await recordAuditLogTx(tx, {
+          actor,
+          action: "LEAD_STATUS_CHANGED",
+          entity: "leads",
+          recordId: leadId,
+          oldValue: { status: "CONTACTED" },
+          newValue: { status: "SCHEDULED", trigger: "FIRST_DEMO_LOGIN" },
+          ipAddress: meta.ipAddress,
+          userAgent: meta.userAgent,
+        });
+      }
+      await recordAuditLogTx(tx, {
+        actor,
+        action: "DEMO_LOGIN_SUCCEEDED",
+        entity: "demo_accesses",
+        recordId: access.id,
+        newValue: { leadId, firstLogin, accessEndsAt: window.coverageEnd.toISOString() },
+        ipAddress: meta.ipAddress,
+        userAgent: meta.userAgent,
+      });
+
+      const session: AuthSessionPayload = {
         userId: user.id,
         name: user.name,
         email: user.email,
-        role: DEMO_ROLE_NAME,
-        demoExpiresAt: demoExpiresAt.toISOString(),
-      },
-    };
-  });
+        role: "USER",
+        demoExpiresAt: window.coverageEnd.toISOString(),
+      };
+      const remaining = Math.floor((window.coverageEnd.getTime() - now.getTime()) / 1000);
+      const maxAge = Math.max(1, Math.min(SESSION_DURATION_HOURS * 3600, remaining));
+
+      // Gagal menandatangani sesi -> exception -> ROLLBACK seluruh transaksi
+      const sessionToken = await signer(session, maxAge);
+
+      return {
+        success: true,
+        sessionToken,
+        sessionMaxAgeSeconds: maxAge,
+        session,
+        leadId,
+        firstLogin,
+        demoExpiresAt: window.coverageEnd,
+      };
+    });
+  } catch (error) {
+    if (error instanceof ConsumeAbort) {
+      return { success: false, code: error.code, leadId: error.leadId, userId: error.userId };
+    }
+    throw error;
+  }
 }

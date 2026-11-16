@@ -47,6 +47,8 @@ export const demoRequestSchema = z.object({
     .max(1000, "Catatan maksimal 1000 karakter")
     .optional()
     .or(z.literal("")),
+  /** Honeypot anti-bot: wajib kosong (field tersembunyi di form) */
+  website: z.string().max(0).optional().or(z.literal("")),
 });
 
 export type DemoRequestSchemaType = z.infer<typeof demoRequestSchema>;
@@ -57,19 +59,27 @@ const demoDurationSchema = z.coerce
     message: `Durasi demo harus salah satu dari: ${DEMO_DURATION_OPTIONS.join(", ")} hari`,
   });
 
-export const approveLeadSchema = z.object({
-  confirmedDemoDate: z.string().optional().nullable(),
+export const grantAccessSchema = z.object({
   durationDays: demoDurationSchema.default(7),
-  notes: z.string().optional(),
-});
+  confirmedDemoDate: z.string().optional().nullable(),
+}).strict();
 
-export type ApproveLeadSchemaType = z.infer<typeof approveLeadSchema>;
+export const extendAccessSchema = z.object({
+  durationDays: demoDurationSchema,
+}).strict();
 
 export const rejectLeadSchema = z.object({
-  rejectionReason: z.string().min(2, "Alasan penolakan harus diisi"),
-});
+  rejectionReason: z.string().trim().min(2, "Alasan penolakan harus diisi").max(1000),
+}).strict();
 
-export type RejectLeadSchemaType = z.infer<typeof rejectLeadSchema>;
+export const completeLeadSchema = z.object({
+  note: z.string().max(1000, "Catatan maksimal 1000 karakter").optional().nullable(),
+}).strict();
+
+/** PATCH lead: hanya jadwal presentasi. Status TIDAK dapat diubah lewat PATCH (OD-06). */
+export const updateLeadScheduleSchema = z.object({
+  confirmedDemoDate: z.string().nullable(),
+}).strict();
 
 export const loginSchema = z.object({
   email: z.string().email("Format alamat email tidak valid"),
@@ -78,23 +88,23 @@ export const loginSchema = z.object({
 
 export type LoginSchemaType = z.infer<typeof loginSchema>;
 
-export const updateLeadStatusSchema = z.object({
-  status: z.coerce.number().min(1).max(4),
-  voucherDays: demoDurationSchema.optional().default(3),
-  demoDate: z.string().optional().nullable(),
-});
-
-export type UpdateLeadStatusSchemaType = z.infer<typeof updateLeadStatusSchema>;
-
+/** User Management hanya mengelola USER (akun demo, login via magic link -> tanpa password). */
 export const createUserSchema = z.object({
-  name: z.string().min(2, "Nama minimal 2 karakter"),
-  email: z.string().email("Format email tidak valid"),
-  password: z.string().min(6, "Password minimal 6 karakter"),
-  institution: z.string().optional(),
-  jobTitle: z.string().optional(),
-  phone: z.string().optional(),
-  roleId: z.string().min(1, "Role wajib dipilih"),
-  status: z.coerce.number().default(1),
-});
+  name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100),
+  email: z.string().trim().email("Format email tidak valid").max(255),
+  institution: z.string().trim().max(150).optional().or(z.literal("")),
+  jobTitle: z.string().trim().max(100).optional().or(z.literal("")),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+}).strict();
 
 export type CreateUserSchemaType = z.infer<typeof createUserSchema>;
+
+export const updateUserSchema = z.object({
+  name: z.string().trim().min(2).max(100).optional(),
+  institution: z.string().trim().max(150).optional().nullable(),
+  jobTitle: z.string().trim().max(100).optional().nullable(),
+  phone: z.string().trim().max(30).optional().nullable(),
+  status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
+}).strict();
+
+export type UpdateUserSchemaType = z.infer<typeof updateUserSchema>;

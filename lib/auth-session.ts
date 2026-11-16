@@ -5,7 +5,7 @@ import { getSessionSecret } from "@/lib/session-secret";
 
 const SESSION_COOKIE_NAME = "diagnova_session";
 
-const SESSION_DURATION_HOURS = 24;
+export const SESSION_DURATION_HOURS = 24;
 
 /**
  * Membuat JWT token untuk sesi pengguna
@@ -48,9 +48,14 @@ export async function setSessionCookie(
   }
 
   const token = await signSessionToken(payload, maxAgeSeconds);
-  const cookieStore = cookies();
+  setSessionCookieToken(token, maxAgeSeconds);
+}
 
-  cookieStore.set(SESSION_COOKIE_NAME, token, {
+/**
+ * Menyetel cookie sesi dari token yang SUDAH ditandatangani (mis. di dalam transaksi login demo).
+ */
+export function setSessionCookieToken(token: string, maxAgeSeconds: number): void {
+  cookies().set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

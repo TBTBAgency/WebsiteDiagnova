@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/authz";
 import { db } from "@/lib/db";
-import { getLeadMetrics, prismaToInstitutionType } from "@/lib/models/lead.model";
+import { getLeadMetrics, prismaToInstitutionType, STATUS_LABELS } from "@/lib/models/lead.model";
+import { getAuditLogs } from "@/lib/models/audit.model";
+import { jakartaDateKey, jakartaDayStart } from "@/lib/time";
 import { prismaPriorityToOrderPriority, prismaStatusToOrderStatus } from "@/lib/models/order.model";
 import { ApiResponse } from "@/types";
 import { OrderPriority, OrderStatus, SpecimenStatus } from "@prisma/client";
@@ -13,7 +15,10 @@ export async function GET() {
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
 
-    // Eksekusi query database paralel
+    const now = new Date();
+    const days = 14;
+    const timelineStart = jakartaDayStart(jakartaDateKey(new Date(now.getTime() - (days - 1) * 86400000)))!;
+
     const [
       leadMetrics,
       orderStats,
@@ -37,7 +42,8 @@ export async function GET() {
         by: ["status"],
         _count: { status: true },
       }),
-      db.user.count({ where: { status: 1 } }),
+      // Hanya akun USER (akun demo klien) yang aktif & tidak dihapus — ADMIN tidak dihitung
+      db.user.count({ where: { status: "ACTIVE", deletedAt: null, role: { code: "USER" } } }),
       db.lead.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -56,6 +62,13 @@ export async function GET() {
         by: ["institutionType"],
         _count: { institutionType: true },
       }),
+    ]);
+
+    // Agregasi penuh 14 hari (bukan dari 5 data terbaru)
+    const [leadDates, orderDates, recentAudit] = await Promise.all([
+      db.lead.findMany({ where: { createdAt: { gte: timelineStart } }, select: { createdAt: true } }),
+      db.labOrder.findMany({ where: { orderedAt: { gte: timelineStart } }, select: { orderedAt: true } }),
+      getAuditLogs({ limit: 5 }),
     ]);
 
     // Format Metrik Order LIS
@@ -99,30 +112,17 @@ export async function GET() {
       count: g._count.institutionType,
     }));
 
-    // Data timeline harian permohonan demo & lab orders (14 hari terakhir)
-    const now = new Date();
-    const days = 14;
+    // Timeline harian per tanggal WIB
+    const leadCounts = new Map<string, number>();
+    for (const l of leadDates) leadCounts.set(jakartaDateKey(l.createdAt), (leadCounts.get(jakartaDateKey(l.createdAt)) ?? 0) + 1);
+    const orderCounts = new Map<string, number>();
+    for (const o of orderDates) orderCounts.set(jakartaDateKey(o.orderedAt), (orderCounts.get(jakartaDateKey(o.orderedAt)) ?? 0) + 1);
+
     const timelineData: { date: string; label: string; leads: number; orders: number }[] = [];
-
     for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split("T")[0];
-      const label = d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
-
-      const leadsCount = recentLeads.filter(
-        (l) => l.createdAt.toISOString().split("T")[0] === dateStr
-      ).length;
-      const ordersCount = recentOrders.filter(
-        (o) => o.orderedAt.toISOString().split("T")[0] === dateStr
-      ).length;
-
-      timelineData.push({
-        date: dateStr,
-        label,
-        leads: leadsCount,
-        orders: ordersCount,
-      });
+      const key = jakartaDateKey(new Date(now.getTime() - i * 86400000));
+      const label = new Date(`${key}T00:00:00+07:00`).toLocaleDateString("id-ID", { day: "numeric", month: "short", timeZone: "Asia/Jakarta" });
+      timelineData.push({ date: key, label, leads: leadCounts.get(key) ?? 0, orders: orderCounts.get(key) ?? 0 });
     }
 
     // Format Recent Leads
@@ -135,8 +135,7 @@ export async function GET() {
       phone: l.phone,
       institutionType: prismaToInstitutionType[l.institutionType] || "other",
       status: l.status,
-      voucherCode: l.voucherCode,
-      voucherExpiry: l.voucherExpiry ? l.voucherExpiry.toISOString() : null,
+      statusLabel: STATUS_LABELS[l.status],
       createdAt: l.createdAt.toISOString(),
     }));
 
@@ -162,10 +161,11 @@ export async function GET() {
         summary: {
           leads: {
             total: leadMetrics.total,
-            new: leadMetrics.new,
             contacted: leadMetrics.contacted,
             scheduled: leadMetrics.scheduled,
             completed: leadMetrics.completed,
+            upcomingThisMonth: leadMetrics.upcomingThisMonth,
+            awaitingCompletion: leadMetrics.awaitingCompletion,
           },
           orders: {
             total: totalOrders,
@@ -187,7 +187,7 @@ export async function GET() {
         institutionDistribution,
         recentLeads: formattedRecentLeads,
         recentOrders: formattedRecentOrders,
-        recentAuditLogs: [],
+        recentAuditLogs: recentAudit,
       },
     });
   } catch (error) {

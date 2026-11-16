@@ -9,7 +9,7 @@ import { ComparisonSection } from "@/components/sections/ComparisonSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { CTABanner } from "@/components/sections/CTABanner";
-import { getCmsHomepageContent } from "@/lib/models/cms.model";
+import { getCmsHomepageContent, type CmsHomepageData } from "@/lib/models/cms.model";
 
 export const metadata: Metadata = {
   title: "Diagnova — AI-Powered Laboratory Intelligence Platform",
@@ -21,41 +21,27 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  let cmsData = null;
+  // undefined = DB tidak tersedia -> komponen memakai konten statis bawaan
+  // null      = section disembunyikan / dihapus di CMS -> tidak dirender
+  let cms: CmsHomepageData = {};
   try {
-    cmsData = await getCmsHomepageContent();
+    cms = await getCmsHomepageContent();
   } catch (err) {
     console.error("Gagal memuat data CMS, beralih ke konten default statis:", err);
   }
+  const show = (v: unknown) => v !== null;
 
   return (
     <>
-      {/* 1. Hero Section */}
-      <Hero initialData={cmsData?.hero} />
-
-      {/* 2. Trusted By Bar */}
-      <TrustedByBar initialData={cmsData?.trustedBy} />
-
-      {/* 3. About Diagnova Section */}
-      <AboutSection initialData={cmsData?.about} />
-
-      {/* 4. Comparison Section */}
-      <ComparisonSection initialData={cmsData?.comparison} />
-
-      {/* 5. Workflow Section */}
-      <WorkflowSection initialData={cmsData?.workflow} />
-
-      {/* 6. Infrastructure Section */}
-      <InfrastructureSection initialData={cmsData?.infrastructure} />
-
-      {/* 7. Customer Testimonials Section */}
-      <TestimonialsSection initialData={cmsData?.testimonials} />
-
-      {/* 8. Frequently Asked Questions (FAQ) Section */}
-      <FAQSection />
-
-      {/* 9. Bottom CTA Banner */}
-      <CTABanner initialData={cmsData?.cta} bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />
+      {show(cms.hero) && <Hero initialData={cms.hero ?? undefined} />}
+      {show(cms.trustedBy) && <TrustedByBar initialData={cms.trustedBy ?? undefined} />}
+      {show(cms.about) && <AboutSection initialData={cms.about ?? undefined} />}
+      {show(cms.comparison) && <ComparisonSection initialData={cms.comparison ?? undefined} />}
+      {show(cms.workflow) && <WorkflowSection initialData={cms.workflow ?? undefined} />}
+      {show(cms.infrastructure) && <InfrastructureSection initialData={cms.infrastructure ?? undefined} />}
+      {show(cms.testimonials) && <TestimonialsSection initialData={cms.testimonials ?? undefined} />}
+      <FAQSection content={cms.faq as any} />
+      {show(cms.cta) && <CTABanner initialData={cms.cta ?? undefined} bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />}
     </>
   );
 }

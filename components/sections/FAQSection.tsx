@@ -4,29 +4,25 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Plus, Minus, ArrowRight, MessageSquare } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
-import { useLanguage } from "@/components/providers/LanguageProvider";
-import { faqContentID, faqContentEN } from "@/content/faq";
+import { useCmsText, visibleItems } from "@/lib/cms/text";
+import { homeFaqSection, type HomeFaqContent } from "@/content/pages/home-faq";
 import { cn } from "@/lib/utils";
 
 export interface FAQSectionProps {
-  initialData?: any;
+  /**
+   * Konten CMS section FAQ. `null` = disembunyikan di CMS (tidak dirender).
+   * `undefined` (prop tidak dikirim) = memakai konten default.
+   */
+  content?: HomeFaqContent | null;
 }
 
-export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) {
-  const { language } = useLanguage();
-  const defaultContent = language === "ID" ? faqContentID : faqContentEN;
+export function FAQSection({ content: cmsContent }: FAQSectionProps = {}) {
+  const t = useCmsText();
+  const content = cmsContent === undefined ? homeFaqSection.content : cmsContent;
+  const categories = visibleItems(content?.categories);
+  const items = visibleItems(content?.items);
 
-  const content = {
-    sectionBadge: defaultContent.sectionBadge,
-    sectionTitle: defaultContent.sectionTitle,
-    sectionSubtitle: defaultContent.sectionSubtitle,
-    supportPrompt: defaultContent.supportPrompt,
-    supportCta: defaultContent.supportCta,
-    categories: defaultContent.categories,
-    items: defaultContent.items,
-  };
-
-  const [activeCategory, setActiveCategory] = useState<string>("general");
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id ?? "general");
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -47,7 +43,9 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
     return () => observer.disconnect();
   }, []);
 
-  const filteredItems = content.items.filter(
+  if (!content) return null;
+
+  const filteredItems = items.filter(
     (item) => item.category === activeCategory
   );
 
@@ -77,14 +75,14 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
         >
           <div className="max-w-2xl">
             <div className="mb-3.5 sm:mb-4">
-              <SectionBadge variant="blue">{content.sectionBadge}</SectionBadge>
+              <SectionBadge variant="blue">{t(content.badge)}</SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
-              {content.sectionTitle}
+              {t(content.title)}
             </h2>
           </div>
           <p className="max-w-md text-slate-600 text-xs sm:text-sm lg:text-[15px] font-normal leading-relaxed lg:text-right pb-1 shrink-0">
-            {content.sectionSubtitle}
+            {t(content.subtitle)}
           </p>
         </div>
 
@@ -99,7 +97,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
           {/* ── LEFT: CATEGORY TABS ── */}
           <div className="lg:col-span-4 xl:col-span-3">
             <nav className="flex flex-wrap lg:flex-col gap-2">
-              {content.categories.map((cat) => {
+              {categories.map((cat) => {
                 const isActive = activeCategory === cat.id;
                 return (
                   <button
@@ -116,7 +114,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                         : "bg-white lg:bg-transparent border-slate-200/90 lg:border-transparent text-slate-600 hover:text-[#2568BA] hover:bg-white/90 font-medium shadow-2xs lg:shadow-none"
                     )}
                   >
-                    {cat.label}
+                    {t(cat.label)}
                   </button>
                 );
               })}
@@ -147,7 +145,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                             : "font-medium text-slate-700 group-hover:text-[#2568BA]"
                         )}
                       >
-                        {item.question}
+                        {t(item.question)}
                       </span>
                       <span
                         className={cn(
@@ -174,7 +172,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
                     >
                       <div className="overflow-hidden">
                         <p className="text-slate-600 text-xs sm:text-[13px] lg:text-sm leading-relaxed font-normal pb-5 sm:pb-6 pr-10 sm:pr-14">
-                          {item.answer}
+                          {t(item.answer)}
                         </p>
                       </div>
                     </div>
@@ -200,21 +198,19 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
               </div>
               <div>
                 <h4 className="font-display text-sm sm:text-base font-bold text-[#1D3F82]">
-                  {content.supportPrompt}
+                  {t(content.supportPrompt)}
                 </h4>
                 <p className="text-xs sm:text-[13px] text-slate-500 font-light mt-0.5">
-                  {language === "ID"
-                    ? "Jadwalkan demonstrasi teknis atau konsultasi kebutuhan laboratorium Anda."
-                    : "Schedule a technical consultation or request a live interactive demo."}
+                  {t(content.supportDescription)}
                 </p>
               </div>
             </div>
 
             <Link
-              href="/request-demo"
+              href={content.supportCtaHref}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2568BA] hover:bg-[#1D3F82] text-white px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-[0.98] shrink-0"
             >
-              <span>{content.supportCta}</span>
+              <span>{t(content.supportCtaLabel)}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>

@@ -30,3 +30,7 @@ yarn-error.log*
 prisma/migrations/dev.db
 
 *.tsbuildinfo
+
+# CMS uploads (runtime, di luar public/)
+/storage/
+/.uploads-test/

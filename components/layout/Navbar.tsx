@@ -4,408 +4,47 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  Menu,
-  X,
-  ChevronDown,
-  ChevronRight,
-  Activity,
-  Layers,
-  Sparkles,
-  Network,
-  Cpu,
-  ArrowRight,
-  ShieldCheck,
-  Building2,
-  Stethoscope,
-  Microscope,
-  FlaskConical,
-  HeartPulse,
-} from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { pickText, visibleItems } from "@/lib/cms/text";
+import type { AnnouncementContent, NavigationContent } from "@/content/pages/global";
 
 interface NavItem {
+  id: string;
   label: string;
   href: string;
   children?: {
+    id: string;
     title: string;
     description: string;
     href: string;
-    icon: React.ReactNode;
+    /** Nama ikon lucide & kunci warna aksen dari CMS (saat ini tidak ditampilkan di dropdown). */
+    iconName: string;
+    accent: string;
   }[];
 }
 
-function getNavItems(lang: "ID" | "EN"): NavItem[] {
-  if (lang === "ID") {
-    return [
-      {
-        label: "Platform",
-        href: "/platform",
-        children: [
-          {
-            title: "Gambaran Platform",
-            description: "Buku catatan super pintar yang menghubungkan instrumen lab dengan dokter",
-            href: "/platform",
-            icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Alur Kerja",
-            description: "Alur kerja 4 tahap dari penerimaan sampel hingga rilis hasil ke dokter",
-            href: "/platform#workflow",
-            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "100% Otomasi",
-            description: "Antarmuka analyzer langsung & verifikasi otomatis memangkas TAT 70%",
-            href: "/platform#automation",
-            icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Pelaporan & Jejak Audit",
-            description: "Rekam jejak digital transparan untuk setiap perubahan hasil sampel",
-            href: "/platform#reporting",
-            icon: <ShieldCheck className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Analitik & Inteligensi",
-            description: "Pemanfaatan insight data lab untuk mendukung efisiensi & Nova AI",
-            href: "/platform#analytics",
-            icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
-          },
-        ],
-      },
-      {
-        label: "Solusi",
-        href: "/solutions",
-        children: [
-          {
-            title: "Laboratorium Rumah Sakit",
-            description: "Solusi terpadu lab pusat, IGD, dan ICU dengan bridging SIMRS/RME",
-            href: "/solutions#hospital-laboratory",
-            icon: <Building2 className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Laboratorium Klinik",
-            description: "Kecepatan registrasi, MCU massal, dan portal hasil pasien online",
-            href: "/solutions#clinical-laboratory",
-            icon: <Stethoscope className="h-4 w-4 text-nova-blue" />,
-          },
-          {
-            title: "Patologi Anatomi",
-            description: "Pelacakan spesimen jaringan ketat & integrasi patologi digital",
-            href: "/solutions#pathology",
-            icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Mikrobiologi & PPRA",
-            description: "Kultur bakteri, uji kepekaan antibiotik, dan kalkulasi antibiogram",
-            href: "/solutions#microbiology",
-            icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
-          },
-          {
-            title: "Bank Darah & Transfusi",
-            description: "Kontrol rantai dingin, validasi crossmatch, dan zero wastage",
-            href: "/solutions#blood-bank",
-            icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
-          },
-          {
-            title: "Nova AI Inteligensi",
-            description: "Asisten AI cerdas: mendeteksi anomali & merangkum angka klinis",
-            href: "/solutions#nova-ai",
-            icon: <Sparkles className="h-4 w-4 text-amber-500" />,
-          },
-        ],
-      },
-      {
-        label: "Modul",
-        href: "/modules",
-        children: [
-          {
-            title: "Rutin & Hematologi",
-            description: "Pemeriksaan darah harian & kimia klinik bervolume tinggi",
-            href: "/modules#routine-hematology",
-            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Bank Darah",
-            description: "Ketersediaan, masa kedaluwarsa, crossmatching, dan distribusi darah",
-            href: "/modules#blood-bank",
-            icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
-          },
-          {
-            title: "Inventaris & Reagen",
-            description: "Pantau stok reagen real-time & cegah kehabisan saat shift berjalan",
-            href: "/modules#inventory-reagent",
-            icon: <Cpu className="h-4 w-4 text-nova-blue" />,
-          },
-          {
-            title: "Patologi",
-            description: "Pencatatan histopatologi & sitologi dengan pelacakan kaset/slide",
-            href: "/modules#pathology",
-            icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "Mikrobiologi",
-            description: "Identifikasi kuman, kultur bakteri, dan uji resistensi antibiotik",
-            href: "/modules#microbiology",
-            icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
-          },
-        ],
-      },
-      {
-        label: "Nova AI",
-        href: "/nova-ai",
-        children: [
-          {
-            title: "Gambaran Nova AI",
-            description: "Mengubah angka medis rumit menjadi kalimat ringkas & dapat ditindaklanjuti",
-            href: "/nova-ai",
-            icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
-          },
-          {
-            title: "Cara Kerja (4 Tahap)",
-            description: "Membaca Pola → Menerjemahkan Angka → Notifikasi Cepat → Validasi Dokter",
-            href: "/nova-ai#how-it-works",
-            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "AI + Dokter (Etika & Kolaborasi)",
-            description: "AI membantu. Dokter memutuskan. Penegasan peran manusia dalam keputusan klinis",
-            href: "/nova-ai#ai-doctor",
-            icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
-          },
-        ],
-      },
-      {
-        label: "Integrasi",
-        href: "/integration",
-        children: [
-          {
-            title: "Gambaran Integrasi",
-            description: "Konektivitas siap pakai dengan sistem & instrumen laboratorium Anda",
-            href: "/integration",
-            icon: <Network className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "SIMRS / HIS",
-            description: "Bridging native dua arah untuk penerimaan order & rilis hasil",
-            href: "/integration#simrs-his",
-            icon: <Building2 className="h-4 w-4 text-nova-blue" />,
-          },
-          {
-            title: "RME (Rekam Medis Elektronik)",
-            description: "Kepatuhan Permenkes 24/2022 dengan riwayat lab longitudinal",
-            href: "/integration#rme",
-            icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-          },
-          {
-            title: "500+ Analyzer",
-            description: "Antarmuka langsung dengan instrumen Roche, Abbott, Sysmex, Mindray, dll",
-            href: "/integration#analyzer",
-            icon: <Cpu className="h-4 w-4 text-nova-blue" />,
-          },
-          {
-            title: "SATUSEHAT Kemenkes",
-            description: "Interoperabilitas HL7 FHIR standar data kesehatan nasional",
-            href: "/integration#satusehat",
-            icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
-          },
-          {
-            title: "Smart Resilient Gateway",
-            description: "Koneksi tangguh HL7/ASTM dengan Offline Edge Buffer & Uptime 99,9%",
-            href: "/integration#connectivity",
-            icon: <Network className="h-4 w-4 text-diagnova-blue" />,
-          },
-        ],
-      },
-    ];
-  }
-
-  // English
-  return [
-    {
-      label: "Platform",
-      href: "/platform",
-      children: [
-        {
-          title: "Platform Overview",
-          description: "A smart notebook connecting lab instruments with physicians seamlessly",
-          href: "/platform",
-          icon: <Layers className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Workflow",
-          description: "4-stage workflow from sample receipt to result release to physicians",
-          href: "/platform#workflow",
-          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "100% Automation",
-          description: "Direct analyzer interfacing & auto-verification cutting TAT by 70%",
-          href: "/platform#automation",
-          icon: <Cpu className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Reporting & Audit Trail",
-          description: "Transparent digital trail for every sample result change",
-          href: "/platform#reporting",
-          icon: <ShieldCheck className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Analytics & Intelligence",
-          description: "Leverage lab data insights to drive efficiency & power Nova AI",
-          href: "/platform#analytics",
-          icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
-        },
-      ],
-    },
-    {
-      label: "Solutions",
-      href: "/solutions",
-      children: [
-        {
-          title: "Hospital Laboratory",
-          description: "Unified solution for central lab, ER, and ICU with HIS/EMR bridging",
-          href: "/solutions#hospital-laboratory",
-          icon: <Building2 className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Clinical Laboratory",
-          description: "Fast registration, mass check-ups, and online patient result portal",
-          href: "/solutions#clinical-laboratory",
-          icon: <Stethoscope className="h-4 w-4 text-nova-blue" />,
-        },
-        {
-          title: "Anatomical Pathology",
-          description: "Strict tissue specimen tracking & digital pathology integration",
-          href: "/solutions#pathology",
-          icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Microbiology & PPRA",
-          description: "Bacterial culture, antibiotic sensitivity testing, and antibiogram calculation",
-          href: "/solutions#microbiology",
-          icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
-        },
-        {
-          title: "Blood Bank & Transfusion",
-          description: "Cold chain control, crossmatch validation, and zero wastage",
-          href: "/solutions#blood-bank",
-          icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
-        },
-        {
-          title: "Nova AI Intelligence",
-          description: "Smart AI assistant: detects anomalies & summarizes clinical figures",
-          href: "/solutions#nova-ai",
-          icon: <Sparkles className="h-4 w-4 text-amber-500" />,
-        },
-      ],
-    },
-    {
-      label: "Modules",
-      href: "/modules",
-      children: [
-        {
-          title: "Routine & Hematology",
-          description: "Daily blood tests & high-volume clinical chemistry processing",
-          href: "/modules#routine-hematology",
-          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Blood Bank",
-          description: "Availability, expiry tracking, crossmatching, and blood distribution",
-          href: "/modules#blood-bank",
-          icon: <HeartPulse className="h-4 w-4 text-rose-500" />,
-        },
-        {
-          title: "Inventory & Reagent",
-          description: "Real-time reagent stock monitoring & prevent stock-outs during shifts",
-          href: "/modules#inventory-reagent",
-          icon: <Cpu className="h-4 w-4 text-nova-blue" />,
-        },
-        {
-          title: "Pathology",
-          description: "Histopathology & cytology recording with cassette/slide tracking",
-          href: "/modules#pathology",
-          icon: <Microscope className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "Microbiology",
-          description: "Germ identification, bacterial culture, and antibiotic resistance testing",
-          href: "/modules#microbiology",
-          icon: <FlaskConical className="h-4 w-4 text-nova-blue" />,
-        },
-      ],
-    },
-    {
-      label: "Nova AI",
-      href: "/nova-ai",
-      children: [
-        {
-          title: "Nova AI Overview",
-          description: "Turning complex medical numbers into concise & actionable summaries",
-          href: "/nova-ai",
-          icon: <Sparkles className="h-4 w-4 text-nova-blue" />,
-        },
-        {
-          title: "How It Works (4 Steps)",
-          description: "Read Patterns → Translate Numbers → Fast Alerts → Doctor Validation",
-          href: "/nova-ai#how-it-works",
-          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "AI + Doctor (Ethics & Collaboration)",
-          description: "AI assists. Doctors decide. Affirming the human role in clinical decisions",
-          href: "/nova-ai#ai-doctor",
-          icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
-        },
-      ],
-    },
-    {
-      label: "Integration",
-      href: "/integration",
-      children: [
-        {
-          title: "Integration Overview",
-          description: "Ready-to-use connectivity with your lab systems & instruments",
-          href: "/integration",
-          icon: <Network className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "HIS / EMR",
-          description: "Native two-way bridging for order reception & result release",
-          href: "/integration#simrs-his",
-          icon: <Building2 className="h-4 w-4 text-nova-blue" />,
-        },
-        {
-          title: "Electronic Medical Records",
-          description: "Compliance with national health data standards & longitudinal lab history",
-          href: "/integration#rme",
-          icon: <Activity className="h-4 w-4 text-diagnova-blue" />,
-        },
-        {
-          title: "500+ Analyzers",
-          description: "Direct interfacing with Roche, Abbott, Sysmex, Mindray instruments & more",
-          href: "/integration#analyzer",
-          icon: <Cpu className="h-4 w-4 text-nova-blue" />,
-        },
-        {
-          title: "SATUSEHAT (National Health)",
-          description: "HL7 FHIR interoperability with national health data standards",
-          href: "/integration#satusehat",
-          icon: <ShieldCheck className="h-4 w-4 text-emerald-600" />,
-        },
-        {
-          title: "Smart Resilient Gateway",
-          description: "Robust HL7/ASTM connection with Offline Edge Buffer & 99.9% Uptime",
-          href: "/integration#connectivity",
-          icon: <Network className="h-4 w-4 text-diagnova-blue" />,
-        },
-      ],
-    },
-  ];
+/** Menyusun menu (maks. 2 level) dari konten CMS `global.navigation`. */
+function getNavItems(content: NavigationContent | null | undefined, lang: "ID" | "EN"): NavItem[] {
+  if (!content) return [];
+  return visibleItems(content.items).map((item) => {
+    const children = visibleItems(item.children).map((child) => ({
+      id: child.id,
+      title: pickText(lang, child.title),
+      description: pickText(lang, child.description),
+      href: child.href,
+      iconName: child.iconName,
+      accent: child.accent,
+    }));
+    return {
+      id: item.id,
+      label: pickText(lang, item.label),
+      href: item.href,
+      children: children.length > 0 ? children : undefined,
+    };
+  });
 }
 
 // Circular Indonesia Flag SVG Component
@@ -527,7 +166,14 @@ function LanguageSwitcher({
   );
 }
 
-export function Navbar() {
+interface NavbarProps {
+  /** Konten CMS section `global.navigation` (`null` = disembunyikan di CMS). */
+  content: NavigationContent | null;
+  /** Konten CMS section `global.announcement` (`null` = announcement bar tidak dirender). */
+  announcement: AnnouncementContent | null;
+}
+
+export function Navbar({ content, announcement }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -539,7 +185,8 @@ export function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const navItems = getNavItems(language);
+  const navItems = getNavItems(content, language);
+  const hasAnnouncement = announcement != null;
 
   const updateProgress = (y: number) => {
     if (!progressBarRef.current) return;
@@ -551,7 +198,7 @@ export function Navbar() {
   };
 
   const updateNavPosition = (y: number) => {
-    const effectiveHeight = isDismissed ? 0 : barHeight;
+    const effectiveHeight = isDismissed || !hasAnnouncement ? 0 : barHeight;
     const barOffset = Math.min(y, effectiveHeight);
     const topOffset = Math.max(0, effectiveHeight - y);
 
@@ -581,7 +228,14 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     updateNavPosition(window.scrollY);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isDismissed, barHeight]);
+  }, [isDismissed, barHeight, hasAnnouncement]);
+
+  // Announcement bar disembunyikan di CMS: offset konten halaman = 0
+  useEffect(() => {
+    if (!hasAnnouncement) {
+      document.documentElement.style.setProperty("--announcement-bar-height", "0px");
+    }
+  }, [hasAnnouncement]);
 
   // Close mobile menu on route change & recalculate scroll progress
   useEffect(() => {
@@ -608,11 +262,12 @@ export function Navbar() {
     }
   };
 
-  const effectiveBarHeight = isDismissed ? 0 : barHeight;
+  const effectiveBarHeight = isDismissed || !hasAnnouncement ? 0 : barHeight;
 
   return (
     <>
       {/* ── Fixed Announcement Bar: Scrolls smoothly out of view (z-30) ── */}
+      {announcement && (
       <div
         ref={announcementRef}
         style={{
@@ -624,6 +279,7 @@ export function Navbar() {
         )}
       >
         <AnnouncementBar
+          content={announcement}
           language={language}
           onHeightChange={(h) => setBarHeight(h)}
           onDismiss={() => {
@@ -635,6 +291,7 @@ export function Navbar() {
           }}
         />
       </div>
+      )}
 
       {/* ── Main Navbar: z-40 with solid bg-white. Slides up and stays locked at top:0 ── */}
       <header
@@ -655,29 +312,31 @@ export function Navbar() {
         <div className="relative z-20 mx-auto flex max-w-[1560px] items-center justify-between px-5 sm:px-6 lg:px-10">
         {/* Left: Brand Logo */}
         <div className="flex items-center flex-1 justify-start">
+          {content?.logoUrl && (
           <Link
-            href="/"
+            href={content.logoHref || "/"}
             prefetch={true}
             className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-2.5 sm:-translate-x-3.5"
           >
             <Image
-              src="/images/logo-nav.png"
-              alt="Diagnova"
+              src={content.logoUrl}
+              alt={content.logoAlt}
               width={240}
               height={66}
               priority
               className="h-10 sm:h-11 md:h-12 lg:h-[46px] xl:h-12 w-auto object-contain"
             />
           </Link>
+          )}
         </div>
 
         {/* Center: Desktop Navigation Links */}
         <nav className="hidden items-center justify-center gap-7 xl:gap-10 lg:flex shrink-0">
           {navItems.map((item) => (
             <div
-              key={item.label}
+              key={item.id}
               className="relative"
-              onMouseEnter={() => setActiveDropdown(item.label)}
+              onMouseEnter={() => setActiveDropdown(item.id)}
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <Link
@@ -696,14 +355,14 @@ export function Navbar() {
                   <ChevronDown
                     className={cn(
                       "h-3.5 w-3.5 text-slate-400 transition-transform duration-200 group-hover/nav:text-diagnova-blue",
-                      activeDropdown === item.label && "rotate-180 text-diagnova-blue"
+                      activeDropdown === item.id && "rotate-180 text-diagnova-blue"
                     )}
                   />
                 )}
               </Link>
 
               {/* Clean Minimalist Dropdown Menu with Top Caret */}
-              {item.children && activeDropdown === item.label && (
+              {item.children && activeDropdown === item.id && (
                 <div className="absolute -left-3 top-full pt-3 z-50">
                   <div className="relative w-[250px] rounded-xl border border-slate-200/90 bg-white py-3.5 px-2 shadow-[0_14px_36px_-10px_rgba(15,23,42,0.12)] animate-dropdown">
                     {/* Top-left triangle caret */}
@@ -714,7 +373,7 @@ export function Navbar() {
                     <div className="relative z-10 flex flex-col">
                       {item.children.map((child) => (
                         <Link
-                          key={child.href}
+                          key={child.id}
                           href={child.href}
                           prefetch={true}
                           onClick={() => handleNavClick(child.href)}
@@ -742,29 +401,33 @@ export function Navbar() {
           <LanguageSwitcher language={language} setLanguage={setLanguage} />
 
           {/* Primary CTA: Request Demo */}
+          {content && (
           <Link
-            href="/request-demo"
+            href={content.ctaHref}
             prefetch={true}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-6 py-2.5 xl:px-7 xl:py-3 text-[15px] xl:text-base font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
           >
-            <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
+            <span>{pickText(language, content.ctaLabel)}</span>
           </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 lg:hidden">
+          {content && (
           <Link
-            href="/request-demo"
+            href={content.ctaHref}
             prefetch={true}
             className="inline-flex items-center gap-1.5 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm"
           >
-            <span>Demo</span>
+            <span>{pickText(language, content.ctaMobileLabel)}</span>
           </Link>
+          )}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
-            aria-label={language === "ID" ? "Buka Navigasi" : "Open Navigation"}
+            aria-label={content ? pickText(language, content.mobileMenuAriaLabel) : undefined}
           >
             {mobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -784,7 +447,7 @@ export function Navbar() {
                 pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
-                  key={item.href}
+                  key={item.id}
                   href={item.href}
                   prefetch={true}
                   onClick={() => handleNavClick(item.href)}
@@ -809,14 +472,16 @@ export function Navbar() {
 
           <div className="mt-4 flex items-center justify-between gap-3 pt-4 border-t border-slate-100">
             <LanguageSwitcher language={language} setLanguage={setLanguage} />
+            {content && (
             <Link
-              href="/request-demo"
+              href={content.ctaHref}
               prefetch={true}
               className="inline-flex items-center justify-center gap-2 flex-1 rounded-full bg-[#2764B8] hover:bg-[#1E5299] py-3 text-center text-sm font-semibold text-white shadow-sm active:scale-[0.98]"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>{language === "ID" ? "Minta Demo" : "Request Demo"}</span>
+              <span>{pickText(language, content.ctaLabel)}</span>
             </Link>
+            )}
           </div>
         </div>
       )}
