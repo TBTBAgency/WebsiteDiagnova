@@ -252,11 +252,8 @@ enum InstitutionType {
 }
 
 enum UserRole {
-  SUPER_ADMIN @map("super_admin")
-  SALES_ADMIN @map("sales_admin")
-  LAB_STAFF   @map("lab_staff")
-  PATHOLOGIST @map("pathologist")
-  DEMO_USER   @map("demo_user")
+  ADMIN @map("admin")
+  USER  @map("user")
 
   @@map("user_role")
 }
@@ -347,100 +344,5 @@ model CmsSection {
   createdAt       DateTime             @default(now()) @map("created_at")
   updatedAt       DateTime             @updatedAt @map("updated_at")
 
-  heroSlides      CmsHeroSlide[]
-  comparisonItems CmsComparisonItem[]
-  testimonials    CmsTestimonial[]
-  partners        CmsPartner[]
-
   @@map("cms_sections")
-}
-
-model CmsHeroSlide {
-  id                 String      @id @default(cuid())
-  sectionId          String?     @map("section_id")
-  section            CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  titleId            String      @map("title_id")
-  titleEn            String      @map("title_en")
-  subtitleId         String?     @map("subtitle_id")
-  subtitleEn         String?     @map("subtitle_en")
-  badgeId            String?     @map("badge_id")
-  badgeEn            String?     @map("badge_en")
-  ctaPrimaryTextId   String?     @map("cta_primary_text_id")
-  ctaPrimaryTextEn   String?     @map("cta_primary_text_en")
-  ctaPrimaryUrl      String?     @map("cta_primary_url")
-  ctaSecondaryTextId String?     @map("cta_secondary_text_id")
-  ctaSecondaryTextEn String?     @map("cta_secondary_text_en")
-  ctaSecondaryUrl    String?     @map("cta_secondary_url")
-  imageUrl           String      @map("image_url")
-  imageAlt           String?     @map("image_alt")
-  sortOrder          Int         @default(0) @map("sort_order")
-  isActive           Boolean     @default(true) @map("is_active")
-  createdAt          DateTime    @default(now()) @map("created_at")
-  updatedAt          DateTime    @updatedAt @map("updated_at")
-
-  @@index([sectionId])
-  @@index([sortOrder])
-  @@map("cms_hero_slides")
-}
-
-model CmsComparisonItem {
-  id                   String      @id @default(cuid())
-  sectionId            String?     @map("section_id")
-  section              CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  number               String      @db.VarChar(10)
-  conventionalTitleId  String      @map("conventional_title_id")
-  conventionalTitleEn  String      @map("conventional_title_en")
-  conventionalDescId   String      @map("conventional_desc_id")
-  conventionalDescEn   String      @map("conventional_desc_en")
-  diagnovaTitleId      String      @map("diagnova_title_id")
-  diagnovaTitleEn      String      @map("diagnova_title_en")
-  diagnovaDescId       String      @map("diagnova_desc_id")
-  diagnovaDescEn       String      @map("diagnova_desc_en")
-  impactMetric         String      @map("impact_metric") @db.VarChar(100)
-  sortOrder            Int         @default(0) @map("sort_order")
-  isActive             Boolean     @default(true) @map("is_active")
-  createdAt            DateTime    @default(now()) @map("created_at")
-  updatedAt            DateTime    @updatedAt @map("updated_at")
-
-  @@index([sectionId])
-  @@index([sortOrder])
-  @@map("cms_comparison_items")
-}
-
-model CmsTestimonial {
-  id          String      @id @default(cuid())
-  sectionId   String?     @map("section_id")
-  section     CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  name        String      @db.VarChar(120)
-  roleId      String      @map("role_id_text") @db.VarChar(120)
-  roleEn      String?     @map("role_en_text") @db.VarChar(120)
-  institution String      @db.VarChar(150)
-  quoteId     String      @map("quote_id")
-  quoteEn     String      @map("quote_en")
-  avatarUrl   String      @default("/images/testimonial-silhouette-female.jpg") @map("avatar_url")
-  rating      Int         @default(5)
-  sortOrder   Int         @default(0) @map("sort_order")
-  isActive    Boolean     @default(true) @map("is_active")
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
-
-  @@index([sectionId])
-  @@index([sortOrder])
-  @@map("cms_testimonials")
-}
-
-model CmsPartner {
-  id        String      @id @default(cuid())
-  sectionId String?     @map("section_id")
-  section   CmsSection? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  name      String      @db.VarChar(120)
-  logoUrl   String      @map("logo_url")
-  sortOrder Int         @default(0) @map("sort_order")
-  isActive  Boolean     @default(true) @map("is_active")
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
-
-  @@index([sectionId])
-  @@index([sortOrder])
-  @@map("cms_partners")
 }

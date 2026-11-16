@@ -2,13 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth-session";
 import { getAllUsers, createUser } from "@/lib/models/user.model";
 import { createUserSchema } from "@/lib/validations";
+import { db } from "@/lib/db";
 import { ApiResponse } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/admin/users
- * Mengambil daftar seluruh pengguna
+ * Mengambil daftar seluruh pengguna dengan role USER.
+ * Sesuai arsitektur Diagnova: Akun ADMIN tidak pernah dikembalikan ke antarmuka Manajemen Pengguna.
  */
 export async function GET() {
   try {
@@ -20,11 +22,19 @@ export async function GET() {
       );
     }
 
-    const users = await getAllUsers();
+    if (session.role !== "ADMIN") {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Akses ditolak. Hanya Administrator yang dapat mengakses data ini." },
+        { status: 403 }
+      );
+    }
+
+    // Server-side filter: Hanya role USER
+    const users = await getAllUsers("USER");
 
     return NextResponse.json<ApiResponse>({
       success: true,
-      message: "Daftar pengguna berhasil dimuat.",
+      message: "Daftar pengguna (USER) berhasil dimuat.",
       data: users,
     });
   } catch (error) {
@@ -38,7 +48,8 @@ export async function GET() {
 
 /**
  * POST /api/admin/users
- * Menambahkan user baru
+ * Menambahkan user baru.
+ * Sesuai arsitektur Diagnova: Pembuatan akun dari Manajemen Pengguna selalu menetapkan role USER.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -47,6 +58,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Akses ditolak. Sesi tidak valid." },
         { status: 401 }
+      );
+    }
+
+    if (session.role !== "ADMIN") {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Akses ditolak. Hanya Administrator yang dapat menambahkan pengguna." },
+        { status: 403 }
       );
     }
 
@@ -64,12 +82,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newUser = await createUser(validation.data);
+    // Cari role USER di database
+    const userRole = await db.role.findFirst({
+      where: { name: "USER" },
+    });
+
+    if (!userRole) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Sistem error: Role USER tidak ditemukan di database." },
+        { status: 500 }
+      );
+    }
+
+    // Force role USER - abaikan atau override input apapun dari client
+    const newUser = await createUser({
+      name: validation.data.name,
+      email: validation.data.email,
+      password: validation.data.password,
+      institution: validation.data.institution,
+      jobTitle: validation.data.jobTitle,
+      phone: validation.data.phone,
+      roleId: userRole.id,
+      status: validation.data.status,
+      demoDurationDays: validation.data.demoDurationDays,
+    });
 
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: "Pengguna baru berhasil ditambahkan.",
+        message: "Pengguna baru (USER) berhasil ditambahkan.",
         data: newUser,
       },
       { status: 201 }
@@ -89,4 +130,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

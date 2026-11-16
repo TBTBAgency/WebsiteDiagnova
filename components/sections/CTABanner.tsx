@@ -35,6 +35,7 @@ export function CTABanner({
   topColor = "#FAFBFD",
 }: CTABannerProps = {}) {
   const { language } = useLanguage();
+  const ctaImage = initialData?.section?.extraContent?.imageUrl || "/images/CTA-image.webp";
   const [email, setEmail] = useState("");
   const router = useRouter();
   const rgb = hexToRgb(topColor);
@@ -139,7 +140,7 @@ export function CTABanner({
             >
               <div className="relative lg:absolute right-0 bottom-0 w-[94%] sm:w-[78%] lg:w-full lg:max-w-[659px] flex items-end justify-end translate-x-1 z-10">
                 <Image
-                  src="/images/CTA-image.webp"
+                  src={ctaImage}
                   alt="Diagnova Platform on Laptop"
                   width={1200}
                   height={960}

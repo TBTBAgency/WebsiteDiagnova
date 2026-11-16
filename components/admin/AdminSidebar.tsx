@@ -16,6 +16,7 @@ import {
   ChevronRight,
   UserCheck,
   Globe,
+  Compass,
 } from "lucide-react";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { AuthSessionPayload } from "@/types";
@@ -50,10 +51,10 @@ const NAV_ITEMS: NavItem[] = [
     badgeVariant: "purple",
   },
   {
-    name: "CMS Homepage",
-    href: "/admin/cms/homepage",
+    name: "Pusat Konten (CMS)",
+    href: "/admin/cms",
     icon: Globe,
-    badge: "CMS",
+    badge: "Hub",
     badgeVariant: "blue",
   },
 ];

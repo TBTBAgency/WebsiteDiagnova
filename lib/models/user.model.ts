@@ -13,6 +13,9 @@ export interface SafeUser {
   roleName?: string | null;
   role?: RoleRecord | string | null;
   status: number; // 1: Aktif, 0: Nonaktif
+  demoDurationDays?: number | null;
+  demoActivatedAt?: string | null;
+  demoExpiresAt?: string | null;
   createdAt: string;
 }
 
@@ -89,10 +92,16 @@ export async function getAllRoles(): Promise<RoleRecord[]> {
 }
 
 /**
- * Mengambil daftar seluruh user untuk tabel User Management
+ * Mengambil daftar pengguna berdasarkan role (default: hanya role USER)
+ * Akun ADMIN tidak pernah dikembalikan ke antarmuka Manajemen Pengguna.
  */
-export async function getAllUsers(): Promise<SafeUser[]> {
+export async function getAllUsers(roleFilter: string = "USER"): Promise<SafeUser[]> {
   const users = await db.user.findMany({
+    where: {
+      role: {
+        name: roleFilter,
+      },
+    },
     orderBy: { createdAt: "desc" },
     include: { role: true },
   });
@@ -105,11 +114,124 @@ export async function getAllUsers(): Promise<SafeUser[]> {
     jobTitle: u.jobTitle,
     phone: u.phone,
     roleId: u.roleId,
-    roleName: u.role?.name || "User",
-    role: u.role?.name || "User",
+    roleName: u.role?.name || "USER",
+    role: u.role?.name || "USER",
     status: u.status ?? 1,
+    demoDurationDays: u.demoDurationDays ?? null,
+    demoActivatedAt: u.demoActivatedAt ? u.demoActivatedAt.toISOString() : null,
+    demoExpiresAt: u.demoExpiresAt ? u.demoExpiresAt.toISOString() : null,
     createdAt: u.createdAt.toISOString(),
   }));
+}
+
+/**
+ * Update akun USER (hanya boleh jika role pengguna adalah USER)
+ * Melindungi akun ADMIN dari modifikasi melalui endpoint ini.
+ */
+export async function updateUser(
+  id: string,
+  data: {
+    name?: string;
+    institution?: string | null;
+    jobTitle?: string | null;
+    phone?: string | null;
+    status?: number;
+    demoDurationDays?: number | null;
+  }
+): Promise<SafeUser> {
+  const target = await db.user.findUnique({
+    where: { id },
+    include: { role: true },
+  });
+
+  if (!target) {
+    throw new Error("Pengguna tidak ditemukan.");
+  }
+
+  // PROTEKSI KETAT: Dilarang mengubah akun ADMIN melalui modul Manajemen Pengguna
+  if (target.role?.name === "ADMIN") {
+    throw new Error("Akses ditolak: Akun Administrator dilindungi dari modifikasi Manajemen Pengguna.");
+  }
+
+  const updated = await db.user.update({
+    where: { id },
+    data: {
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.institution !== undefined && { institution: data.institution }),
+      ...(data.jobTitle !== undefined && { jobTitle: data.jobTitle }),
+      ...(data.phone !== undefined && { phone: data.phone }),
+      ...(data.status !== undefined && { status: data.status }),
+      ...(data.demoDurationDays !== undefined && { demoDurationDays: data.demoDurationDays }),
+    },
+    include: { role: true },
+  });
+
+  return {
+    id: updated.id,
+    name: updated.name,
+    email: updated.email,
+    institution: updated.institution,
+    jobTitle: updated.jobTitle,
+    phone: updated.phone,
+    roleId: updated.roleId,
+    roleName: updated.role?.name || "USER",
+    role: updated.role?.name || "USER",
+    status: updated.status ?? 1,
+    demoDurationDays: updated.demoDurationDays ?? null,
+    demoActivatedAt: updated.demoActivatedAt ? updated.demoActivatedAt.toISOString() : null,
+    demoExpiresAt: updated.demoExpiresAt ? updated.demoExpiresAt.toISOString() : null,
+    createdAt: updated.createdAt.toISOString(),
+  };
+}
+
+/**
+ * Toggle status akun USER (1: Aktif, 0: Nonaktif/Suspended)
+ * Melindungi akun ADMIN dari penonaktifan melalui endpoint ini.
+ */
+export async function toggleUserStatus(id: string, newStatus: number): Promise<SafeUser> {
+  return updateUser(id, { status: newStatus });
+}
+
+/**
+ * Menghapus akun USER
+ * Melindungi akun ADMIN dari penghapusan melalui modul ini.
+ */
+export async function deleteUser(id: string): Promise<SafeUser> {
+  const target = await db.user.findUnique({
+    where: { id },
+    include: { role: true },
+  });
+
+  if (!target) {
+    throw new Error("Pengguna tidak ditemukan.");
+  }
+
+  // PROTEKSI KETAT: Dilarang menghapus akun ADMIN
+  if (target.role?.name === "ADMIN") {
+    throw new Error("Akses ditolak: Akun Administrator dilindungi dari penghapusan.");
+  }
+
+  const deleted = await db.user.delete({
+    where: { id },
+    include: { role: true },
+  });
+
+  return {
+    id: deleted.id,
+    name: deleted.name,
+    email: deleted.email,
+    institution: deleted.institution,
+    jobTitle: deleted.jobTitle,
+    phone: deleted.phone,
+    roleId: deleted.roleId,
+    roleName: deleted.role?.name || "USER",
+    role: deleted.role?.name || "USER",
+    status: deleted.status ?? 0,
+    demoDurationDays: deleted.demoDurationDays ?? null,
+    demoActivatedAt: deleted.demoActivatedAt ? deleted.demoActivatedAt.toISOString() : null,
+    demoExpiresAt: deleted.demoExpiresAt ? deleted.demoExpiresAt.toISOString() : null,
+    createdAt: deleted.createdAt.toISOString(),
+  };
 }
 
 /**
@@ -119,11 +241,12 @@ export async function createUser(data: {
   name: string;
   email: string;
   password?: string;
-  institution?: string;
-  jobTitle?: string;
-  phone?: string;
-  roleId?: string;
+  institution?: string | null;
+  jobTitle?: string | null;
+  phone?: string | null;
+  roleId?: string | null;
   status?: number;
+  demoDurationDays?: number | null;
 }): Promise<SafeUser> {
   let passwordHash = "";
   if (data.password) {
@@ -134,11 +257,11 @@ export async function createUser(data: {
     passwordHash = await bcrypt.hash("Diagnova2026!", salt);
   }
 
-  // Jika roleId tidak diberikan, cari role default
+  // Jika roleId tidak diberikan, default ke role USER
   let roleId = data.roleId;
   if (!roleId) {
     const defaultRole = await db.role.findFirst({
-      where: { name: "Sales Admin" },
+      where: { name: "USER" },
     });
     roleId = defaultRole?.id;
   }
@@ -153,6 +276,7 @@ export async function createUser(data: {
       phone: data.phone || null,
       roleId: roleId || null,
       status: data.status !== undefined ? data.status : 1,
+      demoDurationDays: data.demoDurationDays ?? 7,
     },
     include: { role: true },
   });
@@ -165,9 +289,12 @@ export async function createUser(data: {
     jobTitle: user.jobTitle,
     phone: user.phone,
     roleId: user.roleId,
-    roleName: user.role?.name || "User",
-    role: user.role?.name || "User",
+    roleName: user.role?.name || "USER",
+    role: user.role?.name || "USER",
     status: user.status ?? 1,
+    demoDurationDays: user.demoDurationDays ?? null,
+    demoActivatedAt: user.demoActivatedAt ? user.demoActivatedAt.toISOString() : null,
+    demoExpiresAt: user.demoExpiresAt ? user.demoExpiresAt.toISOString() : null,
     createdAt: user.createdAt.toISOString(),
   };
 }
@@ -225,7 +352,7 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 }
 
 /**
- * Menjamin adanya akun Super Admin default
+ * Menjamin adanya akun ADMIN default
  */
 export async function ensureDefaultAdmin(): Promise<SafeUser> {
   const defaultEmail = "admin@diagnova.id";
@@ -234,15 +361,15 @@ export async function ensureDefaultAdmin(): Promise<SafeUser> {
     return existing;
   }
 
-  let role = await db.role.findFirst({ where: { name: "Super Admin" } });
+  let role = await db.role.findFirst({ where: { name: "ADMIN" } });
   if (!role) {
     role = await db.role.create({
-      data: { name: "Super Admin", description: "Akses penuh seluruh sistem" },
+      data: { name: "ADMIN", description: "Administrator pengelola sistem, website, dan otorisasi Diagnova" },
     });
   }
 
   return createUser({
-    name: "Diagnova Super Admin",
+    name: "Diagnova Admin",
     email: defaultEmail,
     password: "Diagnova2026!",
     roleId: role.id,

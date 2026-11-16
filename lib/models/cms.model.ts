@@ -34,25 +34,11 @@ export interface CmsHomepageData {
 }
 
 /**
- * Mengambil seluruh data CMS Homepage untuk render frontend maupun form admin
+ * Mengambil seluruh data CMS Homepage murni dari JSON CmsSection.extraContent
+ * Tanpa query atau ketergantungan pada tabel relasional anak lama
  */
 export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
-  const sections = await db.cmsSection.findMany({
-    include: {
-      heroSlides: {
-        orderBy: { sortOrder: "asc" },
-      },
-      comparisonItems: {
-        orderBy: { sortOrder: "asc" },
-      },
-      testimonials: {
-        orderBy: { sortOrder: "asc" },
-      },
-      partners: {
-        orderBy: { sortOrder: "asc" },
-      },
-    },
-  });
+  const sections = await db.cmsSection.findMany();
 
   const sectionMap = new Map<string, (typeof sections)[0]>();
   for (const s of sections) {
@@ -68,21 +54,26 @@ export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
   const testiSec = sectionMap.get("testimonials");
   const ctaSec = sectionMap.get("cta");
 
+  const heroExtra = (heroSec?.extraContent as any) || {};
+  const trustedExtra = (trustedSec?.extraContent as any) || {};
+  const compExtra = (compSec?.extraContent as any) || {};
+  const testiExtra = (testiSec?.extraContent as any) || {};
+
   return {
     hero: {
       section: heroSec ?? null,
-      slides: heroSec?.heroSlides ?? [],
+      slides: Array.isArray(heroExtra.slides) ? heroExtra.slides : [],
     },
     trustedBy: {
       section: trustedSec ?? null,
-      partners: trustedSec?.partners ?? [],
+      partners: Array.isArray(trustedExtra.partners) ? trustedExtra.partners : [],
     },
     about: {
       section: aboutSec ?? null,
     },
     comparison: {
       section: compSec ?? null,
-      items: compSec?.comparisonItems ?? [],
+      items: Array.isArray(compExtra.items) ? compExtra.items : [],
     },
     workflow: {
       section: workSec ?? null,
@@ -92,7 +83,7 @@ export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
     },
     testimonials: {
       section: testiSec ?? null,
-      items: testiSec?.testimonials ?? [],
+      items: Array.isArray(testiExtra.items) ? testiExtra.items : [],
     },
     cta: {
       section: ctaSec ?? null,
@@ -155,7 +146,7 @@ export async function updateCmsSection(
 }
 
 /**
- * Simpan atau perbarui Hero Slide
+ * Simpan atau perbarui Hero Slide langsung di CmsSection.extraContent.slides
  */
 export async function saveHeroSlide(
   slide: {
@@ -180,320 +171,103 @@ export async function saveHeroSlide(
   },
   userId?: string
 ) {
-  let heroSectionId = slide.sectionId;
-  if (!heroSectionId) {
-    const heroSec = await db.cmsSection.findUnique({ where: { sectionKey: "hero" } });
-    heroSectionId = heroSec?.id;
-  }
+  const heroSec = await db.cmsSection.findUnique({ where: { sectionKey: "hero" } });
+  if (!heroSec) throw new Error("Section 'hero' tidak ditemukan.");
 
+  const extra = (heroSec.extraContent as any) || {};
+  const slides: any[] = Array.isArray(extra.slides) ? [...extra.slides] : [];
+
+  let savedSlide: any;
   if (slide.id) {
-    const existing = await db.cmsHeroSlide.findUnique({ where: { id: slide.id } });
-    const updated = await db.cmsHeroSlide.update({
-      where: { id: slide.id },
-      data: {
-        titleId: slide.titleId,
-        titleEn: slide.titleEn,
-        subtitleId: slide.subtitleId,
-        subtitleEn: slide.subtitleEn,
-        badgeId: slide.badgeId,
-        badgeEn: slide.badgeEn,
-        ctaPrimaryTextId: slide.ctaPrimaryTextId,
-        ctaPrimaryTextEn: slide.ctaPrimaryTextEn,
-        ctaPrimaryUrl: slide.ctaPrimaryUrl,
-        ctaSecondaryTextId: slide.ctaSecondaryTextId,
-        ctaSecondaryTextEn: slide.ctaSecondaryTextEn,
-        ctaSecondaryUrl: slide.ctaSecondaryUrl,
-        imageUrl: slide.imageUrl,
-        imageAlt: slide.imageAlt,
-        sortOrder: slide.sortOrder ?? 0,
+    const idx = slides.findIndex((s) => s.id === slide.id);
+    if (idx >= 0) {
+      savedSlide = {
+        ...slides[idx],
+        ...slide,
+        sortOrder: slide.sortOrder ?? slides[idx].sortOrder ?? 0,
+        isActive: slide.isActive ?? slides[idx].isActive ?? true,
+      };
+      slides[idx] = savedSlide;
+    } else {
+      savedSlide = {
+        ...slide,
+        id: slide.id,
+        sortOrder: slide.sortOrder ?? slides.length + 1,
         isActive: slide.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_HERO_SLIDE",
-      entity: "cms_hero_slides",
-      recordId: slide.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
+      };
+      slides.push(savedSlide);
+    }
   } else {
-    const created = await db.cmsHeroSlide.create({
-      data: {
-        sectionId: heroSectionId,
-        titleId: slide.titleId,
-        titleEn: slide.titleEn,
-        subtitleId: slide.subtitleId,
-        subtitleEn: slide.subtitleEn,
-        badgeId: slide.badgeId,
-        badgeEn: slide.badgeEn,
-        ctaPrimaryTextId: slide.ctaPrimaryTextId,
-        ctaPrimaryTextEn: slide.ctaPrimaryTextEn,
-        ctaPrimaryUrl: slide.ctaPrimaryUrl,
-        ctaSecondaryTextId: slide.ctaSecondaryTextId,
-        ctaSecondaryTextEn: slide.ctaSecondaryTextEn,
-        ctaSecondaryUrl: slide.ctaSecondaryUrl,
-        imageUrl: slide.imageUrl,
-        imageAlt: slide.imageAlt,
-        sortOrder: slide.sortOrder ?? 0,
-        isActive: slide.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_HERO_SLIDE",
-      entity: "cms_hero_slides",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
+    const newId = `slide-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    savedSlide = {
+      ...slide,
+      id: newId,
+      sortOrder: slide.sortOrder ?? slides.length + 1,
+      isActive: slide.isActive ?? true,
+    };
+    slides.push(savedSlide);
   }
+
+  slides.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  await db.cmsSection.update({
+    where: { sectionKey: "hero" },
+    data: {
+      extraContent: {
+        ...extra,
+        slides,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: slide.id ? "UPDATE_HERO_SLIDE_JSON" : "CREATE_HERO_SLIDE_JSON",
+    entity: "cms_sections",
+    recordId: savedSlide.id,
+    newValue: savedSlide,
+  });
+
+  return savedSlide;
 }
 
 /**
- * Hapus Hero Slide
+ * Hapus Hero Slide langsung dari CmsSection.extraContent.slides
  */
 export async function deleteHeroSlide(slideId: string, userId?: string) {
-  const existing = await db.cmsHeroSlide.findUnique({ where: { id: slideId } });
-  if (!existing) return null;
+  const heroSec = await db.cmsSection.findUnique({ where: { sectionKey: "hero" } });
+  if (!heroSec) throw new Error("Section 'hero' tidak ditemukan.");
 
-  await db.cmsHeroSlide.delete({ where: { id: slideId } });
+  const extra = (heroSec.extraContent as any) || {};
+  const slides: any[] = Array.isArray(extra.slides) ? [...extra.slides] : [];
+  const filtered = slides.filter((s) => s.id !== slideId);
+
+  await db.cmsSection.update({
+    where: { sectionKey: "hero" },
+    data: {
+      extraContent: {
+        ...extra,
+        slides: filtered,
+      },
+    },
+  });
 
   await recordAuditLog({
     userId,
-    action: "DELETE_CMS_HERO_SLIDE",
-    entity: "cms_hero_slides",
+    action: "DELETE_HERO_SLIDE_JSON",
+    entity: "cms_sections",
     recordId: slideId,
-    oldValue: existing as unknown as Record<string, unknown>,
   });
 
-  return existing;
+  return { success: true };
 }
 
 /**
- * Simpan atau perbarui Testimonial
- */
-export async function saveTestimonial(
-  testimonial: {
-    id?: string;
-    sectionId?: string;
-    name: string;
-    roleId: string;
-    roleEn?: string | null;
-    institution: string;
-    quoteId: string;
-    quoteEn: string;
-    avatarUrl?: string;
-    rating?: number;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
-  let sectionId = testimonial.sectionId;
-  if (!sectionId) {
-    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "testimonials" } });
-    sectionId = sec?.id;
-  }
-
-  if (testimonial.id) {
-    const existing = await db.cmsTestimonial.findUnique({ where: { id: testimonial.id } });
-    const updated = await db.cmsTestimonial.update({
-      where: { id: testimonial.id },
-      data: {
-        name: testimonial.name,
-        roleId: testimonial.roleId,
-        roleEn: testimonial.roleEn,
-        institution: testimonial.institution,
-        quoteId: testimonial.quoteId,
-        quoteEn: testimonial.quoteEn,
-        avatarUrl: testimonial.avatarUrl ?? "/images/testimonial-silhouette-female.jpg",
-        rating: testimonial.rating ?? 5,
-        sortOrder: testimonial.sortOrder ?? 0,
-        isActive: testimonial.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_TESTIMONIAL",
-      entity: "cms_testimonials",
-      recordId: testimonial.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
-  } else {
-    const created = await db.cmsTestimonial.create({
-      data: {
-        sectionId,
-        name: testimonial.name,
-        roleId: testimonial.roleId,
-        roleEn: testimonial.roleEn,
-        institution: testimonial.institution,
-        quoteId: testimonial.quoteId,
-        quoteEn: testimonial.quoteEn,
-        avatarUrl: testimonial.avatarUrl ?? "/images/testimonial-silhouette-female.jpg",
-        rating: testimonial.rating ?? 5,
-        sortOrder: testimonial.sortOrder ?? 0,
-        isActive: testimonial.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_TESTIMONIAL",
-      entity: "cms_testimonials",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
-  }
-}
-
-/**
- * Hapus Testimonial
- */
-export async function deleteTestimonial(id: string, userId?: string) {
-  const existing = await db.cmsTestimonial.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  await db.cmsTestimonial.delete({ where: { id } });
-
-  await recordAuditLog({
-    userId,
-    action: "DELETE_CMS_TESTIMONIAL",
-    entity: "cms_testimonials",
-    recordId: id,
-    oldValue: existing as unknown as Record<string, unknown>,
-  });
-
-  return existing;
-}
-
-/**
- * Simpan atau perbarui Comparison Item
- */
-export async function saveComparisonItem(
-  item: {
-    id?: string;
-    sectionId?: string;
-    number: string;
-    conventionalTitleId: string;
-    conventionalTitleEn: string;
-    conventionalDescId: string;
-    conventionalDescEn: string;
-    diagnovaTitleId: string;
-    diagnovaTitleEn: string;
-    diagnovaDescId: string;
-    diagnovaDescEn: string;
-    impactMetric: string;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
-  let sectionId = item.sectionId;
-  if (!sectionId) {
-    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "comparison" } });
-    sectionId = sec?.id;
-  }
-
-  if (item.id) {
-    const existing = await db.cmsComparisonItem.findUnique({ where: { id: item.id } });
-    const updated = await db.cmsComparisonItem.update({
-      where: { id: item.id },
-      data: {
-        number: item.number,
-        conventionalTitleId: item.conventionalTitleId,
-        conventionalTitleEn: item.conventionalTitleEn,
-        conventionalDescId: item.conventionalDescId,
-        conventionalDescEn: item.conventionalDescEn,
-        diagnovaTitleId: item.diagnovaTitleId,
-        diagnovaTitleEn: item.diagnovaTitleEn,
-        diagnovaDescId: item.diagnovaDescId,
-        diagnovaDescEn: item.diagnovaDescEn,
-        impactMetric: item.impactMetric,
-        sortOrder: item.sortOrder ?? 0,
-        isActive: item.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_COMPARISON_ITEM",
-      entity: "cms_comparison_items",
-      recordId: item.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
-  } else {
-    const created = await db.cmsComparisonItem.create({
-      data: {
-        sectionId,
-        number: item.number,
-        conventionalTitleId: item.conventionalTitleId,
-        conventionalTitleEn: item.conventionalTitleEn,
-        conventionalDescId: item.conventionalDescId,
-        conventionalDescEn: item.conventionalDescEn,
-        diagnovaTitleId: item.diagnovaTitleId,
-        diagnovaTitleEn: item.diagnovaTitleEn,
-        diagnovaDescId: item.diagnovaDescId,
-        diagnovaDescEn: item.diagnovaDescEn,
-        impactMetric: item.impactMetric,
-        sortOrder: item.sortOrder ?? 0,
-        isActive: item.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_COMPARISON_ITEM",
-      entity: "cms_comparison_items",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
-  }
-}
-
-/**
- * Hapus Comparison Item
- */
-export async function deleteComparisonItem(id: string, userId?: string) {
-  const existing = await db.cmsComparisonItem.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  await db.cmsComparisonItem.delete({ where: { id } });
-
-  await recordAuditLog({
-    userId,
-    action: "DELETE_CMS_COMPARISON_ITEM",
-    entity: "cms_comparison_items",
-    recordId: id,
-    oldValue: existing as unknown as Record<string, unknown>,
-  });
-
-  return existing;
-}
-
-/**
- * Simpan atau perbarui Partner Logo
+ * Simpan atau perbarui Partner Logo langsung di CmsSection.extraContent.partners
  */
 export async function savePartner(
   partner: {
     id?: string;
-    sectionId?: string;
     name: string;
     logoUrl: string;
     sortOrder?: number;
@@ -501,74 +275,818 @@ export async function savePartner(
   },
   userId?: string
 ) {
-  let sectionId = partner.sectionId;
-  if (!sectionId) {
-    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "trusted_by" } });
-    sectionId = sec?.id;
-  }
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "trusted_by" } });
+  if (!sec) throw new Error("Section 'trusted_by' tidak ditemukan.");
 
+  const extra = (sec.extraContent as any) || {};
+  const partners: any[] = Array.isArray(extra.partners) ? [...extra.partners] : [];
+
+  let savedPartner: any;
   if (partner.id) {
-    const existing = await db.cmsPartner.findUnique({ where: { id: partner.id } });
-    const updated = await db.cmsPartner.update({
-      where: { id: partner.id },
-      data: {
-        name: partner.name,
-        logoUrl: partner.logoUrl,
-        sortOrder: partner.sortOrder ?? 0,
+    const idx = partners.findIndex((p) => p.id === partner.id);
+    if (idx >= 0) {
+      savedPartner = {
+        ...partners[idx],
+        ...partner,
+        sortOrder: partner.sortOrder ?? partners[idx].sortOrder ?? 0,
+        isActive: partner.isActive ?? partners[idx].isActive ?? true,
+      };
+      partners[idx] = savedPartner;
+    } else {
+      savedPartner = {
+        ...partner,
+        id: partner.id,
+        sortOrder: partner.sortOrder ?? partners.length + 1,
         isActive: partner.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "UPDATE_CMS_PARTNER",
-      entity: "cms_partners",
-      recordId: partner.id,
-      oldValue: existing as unknown as Record<string, unknown>,
-      newValue: updated as unknown as Record<string, unknown>,
-    });
-
-    return updated;
+      };
+      partners.push(savedPartner);
+    }
   } else {
-    const created = await db.cmsPartner.create({
-      data: {
-        sectionId,
-        name: partner.name,
-        logoUrl: partner.logoUrl,
-        sortOrder: partner.sortOrder ?? 0,
-        isActive: partner.isActive ?? true,
-      },
-    });
-
-    await recordAuditLog({
-      userId,
-      action: "CREATE_CMS_PARTNER",
-      entity: "cms_partners",
-      recordId: created.id,
-      newValue: created as unknown as Record<string, unknown>,
-    });
-
-    return created;
+    const newId = `partner-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    savedPartner = {
+      ...partner,
+      id: newId,
+      sortOrder: partner.sortOrder ?? partners.length + 1,
+      isActive: partner.isActive ?? true,
+    };
+    partners.push(savedPartner);
   }
-}
 
-/**
- * Hapus Partner Logo
- */
-export async function deletePartner(id: string, userId?: string) {
-  const existing = await db.cmsPartner.findUnique({ where: { id } });
-  if (!existing) return null;
+  partners.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-  await db.cmsPartner.delete({ where: { id } });
+  await db.cmsSection.update({
+    where: { sectionKey: "trusted_by" },
+    data: {
+      extraContent: {
+        ...extra,
+        partners,
+      },
+    },
+  });
 
   await recordAuditLog({
     userId,
-    action: "DELETE_CMS_PARTNER",
-    entity: "cms_partners",
-    recordId: id,
-    oldValue: existing as unknown as Record<string, unknown>,
+    action: partner.id ? "UPDATE_CMS_PARTNER_JSON" : "CREATE_CMS_PARTNER_JSON",
+    entity: "cms_sections",
+    recordId: savedPartner.id,
+    newValue: savedPartner,
   });
 
-  return existing;
+  return savedPartner;
 }
 
+/**
+ * Hapus Partner Logo langsung dari CmsSection.extraContent.partners
+ */
+export async function deletePartner(id: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "trusted_by" } });
+  if (!sec) throw new Error("Section 'trusted_by' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  const partners: any[] = Array.isArray(extra.partners) ? [...extra.partners] : [];
+  const filtered = partners.filter((p) => p.id !== id);
+
+  await db.cmsSection.update({
+    where: { sectionKey: "trusted_by" },
+    data: {
+      extraContent: {
+        ...extra,
+        partners: filtered,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: "DELETE_CMS_PARTNER_JSON",
+    entity: "cms_sections",
+    recordId: id,
+  });
+
+  return { success: true };
+}
+
+/**
+ * Simpan atau perbarui Comparison Item langsung di CmsSection.extraContent.items
+ */
+export async function saveComparisonItem(
+  item: {
+    id?: string;
+    number: string;
+    conventionalTitleId: string;
+    conventionalTitleEn: string;
+    conventionalDescId?: string | null;
+    conventionalDescEn?: string | null;
+    diagnovaTitleId: string;
+    diagnovaTitleEn: string;
+    diagnovaDescId?: string | null;
+    diagnovaDescEn?: string | null;
+    impactMetric?: string | null;
+    sortOrder?: number;
+    isActive?: boolean;
+  },
+  userId?: string
+) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "comparison" } });
+  if (!sec) throw new Error("Section 'comparison' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+
+  let savedItem: any;
+  if (item.id) {
+    const idx = items.findIndex((i) => i.id === item.id);
+    if (idx >= 0) {
+      savedItem = {
+        ...items[idx],
+        ...item,
+        sortOrder: item.sortOrder ?? items[idx].sortOrder ?? 0,
+        isActive: item.isActive ?? items[idx].isActive ?? true,
+      };
+      items[idx] = savedItem;
+    } else {
+      savedItem = {
+        ...item,
+        id: item.id,
+        sortOrder: item.sortOrder ?? items.length + 1,
+        isActive: item.isActive ?? true,
+      };
+      items.push(savedItem);
+    }
+  } else {
+    const newId = `comp-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    savedItem = {
+      ...item,
+      id: newId,
+      sortOrder: item.sortOrder ?? items.length + 1,
+      isActive: item.isActive ?? true,
+    };
+    items.push(savedItem);
+  }
+
+  items.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  await db.cmsSection.update({
+    where: { sectionKey: "comparison" },
+    data: {
+      extraContent: {
+        ...extra,
+        items,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: item.id ? "UPDATE_COMPARISON_ITEM_JSON" : "CREATE_COMPARISON_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: savedItem.id,
+    newValue: savedItem,
+  });
+
+  return savedItem;
+}
+
+/**
+ * Hapus Comparison Item langsung dari CmsSection.extraContent.items
+ */
+export async function deleteComparisonItem(id: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "comparison" } });
+  if (!sec) throw new Error("Section 'comparison' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+  const filtered = items.filter((i) => i.id !== id);
+
+  await db.cmsSection.update({
+    where: { sectionKey: "comparison" },
+    data: {
+      extraContent: {
+        ...extra,
+        items: filtered,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: "DELETE_COMPARISON_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: id,
+  });
+
+  return { success: true };
+}
+
+/**
+ * Simpan atau perbarui Testimonial langsung di CmsSection.extraContent.items
+ */
+export async function saveTestimonial(
+  testimonial: {
+    id?: string;
+    name: string;
+    roleId: string;
+    roleEn: string;
+    institution: string;
+    quoteId: string;
+    quoteEn: string;
+    avatarUrl?: string | null;
+    rating?: number;
+    sortOrder?: number;
+    isActive?: boolean;
+  },
+  userId?: string
+) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "testimonials" } });
+  if (!sec) throw new Error("Section 'testimonials' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+
+  let savedTesti: any;
+  if (testimonial.id) {
+    const idx = items.findIndex((t) => t.id === testimonial.id);
+    if (idx >= 0) {
+      savedTesti = {
+        ...items[idx],
+        ...testimonial,
+        sortOrder: testimonial.sortOrder ?? items[idx].sortOrder ?? 0,
+        isActive: testimonial.isActive ?? items[idx].isActive ?? true,
+      };
+      items[idx] = savedTesti;
+    } else {
+      savedTesti = {
+        ...testimonial,
+        id: testimonial.id,
+        sortOrder: testimonial.sortOrder ?? items.length + 1,
+        isActive: testimonial.isActive ?? true,
+      };
+      items.push(savedTesti);
+    }
+  } else {
+    const newId = `testi-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    savedTesti = {
+      ...testimonial,
+      id: newId,
+      sortOrder: testimonial.sortOrder ?? items.length + 1,
+      isActive: testimonial.isActive ?? true,
+    };
+    items.push(savedTesti);
+  }
+
+  items.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  await db.cmsSection.update({
+    where: { sectionKey: "testimonials" },
+    data: {
+      extraContent: {
+        ...extra,
+        items,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: testimonial.id ? "UPDATE_TESTIMONIAL_JSON" : "CREATE_TESTIMONIAL_JSON",
+    entity: "cms_sections",
+    recordId: savedTesti.id,
+    newValue: savedTesti,
+  });
+
+  return savedTesti;
+}
+
+/**
+ * Hapus Testimonial langsung dari CmsSection.extraContent.items
+ */
+export async function deleteTestimonial(id: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "testimonials" } });
+  if (!sec) throw new Error("Section 'testimonials' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+  const filtered = items.filter((t) => t.id !== id);
+
+  await db.cmsSection.update({
+    where: { sectionKey: "testimonials" },
+    data: {
+      extraContent: {
+        ...extra,
+        items: filtered,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: "DELETE_TESTIMONIAL_JSON",
+    entity: "cms_sections",
+    recordId: id,
+  });
+
+  return { success: true };
+}
+
+// =============================================================================
+// NAVIGASI CMS BERBASIS JSON CmsSection.extraContent.navigation
+// =============================================================================
+
+export interface CmsNavSubmenu {
+  id: string;
+  labelId: string;
+  labelEn: string;
+  descriptionId?: string;
+  descriptionEn?: string;
+  url: string;
+  sectionKey?: string | null;
+  iconName?: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+export interface CmsNavMenu {
+  id: string;
+  labelId: string;
+  labelEn: string;
+  descriptionId?: string;
+  descriptionEn?: string;
+  url: string;
+  sectionKey?: string | null;
+  iconName?: string;
+  sortOrder: number;
+  isActive: boolean;
+  submenus: CmsNavSubmenu[];
+}
+
+/**
+ * Mengambil seluruh menu navigasi untuk admin editor
+ */
+export async function getCmsNavigationMenus(): Promise<CmsNavMenu[]> {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "navigation" } });
+  const extra = (sec?.extraContent as any) || {};
+  if (Array.isArray(extra.menus)) {
+    return extra.menus;
+  }
+  return [];
+}
+
+/**
+ * Mengambil menu navigasi aktif untuk Navbar publik
+ */
+export async function getPublicCmsNavigationMenus(): Promise<CmsNavMenu[]> {
+  const allMenus = await getCmsNavigationMenus();
+  return allMenus
+    .filter((m) => m.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((m) => ({
+      ...m,
+      submenus: (m.submenus || [])
+        .filter((s) => s.isActive)
+        .sort((a, b) => a.sortOrder - b.sortOrder),
+    }));
+}
+
+/**
+ * Menyimpan atau memperbarui menu/submenu navigasi di JSON
+ */
+export async function saveCmsNavigationMenu(
+  menuData: {
+    id?: string;
+    parentId?: string | null;
+    labelId: string;
+    labelEn: string;
+    descriptionId?: string;
+    descriptionEn?: string;
+    url: string;
+    sectionKey?: string | null;
+    iconName?: string;
+    sortOrder?: number;
+    isActive?: boolean;
+  },
+  userId?: string
+) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "navigation" } });
+  if (!sec) throw new Error("Section 'navigation' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  const menus: CmsNavMenu[] = Array.isArray(extra.menus) ? [...extra.menus] : [];
+
+  if (menuData.parentId) {
+    // Menambahkan atau mengedit submenu
+    const parent = menus.find((m) => m.id === menuData.parentId);
+    if (!parent) throw new Error("Menu induk tidak ditemukan.");
+
+    parent.submenus = parent.submenus || [];
+    if (menuData.id) {
+      const subIdx = parent.submenus.findIndex((s) => s.id === menuData.id);
+      if (subIdx >= 0) {
+        parent.submenus[subIdx] = {
+          ...parent.submenus[subIdx],
+          ...menuData,
+          sortOrder: menuData.sortOrder ?? parent.submenus[subIdx].sortOrder,
+          isActive: menuData.isActive ?? parent.submenus[subIdx].isActive,
+        };
+      } else {
+        parent.submenus.push({
+          id: menuData.id,
+          labelId: menuData.labelId,
+          labelEn: menuData.labelEn,
+          descriptionId: menuData.descriptionId || "",
+          descriptionEn: menuData.descriptionEn || "",
+          url: menuData.url,
+          sectionKey: menuData.sectionKey || null,
+          iconName: menuData.iconName || "Layers",
+          sortOrder: menuData.sortOrder ?? parent.submenus.length + 1,
+          isActive: menuData.isActive ?? true,
+        });
+      }
+    } else {
+      const newSubId = `sub-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      parent.submenus.push({
+        id: newSubId,
+        labelId: menuData.labelId,
+        labelEn: menuData.labelEn,
+        descriptionId: menuData.descriptionId || "",
+        descriptionEn: menuData.descriptionEn || "",
+        url: menuData.url,
+        sectionKey: menuData.sectionKey || null,
+        iconName: menuData.iconName || "Layers",
+        sortOrder: menuData.sortOrder ?? parent.submenus.length + 1,
+        isActive: menuData.isActive ?? true,
+      });
+    }
+    parent.submenus.sort((a, b) => a.sortOrder - b.sortOrder);
+  } else {
+    // Menambahkan atau mengedit root menu
+    if (menuData.id) {
+      const idx = menus.findIndex((m) => m.id === menuData.id);
+      if (idx >= 0) {
+        menus[idx] = {
+          ...menus[idx],
+          ...menuData,
+          sortOrder: menuData.sortOrder ?? menus[idx].sortOrder,
+          isActive: menuData.isActive ?? menus[idx].isActive,
+        };
+      } else {
+        menus.push({
+          id: menuData.id,
+          labelId: menuData.labelId,
+          labelEn: menuData.labelEn,
+          descriptionId: menuData.descriptionId || "",
+          descriptionEn: menuData.descriptionEn || "",
+          url: menuData.url,
+          sectionKey: menuData.sectionKey || null,
+          iconName: menuData.iconName || "Layers",
+          sortOrder: menuData.sortOrder ?? menus.length + 1,
+          isActive: menuData.isActive ?? true,
+          submenus: [],
+        });
+      }
+    } else {
+      const newId = `menu-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      menus.push({
+        id: newId,
+        labelId: menuData.labelId,
+        labelEn: menuData.labelEn,
+        descriptionId: menuData.descriptionId || "",
+        descriptionEn: menuData.descriptionEn || "",
+        url: menuData.url,
+        sectionKey: menuData.sectionKey || null,
+        iconName: menuData.iconName || "Layers",
+        sortOrder: menuData.sortOrder ?? menus.length + 1,
+        isActive: menuData.isActive ?? true,
+        submenus: [],
+      });
+    }
+  }
+
+  menus.sort((a, b) => a.sortOrder - b.sortOrder);
+
+  await db.cmsSection.update({
+    where: { sectionKey: "navigation" },
+    data: {
+      extraContent: {
+        ...extra,
+        menus,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: "SAVE_CMS_NAVIGATION_MENU",
+    entity: "cms_sections",
+    recordId: "navigation",
+  });
+
+  return { success: true };
+}
+
+/**
+ * Menghapus menu atau submenu navigasi dari JSON
+ */
+export async function deleteCmsNavigationMenu(menuId: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "navigation" } });
+  if (!sec) throw new Error("Section 'navigation' tidak ditemukan.");
+
+  const extra = (sec.extraContent as any) || {};
+  let menus: CmsNavMenu[] = Array.isArray(extra.menus) ? [...extra.menus] : [];
+
+  // Cek apakah yang dihapus adalah root menu
+  const isRoot = menus.some((m) => m.id === menuId);
+  if (isRoot) {
+    menus = menus.filter((m) => m.id !== menuId);
+  } else {
+    // Submenu
+    menus = menus.map((m) => ({
+      ...m,
+      submenus: (m.submenus || []).filter((s) => s.id !== menuId),
+    }));
+  }
+
+  await db.cmsSection.update({
+    where: { sectionKey: "navigation" },
+    data: {
+      extraContent: {
+        ...extra,
+        menus,
+      },
+    },
+  });
+
+  await recordAuditLog({
+    userId,
+    action: "DELETE_CMS_NAVIGATION_MENU",
+    entity: "cms_sections",
+    recordId: menuId,
+  });
+
+  return { success: true };
+}
+
+/**
+ * Mengambil konten section halaman tertentu (e.g. page_platform, page_solutions, dsb)
+ */
+export async function getCmsSectionByKey(sectionKey: string) {
+  return await db.cmsSection.findUnique({
+    where: { sectionKey },
+  });
+}
+
+
+export interface AllCmsData {
+  homepage: CmsHomepageData;
+  navigation: CmsNavMenu[];
+  platform: any;
+  solutions: any;
+  modules: any;
+  novaAi: any;
+  integrations: any;
+}
+
+/**
+ * Mengambil seluruh data CMS untuk Single-Hub CMS Administrator
+ */
+export async function getAllCmsContent(): Promise<AllCmsData> {
+  const [homepage, navigation, platform, solutions, modules, novaAi, integrations] = await Promise.all([
+    getCmsHomepageContent(),
+    getCmsNavigationMenus(),
+    getCmsSectionByKey("page_platform"),
+    getCmsSectionByKey("page_solutions"),
+    getCmsSectionByKey("page_modules"),
+    getCmsSectionByKey("page_nova_ai"),
+    getCmsSectionByKey("page_integrations"),
+  ]);
+
+  return {
+    homepage,
+    navigation,
+    platform: platform ? { section: platform, extraContent: platform.extraContent } : null,
+    solutions: solutions ? { section: solutions, items: (solutions.extraContent as any)?.items || [] } : null,
+    modules: modules ? { section: modules, items: (modules.extraContent as any)?.items || [] } : null,
+    novaAi: novaAi ? { section: novaAi, extraContent: novaAi.extraContent } : null,
+    integrations: integrations ? { section: integrations, items: (integrations.extraContent as any)?.items || [] } : null,
+  };
+}
+
+/**
+ * Simpan atau perbarui item solusi pada page_solutions
+ */
+export async function saveSolutionItem(item: any, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_solutions" } });
+  if (!sec) throw new Error("Section 'page_solutions' tidak ditemukan.");
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+  let saved: any;
+  if (item.slug) {
+    const idx = items.findIndex((i) => i.slug === item.slug);
+    if (idx >= 0) {
+      saved = { ...items[idx], ...item };
+      items[idx] = saved;
+    } else {
+      saved = { ...item };
+      items.push(saved);
+    }
+  } else {
+    saved = { ...item, slug: "solusi-" + Date.now() };
+    items.push(saved);
+  }
+  await db.cmsSection.update({
+    where: { sectionKey: "page_solutions" },
+    data: { extraContent: { ...extra, items } },
+  });
+  await recordAuditLog({
+    userId,
+    action: "SAVE_SOLUTION_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: saved.slug,
+    newValue: saved,
+  });
+  return saved;
+}
+
+export async function deleteSolutionItem(slug: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_solutions" } });
+  if (!sec) throw new Error("Section 'page_solutions' tidak ditemukan.");
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = (extra.items || []).filter((i: any) => i.slug !== slug);
+  await db.cmsSection.update({
+    where: { sectionKey: "page_solutions" },
+    data: { extraContent: { ...extra, items } },
+  });
+  await recordAuditLog({
+    userId,
+    action: "DELETE_SOLUTION_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: slug,
+  });
+  return { success: true };
+}
+
+/**
+ * Simpan atau perbarui item modul pada page_modules
+ */
+export async function saveModuleItem(item: any, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_modules" } });
+  if (!sec) throw new Error("Section 'page_modules' tidak ditemukan.");
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+  let saved: any;
+  if (item.slug) {
+    const idx = items.findIndex((i) => i.slug === item.slug);
+    if (idx >= 0) {
+      saved = { ...items[idx], ...item };
+      items[idx] = saved;
+    } else {
+      saved = { ...item };
+      items.push(saved);
+    }
+  } else {
+    saved = { ...item, slug: "modul-" + Date.now() };
+    items.push(saved);
+  }
+  await db.cmsSection.update({
+    where: { sectionKey: "page_modules" },
+    data: { extraContent: { ...extra, items } },
+  });
+  await recordAuditLog({
+    userId,
+    action: "SAVE_MODULE_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: saved.slug,
+    newValue: saved,
+  });
+  return saved;
+}
+
+export async function deleteModuleItem(slug: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_modules" } });
+  if (!sec) throw new Error("Section 'page_modules' tidak ditemukan.");
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = (extra.items || []).filter((i: any) => i.slug !== slug);
+  await db.cmsSection.update({
+    where: { sectionKey: "page_modules" },
+    data: { extraContent: { ...extra, items } },
+  });
+  await recordAuditLog({
+    userId,
+    action: "DELETE_MODULE_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: slug,
+  });
+  return { success: true };
+}
+
+/**
+ * Simpan atau perbarui item integrasi pada page_integrations
+ */
+export async function saveIntegrationItem(item: any, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_integrations" } });
+  if (!sec) throw new Error("Section 'page_integrations' tidak ditemukan.");
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
+  let saved: any;
+  if (item.slug) {
+    const idx = items.findIndex((i) => i.slug === item.slug);
+    if (idx >= 0) {
+      saved = { ...items[idx], ...item };
+      items[idx] = saved;
+    } else {
+      saved = { ...item };
+      items.push(saved);
+    }
+  } else {
+    saved = { ...item, slug: "integrasi-" + Date.now() };
+    items.push(saved);
+  }
+  await db.cmsSection.update({
+    where: { sectionKey: "page_integrations" },
+    data: { extraContent: { ...extra, items } },
+  });
+  await recordAuditLog({
+    userId,
+    action: "SAVE_INTEGRATION_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: saved.slug,
+    newValue: saved,
+  });
+  return saved;
+}
+
+export async function deleteIntegrationItem(slug: string, userId?: string) {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_integrations" } });
+  if (!sec) throw new Error("Section 'page_integrations' tidak ditemukan.");
+  const extra = (sec.extraContent as any) || {};
+  const items: any[] = (extra.items || []).filter((i: any) => i.slug !== slug);
+  await db.cmsSection.update({
+    where: { sectionKey: "page_integrations" },
+    data: { extraContent: { ...extra, items } },
+  });
+  await recordAuditLog({
+    userId,
+    action: "DELETE_INTEGRATION_ITEM_JSON",
+    entity: "cms_sections",
+    recordId: slug,
+  });
+  return { success: true };
+}
+
+
+import { solutionsData as staticSolutions } from "@/content/solutions";
+import { modulesData as staticModules } from "@/content/modules";
+import { integrationsData as staticIntegrations } from "@/content/integrations";
+import {
+  novaAIWorkflowSteps as staticNovaSteps,
+  novaAISampleTranslations as staticNovaTranslations,
+  novaAIDisclaimer as staticNovaDisclaimer,
+} from "@/content/nova-ai";
+
+export async function getSolutionsPageData() {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_solutions" } });
+  const items = (sec?.extraContent as any)?.items;
+  return {
+    section: sec,
+    items: Array.isArray(items) && items.length > 0 ? items : staticSolutions,
+  };
+}
+
+export async function getModulesPageData() {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_modules" } });
+  const items = (sec?.extraContent as any)?.items;
+  return {
+    section: sec,
+    items: Array.isArray(items) && items.length > 0 ? items : staticModules,
+  };
+}
+
+export async function getIntegrationsPageData() {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_integrations" } });
+  const items = (sec?.extraContent as any)?.items;
+  return {
+    section: sec,
+    items: Array.isArray(items) && items.length > 0 ? items : staticIntegrations,
+  };
+}
+
+export async function getNovaAiPageData() {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_nova_ai" } });
+  const extra = (sec?.extraContent as any) || {};
+  return {
+    section: sec,
+    bannerUrl: extra.bannerUrl || "/images/hero-bg-1.webp",
+    disclaimer: extra.disclaimer || staticNovaDisclaimer,
+    workflowSteps: Array.isArray(extra.workflowSteps) && extra.workflowSteps.length > 0 ? extra.workflowSteps : staticNovaSteps,
+    sampleTranslations: Array.isArray(extra.sampleTranslations) && extra.sampleTranslations.length > 0 ? extra.sampleTranslations : staticNovaTranslations,
+  };
+}
+
+export async function getPlatformPageData() {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_platform" } });
+  const extra = (sec?.extraContent as any) || {};
+  return {
+    section: sec,
+    bannerUrl: extra.bannerUrl || "/images/hero-bg-1.webp",
+    submodules: Array.isArray(extra.submodules) ? extra.submodules : [],
+  };
+}

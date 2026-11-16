@@ -527,6 +527,35 @@ function LanguageSwitcher({
   );
 }
 
+function getNavIcon(iconName?: string | null) {
+  switch (iconName?.toLowerCase()) {
+    case "layers":
+      return <Layers className="h-4 w-4 text-diagnova-blue" />;
+    case "activity":
+      return <Activity className="h-4 w-4 text-diagnova-blue" />;
+    case "cpu":
+      return <Cpu className="h-4 w-4 text-diagnova-blue" />;
+    case "shield-check":
+      return <ShieldCheck className="h-4 w-4 text-diagnova-blue" />;
+    case "sparkles":
+      return <Sparkles className="h-4 w-4 text-nova-blue" />;
+    case "building-2":
+      return <Building2 className="h-4 w-4 text-diagnova-blue" />;
+    case "stethoscope":
+      return <Stethoscope className="h-4 w-4 text-nova-blue" />;
+    case "microscope":
+      return <Microscope className="h-4 w-4 text-diagnova-blue" />;
+    case "flask-conical":
+      return <FlaskConical className="h-4 w-4 text-nova-blue" />;
+    case "heart-pulse":
+      return <HeartPulse className="h-4 w-4 text-rose-500" />;
+    case "network":
+      return <Network className="h-4 w-4 text-diagnova-blue" />;
+    default:
+      return <Layers className="h-4 w-4 text-diagnova-blue" />;
+  }
+}
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -539,7 +568,40 @@ export function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const navItems = getNavItems(language);
+
+  // Dynamic Menu dari Database dengan Fallback Aman
+  const [dbMenus, setDbMenus] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/menus")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setDbMenus(res.data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Gagal memuat dynamic menus, menggunakan static fallback:", err);
+      });
+  }, []);
+
+  const navItems: NavItem[] =
+    dbMenus && dbMenus.length > 0
+      ? dbMenus.map((m: any) => ({
+          label: language === "ID" ? m.labelId : m.labelEn,
+          href: m.sectionKey ? `/#${m.sectionKey}` : m.url || "#",
+          children:
+            (m.submenus || m.children) && (m.submenus || m.children).length > 0
+              ? (m.submenus || m.children).map((c: any) => ({
+                  title: language === "ID" ? c.labelId : c.labelEn,
+                  description:
+                    (language === "ID" ? c.descriptionId : c.descriptionEn) || "",
+                  href: c.sectionKey ? `/#${c.sectionKey}` : c.url || "#",
+                  icon: getNavIcon(c.iconName),
+                }))
+              : undefined,
+        }))
+      : getNavItems(language);
 
   const updateProgress = (y: number) => {
     if (!progressBarRef.current) return;
