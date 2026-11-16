@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicErrorMessage } from "@/lib/errors";
 import { getTestCatalog, ensureDefaultCatalog } from "@/lib/models/catalog.model";
 import { searchPatients, createPatient, listPatients } from "@/lib/models/patient.model";
 import { createLabOrder, getLabOrders, getLabOrderById } from "@/lib/models/order.model";
@@ -95,7 +96,7 @@ export async function createPatientController(request: NextRequest): Promise<Nex
         success: false,
         message: isDuplicate
           ? "Nomor Rekam Medis (MRN) ini sudah terdaftar di sistem."
-          : error.message || "Gagal mendaftarkan pasien.",
+          : publicErrorMessage(error, "Gagal mendaftarkan pasien."),
       },
       { status: isDuplicate ? 409 : 500 }
     );
@@ -204,7 +205,7 @@ export async function createOrderController(request: NextRequest): Promise<NextR
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "Gagal membuat order lab.",
+        message: publicErrorMessage(error, "Gagal membuat order lab."),
       },
       { status: 500 }
     );
@@ -237,7 +238,7 @@ export async function receiveSpecimenController(
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "Gagal mencatat penerimaan spesimen.",
+        message: publicErrorMessage(error, "Gagal mencatat penerimaan spesimen."),
       },
       { status: 400 }
     );
@@ -278,7 +279,7 @@ export async function rejectSpecimenController(
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "Gagal menolak spesimen.",
+        message: publicErrorMessage(error, "Gagal menolak spesimen."),
       },
       { status: 400 }
     );

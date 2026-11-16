@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/authz";
 import { db } from "@/lib/db";
 import { getLeadMetrics, prismaToInstitutionType } from "@/lib/models/lead.model";
 import { prismaPriorityToOrderPriority, prismaStatusToOrderStatus } from "@/lib/models/order.model";
@@ -10,13 +10,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     // Eksekusi query database paralel
     const [

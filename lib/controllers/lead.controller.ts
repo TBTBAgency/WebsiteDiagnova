@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicErrorMessage } from "@/lib/errors";
 import {
   getLeadsWithPagination,
   getLeadById,
@@ -179,7 +180,7 @@ export async function approveLeadController(
   } catch (error: any) {
     console.error("approveLeadController error:", error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: error.message || "Gagal menyetujui permohonan demo." },
+      { success: false, message: publicErrorMessage(error, "Gagal menyetujui permohonan demo.") },
       { status: 500 }
     );
   }
@@ -231,7 +232,7 @@ export async function rejectLeadController(
   } catch (error: any) {
     console.error("rejectLeadController error:", error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: error.message || "Gagal menolak permohonan demo." },
+      { success: false, message: publicErrorMessage(error, "Gagal menolak permohonan demo.") },
       { status: 500 }
     );
   }

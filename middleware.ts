@@ -1,72 +1,88 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { isAdminRole } from "@/lib/roles";
+import { getSessionSecret } from "@/lib/session-secret";
 
 const SESSION_COOKIE_NAME = "diagnova_session";
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "diagnova-super-secret-key-production-change-this-2026-xyz"
-);
 
+/**
+ * Lapisan pertama otorisasi (Edge). Hanya memeriksa JWT.
+ * Setiap route handler admin/LIS tetap memverifikasi ulang status & role ke database
+ * melalui `requireAdmin()` di lib/authz.ts.
+ */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Hanya periksa rute yang diawali dengan /admin
-  if (!pathname.startsWith("/admin")) {
-    return NextResponse.next();
-  }
-
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  let isValidSession = false;
   let sessionPayload: Record<string, any> | null = null;
 
   if (sessionCookie) {
     try {
-      const { payload } = await jwtVerify(sessionCookie, JWT_SECRET);
+      // getSessionSecret() melempar error di production bila AUTH_SECRET kosong -> sesi dianggap tidak ada
+      const { payload } = await jwtVerify(sessionCookie, getSessionSecret());
       sessionPayload = payload as Record<string, any>;
-      isValidSession = true;
     } catch {
-      isValidSession = false;
+      sessionPayload = null;
     }
   }
 
-  // Jika sesi adalah Demo User, periksa masa aktif demo dan proteksi RBAC
-  if (isValidSession && sessionPayload?.role === "Demo User") {
-    // 1. Cek apakah masa aktif demo telah kedaluwarsa
-    if (
+  const isAdmin = !!sessionPayload && isAdminRole(sessionPayload.role);
+
+  // ---- API admin & LIS: tolak lebih awal dengan JSON ----
+  if (pathname.startsWith("/api/admin") || pathname.startsWith("/api/lis")) {
+    if (!sessionPayload) {
+      return NextResponse.json(
+        { success: false, message: "Akses ditolak. Silakan login terlebih dahulu." },
+        { status: 401 }
+      );
+    }
+    if (!isAdmin) {
+      return NextResponse.json(
+        { success: false, message: "Akses ditolak. Endpoint ini khusus administrator." },
+        { status: 403 }
+      );
+    }
+    return NextResponse.next();
+  }
+
+  // ---- Halaman /admin ----
+  // Sesi non-admin (mis. akun demo) tidak boleh membuka area admin mana pun.
+  if (sessionPayload && !isAdmin) {
+    const isDemoExpired =
       sessionPayload.demoExpiresAt &&
-      Date.now() > new Date(sessionPayload.demoExpiresAt).getTime()
-    ) {
-      const response = NextResponse.redirect(new URL("/demo-expired", request.url));
+      Date.now() > new Date(sessionPayload.demoExpiresAt).getTime();
+
+    const target = isDemoExpired
+      ? new URL("/demo-expired", request.url)
+      : new URL("/admin/login?error=forbidden", request.url);
+
+    if (pathname === "/admin/login" && !isDemoExpired) {
+      const response = NextResponse.next();
       response.cookies.delete(SESSION_COOKIE_NAME);
       return response;
     }
 
-    // 2. Proteksi RBAC: Demo User dilarang membuka Pengguna (Users), CMS, atau Audit Logs
-    if (
-      pathname.startsWith("/admin/users") ||
-      pathname.startsWith("/admin/cms") ||
-      pathname.startsWith("/admin/audit-logs")
-    ) {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-    }
+    const response = NextResponse.redirect(target);
+    response.cookies.delete(SESSION_COOKIE_NAME);
+    return response;
   }
 
-  // Jika membuka halaman login tapi sudah login, redirect langsung ke /admin/dashboard
+  // Jika membuka halaman login tapi sudah login sebagai admin, redirect ke dashboard
   if (pathname === "/admin/login") {
-    if (isValidSession) {
+    if (isAdmin) {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.next();
   }
 
-  // Jika membuka rute admin lain tapi belum login, redirect ke login
-  if (!isValidSession) {
+  // Rute admin lain tanpa sesi -> login
+  if (!sessionPayload) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Jika membuka /admin root, redirect ke /admin/dashboard
   if (pathname === "/admin") {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
@@ -75,5 +91,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/lis/:path*"],
 };

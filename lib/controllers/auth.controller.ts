@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { loginSchema } from "@/lib/validations";
 import { findUserByEmail, verifyPassword } from "@/lib/models/user.model";
 import { recordAuditLog } from "@/lib/models/audit.model";
+import { isAdminRole } from "@/lib/roles";
 import { setSessionCookie, removeSessionCookie, getCurrentSession } from "@/lib/auth-session";
 import { ApiResponse, AuthSessionPayload } from "@/types";
 
@@ -79,6 +80,26 @@ export async function loginController(request: NextRequest): Promise<NextRespons
           message: "Email atau password yang Anda masukkan salah.",
         },
         { status: 401 }
+      );
+    }
+
+    // Hanya administrator yang boleh login ke dashboard admin via password
+    if (!isAdminRole(user.roleName)) {
+      await recordAuditLog({
+        userId: user.id,
+        action: "LOGIN_DENIED_ROLE",
+        entity: "User",
+        recordId: user.id,
+        ipAddress: clientIp,
+        userAgent,
+      });
+
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Akun ini tidak memiliki akses ke dashboard admin.",
+        },
+        { status: 403 }
       );
     }
 

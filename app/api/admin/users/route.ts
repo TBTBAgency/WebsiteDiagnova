@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { publicErrorMessage } from "@/lib/errors";
+import { requireAdmin } from "@/lib/authz";
+import { isAdminRole } from "@/lib/roles";
+import { db } from "@/lib/db";
 import { getAllUsers, createUser } from "@/lib/models/user.model";
 import { createUserSchema } from "@/lib/validations";
 import { ApiResponse } from "@/types";
@@ -12,13 +15,8 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const users = await getAllUsers();
 
@@ -42,13 +40,8 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const body = await request.json();
     const validation = createUserSchema.safeParse(body);
@@ -61,6 +54,24 @@ export async function POST(request: NextRequest) {
           errors: validation.error.flatten().fieldErrors,
         },
         { status: 400 }
+      );
+    }
+
+    // Role target wajib ada dan tidak boleh role administrator (dicek di server, bukan dari UI)
+    const targetRole = await db.role.findUnique({
+      where: { id: validation.data.roleId },
+      select: { name: true },
+    });
+    if (!targetRole) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Role tidak ditemukan." },
+        { status: 400 }
+      );
+    }
+    if (isAdminRole(targetRole.name)) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Akun administrator tidak dapat dibuat melalui User Management." },
+        { status: 403 }
       );
     }
 
@@ -84,7 +95,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menambahkan pengguna baru." },
+      { success: false, message: publicErrorMessage(error, "Gagal menambahkan pengguna baru.") },
       { status: 500 }
     );
   }

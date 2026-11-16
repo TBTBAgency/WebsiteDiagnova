@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { publicErrorMessage } from "@/lib/errors";
+import { requireAdmin } from "@/lib/authz";
 import {
   getCmsHomepageContent,
   updateCmsSection,
@@ -23,21 +24,8 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Silakan login terlebih dahulu." },
-        { status: 401 }
-      );
-    }
-
-    // Hanya Super Admin yang berhak mengelola CMS
-    if (session.role !== "Super Admin") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Fitur CMS khusus untuk Super Admin." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const data = await getCmsHomepageContent();
 
@@ -61,20 +49,9 @@ export async function GET() {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Silakan login terlebih dahulu." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "Super Admin") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Pengubahan CMS hanya diizinkan bagi Super Admin." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const body = await request.json();
     const { type, sectionKey, action = "save", data } = body;
@@ -135,7 +112,7 @@ export async function PUT(request: NextRequest) {
   } catch (error: any) {
     console.error("PUT CMS Homepage Error:", error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: error.message || "Gagal menyimpan perubahan konten." },
+      { success: false, message: publicErrorMessage(error, "Gagal menyimpan perubahan konten.") },
       { status: 500 }
     );
   }

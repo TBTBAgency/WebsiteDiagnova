@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
 import { getAuditLogs } from "@/lib/models/audit.model";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/authz";
 import { ApiResponse } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak." },
-        { status: 401 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const logs = await getAuditLogs({ limit: 100 });
 
