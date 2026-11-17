@@ -34,7 +34,9 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { CmsPageHero, resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero } from "@/lib/cms-hero";
+import type { InnerPageCmsProps } from "@/lib/cms-layout";
+import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
 
 interface ClinicalProfile {
@@ -69,8 +71,9 @@ interface ClinicalProfile {
   isPanicValue: boolean;
 }
 
-export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | null }) {
+export default function NovaAIPageClient({ cmsHero, layout, cta }: InnerPageCmsProps) {
   const { language } = useLanguage();
+  const st = makeSectionText(layout, language);
   const [virtualStaining, setVirtualStaining] = useState<boolean>(true);
   const [selectedProfileIdx, setSelectedProfileIdx] = useState<number>(0);
   const [authorizedProfiles, setAuthorizedProfiles] = useState<Record<string, boolean>>({});
@@ -296,6 +299,8 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
       {/* ══════════════════════════════════════════════════════════════
           HERO SECTION: PageHero (Enterprise Medical SaaS Aesthetic)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSectionList layout={layout}>
+      <CmsSlot id="hero">
       <PageHero
         cms={resolveCmsHero(cmsHero, language)}
         badge={language === "ID" ? "Clinical Decision Support System (CDSS)" : "Clinical Decision Support System (CDSS)"}
@@ -350,10 +355,12 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
           },
         ]}
       />
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: SYSTEM OF RECORD VS SYSTEM OF ACTION
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="system-of-action">
       <section className="w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-y border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
@@ -361,19 +368,19 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Paradigma Baru LIS" : "The LIS System of Action"}
+                  {st("system-of-action", "badge", language === "ID" ? "Paradigma Baru LIS" : "The LIS System of Action")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("system-of-action", "title", language === "ID"
                   ? "Dari System of Record Menuju System of Action"
-                  : "From System of Record to System of Action"}
+                  : "From System of Record to System of Action")}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("system-of-action", "subtitle", language === "ID"
                 ? "LIS konvensional berhenti pada pencatatan pasif. Nova AI membaca konteks klinis secara aktif—mengekstrak order, menghitung tren delta, dan menyiapkan draf laporan siap sah."
-                : "Traditional LIS stops at passive record-keeping. Nova AI reads clinical context actively—extracting orders, computing delta trends, and preparing sign-off-ready drafts."}
+                : "Traditional LIS stops at passive record-keeping. Nova AI reads clinical context actively—extracting orders, computing delta trends, and preparing sign-off-ready drafts.")}
             </p>
           </div>
 
@@ -443,11 +450,13 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: PATHOLOGIST WORKSTATION & AI CAPABILITIES (#workstation-demo)
           (3x2 Flat Card Grid on Pure White Background)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="workstation-demo">
       <section id="workstation-demo" className="scroll-mt-32 w-full bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* Split Header (Left-Aligned) */}
@@ -455,19 +464,19 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Meja Kerja Patologi Klinik" : "Pathologist Workstation"}
+                  {st("workstation-demo", "badge", language === "ID" ? "Meja Kerja Patologi Klinik" : "Pathologist Workstation")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("workstation-demo", "title", language === "ID"
                   ? "Bagaimana Nova AI Mendukung Otorisasi Dokter"
-                  : "How Nova AI Powers Pathologist Sign-Off Workflows"}
+                  : "How Nova AI Powers Pathologist Sign-Off Workflows")}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("workstation-demo", "subtitle", language === "ID"
                 ? "Enam kapabilitas agen cerdas yang tertanam langsung di meja kerja dokter Sp.PK—mempercepat validasi tanpa mengurangi otoritas medis."
-                : "Six embedded AI capabilities inside the pathologist desk—accelerating sign-off without altering physician authority."}
+                : "Six embedded AI capabilities inside the pathologist desk—accelerating sign-off without altering physician authority.")}
             </p>
           </div>
 
@@ -563,10 +572,12 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: 4-STAGE LABORATORY PIPELINE (#how-it-works)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="how-it-works">
       <section
         id="how-it-works"
         className="scroll-mt-28 w-full bg-[#FAFBFD] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
@@ -577,19 +588,19 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Alur Kerja 4 Tahap" : "4-Stage Clinical Pipeline"}
+                  {st("how-it-works", "badge", language === "ID" ? "Alur Kerja 4 Tahap" : "4-Stage Clinical Pipeline")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("how-it-works", "title", language === "ID"
                   ? "Alur Kerja Terstruktur yang Menjamin Presisi & Keselamatan Pasien"
-                  : "Structured Pipeline Safeguarding Clinical Integrity & Accuracy"}
+                  : "Structured Pipeline Safeguarding Clinical Integrity & Accuracy")}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("how-it-works", "subtitle", language === "ID"
                 ? "Dari pembacaan instrumen analitik hingga otorisasi digital dokter spesialis, setiap tahap didesain dengan ketertelusuran penuh dan kepatuhan akreditasi rumah sakit."
-                : "From direct analyzer telemetry to certified pathologist authorization, every phase is engineered with full audit traceability and hospital accreditation standards."}
+                : "From direct analyzer telemetry to certified pathologist authorization, every phase is engineered with full audit traceability and hospital accreditation standards.")}
             </p>
           </div>
 
@@ -1019,10 +1030,12 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: CLINICAL GOVERNANCE & RESPONSIBILITY MATRIX (#ai-doctor)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="ai-doctor">
       <section
         id="ai-doctor"
         className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
@@ -1033,19 +1046,19 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Tata Kelola Klinis & Keamanan Data" : "Clinical Governance & Security"}
+                  {st("ai-doctor", "badge", language === "ID" ? "Tata Kelola Klinis & Keamanan Data" : "Clinical Governance & Security")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.14] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("ai-doctor", "title", language === "ID"
                   ? "Kepatuhan & Keamanan untuk Data Klinis Sensitif"
-                  : "Compliance & Security Built for Clinical Data"}
+                  : "Compliance & Security Built for Clinical Data")}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("ai-doctor", "subtitle", language === "ID"
                 ? "Nova AI beroperasi dengan prinsip Human-in-the-Loop mutlak—mempercepat analisis data laboratorium sekaligus menjaga otoritas hukum dokter dan keamanan rekam medis."
-                : "Nova AI operates under strict Human-in-the-Loop governance—accelerating lab intelligence while safeguarding physician sovereignty and patient record security."}
+                : "Nova AI operates under strict Human-in-the-Loop governance—accelerating lab intelligence while safeguarding physician sovereignty and patient record security.")}
             </p>
           </div>
 
@@ -1167,11 +1180,15 @@ export default function NovaAIPageClient({ cmsHero }: { cmsHero?: CmsPageHero | 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Standardized Enterprise Banner
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#FAFBFD] border-t border-slate-200/60" topColor="#FAFBFD" />
+      <CmsSlot id="cta">
+      <CTABanner initialData={cta} bgClassName="bg-[#FAFBFD] border-t border-slate-200/60" topColor="#FAFBFD" />
+      </CmsSlot>
+      </CmsSectionList>
     </div>
   );
 }

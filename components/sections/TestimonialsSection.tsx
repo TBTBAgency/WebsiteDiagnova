@@ -33,7 +33,8 @@ export function TestimonialsSection({ initialData }: TestimonialsSectionProps = 
               name: t.name,
               role: language === "ID" ? t.roleId : t.roleEn || t.roleId,
               organization: t.institution,
-              quote: language === "ID" ? t.quoteId : t.quoteEn,
+              // Kutipan EN kosong (mis. testimoni lama tanpa quoteEn) memakai kutipan ID.
+              quote: language === "ID" ? t.quoteId : t.quoteEn || t.quoteId,
               imageSrc: t.avatarUrl || fallback.imageSrc,
               readMoreLink: fallback.readMoreLink || "#",
               accentGradient: fallback.accentGradient || "from-[#2A68B8] via-[#4F9DE6] to-[#7EC5F8]",

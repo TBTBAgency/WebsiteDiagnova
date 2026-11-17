@@ -34,12 +34,15 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { CmsPageHero, resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero } from "@/lib/cms-hero";
+import type { InnerPageCmsProps } from "@/lib/cms-layout";
+import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero | null }) {
+export default function PlatformPageClient({ cmsHero, layout, cta }: InnerPageCmsProps) {
   const { language } = useLanguage();
+  const st = makeSectionText(layout, language);
   const [activeSlaSlot, setActiveSlaSlot] = useState<number>(1);
 
   return (
@@ -47,6 +50,8 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
       {/* ══════════════════════════════════════════════════════════════
           HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSectionList layout={layout}>
+      <CmsSlot id="hero">
       <PageHero
         cms={resolveCmsHero(cmsHero, language)}
         badge={language === "ID" ? "Platform Diagnova" : "Diagnova Platform"}
@@ -101,19 +106,23 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           },
         ]}
       />
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: #workflow - Alur Kerja 4 Tahap
           (Menggunakan komponen asli Home Page yang rapi & interaktif)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="workflow">
       <div id="workflow" className="scroll-mt-28">
         <WorkflowSection />
       </div>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: #automation - 100% Otomatisasi & Interfacing
           (Alternating background: #F9F9F9, Card rounded-3xl)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="automation">
       <section
         id="automation"
         className="scroll-mt-28 w-full bg-[#F9F9F9] py-16 sm:py-20 lg:py-24 border-t border-slate-200/60"
@@ -123,11 +132,11 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           <div className="mb-10 sm:mb-14">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Otomatisasi 100%" : "100% Automation"}
+                {st("automation", "badge", language === "ID" ? "Otomatisasi 100%" : "100% Automation")}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
-              {language === "ID" ? (
+              {st("automation", "title", language === "ID" ? (
                 <>
                   Interfacing Dua Arah dengan 500+ Instrumen Medis
                 </>
@@ -135,12 +144,12 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
                 <>
                   Direct Bidirectional Interfacing with 500+ Medical Analyzers
                 </>
-              )}
+              ))}
             </h2>
             <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("automation", "subtitle", language === "ID"
                 ? "Mengeliminasi entri data manual sepenuhnya. Diagnova berkomunikasi langsung dua arah dengan instrumen laboratorium melalui protokol HL7 dan ASTM standar internasional."
-                : "Completely eliminate manual data entry. Diagnova establishes native two-way communication with any laboratory instrument brand via industry-standard HL7 and ASTM protocols."}
+                : "Completely eliminate manual data entry. Diagnova establishes native two-way communication with any laboratory instrument brand via industry-standard HL7 and ASTM protocols.")}
             </p>
           </div>
 
@@ -321,11 +330,13 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: #reporting - Digital Audit Trail & Medical Reporting
           (Dynamic 2-Column Showcase with Real Desktop Workstation + Floating Accent Card)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="reporting">
       <section
         id="reporting"
         className="scroll-mt-28 w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60 overflow-hidden"
@@ -336,11 +347,11 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
             <div className="lg:col-span-6 flex flex-col justify-center">
               <div className="mb-4">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Kepatuhan & Akreditasi" : "Compliance & Accreditation"}
+                  {st("reporting", "badge", language === "ID" ? "Kepatuhan & Akreditasi" : "Compliance & Accreditation")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
-                {language === "ID" ? (
+                {st("reporting", "title", language === "ID" ? (
                   <>
                     Jejak Audit Digital Permanen,
                     <br />
@@ -352,12 +363,12 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
                     <br />
                     KARS &amp; ISO 15189 Ready
                   </>
-                )}
+                ))}
               </h2>
               <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-                {language === "ID"
+                {st("reporting", "subtitle", language === "ID"
                   ? "Transparansi penuh untuk setiap tindakan laboratorium. Setiap perubahan hasil, kalibrasi alat, dan approval dokter tercatat permanen dengan cap waktu (timestamp) hingga milidetik."
-                  : "Absolute transparency for every clinical action. Every result change, instrument calibration, and physician sign-off is permanently recorded with millisecond-level timestamps."}
+                  : "Absolute transparency for every clinical action. Every result change, instrument calibration, and physician sign-off is permanently recorded with millisecond-level timestamps.")}
               </p>
 
               <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4">
@@ -582,11 +593,13 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 4: #analytics - Nova AI & Analitik Operasional
           (Alternating background: #F9F9F9)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="analytics">
       <section
         id="analytics"
         className="relative scroll-mt-28 w-full bg-[#FAFBFD] border-t border-slate-200/60 py-16 sm:py-20 lg:py-24 overflow-hidden"
@@ -596,11 +609,11 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           <div className="mb-10 sm:mb-14">
             <div className="mb-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Nova AI & Analitik" : "Nova AI & Analytics"}
+                {st("analytics", "badge", language === "ID" ? "Nova AI & Analitik" : "Nova AI & Analytics")}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] sm:leading-[1.22] tracking-tight text-slate-900">
-              {language === "ID" ? (
+              {st("analytics", "title", language === "ID" ? (
                 <>
                   Wawasan Operasional &amp; Asisten Klinis Nova AI
                 </>
@@ -608,12 +621,12 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
                 <>
                   Operational Insights &amp; Nova AI Clinical Intelligence
                 </>
-              )}
+              ))}
             </h2>
             <p className="mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("analytics", "subtitle", language === "ID"
                 ? "Mengubah jutaan titik data pemeriksaan laboratorium menjadi wawasan strategis. Memantau utilisasi instrumen, efisiensi reagen, dan membantu dokter mendeteksi lonjakan biomarker kritis."
-                : "Transforming millions of laboratory data points into actionable intelligence. Monitor analyzer utilization, reagent efficiency, and empower clinicians with rapid anomaly detection."}
+                : "Transforming millions of laboratory data points into actionable intelligence. Monitor analyzer utilization, reagent efficiency, and empower clinicians with rapid anomaly detection.")}
             </p>
           </div>
 
@@ -806,28 +819,30 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 5: 24/7 SLA, ROADMAP & MULTI-SITE NETWORK BENTO (Ref 2)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="enterprise">
       <section className="w-full bg-[#FAFBFD] border-t border-slate-200/70 py-16 sm:py-24">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl space-y-3">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Keandalan Enterprise" : "Enterprise Reliability"}
+                {st("enterprise", "badge", language === "ID" ? "Keandalan Enterprise" : "Enterprise Reliability")}
               </SectionBadge>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.15]">
-                {language === "ID"
+                {st("enterprise", "title", language === "ID"
                   ? "Dukungan 24/7, Peta Jalan AI & Jaringan Multi-Unit"
-                  : "24/7 Support SLA, AI Roadmap & Multi-Site Network"}
+                  : "24/7 Support SLA, AI Roadmap & Multi-Site Network")}
               </h2>
             </div>
             <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
-              {language === "ID"
+              {st("enterprise", "subtitle", language === "ID"
                 ? "Dirancang untuk operasional laboratorium rumah sakit yang tidak pernah berhenti—lengkap dengan eskalasi teknis instan dan sinkronisasi lintas cabang."
-                : "Engineered for non-stop hospital diagnostics with instant engineering escalation and unified multi-branch synchronization."}
+                : "Engineered for non-stop hospital diagnostics with instant engineering escalation and unified multi-branch synchronization.")}
             </p>
           </div>
 
@@ -1045,11 +1060,15 @@ export default function PlatformPageClient({ cmsHero }: { cmsHero?: CmsPageHero 
           })()}
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
+      <CmsSlot id="cta">
+      <CTABanner initialData={cta} bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
+      </CmsSlot>
+      </CmsSectionList>
     </div>
   );
 }

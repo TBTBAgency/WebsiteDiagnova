@@ -2404,6 +2404,17 @@ export default function AdminCmsUnifiedHubPage() {
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Kutipan Testimoni (EN)</label>
+                      <textarea
+                        rows={2}
+                        value={editingTestimonial.quoteEn || ""}
+                        onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quoteEn: e.target.value })}
+                        placeholder="Kosong = tampilan bahasa Inggris memakai kutipan ID"
+                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
+                      />
+                    </div>
+
                     <div className="flex items-center justify-between border-t border-slate-200/80 pt-3">
                       <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
@@ -2598,6 +2609,13 @@ export default function AdminCmsUnifiedHubPage() {
       {/* ==================================================================== */}
       {mainTab === "platform" && (
         <div className="space-y-6">
+          <div data-cms-public-notice="platform" className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+            <span className="font-bold shrink-0">Catatan:</span>
+            <span>
+              Badge, judul, dan deskripsi tampil di hero /platform. Gambar banner dan daftar submodul belum ditampilkan di website publik. Untuk urutan section, teks header section, dan section kustom gunakan menu Halaman & Section.{" "}
+              <a href="/admin/page-sections" className="font-semibold underline">Buka Halaman &amp; Section</a>
+            </span>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
@@ -2718,6 +2736,13 @@ export default function AdminCmsUnifiedHubPage() {
       {/* ==================================================================== */}
       {mainTab === "solutions" && (
         <div className="space-y-6">
+          <div data-cms-public-notice="solutions" className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+            <span className="font-bold shrink-0">Catatan:</span>
+            <span>
+              Daftar item di tab ini belum ditampilkan di website publik (halaman detail /[slug] dialihkan ke anchor halaman induk). Untuk hero, urutan section, teks header section, dan section kustom gunakan menu Halaman & Section.{" "}
+              <a href="/admin/page-sections" className="font-semibold underline">Buka Halaman &amp; Section</a>
+            </span>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <div>
@@ -2879,6 +2904,13 @@ export default function AdminCmsUnifiedHubPage() {
       {/* ==================================================================== */}
       {mainTab === "modules" && (
         <div className="space-y-6">
+          <div data-cms-public-notice="modules" className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+            <span className="font-bold shrink-0">Catatan:</span>
+            <span>
+              Daftar item di tab ini belum ditampilkan di website publik (halaman detail /[slug] dialihkan ke anchor halaman induk). Untuk hero, urutan section, teks header section, dan section kustom gunakan menu Halaman & Section.{" "}
+              <a href="/admin/page-sections" className="font-semibold underline">Buka Halaman &amp; Section</a>
+            </span>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <div>
@@ -2913,6 +2945,13 @@ export default function AdminCmsUnifiedHubPage() {
       {/* ==================================================================== */}
       {mainTab === "nova_ai" && (
         <div className="space-y-6">
+          <div data-cms-public-notice="nova_ai" className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+            <span className="font-bold shrink-0">Catatan:</span>
+            <span>
+              Badge, judul, dan deskripsi tampil di hero /nova-ai. Gambar banner belum ditampilkan di website publik. Untuk urutan section, teks header section, dan section kustom gunakan menu Halaman & Section.{" "}
+              <a href="/admin/page-sections" className="font-semibold underline">Buka Halaman &amp; Section</a>
+            </span>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
@@ -2996,6 +3035,13 @@ export default function AdminCmsUnifiedHubPage() {
       {/* ==================================================================== */}
       {mainTab === "integrations" && (
         <div className="space-y-6">
+          <div data-cms-public-notice="integrations" className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+            <span className="font-bold shrink-0">Catatan:</span>
+            <span>
+              Daftar item di tab ini belum ditampilkan di website publik (halaman detail /[slug] dialihkan ke anchor halaman induk). Untuk hero, urutan section, teks header section, dan section kustom gunakan menu Halaman & Section.{" "}
+              <a href="/admin/page-sections" className="font-semibold underline">Buka Halaman &amp; Section</a>
+            </span>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <div>

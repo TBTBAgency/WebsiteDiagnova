@@ -1,16 +1,12 @@
 import React from "react";
 import SolutionsPageClient from "./SolutionsPageClient";
-import { getCmsPageHero } from "@/lib/models/cms.model";
+import { getInnerPageCmsData } from "@/lib/models/cms-layout.model";
 
-// ISR: konten hero diambil dari CMS (page_solutions); disegarkan tiap 60 detik dan saat admin menyimpan CMS.
+// ISR: hero, tata letak section (urutan/aktif/teks header/section kustom) dan CTA diambil dari CMS;
+// disegarkan tiap 60 detik dan saat admin menyimpan CMS. Gagal memuat => teks & urutan bawaan.
 export const revalidate = 60;
 
 export default async function SolutionsPage() {
-  let cmsHero = null;
-  try {
-    cmsHero = await getCmsPageHero("page_solutions");
-  } catch (err) {
-    console.error("Gagal memuat hero CMS (page_solutions), memakai teks bawaan:", err);
-  }
-  return <SolutionsPageClient cmsHero={cmsHero} />;
+  const { cmsHero, layout, cta } = await getInnerPageCmsData("solutions");
+  return <SolutionsPageClient cmsHero={cmsHero} layout={layout} cta={cta} />;
 }

@@ -67,6 +67,13 @@ export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
   const testiSec = sectionMap.get("testimonials");
   const ctaSec = sectionMap.get("cta");
 
+  // Item diurutkan berdasarkan sortOrder saat dibaca (bukan hanya saat disimpan),
+  // sehingga urutan tetap benar walaupun data diubah di luar fungsi simpan.
+  const bySortOrder = (list: unknown) =>
+    Array.isArray(list)
+      ? [...list].sort((a: any, b: any) => (Number(a?.sortOrder) || 0) - (Number(b?.sortOrder) || 0))
+      : [];
+
   const heroExtra = (heroSec?.extraContent as any) || {};
   const trustedExtra = (trustedSec?.extraContent as any) || {};
   const compExtra = (compSec?.extraContent as any) || {};
@@ -75,18 +82,18 @@ export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
   return {
     hero: {
       section: heroSec ?? null,
-      slides: Array.isArray(heroExtra.slides) ? heroExtra.slides : [],
+      slides: bySortOrder(heroExtra.slides),
     },
     trustedBy: {
       section: trustedSec ?? null,
-      partners: Array.isArray(trustedExtra.partners) ? trustedExtra.partners : [],
+      partners: bySortOrder(trustedExtra.partners),
     },
     about: {
       section: aboutSec ?? null,
     },
     comparison: {
       section: compSec ?? null,
-      items: Array.isArray(compExtra.items) ? compExtra.items : [],
+      items: bySortOrder(compExtra.items),
     },
     workflow: {
       section: workSec ?? null,
@@ -96,7 +103,7 @@ export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
     },
     testimonials: {
       section: testiSec ?? null,
-      items: Array.isArray(testiExtra.items) ? testiExtra.items : [],
+      items: bySortOrder(testiExtra.items),
     },
     cta: {
       section: ctaSec ?? null,

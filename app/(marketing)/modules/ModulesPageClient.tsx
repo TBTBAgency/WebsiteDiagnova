@@ -38,11 +38,14 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { CmsPageHero, resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero } from "@/lib/cms-hero";
+import type { InnerPageCmsProps } from "@/lib/cms-layout";
+import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero | null }) {
+export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCmsProps) {
   const { language } = useLanguage();
+  const st = makeSectionText(layout, language);
   const [isClinicalView, setIsClinicalView] = useState<boolean>(false);
   const [activeCase, setActiveCase] = useState<number>(0);
 
@@ -436,6 +439,8 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
       {/* ══════════════════════════════════════════════════════════════
           HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSectionList layout={layout}>
+      <CmsSlot id="hero">
       <PageHero
         cms={resolveCmsHero(cmsHero, language)}
         badge={language === "ID" ? "Modul Terintegrasi Diagnova" : "Diagnova Modular Suite"}
@@ -490,10 +495,12 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
           },
         ]}
       />
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           INTERACTIVE STATION (MATCHING USER LIGOLAB SPEC: 4 VALUE ROWS + AI PATIENT & CLINICAL VIEW)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="modules-explorer">
       <section
         id="modules-explorer"
         className="relative scroll-mt-24 w-full bg-white py-12 sm:py-16 lg:py-24"
@@ -503,18 +510,18 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
           <div className="max-w-2xl mb-8 sm:mb-12 lg:mb-14">
             <div className="mb-3 sm:mb-3.5">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Nova AI • Pelaporan Pasien" : "Nova AI • Patient Reporting"}
+                {st("modules-explorer", "badge", language === "ID" ? "Nova AI • Pelaporan Pasien" : "Nova AI • Patient Reporting")}
               </SectionBadge>
             </div>
             <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-bold text-slate-900 tracking-tight leading-[1.2]">
-              {language === "ID"
+              {st("modules-explorer", "title", language === "ID"
                 ? "Laporan Pasien Cerdas dengan Validasi Klinis Penuh"
-                : "Intelligent Patient Reporting with Full Clinical Oversight"}
+                : "Intelligent Patient Reporting with Full Clinical Oversight")}
             </h2>
             <p className="mt-2.5 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-              {language === "ID"
+              {st("modules-explorer", "subtitle", language === "ID"
                 ? "Nova AI menerjemahkan hasil patologi dan laboratorium yang kompleks menjadi ringkasan yang jelas, empatik, dan mudah dipahami pasien—tanpa mengurangi otoritas diagnostik dokter."
-                : "Nova AI translates complex laboratory and pathology findings into clear, empathetic patient summaries—while keeping diagnostic authority firmly with the attending physician."}
+                : "Nova AI translates complex laboratory and pathology findings into clear, empathetic patient summaries—while keeping diagnostic authority firmly with the attending physician.")}
             </p>
           </div>
 
@@ -775,11 +782,13 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           COMPLETE MODULE DIRECTORY (2x2 ASYMMETRICAL BENTO SHOWCASE)
           Matching Reference Architecture: 2-Column Header + 7/5 & 5/7 Bento Grid
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="catalog">
       <section className="w-full bg-[#FAFBFD] py-14 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           {/* 2-Column Split Header */}
@@ -787,11 +796,11 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
             <div className="lg:col-span-6">
               <div className="mb-3 sm:mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Katalog Modul Lengkap" : "Complete Module Catalog"}
+                  {st("catalog", "badge", language === "ID" ? "Katalog Modul Lengkap" : "Complete Module Catalog")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-2xl sm:text-3xl lg:text-[40px] font-bold leading-[1.16] tracking-tight text-slate-900">
-                {language === "ID" ? (
+                {st("catalog", "title", language === "ID" ? (
                   <>
                     Arsitektur 5 Modul Inti &amp; <br className="hidden sm:inline" />
                     Gateway Laboratorium
@@ -801,15 +810,15 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
                     Your Connected Suite of <br className="hidden sm:inline" />
                     Clinical Modules.
                   </>
-                )}
+                ))}
               </h2>
             </div>
 
             <div className="lg:col-span-6 lg:pb-1">
               <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-xl lg:ml-auto">
-                {language === "ID"
+                {st("catalog", "subtitle", language === "ID"
                   ? "Diagnova mengotomatiskan setiap alur kerja laboratorium—mulai dari interfacing analyzer, kontrol reagen, pelacakan Bank Darah, hingga pelaporan patologi & mikrobiologi terpadu."
-                  : "Diagnova automates every mission-critical workflow across your laboratory — analyzer interfacing, reagent telemetry, blood bank safety, and specialized pathology & microbiology reporting."}
+                  : "Diagnova automates every mission-critical workflow across your laboratory — analyzer interfacing, reagent telemetry, blood bank safety, and specialized pathology & microbiology reporting.")}
               </p>
             </div>
           </div>
@@ -1144,28 +1153,30 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: ARCHITECTURE (UNIFIED DATA, NO SILOS)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="architecture">
       <section className="w-full bg-white py-16 sm:py-20 lg:py-24 border-t border-slate-200/60">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="lg:col-span-5 space-y-4">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Arsitektur Tanpa Silo" : "Zero Data Silos"}
+                {st("architecture", "badge", language === "ID" ? "Arsitektur Tanpa Silo" : "Zero Data Silos")}
               </SectionBadge>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[38px] font-bold text-slate-900 tracking-tight leading-[1.2]">
-                {language === "ID" ? (
+                {st("architecture", "title", language === "ID" ? (
                   <>Satu Pasien, Satu Basis Data Laboratorium Terpadu</>
                 ) : (
                   <>Single Patient ID, One Unified Laboratory Database</>
-                )}
+                ))}
               </h2>
               <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-                {language === "ID"
+                {st("architecture", "subtitle", language === "ID"
                   ? "Walaupun setiap modul menangani alur kerja spesifik, seluruh data bermuara pada satu pusat data Diagnova. Dokter dapat melihat hasil darah rutin, riwayat transfusi, dan laporan patologi dalam satu rekam medis terpadu tanpa fragmentasi sistem."
-                  : "Even with department-specific workflows, all clinical data converges into Diagnova's unified clinical registry. Physicians review routine hematology, blood bank logs, and pathology reports in one seamless patient timeline."}
+                  : "Even with department-specific workflows, all clinical data converges into Diagnova's unified clinical registry. Physicians review routine hematology, blood bank logs, and pathology reports in one seamless patient timeline.")}
               </p>
               <div className="pt-2">
                 <Link
@@ -1224,10 +1235,12 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 4: STEPPED MODULE PERFORMANCE COMPARISON (Ref 4 Midas)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="scalability">
       <section className="w-full bg-[#F7F9FC] border-t border-slate-200/70 py-16 sm:py-24 overflow-hidden">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <div className="rounded-[32px] border border-slate-200/90 bg-white p-7 sm:p-10 lg:p-14 shadow-2xs">
@@ -1235,17 +1248,17 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
               {/* Left Editorial Column */}
               <div className="lg:col-span-5 space-y-5 pb-2">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Skalabilitas Terbukti" : "Proven Scalability"}
+                  {st("scalability", "badge", language === "ID" ? "Skalabilitas Terbukti" : "Proven Scalability")}
                 </SectionBadge>
                 <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-[1.12]">
-                  {language === "ID"
+                  {st("scalability", "title", language === "ID"
                     ? "Butuh akselerasi waktu rilis hasil?"
-                    : "Looking for faster diagnostic turnaround?"}
+                    : "Looking for faster diagnostic turnaround?")}
                 </h2>
                 <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-md">
-                  {language === "ID"
+                  {st("scalability", "subtitle", language === "ID"
                     ? "Setiap modul Diagnova diskalakan sesuai kompleksitas fasilitas—mulai dari klinik pratama hingga jejaring rumah sakit rujukan nasional."
-                    : "Every Diagnova module scales to your facility's diagnostic volume—from primary clinics to national reference hospital chains."}
+                    : "Every Diagnova module scales to your facility's diagnostic volume—from primary clinics to national reference hospital chains.")}
                 </p>
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <Link
@@ -1339,11 +1352,15 @@ export default function ModulesPageClient({ cmsHero }: { cmsHero?: CmsPageHero |
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION: Seamlessly connects to Footer
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
+      <CmsSlot id="cta">
+      <CTABanner initialData={cta} bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
+      </CmsSlot>
+      </CmsSectionList>
     </div>
   );
 }

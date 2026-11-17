@@ -48,11 +48,14 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { CmsPageHero, resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero } from "@/lib/cms-hero";
+import type { InnerPageCmsProps } from "@/lib/cms-layout";
+import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero | null }) {
+export default function SolutionsPageClient({ cmsHero, layout, cta }: InnerPageCmsProps) {
   const { language } = useLanguage();
+  const st = makeSectionText(layout, language);
   const [activeSubTab, setActiveSubTab] = useState<"micro" | "blood">("micro");
 
   // Deep-link dari navigasi: /solutions#blood-bank membuka tab Bank Darah pada kartu Mikrobiologi
@@ -78,6 +81,8 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
       {/* ══════════════════════════════════════════════════════════════
           HERO SECTION: Standardized PageHero (Clean Medical SaaS)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSectionList layout={layout}>
+      <CmsSlot id="hero">
       <PageHero
         cms={resolveCmsHero(cmsHero, language)}
         badge={language === "ID" ? "Solusi Diagnova" : "Diagnova Solutions"}
@@ -132,11 +137,13 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
           },
         ]}
       />
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           CORE FACILITY SHOWCASE (MATCHING EXACT USER MOCKUP SPEC)
           3 Cards Top, 2 Cards Bottom, Authentic Micro-UIs, Precise Copy
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="facility-solutions">
       <section
         id="facility-solutions"
         className="relative scroll-mt-24 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
@@ -146,20 +153,20 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
           <div className="max-w-3xl mb-10 sm:mb-12">
             <div className="mb-3.5">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?"}
+                {st("facility-solutions", "badge", language === "ID" ? "Mengapa Diagnova?" : "Why Diagnova?")}
               </SectionBadge>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-bold leading-[1.18] tracking-tight text-slate-900">
-              {language === "ID" ? (
+              {st("facility-solutions", "title", language === "ID" ? (
                 <>Dirancang untuk Membuat Kerja Laboratorium Lebih Mudah</>
               ) : (
                 <>Designed to Make Laboratory Work Effortless</>
-              )}
+              ))}
             </h2>
             <p className="mt-3.5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("facility-solutions", "subtitle", language === "ID"
                 ? "Pengalaman diagnostik yang lebih lancar dan cerdas, mulai dari bridging SIMRS dua arah hingga rangkuman klinis Nova AI."
-                : "Experience a smoother, smarter way to run clinical workflows from HIS bridging to Nova AI summaries."}
+                : "Experience a smoother, smarter way to run clinical workflows from HIS bridging to Nova AI summaries.")}
             </p>
           </div>
 
@@ -511,10 +518,12 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           FACILITY FIT MATRIX (ONE-SCREEN VIEWPORT SCALE - ZERO OVERFLOW)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="tiers">
       <section className="w-full bg-[#FAFBFD] border-t border-slate-200/60 min-h-screen lg:h-screen lg:max-h-[1020px] flex flex-col justify-center py-2 sm:py-3 lg:py-4 overflow-hidden">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10 w-full relative">
           {/* Blue Framed Container Pod with Request-Demo Gradient & Orbs */}
@@ -546,14 +555,14 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
             {/* Header: Centered White Title, Subtitle, and Galileo White Capsule Switcher */}
             <div className="relative z-10 text-center max-w-2xl mx-auto">
               <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.16]">
-                {language === "ID"
+                {st("tiers", "title", language === "ID"
                   ? "Solusi Tepat untuk Setiap Skala Faskes"
-                  : "Tailored Architectures for Every Facility Scale"}
+                  : "Tailored Architectures for Every Facility Scale")}
               </h2>
               <p className="mt-2.5 text-xs sm:text-[14px] text-blue-100/90 font-normal leading-relaxed max-w-xl mx-auto">
-                {language === "ID"
+                {st("tiers", "subtitle", language === "ID"
                   ? "Pilih konfigurasi yang dirancang khusus untuk kebutuhan dan kapasitas instansi Anda. Tanpa biaya tersembunyi, fokus pada efisiensi kerja klinis."
-                  : "Choose an architecture engineered for your institution's specific tier. No bloatware, focused purely on clinical speed and compliance."}
+                  : "Choose an architecture engineered for your institution's specific tier. No bloatware, focused purely on clinical speed and compliance.")}
               </p>
 
               {/* Galileo-style White Pill Switcher with Active Blue Button */}
@@ -860,28 +869,30 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: EFFICIENCY TRAJECTORY & MANUAL VS DIAGNOVA EDGE
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="efficiency">
       <section className="w-full bg-white border-t border-slate-200/70 py-16 sm:py-24">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl space-y-3">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Dampak Terukur" : "Measurable Impact"}
+                {st("efficiency", "badge", language === "ID" ? "Dampak Terukur" : "Measurable Impact")}
               </SectionBadge>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.15]">
-                {language === "ID"
+                {st("efficiency", "title", language === "ID"
                   ? "Transformasi Efisiensi Operasional Laboratorium"
-                  : "Transforming Laboratory Operational Efficiency"}
+                  : "Transforming Laboratory Operational Efficiency")}
               </h2>
             </div>
             <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
-              {language === "ID"
+              {st("efficiency", "subtitle", language === "ID"
                 ? "Bandingkan alur kerja manual berbasis entri ulang dengan otomatisasi end-to-end Diagnova di setiap tahapan pemeriksaan."
-                : "Compare manual re-entry bottlenecks against end-to-end Diagnova automation across every diagnostic stage."}
+                : "Compare manual re-entry bottlenecks against end-to-end Diagnova automation across every diagnostic stage.")}
             </p>
           </div>
 
@@ -1110,28 +1121,30 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 4: 4-WEEK GO-LIVE GANTT TIMELINE (Ref 5/6)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="rollout">
       <section className="w-full bg-[#F7F9FC] border-t border-slate-200/70 py-16 sm:py-24">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
             <div className="max-w-2xl space-y-3">
               <SectionBadge variant="blue">
-                {language === "ID" ? "Implementasi Terstruktur" : "Structured Rollout"}
+                {st("rollout", "badge", language === "ID" ? "Implementasi Terstruktur" : "Structured Rollout")}
               </SectionBadge>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.15]">
-                {language === "ID"
+                {st("rollout", "title", language === "ID"
                   ? "Dari Audit Awal Hingga Go-Live dalam 4 Minggu"
-                  : "From Initial Audit to 24/7 Go-Live in 4 Weeks"}
+                  : "From Initial Audit to 24/7 Go-Live in 4 Weeks")}
               </h2>
             </div>
             <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
-              {language === "ID"
+              {st("rollout", "subtitle", language === "ID"
                 ? "Metodologi deployment tanpa mengganggu layanan pasien aktif, lengkap dengan tim engineer khusus."
-                : "Zero-downtime deployment methodology led by dedicated clinical integration engineers."}
+                : "Zero-downtime deployment methodology led by dedicated clinical integration engineers.")}
             </p>
           </div>
 
@@ -1297,11 +1310,15 @@ export default function SolutionsPageClient({ cmsHero }: { cmsHero?: CmsPageHero
           })()}
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA SECTION
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
+      <CmsSlot id="cta">
+      <CTABanner initialData={cta} bgClassName="bg-white border-t border-slate-200/60" topColor="#FFFFFF" />
+      </CmsSlot>
+      </CmsSectionList>
     </div>
   );
 }

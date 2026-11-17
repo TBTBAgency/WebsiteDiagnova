@@ -28,11 +28,14 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { CmsPageHero, resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero } from "@/lib/cms-hero";
+import type { InnerPageCmsProps } from "@/lib/cms-layout";
+import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHero | null }) {
+export default function IntegrationPageClient({ cmsHero, layout, cta }: InnerPageCmsProps) {
   const { language } = useLanguage();
+  const st = makeSectionText(layout, language);
   const [selectedIntegration, setSelectedIntegration] = useState<number>(0);
   const [autoCycle, setAutoCycle] = useState<boolean>(false);
   const [validationMode, setValidationMode] = useState<"auto" | "strict" | "custom">("auto");
@@ -298,6 +301,8 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
       {/* ══════════════════════════════════════════════════════════════
           HERO SECTION
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSectionList layout={layout}>
+      <CmsSlot id="hero">
       <PageHero
         cms={resolveCmsHero(cmsHero, language)}
         badge={language === "ID" ? "Interoperabilitas Laboratorium" : "Laboratory Interoperability Suite"}
@@ -352,10 +357,12 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
           },
         ]}
       />
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 1: ATTIO-STYLE CONNECTED NODE CANVAS & WORKFLOW SPLIT (#integration-explorer)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="integration-explorer">
       <section
         id="integration-explorer"
         className="w-full py-16 sm:py-24 bg-[#FAFBFD] border-y border-slate-200/70 scroll-mt-20"
@@ -366,21 +373,21 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Arsitektur Interoperabilitas" : "Interoperability Architecture"}
+                  {st("integration-explorer", "badge", language === "ID" ? "Arsitektur Interoperabilitas" : "Interoperability Architecture")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.12] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("integration-explorer", "title", language === "ID"
                   ? "Satu Hub Terpadu untuk Seluruh Ekosistem Data Medis"
-                  : "One Unified Hub for Your Entire Clinical Data Ecosystem"}
+                  : "One Unified Hub for Your Entire Clinical Data Ecosystem")}
               </h2>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <p className="max-w-sm text-sm leading-relaxed text-slate-600 font-normal">
-                {language === "ID"
+                {st("integration-explorer", "subtitle", language === "ID"
                   ? "Klik simpul mana saja pada diagram untuk memeriksa alur otomatisasi dan protokolnya."
-                  : "Select any node on the diagram to inspect its live automation flow and protocols."}
+                  : "Select any node on the diagram to inspect its live automation flow and protocols.")}
               </p>
               <button
                 type="button"
@@ -679,10 +686,12 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 2: GRADEWITHAI-STYLE ARCHITECTURAL HAIRLINE GRID (#architecture)
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="architecture">
       <section id="architecture" className="w-full py-16 sm:py-24 bg-white border-b border-slate-200/70">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           {/* Split Header */}
@@ -690,19 +699,19 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Kapabilitas Teknis" : "Engineering Capabilities"}
+                  {st("architecture", "badge", language === "ID" ? "Kapabilitas Teknis" : "Engineering Capabilities")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.12] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("architecture", "title", language === "ID"
                   ? "Semua yang Dibutuhkan untuk Integrasi Tanpa Friksi"
-                  : "Everything You Need for Frictionless Lab Integration"}
+                  : "Everything You Need for Frictionless Lab Integration")}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("architecture", "subtitle", language === "ID"
                 ? "Dari Host Query barcode, validasi Westgard QC, pemetaan LOINC, hingga ketahanan jaringan offline—seluruhnya dirancang presisi."
-                : "From barcode Host Query and Westgard QC gating to LOINC normalization and offline edge resilience."}
+                : "From barcode Host Query and Westgard QC gating to LOINC normalization and offline edge resilience.")}
             </p>
           </div>
 
@@ -896,29 +905,31 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3: ENTERPRISE ANALYZER COMPATIBILITY DIRECTORY
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="analyzer-directory">
       <section className="w-full py-16 sm:py-24 bg-[#FAFBFD] border-b border-slate-200/70">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
             <div className="max-w-2xl">
               <div className="mb-3.5">
                 <SectionBadge variant="blue">
-                  {language === "ID" ? "Direktori 500+ Analyzer" : "500+ Analyzer Directory"}
+                  {st("analyzer-directory", "badge", language === "ID" ? "Direktori 500+ Analyzer" : "500+ Analyzer Directory")}
                 </SectionBadge>
               </div>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-bold leading-[1.12] tracking-tight text-slate-900">
-                {language === "ID"
+                {st("analyzer-directory", "title", language === "ID"
                   ? "Matriks Kompatibilitas Instrumen Laboratorium"
-                  : "Laboratory Instrument Compatibility Matrix"}
+                  : "Laboratory Instrument Compatibility Matrix")}
               </h2>
             </div>
             <p className="max-w-md text-sm sm:text-base leading-relaxed text-slate-600 font-normal">
-              {language === "ID"
+              {st("analyzer-directory", "subtitle", language === "ID"
                 ? "Cari merek atau seri mesin laboratorium Anda untuk melihat antarmuka fisik dan protokol yang didukung native."
-                : "Search your analyzer brand or series to inspect natively supported physical interfaces and protocols."}
+                : "Search your analyzer brand or series to inspect natively supported physical interfaces and protocols.")}
             </p>
           </div>
 
@@ -1032,10 +1043,12 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 4: REGULATORY & SECURITY COMPLIANCE
           ══════════════════════════════════════════════════════════════ */}
+      <CmsSlot id="compliance">
       <section className="w-full py-16 sm:py-20 bg-white">
         <div className="mx-auto max-w-[1560px] px-5 sm:px-6 lg:px-10">
           <div className="rounded-[28px] bg-[#F1F4F8] p-7 sm:p-10 lg:p-12">
@@ -1043,17 +1056,17 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
               <div className="lg:col-span-6 space-y-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#0073FC] text-[11px] font-bold uppercase tracking-wider border border-blue-200/70">
                   <ShieldCheck className="h-3.5 w-3.5" />
-                  <span>{language === "ID" ? "Kepatuhan Regulasi & Privasi" : "Regulatory & Privacy Compliance"}</span>
+                  <span>{st("compliance", "badge", language === "ID" ? "Kepatuhan Regulasi & Privasi" : "Regulatory & Privacy Compliance")}</span>
                 </span>
                 <h3 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-snug">
-                  {language === "ID"
+                  {st("compliance", "title", language === "ID"
                     ? "Arsitektur Interoperabilitas Sesuai Regulasi Kesehatan Nasional"
-                    : "Interoperability Architecture Built for National Health Compliance"}
+                    : "Interoperability Architecture Built for National Health Compliance")}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-xl">
-                  {language === "ID"
+                  {st("compliance", "subtitle", language === "ID"
                     ? "Setiap pertukaran data dilindungi enkripsi TLS 1.3 / AES-256 serta memenuhi amanat Permenkes 24/2022, standar SATUSEHAT Kemenkes RI, dan UU Perlindungan Data Pribadi."
-                    : "Every data exchange is guarded by TLS 1.3 / AES-256 encryption, fully aligning with Permenkes 24/2022, MoH SATUSEHAT FHIR, and Indonesia's PDP Act."}
+                    : "Every data exchange is guarded by TLS 1.3 / AES-256 encryption, fully aligning with Permenkes 24/2022, MoH SATUSEHAT FHIR, and Indonesia's PDP Act.")}
                 </p>
               </div>
 
@@ -1087,11 +1100,15 @@ export default function IntegrationPageClient({ cmsHero }: { cmsHero?: CmsPageHe
           </div>
         </div>
       </section>
+      </CmsSlot>
 
       {/* ══════════════════════════════════════════════════════════════
           BOTTOM CTA BANNER
           ══════════════════════════════════════════════════════════════ */}
-      <CTABanner bgClassName="bg-[#FAFBFD]" topColor="#FAFBFD" />
+      <CmsSlot id="cta">
+      <CTABanner initialData={cta} bgClassName="bg-[#FAFBFD]" topColor="#FAFBFD" />
+      </CmsSlot>
+      </CmsSectionList>
     </div>
   );
 }

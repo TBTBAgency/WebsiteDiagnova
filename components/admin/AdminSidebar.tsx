@@ -17,6 +17,7 @@ import {
   UserCheck,
   Globe,
   Compass,
+  Layers,
 } from "lucide-react";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { AuthSessionPayload } from "@/types";
@@ -56,6 +57,11 @@ const NAV_ITEMS: NavItem[] = [
     icon: Globe,
     badge: "Hub",
     badgeVariant: "blue",
+  },
+  {
+    name: "Halaman & Section",
+    href: "/admin/page-sections",
+    icon: Layers,
   },
   {
     name: "Audit Log",
