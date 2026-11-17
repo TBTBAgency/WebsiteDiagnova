@@ -61,6 +61,10 @@ export const LEAD_STATUS = {
   COMPLETED: 4,
 } as const;
 
+/** Pilihan durasi akses demo saat approval (hari). 30 hari = 1 bulan. */
+export const DEMO_DURATION_OPTIONS = [3, 7, 14, 30] as const;
+export const DEFAULT_DEMO_DURATION_DAYS = 7;
+
 /** Transisi status yang boleh dilakukan admin secara manual. */
 export const MANUAL_STATUS_TRANSITIONS: Record<number, number[]> = {
   [LEAD_STATUS.NEW]: [LEAD_STATUS.CONTACTED],
@@ -208,6 +212,8 @@ export async function createLead(input: DemoRequestInput): Promise<DemoRequestRe
       demoDate: requestedDate,
       status: LEAD_STATUS.CONTACTED, // Ketentuan bisnis: form tersimpan => Dihubungi
       approvalStatus: PrismaLeadApprovalStatus.PENDING,
+      // Durasi akses standar (dapat dipilih admin saat approval: 3 / 7 / 14 hari / 1 bulan).
+      demoDurationDays: DEFAULT_DEMO_DURATION_DAYS,
     },
     include: {
       user: true,
@@ -491,8 +497,9 @@ export async function rejectLead(
         rejectionReason: options.rejectionReason,
       },
     }),
+    // Semua tautan dicabut, termasuk tautan yang sudah aktif (dipakai untuk masuk kembali).
     db.demoMagicLink.updateMany({
-      where: { leadId, usedAt: null, expiresAt: { gt: now } },
+      where: { leadId, expiresAt: { gt: now } },
       data: { expiresAt: now },
     }),
   ]);
@@ -600,6 +607,12 @@ export async function extendDemoAccess(
   await db.$transaction([
     db.user.update({ where: { id: user.id }, data: { demoExpiresAt: newExpiresAt } }),
     db.lead.update({ where: { id: leadId }, data: { voucherExpiry: newExpiresAt } }),
+    // Tautan aktif lead ini berlaku sampai akhir masa akses: ikut diperpanjang. Tautan yang
+    // dicabut (expiresAt = waktu pencabutan) tidak cocok dengan masa akses lama, jadi tidak ikut aktif.
+    db.demoMagicLink.updateMany({
+      where: { leadId, usedAt: { not: null }, expiresAt: user.demoExpiresAt },
+      data: { expiresAt: newExpiresAt },
+    }),
   ]);
 
   return {

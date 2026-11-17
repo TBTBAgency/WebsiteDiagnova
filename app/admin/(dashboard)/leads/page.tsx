@@ -264,7 +264,10 @@ export default function AdminLeadsPage() {
             .slice(0, 16)
         : ""
     );
-    setApprovalDuration(lead.demoDurationDays || 7);
+    // Permohonan yang belum pernah disetujui memakai durasi standar 7 hari; yang sudah
+    // disetujui memakai durasi terakhirnya (bila termasuk pilihan yang tersedia).
+    const lastDuration = lead.demoDurationDays ?? 0;
+    setApprovalDuration(lead.approvalStatus === "APPROVED" && [3, 7, 14, 30].includes(lastDuration) ? lastDuration : 7);
     setActionSuccessMessage("");
     setCopiedVoucher(false);
     setShowRejectForm(false);
@@ -291,7 +294,7 @@ export default function AdminLeadsPage() {
       if (res.ok && json.success && json.data) {
         setSelectedLead(json.data.lead);
         setGeneratedMagicLink(json.data.magicLinkUrl);
-        setActionSuccessMessage(json.message || "Permohonan demo disetujui. Magic Link berlaku 24 jam.");
+        setActionSuccessMessage(json.message || "Permohonan demo disetujui. Magic Link harus dibuka pertama kali dalam 24 jam.");
         fetchLeads();
         fetchHistory(selectedLead.id);
       } else {
@@ -467,7 +470,7 @@ export default function AdminLeadsPage() {
       if (activeLink) {
         message += `🔗 *Tautan Masuk Langsung (Magic Link Tanpa Password):*\n`;
         message += `${activeLink}\n\n`;
-        message += `_Catatan: Tautan berlaku 24 jam dan hanya dapat digunakan 1 kali demi keamanan sistem laboratorium._\n\n`;
+        message += `_Catatan: Buka tautan pertama kali dalam 24 jam. Setelah itu, tautan yang sama dapat dipakai untuk masuk kembali selama masa aktif akun._\n\n`;
       }
     } else {
       message += `Saya dari tim spesialis Diagnova ingin mengonfirmasi jadwal presentasi demo teknis Anda.\n\n`;
@@ -1085,7 +1088,7 @@ export default function AdminLeadsPage() {
                 {selectedLead.approvalStatus === "PENDING" && (
                   <div className="space-y-3 pt-1">
                     <p className="text-xs text-slate-600 leading-relaxed bg-amber-50/70 p-3 rounded-xl border border-amber-200/80">
-                      Permohonan ini menunggu verifikasi admin. Menyetujui permohonan akan mengaktifkan akun demo dan menghasilkan <strong>Magic Link (passwordless login)</strong> berdurasi 24 jam untuk calon klien.
+                      Permohonan ini menunggu verifikasi admin. Menyetujui permohonan akan mengaktifkan akun demo dan menghasilkan <strong>Magic Link (passwordless login)</strong> untuk calon klien (dibuka pertama kali dalam 24 jam, lalu dapat dipakai masuk kembali selama masa aktif).
                     </p>
 
                     {/* Konfirmasi Jadwal Resmi */}
@@ -1113,11 +1116,12 @@ export default function AdminLeadsPage() {
                           { days: 3, label: "3 Hari" },
                           { days: 7, label: "7 Hari (Standard)" },
                           { days: 14, label: "14 Hari" },
-                          { days: 30, label: "30 Hari" },
+                          { days: 30, label: "1 Bulan" },
                         ].map((opt) => (
                           <button
                             key={opt.days}
                             type="button"
+                            data-testid={`approval-duration-${opt.days}`}
                             onClick={() => setApprovalDuration(opt.days)}
                             className={`py-2 px-2 rounded-xl text-xs font-semibold border transition-all ${
                               approvalDuration === opt.days

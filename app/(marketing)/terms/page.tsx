@@ -46,7 +46,7 @@ export default function TermsPage() {
             <ul className="list-disc pl-5 space-y-1">
               <li>
                 Akses demo diberikan melalui tautan masuk (Magic Link) yang dikirim setelah permohonan disetujui. Tautan
-                berlaku 24 jam dan hanya dapat digunakan satu kali.
+                harus dibuka pertama kali dalam 24 jam; setelah aktif, tautan yang sama dapat digunakan untuk masuk kembali selama masa akses demo.
               </li>
               <li>
                 Masa akses demo dihitung sejak tautan pertama kali berhasil digunakan, sesuai durasi yang ditetapkan saat

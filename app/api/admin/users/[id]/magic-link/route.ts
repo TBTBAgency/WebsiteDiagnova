@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     });
     return NextResponse.json<ApiResponse>({
       success: true,
-      message: "Magic Link baru diterbitkan (berlaku 24 jam, sekali pakai). Tautan lama tidak berlaku lagi.",
+      message: "Magic Link baru diterbitkan (buka pertama kali dalam 24 jam; dapat dipakai masuk kembali selama masa demo). Tautan lama tidak berlaku lagi.",
       data: { magicLinkUrl: result.magicLinkUrl, expiresAt: result.expiresAt, leadId: result.leadId },
     });
   } catch (error) {

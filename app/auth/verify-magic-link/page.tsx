@@ -50,9 +50,9 @@ function FailureCard({ reason }: { reason: MagicLinkFailureReason }) {
           </div>
           <ul className="text-slate-500 space-y-1 text-[11px] list-disc list-inside">
             <li>
-              Tautan Magic Link bersifat <strong>sekali pakai</strong> (single-use).
+              Tautan Magic Link harus dibuka pertama kali dalam <strong>24 jam</strong> sejak dibuat.
             </li>
-            <li>Tautan berlaku 24 jam sejak dibuat, dan hanya tautan terbaru yang berlaku.</li>
+            <li>Setelah aktif, tautan yang sama dapat dipakai untuk masuk kembali sampai masa akses demo berakhir. Hanya tautan terbaru yang berlaku.</li>
             <li>Jika Anda memerlukan tautan baru, silakan hubungi tim sales kami.</li>
           </ul>
         </div>
@@ -107,10 +107,21 @@ export default async function VerifyMagicLinkPage({ searchParams }: PageProps) {
         </div>
         <div className="space-y-1.5">
           <h2 className="text-xl font-bold text-slate-900 font-display">Akses Demo Diagnova</h2>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Halo <strong>{status.leadName}</strong> ({status.institution}). Tekan tombol di bawah untuk masuk ke
-            sesi demo Anda. Tautan ini hanya dapat digunakan satu kali.
-          </p>
+          {status.returning ? (
+            <p className="text-xs text-slate-600 leading-relaxed" data-testid="magic-link-returning">
+              Selamat datang kembali, <strong>{status.leadName}</strong> ({status.institution}). Akses demo Anda masih
+              aktif
+              {status.accessExpiresAt
+                ? ` hingga ${new Date(status.accessExpiresAt).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", dateStyle: "medium", timeStyle: "short" })} WIB`
+                : ""}
+              . Tekan tombol di bawah untuk masuk kembali.
+            </p>
+          ) : (
+            <p className="text-xs text-slate-600 leading-relaxed" data-testid="magic-link-first">
+              Halo <strong>{status.leadName}</strong> ({status.institution}). Tekan tombol di bawah untuk masuk ke
+              sesi demo Anda. Setelah aktif, tautan ini dapat dipakai untuk masuk kembali selama masa akses demo.
+            </p>
+          )}
         </div>
 
         <form method="POST" action="/api/auth/magic-link" className="pt-2">

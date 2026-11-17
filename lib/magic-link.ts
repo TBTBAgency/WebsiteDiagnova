@@ -6,6 +6,7 @@ import { setSessionCookie } from "@/lib/auth-session";
 import { recordAuditLog } from "@/lib/models/audit.model";
 import { LEAD_STATUS, transitionLeadStatus } from "@/lib/models/lead.model";
 import { buildMagicLinkUrl, getAppBaseUrl } from "@/lib/app-url";
+import { getDemoAccessUrl } from "@/lib/demo-access";
 
 export const MAGIC_LINK_TTL_HOURS = 24;
 
@@ -29,10 +30,9 @@ export type MagicLinkFailureReason =
 export const MAGIC_LINK_FAILURE_MESSAGES: Record<MagicLinkFailureReason, string> = {
   missing: "Tautan akses demo tidak memiliki token verifikasi yang valid.",
   invalid: "Tautan magic link tidak valid atau tidak ditemukan.",
-  used:
-    "Tautan ini sudah pernah digunakan. Demi keamanan, setiap tautan hanya dapat digunakan satu kali. Hubungi tim Diagnova untuk tautan baru.",
+  used: "Tautan ini baru saja dipakai oleh permintaan lain. Muat ulang halaman tautan lalu coba masuk kembali.",
   link_expired:
-    "Tautan magic link telah kedaluwarsa atau sudah digantikan tautan yang lebih baru. Hubungi tim Diagnova untuk mendapatkan tautan baru.",
+    "Tautan magic link telah kedaluwarsa, dicabut, atau sudah digantikan tautan yang lebih baru. Hubungi tim Diagnova untuk mendapatkan tautan baru.",
   not_approved: "Permohonan demo untuk tautan ini tidak lagi aktif. Hubungi tim Diagnova untuk informasi lebih lanjut.",
   account_inactive: "Akun demo Anda sedang dinonaktifkan. Hubungi tim Diagnova untuk informasi lebih lanjut.",
   account_forbidden: "Tautan ini tidak dapat digunakan untuk akun tersebut.",
@@ -73,8 +73,10 @@ export async function createDemoMagicLink(
   const expiresAt = new Date(now.getTime() + expiresInHours * 60 * 60 * 1000);
 
   await db.$transaction([
+    // Semua tautan lama lead ini dicabut — termasuk tautan yang sudah dipakai dan masih dapat
+    // dipakai untuk masuk kembali — sehingga hanya tautan terbaru yang berlaku.
     db.demoMagicLink.updateMany({
-      where: { leadId, usedAt: null, expiresAt: { gt: now } },
+      where: { leadId, expiresAt: { gt: now } },
       data: { expiresAt: now },
     }),
     db.demoMagicLink.create({
@@ -109,19 +111,33 @@ export async function getLatestMagicLinkForLead(leadId: string) {
  */
 export async function inspectMagicLink(
   rawToken: string | undefined
-): Promise<{ valid: true; leadName: string; institution: string } | { valid: false; reason: MagicLinkFailureReason }> {
+): Promise<
+  | { valid: true; leadName: string; institution: string; returning: boolean; accessExpiresAt: string | null }
+  | { valid: false; reason: MagicLinkFailureReason }
+> {
   if (!rawToken || !/^[a-f0-9]{64}$/i.test(rawToken.trim())) {
     return { valid: false, reason: rawToken ? "invalid" : "missing" };
   }
   const record = await db.demoMagicLink.findUnique({
     where: { tokenHash: hashToken(rawToken) },
-    include: { lead: { select: { name: true, institution: true, approvalStatus: true } } },
+    include: {
+      lead: { select: { name: true, institution: true, approvalStatus: true } },
+      user: { select: { demoActivatedAt: true, demoExpiresAt: true } },
+    },
   });
   if (!record) return { valid: false, reason: "invalid" };
-  if (record.usedAt) return { valid: false, reason: "used" };
-  if (new Date() > record.expiresAt) return { valid: false, reason: "link_expired" };
+  const now = new Date();
+  const accessEnded = !!(record.user?.demoActivatedAt && record.user.demoExpiresAt && now > record.user.demoExpiresAt);
+  if (accessEnded) return { valid: false, reason: "demo_expired" };
+  if (now > record.expiresAt) return { valid: false, reason: "link_expired" };
   if (record.lead.approvalStatus !== LeadApprovalStatus.APPROVED) return { valid: false, reason: "not_approved" };
-  return { valid: true, leadName: record.lead.name, institution: record.lead.institution };
+  return {
+    valid: true,
+    leadName: record.lead.name,
+    institution: record.lead.institution,
+    returning: record.usedAt !== null,
+    accessExpiresAt: record.usedAt && record.user?.demoExpiresAt ? record.user.demoExpiresAt.toISOString() : null,
+  };
 }
 
 /**
@@ -162,10 +178,7 @@ export async function verifyAndConsumeMagicLink(
     return fail(reason);
   };
 
-  if (magicRecord.usedAt !== null) return auditFailure("used");
   const now = new Date();
-  if (now > magicRecord.expiresAt) return auditFailure("link_expired");
-  if (magicRecord.lead.approvalStatus !== LeadApprovalStatus.APPROVED) return auditFailure("not_approved");
 
   // Pastikan akun klien tersedia dan memang akun USER yang aktif
   let user = magicRecord.user;
@@ -175,8 +188,36 @@ export async function verifyAndConsumeMagicLink(
 
   if (user && user.role?.name !== "USER") return auditFailure("account_forbidden");
   if (user && user.status !== 1) return auditFailure("account_inactive");
+  // Masa akses habis: mekanisme akses demo tidak dapat dipakai lagi (status lead TIDAK diubah).
   if (user?.demoActivatedAt && user.demoExpiresAt && now > user.demoExpiresAt) {
     return auditFailure("demo_expired");
+  }
+  if (now > magicRecord.expiresAt) return auditFailure("link_expired");
+  if (magicRecord.lead.approvalStatus !== LeadApprovalStatus.APPROVED) return auditFailure("not_approved");
+
+  // LOGIN ULANG: tautan yang sudah aktif dapat dipakai lagi selama masa akses berlaku
+  // (expiresAt tautan = akhir masa akses; dicabut bila ada tautan baru / penolakan).
+  // Tidak ada perubahan status lead dan tidak ada perubahan masa akses.
+  if (magicRecord.usedAt !== null) {
+    if (!user || !user.demoActivatedAt || !user.demoExpiresAt) return auditFailure("invalid");
+    await recordAuditLog({
+      userId: user.id,
+      action: "MAGIC_LINK_RELOGIN",
+      entity: "Lead",
+      recordId: magicRecord.leadId,
+      newValue: { magicLinkId: magicRecord.id },
+      ipAddress: clientIp,
+      userAgent,
+    });
+    const sessionPayload: AuthSessionPayload = {
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role?.name || "USER",
+      demoExpiresAt: user.demoExpiresAt.toISOString(),
+    };
+    await setSessionCookie(sessionPayload);
+    return { success: true, sessionPayload, redirectUrl: getDemoAccessUrl() };
   }
 
   // Konsumsi token secara atomik: hanya satu request yang bisa berhasil
@@ -236,6 +277,14 @@ export async function verifyAndConsumeMagicLink(
     });
   }
 
+  // Setelah aktif, tautan yang sama berlaku untuk masuk kembali sampai masa akses berakhir.
+  if (demoExpiresAt) {
+    await db.demoMagicLink.updateMany({
+      where: { id: magicRecord.id, usedAt: { not: null } },
+      data: { expiresAt: demoExpiresAt },
+    });
+  }
+
   await recordAuditLog({
     userId: user.id,
     action: "MAGIC_LINK_CONSUMED",
@@ -275,5 +324,5 @@ export async function verifyAndConsumeMagicLink(
 
   await setSessionCookie(sessionPayload);
 
-  return { success: true, sessionPayload, redirectUrl: "/" };
+  return { success: true, sessionPayload, redirectUrl: getDemoAccessUrl() };
 }

@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
 
   const waLinkFor = (u: SafeUser, url: string) => {
     const digits = (u.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "62");
-    const text = `Halo ${u.name}, berikut tautan masuk demo Diagnova (berlaku 24 jam, sekali pakai):\n${url}`;
+    const text = `Halo ${u.name}, berikut tautan masuk demo Diagnova (buka pertama kali dalam 24 jam; setelah itu tautan yang sama dapat dipakai untuk masuk kembali selama masa demo):\n${url}`;
     return digits ? `https://wa.me/${digits}?text=${encodeURIComponent(text)}` : null;
   };
 
@@ -595,7 +595,7 @@ export default function AdminUsersPage() {
               <div>
                 <h3 className="text-base font-bold text-slate-900">Magic Link untuk {magicLinkResult.user.name}</h3>
                 <p className="text-xs text-slate-500">
-                  Berlaku hingga {new Date(magicLinkResult.expiresAt).toLocaleString("id-ID")} · sekali pakai. Tautan hanya ditampilkan sekali.
+                  Berlaku hingga {new Date(magicLinkResult.expiresAt).toLocaleString("id-ID")} · dapat dipakai masuk kembali selama masa demo. Tautan hanya ditampilkan sekali.
                 </p>
               </div>
               <button type="button" aria-label="Tutup" onClick={() => setMagicLinkResult(null)} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100">
