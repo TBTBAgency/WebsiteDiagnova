@@ -27,6 +27,9 @@ import { InstitutionType } from "@/types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 
+/** Placeholder logo belum terverifikasi — lihat docs/FINAL_DEVELOPMENT_REVIEW.md (Content cleanup). */
+const SHOW_TRUST_MARQUEE = false;
+
 // ─── Trust Marquee using Exact Home Page Logos & Slow-Down Hover Animation ───
 function TrustMarquee({ language }: { language: "ID" | "EN" }) {
   const marqueeRef = useRef<HTMLDivElement>(null);
@@ -613,8 +616,10 @@ export default function RequestDemoPage() {
                 </p>
               </div>
 
-              {/* Bottom Content: Infinite Trust Marquee with Logoipsum Logos */}
-              <TrustMarquee language={language} />
+              {/* Trust Marquee DISEMBUNYIKAN (Phase 9): hanya berisi logo placeholder generik dengan
+                  label "Dipercaya oleh Mitra". Tampilkan kembali setelah ada logo mitra terverifikasi
+                  & izin publikasi: aktifkan baris di bawah. */}
+              {SHOW_TRUST_MARQUEE && <TrustMarquee language={language} />}
             </div>
 
             {/* RIGHT: Clean Form Area (Matching Screenshot) */}
