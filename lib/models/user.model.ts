@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isAdminRole } from "@/lib/auth-secret";
 import { RoleRecord, UserRecord } from "@/types";
 import bcrypt from "bcryptjs";
 
@@ -149,7 +150,7 @@ export async function updateUser(
   }
 
   // PROTEKSI KETAT: Dilarang mengubah akun ADMIN melalui modul Manajemen Pengguna
-  if (target.role?.name === "ADMIN") {
+  if (isAdminRole(target.role?.name)) {
     throw new Error("Akses ditolak: Akun Administrator dilindungi dari modifikasi Manajemen Pengguna.");
   }
 
@@ -207,7 +208,7 @@ export async function deleteUser(id: string): Promise<SafeUser> {
   }
 
   // PROTEKSI KETAT: Dilarang menghapus akun ADMIN
-  if (target.role?.name === "ADMIN") {
+  if (isAdminRole(target.role?.name)) {
     throw new Error("Akses ditolak: Akun Administrator dilindungi dari penghapusan.");
   }
 

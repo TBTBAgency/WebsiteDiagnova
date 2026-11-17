@@ -57,6 +57,11 @@ const NAV_ITEMS: NavItem[] = [
     badge: "Hub",
     badgeVariant: "blue",
   },
+  {
+    name: "Audit Log",
+    href: "/admin/audit-logs",
+    icon: ClipboardList,
+  },
 ];
 
 interface AdminSidebarProps {

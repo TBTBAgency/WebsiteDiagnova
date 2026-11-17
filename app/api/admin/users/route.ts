@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-guard";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { recordAuditLog } from "@/lib/models/audit.model";
 import { getAllUsers, createUser } from "@/lib/models/user.model";
 import { createUserSchema } from "@/lib/validations";
 import { db } from "@/lib/db";
@@ -83,6 +84,15 @@ export async function POST(request: NextRequest) {
       roleId: userRole.id,
       status: validation.data.status,
       demoDurationDays: validation.data.demoDurationDays,
+    });
+
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_CREATED",
+      entity: "User",
+      recordId: newUser.id,
+      newValue: { email: newUser.email, role: newUser.roleName, status: newUser.status },
+      ...getClientInfo(request.headers),
     });
 
     return NextResponse.json<ApiResponse>(

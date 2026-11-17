@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-guard";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { isAdminRole } from "@/lib/auth-secret";
+import { recordAuditLog } from "@/lib/models/audit.model";
 import { updateUser, deleteUser, findUserById } from "@/lib/models/user.model";
 import { updateUserSchema } from "@/lib/validations";
 import { ApiResponse } from "@/types";
@@ -40,7 +42,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (existingUser.roleName === "ADMIN" || existingUser.role === "ADMIN") {
+    if (isAdminRole(existingUser.roleName) || isAdminRole(existingUser.role)) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -65,6 +67,22 @@ export async function PUT(request: NextRequest, { params }: Params) {
     }
 
     const updated = await updateUser(id, validation.data);
+
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_UPDATED",
+      entity: "User",
+      recordId: id,
+      oldValue: {
+        name: existingUser.name,
+        institution: existingUser.institution,
+        jobTitle: existingUser.jobTitle,
+        phone: existingUser.phone,
+        status: existingUser.status,
+      },
+      newValue: validation.data,
+      ...getClientInfo(request.headers),
+    });
 
     return NextResponse.json<ApiResponse>({
       success: true,
@@ -110,7 +128,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (existingUser.roleName === "ADMIN" || existingUser.role === "ADMIN") {
+    if (isAdminRole(existingUser.roleName) || isAdminRole(existingUser.role)) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -121,6 +139,15 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     }
 
     const deleted = await deleteUser(id);
+
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_DELETED",
+      entity: "User",
+      recordId: id,
+      oldValue: { email: deleted.email, name: deleted.name, role: deleted.roleName },
+      ...getClientInfo(request.headers),
+    });
 
     return NextResponse.json<ApiResponse>({
       success: true,

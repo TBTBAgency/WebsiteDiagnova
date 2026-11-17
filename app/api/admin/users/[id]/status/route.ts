@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-guard";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { isAdminRole } from "@/lib/auth-secret";
+import { recordAuditLog } from "@/lib/models/audit.model";
 import { toggleUserStatus, findUserById } from "@/lib/models/user.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
@@ -44,7 +46,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (existingUser.roleName === "ADMIN" || existingUser.role === "ADMIN") {
+    if (isAdminRole(existingUser.roleName) || isAdminRole(existingUser.role)) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -65,6 +67,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
 
     const updated = await toggleUserStatus(id, validation.data.status);
+
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_STATUS_CHANGED",
+      entity: "User",
+      recordId: id,
+      newValue: { status: validation.data.status },
+      ...getClientInfo(request.headers),
+    });
 
     return NextResponse.json<ApiResponse>({
       success: true,
