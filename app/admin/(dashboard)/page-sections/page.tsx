@@ -20,6 +20,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { SectionContentEditor } from "@/components/admin/SectionContentEditor";
+import type { ResolvedPageContent, SectionContentDef } from "@/lib/cms-page-content";
 import type { CustomSectionContent, ResolvedSection, SectionDefaults } from "@/lib/cms-layout";
 import type { HeroCtaContent, HeroDefaults, HeroExtraContent, HeroMetricContent } from "@/lib/cms-hero";
 
@@ -44,6 +46,9 @@ interface PageData {
   hero: (HeroData & { isPublished: boolean }) | null;
   heroDefaults: HeroDefaults | null;
   heroExtra: HeroExtraContent | null;
+  contentDefs: Record<string, SectionContentDef> | null;
+  content: ResolvedPageContent | null;
+  contentCustomized: string[];
 }
 
 interface HeroExtraDraft {
@@ -160,9 +165,13 @@ export default function PageSectionsAdminPage() {
     } else {
       setHeroExtraDraft(null);
     }
-    setExpanded(null);
     setDirty(false);
   }, [page]);
+
+  // Section yang sedang dibuka tetap terbuka setelah simpan/muat ulang; ditutup saat pindah halaman.
+  useEffect(() => {
+    setExpanded(null);
+  }, [activePage]);
 
   const updateMetric = (index: number, patch: Partial<HeroMetricContent>) =>
     setHeroExtraDraft((h) => (h ? { ...h, metrics: h.metrics.map((m, i) => (i === index ? { ...m, ...patch } : m)) } : h));
@@ -537,7 +546,8 @@ export default function PageSectionsAdminPage() {
             <ol className="space-y-2">
               {draft.map((s, index) => {
                 const isOpen = expanded === s.key;
-                const editable = s.type === "custom" || !!s.defaults;
+                const contentDef = s.type === "builtin" ? page.contentDefs?.[s.key] : undefined;
+                const editable = s.type === "custom" || !!s.defaults || !!contentDef;
                 return (
                   <li
                     key={s.key}
@@ -611,10 +621,10 @@ export default function PageSectionsAdminPage() {
 
                     {isOpen && (
                       <div className="mt-3 pt-3 border-t border-slate-100 space-y-3">
-                        {s.type === "builtin" && (
+                        {s.type === "builtin" && s.defaults && (
                           <p className="text-[11px] text-slate-500">
-                            Kosongkan kolom untuk memakai teks bawaan (ditampilkan sebagai placeholder). Isi visual, kartu, dan data
-                            demonstrasi di dalam section ini masih bagian dari desain halaman.
+                            Judul section: kosongkan kolom untuk memakai teks bawaan (ditampilkan sebagai placeholder). Judul
+                            disimpan dengan tombol Simpan Tata Letak; isi section disimpan dengan tombol Simpan Isi Section.
                           </p>
                         )}
                         {TEXT_FIELDS.filter(({ field }) => s.type === "custom" || defaultsText(s.defaults, field)).map(({ field, label, multiline }) => (
@@ -660,6 +670,21 @@ export default function PageSectionsAdminPage() {
                               />
                             </label>
                           </>
+                        )}
+                        {contentDef && page.content?.[s.key] && (
+                          <SectionContentEditor
+                            page={page.key}
+                            sectionKey={s.key}
+                            def={contentDef}
+                            value={page.content[s.key]}
+                            customized={page.contentCustomized.includes(s.key)}
+                            baseUpdatedAt={page.layoutUpdatedAt}
+                            disabledReason={dirty ? "Simpan atau batalkan perubahan tata letak terlebih dahulu sebelum menyimpan isi section." : undefined}
+                            onSaved={async (msg) => {
+                              await load();
+                              flash(`${msg} (${page.label} › ${s.label})`);
+                            }}
+                          />
                         )}
                       </div>
                     )}

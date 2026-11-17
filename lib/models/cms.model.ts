@@ -3,6 +3,42 @@ import { recordAuditLog } from "@/lib/models/audit.model";
 import { Prisma } from "@prisma/client";
 import type { CmsPageHero } from "@/lib/cms-hero";
 
+/** Error domain CMS Homepage (pesan aman untuk admin). */
+export class CmsHubError extends Error {
+  constructor(message: string, public readonly httpStatus: 400 | 404 | 409 = 400) {
+    super(message);
+    this.name = "CmsHubError";
+  }
+}
+
+/** Section yang dikelola dari CMS Homepage (menu "CMS Homepage" di admin). */
+export const HOMEPAGE_SECTION_KEYS = ["hero", "trusted_by", "about", "comparison", "workflow", "infrastructure", "testimonials", "cta"];
+
+/** Daftar item yang hanya boleh diubah lewat operasi item (bukan lewat simpan section). */
+const PROTECTED_ITEM_LISTS: Record<string, string[]> = {
+  hero: ["slides"],
+  trusted_by: ["partners"],
+  comparison: ["items"],
+  testimonials: ["items"],
+};
+
+/**
+ * Menjalankan penulisan CMS Homepage secara berurutan (lintas instance server) dengan
+ * advisory lock PostgreSQL. Fungsi simpan item membaca JSON lalu menulis ulang; tanpa
+ * serialisasi, dua penyimpanan bersamaan dapat saling menghapus perubahan.
+ */
+export async function withCmsHubWriteLock<T>(fn: () => Promise<T>): Promise<T> {
+  let result!: T;
+  await db.$transaction(
+    async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('diagnova:cms-hub'))`;
+      result = await fn();
+    },
+    { timeout: 20_000, maxWait: 20_000 }
+  );
+  return result;
+}
+
 /**
  * Mengambil section CMS; bila belum ada (mis. database baru yang belum di-seed) section
  * kosong dibuat otomatis sehingga penyimpanan item dari admin tidak gagal.
@@ -132,12 +168,27 @@ export async function updateCmsSection(
   },
   userId?: string
 ) {
+  // CMS Homepage hanya boleh menyimpan section homepage. Halaman dalam, footer, FAQ, announcement,
+  // tata letak, dan navigasi masing-masing punya editor & validasi sendiri (mencegah saling menimpa).
+  if (!HOMEPAGE_SECTION_KEYS.includes(sectionKey)) {
+    throw new CmsHubError(`Section '${sectionKey}' tidak dikelola dari CMS Homepage.`, 400);
+  }
+
   const existing = await db.cmsSection.findUnique({
     where: { sectionKey },
   });
 
   if (!existing) {
-    throw new Error(`Section CMS dengan kunci '${sectionKey}' tidak ditemukan.`);
+    throw new CmsHubError(`Section CMS dengan kunci '${sectionKey}' tidak ditemukan.`, 404);
+  }
+
+  // extraContent digabung (merge), bukan diganti: daftar item yang punya operasi simpan/hapus sendiri
+  // (slide, mitra, komparasi, testimoni) tidak boleh ditimpa oleh salinan form yang mungkin usang.
+  let mergedExtra: Prisma.InputJsonValue | undefined;
+  if (data.extraContent && typeof data.extraContent === "object") {
+    const protectedKeys = PROTECTED_ITEM_LISTS[sectionKey] || [];
+    const incoming = Object.fromEntries(Object.entries(data.extraContent).filter(([k]) => !protectedKeys.includes(k)));
+    mergedExtra = { ...((existing.extraContent as Record<string, unknown>) || {}), ...incoming } as Prisma.InputJsonValue;
   }
 
   const updated = await db.cmsSection.update({
@@ -149,9 +200,7 @@ export async function updateCmsSection(
       ...(data.titleEn !== undefined && { titleEn: data.titleEn }),
       ...(data.subtitleId !== undefined && { subtitleId: data.subtitleId }),
       ...(data.subtitleEn !== undefined && { subtitleEn: data.subtitleEn }),
-      ...(data.extraContent !== undefined && {
-        extraContent: data.extraContent ? (data.extraContent as Prisma.InputJsonValue) : Prisma.JsonNull,
-      }),
+      ...(mergedExtra !== undefined && { extraContent: mergedExtra }),
       ...(data.isPublished !== undefined && { isPublished: data.isPublished }),
       ...(userId && { updatedBy: userId }),
     },
@@ -687,20 +736,33 @@ export async function saveCmsNavigationMenu(
   const sec = await getOrCreateSection("navigation");
 
   const extra = (sec.extraContent as any) || {};
-  const menus: CmsNavMenu[] = Array.isArray(extra.menus) ? [...extra.menus] : [];
+  const menus: CmsNavMenu[] = Array.isArray(extra.menus)
+    ? extra.menus.map((m: CmsNavMenu) => ({ ...m, submenus: [...(m.submenus || [])] }))
+    : [];
+
+  // Field yang disimpan dari form. `submenus` dan `parentId` dari payload TIDAK pernah disalin:
+  // form edit membawa salinan submenu lama, yang akan menimpa perubahan submenu oleh admin lain.
+  const { submenus: _ignoredSubmenus, parentId: _parentId, ...menuFields } = menuData as typeof menuData & { submenus?: unknown };
 
   if (menuData.parentId) {
     // Menambahkan atau mengedit submenu
     const parent = menus.find((m) => m.id === menuData.parentId);
     if (!parent) throw new Error("Menu induk tidak ditemukan.");
+    if (menuData.id && menus.some((m) => m.id === menuData.id)) {
+      throw new Error("Menu utama tidak dapat dipindahkan menjadi submenu.");
+    }
 
     parent.submenus = parent.submenus || [];
     if (menuData.id) {
+      // Pindah induk: hapus dari induk lama agar tidak tergandakan.
+      for (const m of menus) {
+        if (m !== parent) m.submenus = (m.submenus || []).filter((s) => s.id !== menuData.id);
+      }
       const subIdx = parent.submenus.findIndex((s) => s.id === menuData.id);
       if (subIdx >= 0) {
         parent.submenus[subIdx] = {
           ...parent.submenus[subIdx],
-          ...menuData,
+          ...menuFields,
           sortOrder: menuData.sortOrder ?? parent.submenus[subIdx].sortOrder,
           isActive: menuData.isActive ?? parent.submenus[subIdx].isActive,
         };
@@ -738,10 +800,15 @@ export async function saveCmsNavigationMenu(
     // Menambahkan atau mengedit root menu
     if (menuData.id) {
       const idx = menus.findIndex((m) => m.id === menuData.id);
+      if (idx < 0) {
+        // Submenu yang dijadikan menu utama: hapus dari induk lamanya.
+        for (const m of menus) m.submenus = (m.submenus || []).filter((s) => s.id !== menuData.id);
+      }
       if (idx >= 0) {
         menus[idx] = {
           ...menus[idx],
-          ...menuData,
+          ...menuFields,
+          submenus: menus[idx].submenus || [],
           sortOrder: menuData.sortOrder ?? menus[idx].sortOrder,
           isActive: menuData.isActive ?? menus[idx].isActive,
         };

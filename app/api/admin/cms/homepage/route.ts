@@ -13,12 +13,8 @@ import {
   deletePartner,
   saveCmsNavigationMenu,
   deleteCmsNavigationMenu,
-  saveSolutionItem,
-  deleteSolutionItem,
-  saveModuleItem,
-  deleteModuleItem,
-  saveIntegrationItem,
-  deleteIntegrationItem,
+  withCmsHubWriteLock,
+  CmsHubError,
 } from "@/lib/models/cms.model";
 import { revalidatePath } from "next/cache";
 import { ApiResponse } from "@/types";
@@ -68,74 +64,53 @@ export async function PUT(request: NextRequest) {
     if (!guard.ok) return guard.response;
     const session = guard.session;
 
-    const body = await request.json();
-    const { type, sectionKey, action = "save", data } = body;
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json<ApiResponse>({ success: false, message: "Body JSON tidak valid." }, { status: 400 });
+    }
+    const { type, sectionKey, action = "save", data } = body || {};
 
-    let result: any = null;
-
-    if (type === "section") {
-      if (!sectionKey) {
-        return NextResponse.json<ApiResponse>(
-          { success: false, message: "Parameter 'sectionKey' wajib disertakan." },
-          { status: 400 }
-        );
-      }
-      result = await updateCmsSection(sectionKey, data, session.userId);
-    } else if (type === "hero_slide") {
-      if (action === "delete") {
-        result = await deleteHeroSlide(data.id, session.userId);
-      } else {
-        result = await saveHeroSlide(data, session.userId);
-      }
-    } else if (type === "comparison_item") {
-      if (action === "delete") {
-        result = await deleteComparisonItem(data.id, session.userId);
-      } else {
-        result = await saveComparisonItem(data, session.userId);
-      }
-    } else if (type === "testimonial") {
-      if (action === "delete") {
-        result = await deleteTestimonial(data.id, session.userId);
-      } else {
-        result = await saveTestimonial(data, session.userId);
-      }
-    } else if (type === "partner") {
-      if (action === "delete") {
-        result = await deletePartner(data.id, session.userId);
-      } else {
-        result = await savePartner(data, session.userId);
-      }
-    } else if (type === "navigation") {
-      if (action === "delete") {
-        result = await deleteCmsNavigationMenu(data.id, session.userId);
-      } else {
-        result = await saveCmsNavigationMenu(data, session.userId);
-      }
-    } else if (type === "solution_item") {
-      if (action === "delete") {
-        result = await deleteSolutionItem(data.slug, session.userId);
-      } else {
-        result = await saveSolutionItem(data, session.userId);
-      }
-    } else if (type === "module_item") {
-      if (action === "delete") {
-        result = await deleteModuleItem(data.slug, session.userId);
-      } else {
-        result = await saveModuleItem(data, session.userId);
-      }
-    } else if (type === "integration_item") {
-      if (action === "delete") {
-        result = await deleteIntegrationItem(data.slug, session.userId);
-      } else {
-        result = await saveIntegrationItem(data, session.userId);
-      }
-    } else {
+    if (type === "solution_item" || type === "module_item" || type === "integration_item") {
+      // Konten halaman dalam kini dikelola di menu Halaman & Section (dan benar-benar tampil di
+      // website). Jalur lama ini tidak pernah ditampilkan di website publik dan dinonaktifkan agar
+      // tidak ada dua tempat pengeditan.
       return NextResponse.json<ApiResponse>(
-        { success: false, message: `Tipe update '${type}' tidak dikenali.` },
+        { success: false, message: "Konten halaman Solusi/Modul/Integrasi dikelola di menu Halaman & Section." },
+        { status: 410 }
+      );
+    }
+    if (type === "section" && !sectionKey) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Parameter 'sectionKey' wajib disertakan." },
+        { status: 400 }
+      );
+    }
+    if (!data || typeof data !== "object") {
+      return NextResponse.json<ApiResponse>({ success: false, message: "Parameter 'data' wajib disertakan." }, { status: 400 });
+    }
+
+    const handlers: Record<string, () => Promise<any>> = {
+      section: () => updateCmsSection(sectionKey, data, session.userId),
+      hero_slide: () => (action === "delete" ? deleteHeroSlide(data.id, session.userId) : saveHeroSlide(data, session.userId)),
+      comparison_item: () =>
+        action === "delete" ? deleteComparisonItem(data.id, session.userId) : saveComparisonItem(data, session.userId),
+      testimonial: () => (action === "delete" ? deleteTestimonial(data.id, session.userId) : saveTestimonial(data, session.userId)),
+      partner: () => (action === "delete" ? deletePartner(data.id, session.userId) : savePartner(data, session.userId)),
+      navigation: () =>
+        action === "delete" ? deleteCmsNavigationMenu(data.id, session.userId) : saveCmsNavigationMenu(data, session.userId),
+    };
+    const handler = handlers[type as string];
+    if (!handler) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: `Tipe update '${String(type)}' tidak dikenali.` },
         { status: 400 }
       );
     }
 
+    // Semua penulisan CMS Homepage dijalankan berurutan agar tidak saling menimpa.
+    const result = await withCmsHubWriteLock(handler);
     // Revalidate paths agar perubahan langsung tampil
     try {
       revalidatePath("/");
@@ -155,6 +130,9 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error("PUT CMS Error:", error);
+    if (error instanceof CmsHubError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
     const domain = safeDomainMessage(error);
     return NextResponse.json<ApiResponse>(
       { success: false, message: domain || "Gagal menyimpan perubahan konten." },

@@ -6,6 +6,7 @@ import {
   getAllPageLayoutsForAdmin,
   savePageHero,
   savePageLayout,
+  savePageSectionContent,
 } from "@/lib/models/cms-layout.model";
 import { ApiResponse } from "@/types";
 
@@ -31,6 +32,7 @@ export async function GET() {
  * PUT /api/admin/cms/layout
  * Body: { action: "layout", page, sections: [{ key, type, isActive, content? }] }
  *    or { action: "hero", page, badgeId, badgeEn, titleId, titleEn, subtitleId, subtitleEn }
+ *    or { action: "content", page, sectionKey, content: { fields, lists } | null, baseUpdatedAt }
  */
 export async function PUT(request: NextRequest) {
   const guard = await requireAdmin();
@@ -49,8 +51,10 @@ export async function PUT(request: NextRequest) {
       result = await savePageLayout(body, guard.session.userId);
     } else if (body?.action === "hero") {
       result = await savePageHero(body, guard.session.userId);
+    } else if (body?.action === "content") {
+      result = await savePageSectionContent(body, guard.session.userId);
     } else {
-      return NextResponse.json<ApiResponse>({ success: false, message: "Parameter 'action' harus 'layout' atau 'hero'." }, { status: 400 });
+      return NextResponse.json<ApiResponse>({ success: false, message: "Parameter 'action' harus 'layout', 'hero', atau 'content'." }, { status: 400 });
     }
 
     try {
@@ -61,7 +65,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json<ApiResponse>({
       success: true,
-      message: body.action === "hero" ? "Hero halaman disimpan." : "Tata letak halaman disimpan.",
+      message: body.action === "hero" ? "Hero halaman disimpan." : body.action === "content" ? "Konten section disimpan." : "Tata letak halaman disimpan.",
       data: result,
     });
   } catch (error) {

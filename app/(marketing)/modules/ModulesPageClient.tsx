@@ -34,7 +34,9 @@ import {
   Info,
   Shuffle,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { makeContentReader, type ContentItem, type ContentReader } from "@/lib/cms-page-content";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
@@ -43,9 +45,387 @@ import type { InnerPageCmsProps } from "@/lib/cms-layout";
 import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
 
-export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCmsProps) {
+type PageLang = "ID" | "EN";
+
+/** Ikon yang dapat dipilih admin (nama = opsi select di lib/cms-content/modules.ts). */
+const ICONS: Record<string, LucideIcon> = {
+  Activity,
+  HeartPulse,
+  PackageCheck,
+  Microscope,
+  FlaskConical,
+  Cpu,
+  Database,
+  FileCheck2,
+  FileText,
+  UserCheck,
+  Shuffle,
+  Sparkles,
+  Info,
+  QrCode,
+  Zap,
+  CheckCircle2,
+  ShieldCheck,
+  Layers,
+  Clock,
+  Network,
+  Thermometer,
+  AlertTriangle,
+  SlidersHorizontal,
+  BadgeCheck,
+  BarChart2,
+  FolderGit2,
+};
+
+function iconOf(name: string, fallback: LucideIcon): LucideIcon {
+  return ICONS[name] ?? fallback;
+}
+
+/** Baris teks (satu poin per baris) dari field textarea CMS. */
+function splitLines(text: string): string[] {
+  return text.split(/\r?\n/).filter((line) => line.trim() !== "");
+}
+
+/* ── Katalog: kerangka kartu per ilustrasi (padding & jarak header terikat ilustrasi) ── */
+const CATALOG_SHELL: Record<string, { pad: string; head: string }> = {
+  workflow: { pad: "p-5 sm:p-8", head: "mb-6 sm:mb-8" },
+  reagent: { pad: "pt-5 px-5 sm:pt-8 sm:px-8 pb-0", head: "mb-5" },
+  bloodbank: { pad: "pt-5 px-5 sm:pt-8 sm:px-8 pb-0", head: "mb-6" },
+  specialty: { pad: "p-5 sm:p-8", head: "mb-6 sm:mb-8" },
+  none: { pad: "p-5 sm:p-8", head: "mb-6 sm:mb-8" },
+};
+
+/* Visual: Workflow Node Flow (ilustrasi Hematologi & Kimia Klinik) */
+function WorkflowStage({ language }: { language: PageLang }) {
+  return (
+    <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
+      {/* Left Core Hub Node */}
+      <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+        <Activity className="h-7 w-7 stroke-[2]" />
+      </div>
+
+      {/* Connector Lines (Desktop) */}
+      <svg
+        className="hidden sm:block w-14 h-[212px] shrink-0 text-slate-300"
+        viewBox="0 0 56 212"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M0 106 C24 106, 24 27, 56 27" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 106 L56 106" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 106 C24 106, 24 188, 56 188" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+
+      {/* Right Stacked Branch Cards */}
+      <div className="flex-1 w-full max-w-md space-y-2.5 sm:space-y-3">
+        {/* Top Branch */}
+        <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex items-center gap-2.5 text-xs">
+          <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+            <Zap className="h-3.5 w-3.5" />
+          </span>
+          <div className="min-w-0">
+            <p className="font-semibold text-slate-900 truncate">
+              {language === "ID" ? "Worklist Otomatis Sysmex XN-1000" : "Auto-Worklist Sysmex XN-1000"}
+            </p>
+            <p className="text-[11px] text-slate-500 truncate">
+              {language === "ID" ? "Order #LAB-8841 • ASTM Bidireksional" : "Order #LAB-8841 • Direct ASTM"}
+            </p>
+          </div>
+        </div>
+
+        {/* Middle Branch (Multi-step Validation Card) */}
+        <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-2.5 text-xs">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-semibold text-slate-900">
+              {language === "ID" ? "Validasi QC Westgard" : "Westgard QC Verification"}
+            </span>
+            <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+              In-Control ✓
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
+            <span className="font-semibold text-slate-900">
+              {language === "ID" ? "Delta Check Longitudinal" : "Longitudinal Delta Check"}
+            </span>
+            <span className="text-[10px] font-medium text-slate-500">08:14 WIB</span>
+          </div>
+          <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
+            <span className="font-semibold text-slate-900">
+              {language === "ID" ? "Rilis Hasil EMR & SATUSEHAT" : "Release to EMR & FHIR Sync"}
+            </span>
+            <span className="text-[10px] font-medium text-[#0073FC]">Auto-Sync</span>
+          </div>
+        </div>
+
+        {/* Bottom Branch */}
+        <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex items-center gap-2.5 text-xs">
+          <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
+            <QrCode className="h-3.5 w-3.5" />
+          </span>
+          <span className="font-semibold text-slate-900 truncate">
+            {language === "ID" ? "Barcode Sampel 2D Bedside" : "2D Bedside Specimen Tracking"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Visual: App Window + Floating KPI Card (ilustrasi Inventori & Reagen) */
+function ReagentStage({ language }: { language: PageLang }) {
+  return (
+    <div className="relative mt-auto pt-4">
+      {/* Background Mockup Frame */}
+      <div className="ml-6 sm:ml-10 rounded-tl-2xl bg-white border-t border-l border-slate-200/90 shadow-sm pt-4 px-5 pb-6">
+        <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded-md bg-[#0073FC] flex items-center justify-center text-white text-[9px] font-bold">
+              D
+            </span>
+            <span className="text-xs font-bold text-slate-800">Diagnova Telemetry</span>
+          </div>
+          <span className="text-[10px] font-semibold text-slate-400">500+ Lot</span>
+        </div>
+
+        {/* Subtle Area Chart SVG */}
+        <svg className="w-full h-24 text-[#0073FC]" viewBox="0 0 240 80" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="reagentGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0073FC" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#0073FC" stopOpacity="0.01" />
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="20" x2="240" y2="20" stroke="#F1F5F9" strokeWidth="1" />
+          <line x1="0" y1="45" x2="240" y2="45" stroke="#F1F5F9" strokeWidth="1" />
+          <line x1="0" y1="70" x2="240" y2="70" stroke="#F1F5F9" strokeWidth="1" />
+          <path
+            d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12 L240 80 L0 80 Z"
+            fill="url(#reagentGrad)"
+          />
+          <path
+            d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12"
+            stroke="#0073FC"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+
+      {/* Floating KPI Card */}
+      <div className="absolute top-16 left-0 w-[64%] sm:w-[60%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-[0_14px_30px_-10px_rgba(15,23,42,0.12)] group-hover:-translate-y-1 transition-transform duration-300">
+        <p className="text-[11px] font-medium text-slate-500">
+          {language === "ID" ? "Efisiensi Biaya Reagen" : "Reagent Cost Efficiency"}
+        </p>
+        <div className="mt-1 flex items-baseline gap-2">
+          <span className="font-display text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight">
+            -24%
+          </span>
+          <span className="text-[10px] font-bold text-emerald-600">▲</span>
+        </div>
+        <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200/70">
+          ✓ {language === "ID" ? "FEFO Terkendali" : "Zero Stockout"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* Visual: Mini Dashboard Bar Chart Frame (ilustrasi Bank Darah) */
+function BloodBankStage({ language }: { language: PageLang }) {
+  return (
+    <div className="mt-auto rounded-t-2xl bg-white border-t border-x border-slate-200/90 shadow-sm p-4 sm:p-5 pb-5 sm:pb-6">
+      <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <span className="w-5 h-5 rounded-md bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center">
+            <HeartPulse className="h-3.5 w-3.5" />
+          </span>
+          <span className="text-xs font-bold text-slate-800">
+            {language === "ID" ? "Stok BDRS Aktif" : "BDRS Live Inventory"}
+          </span>
+        </div>
+        <span className="px-2.5 py-0.5 rounded-full bg-[#EBF3FE] text-[#1E5299] text-[10px] font-semibold border border-blue-200/70">
+          {language === "ID" ? "Suhu: 4.1°C Aman" : "Temp: 4.1°C Safe"}
+        </span>
+      </div>
+
+      {/* Vertical Bar Chart */}
+      <div className="grid grid-cols-5 gap-3 items-end h-28 pt-2">
+        {[
+          { label: "O+", pct: "84%" },
+          { label: "A+", pct: "68%" },
+          { label: "B+", pct: "76%" },
+          { label: "AB+", pct: "48%" },
+          { label: "PRC", pct: "90%" },
+        ].map((bar) => (
+          <div key={bar.label} className="flex flex-col items-center gap-1.5 h-full justify-end">
+            <div className="w-full h-full rounded-t-lg bg-slate-100 flex items-end overflow-hidden">
+              <div
+                className="w-full bg-[#0073FC] rounded-t-md transition-all duration-500 group-hover:bg-[#1E5299]"
+                style={{ height: bar.pct }}
+              />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-500">{bar.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const TILE_TONES: Record<string, string> = {
+  blue: "bg-[#EBF3FE] text-[#2764B8]",
+  teal: "bg-teal-50 text-teal-700",
+};
+
+/* Visual: Connected Multi-Specialty Registry (ilustrasi Patologi, Mikrobiologi & Gateway) */
+function SpecialtyStage({ c }: { c: ContentReader }) {
+  const tiles = c.list("catalog", "specialtyTiles");
+  const registry = c.list("catalog", "registry");
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
+      {/* Left 2 Floating Module Cards */}
+      <div className="w-full sm:w-[42%] space-y-3">
+        {tiles.map((tile) => {
+          const TileIcon = iconOf(c.v(tile, "icon"), Microscope);
+          return (
+            <div
+              key={tile.id}
+              className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300"
+            >
+              <div className="flex items-center gap-2">
+                <span className={`w-6 h-6 rounded-lg ${TILE_TONES[c.v(tile, "tone")] ?? TILE_TONES.blue} flex items-center justify-center shrink-0`}>
+                  <TileIcon className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-xs font-bold text-slate-900">{c.t(tile, "title")}</span>
+              </div>
+              <p className="text-[11px] text-slate-500">{c.t(tile, "subtitle")}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Connector SVG */}
+      <svg
+        className="hidden sm:block w-12 h-32 shrink-0 text-slate-300"
+        viewBox="0 0 48 128"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M0 30 C22 30, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 98 C22 98, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+
+      {/* Right Unified Registry Card */}
+      <div
+        id="custom-gateway"
+        className="w-full sm:w-[46%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm space-y-2.5"
+      >
+        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          {c.text("catalog", "registryTitle")}
+        </p>
+
+        {registry.map((row) => {
+          const RowIcon = iconOf(c.v(row, "icon"), Cpu);
+          const tag = c.t(row, "tag");
+          return (
+            <div
+              key={row.id}
+              className="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0 first:pt-0 text-xs"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-6 h-6 rounded-full bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
+                  <RowIcon className="h-3.5 w-3.5" />
+                </span>
+                <span className="font-semibold text-slate-800 truncate">{c.t(row, "title")}</span>
+              </div>
+              {tag !== "" && (
+                <span className="text-[10px] font-medium text-[#0073FC] bg-blue-50 px-2 py-0.5 rounded-full shrink-0">
+                  {tag}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* Visual netral untuk kartu tambahan admin (Ilustrasi = "none"): ikon item di tengah panggung. */
+function NeutralStage({ icon: Icon }: { icon: LucideIcon }) {
+  return (
+    <div className="relative flex items-center justify-center py-6 sm:py-10 my-auto">
+      <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+        <Icon className="h-7 w-7 stroke-[2]" />
+      </div>
+    </div>
+  );
+}
+
+function CatalogStage({ card, c, language }: { card: ContentItem; c: ContentReader; language: PageLang }) {
+  switch (c.v(card, "visual")) {
+    case "workflow":
+      return <WorkflowStage language={language} />;
+    case "reagent":
+      return <ReagentStage language={language} />;
+    case "bloodbank":
+      return <BloodBankStage language={language} />;
+    case "specialty":
+      return <SpecialtyStage c={c} />;
+    default:
+      return <NeutralStage icon={iconOf(c.v(card, "icon"), Cpu)} />;
+  }
+}
+
+/* ── Skalabilitas: gaya batang bertingkat (terikat desain, dipetakan per ID tahap) ── */
+interface StepStyle {
+  hero: boolean;
+  box: string;
+  value: string;
+  segment: string;
+  desc: string;
+  volume: string;
+}
+const STEP_STYLE_LIST: StepStyle[] = [
+  {
+    hero: false,
+    box: "rounded-3xl bg-[#F4F6F9] border border-slate-200/80 p-6 flex flex-col justify-between min-h-[140px] sm:h-[210px] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md",
+    value: "font-display text-4xl sm:text-[42px] font-bold text-slate-800 tracking-tight leading-none",
+    segment: "mt-3 text-xs font-semibold text-slate-700",
+    desc: "mt-1 text-[11.5px] text-slate-500 leading-relaxed",
+    volume: "text-[11px] font-medium text-slate-400",
+  },
+  {
+    hero: false,
+    box: "rounded-3xl bg-[#EEF2F7] border border-slate-200/90 p-6 flex flex-col justify-between min-h-[155px] sm:h-[285px] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md",
+    value: "font-display text-4xl sm:text-[46px] font-bold text-slate-900 tracking-tight leading-none",
+    segment: "mt-3 text-xs font-semibold text-slate-800",
+    desc: "mt-1 text-[11.5px] text-slate-600 leading-relaxed",
+    volume: "text-[11px] font-semibold text-slate-500",
+  },
+  {
+    hero: true,
+    box: "group rounded-3xl bg-[#0073FC] text-white p-6 flex flex-col justify-between min-h-[200px] sm:h-[365px] relative overflow-hidden shadow-lg shadow-blue-600/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-blue-600/30",
+    value: "font-display text-5xl sm:text-[54px] font-bold text-white tracking-tight leading-none",
+    segment: "mt-3 text-xs font-semibold text-blue-50",
+    desc: "mt-1 text-[11.5px] text-blue-100/90 leading-relaxed",
+    volume: "",
+  },
+];
+const STEP_STYLES: Record<string, StepStyle> = {
+  "primary-clinics": STEP_STYLE_LIST[0],
+  "regional-hospitals": STEP_STYLE_LIST[1],
+  "reference-labs": STEP_STYLE_LIST[2],
+};
+
+export default function ModulesPageClient({ cmsHero, layout, cta, content }: InnerPageCmsProps) {
   const { language } = useLanguage();
   const st = makeSectionText(layout, language);
+  const c = makeContentReader(content, language);
+  const features = c.list("modules-explorer", "features");
+  const catalogCards = c.list("catalog", "cards");
+  const pillars = c.list("architecture", "pillars");
+  const steps = c.list("scalability", "steps");
   const [isClinicalView, setIsClinicalView] = useState<boolean>(false);
   const [activeCase, setActiveCase] = useState<number>(0);
 
@@ -502,125 +882,29 @@ export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCms
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 lg:gap-12 xl:gap-20 items-center">
             {/* Left Column: 4 Clean Feature Rows with Responsive Icon Badge */}
             <div className="lg:col-span-6 space-y-5 sm:space-y-7 lg:space-y-8">
-              {/* Item 1 */}
-              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <FileCheck2 className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
-                </div>
-                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Penjelasan Hasil Lab yang Mudah Dipahami" : "Clear Translation of Complex Findings"}
-                  </h3>
-                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Mengubah terminologi medis & nilai rujukan teknis menjadi narasi ramah pasien"
-                          : "Transforms technical medical terminology into clear, everyday patient language"}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Menyoroti temuan utama dan indikator kritis secara terstruktur tanpa memicu kecemasan"
-                          : "Highlights key findings and critical markers clearly without causing unnecessary anxiety"}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Item 2 */}
-              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <HeartPulse className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
-                </div>
-                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Panduan Pola Hidup Berbasis Bukti" : "Evidence-Based Lifestyle Guidance"}
-                  </h3>
-                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Memberikan rekomendasi nutrisi, hidrasi, dan kebiasaan harian selaras hasil tes"
-                          : "Delivers tailored nutrition, hydration, and daily wellness guidance aligned with results"}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Membantu pasien mengambil langkah preventif terarah sebelum jadwal kontrol berikutnya"
-                          : "Empowers proactive, preventive health management ahead of follow-up visits"}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Item 3 */}
-              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <Shuffle className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
-                </div>
-                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Roadmap Tindak Lanjut Terarah" : "Guided \"Next Steps\" Care Roadmap"}
-                  </h3>
-                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Menentukan waktu ideal untuk konsultasi ulang maupun pemeriksaan berkala bersama dokter"
-                          : "Outlines ideal timelines for physician follow-ups and routine monitoring"}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Menyediakan daftar pertanyaan kunci agar diskusi pasien dengan dokter lebih efektif"
-                          : "Suggests focused questions patients can bring to their next consultation"}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Item 4 */}
-              <div className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
-                  <UserCheck className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
-                </div>
-                <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
-                  <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
-                    {language === "ID" ? "Otorisasi & Kendali Mutlak Dokter (DPJP)" : "Physician-Approved & Clinically Verified"}
-                  </h3>
-                  <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Setiap narasi pasien wajib melalui peninjauan dan persetujuan digital dokter Sp.PK / Sp.PA"
-                          : "Every patient narrative requires mandatory clinical review and digital sign-off"}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <span className="text-slate-400 select-none shrink-0">-</span>
-                      <span>
-                        {language === "ID"
-                          ? "Menjamin akurasi diagnostik, etika medis, dan kepatuhan standar akreditasi rumah sakit"
-                          : "Ensures medical accuracy, safety guardrails, and alignment with hospital accreditation standards"}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              {features.map((feature) => {
+                const FeatureIcon = iconOf(c.v(feature, "icon"), FileCheck2);
+                return (
+                  <div key={feature.id} className="flex items-start gap-3.5 sm:gap-5 lg:gap-6 group">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-xl sm:rounded-2xl bg-[#F4F8FD] border border-blue-100/80 flex items-center justify-center shrink-0 text-[#2764B8] group-hover:scale-105 group-hover:bg-[#EBF3FE] transition-all">
+                      <FeatureIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 stroke-[1.6]" />
+                    </div>
+                    <div className="space-y-1 sm:space-y-1.5 flex-1 pt-0.5">
+                      <h3 className="font-display text-base sm:text-lg lg:text-[19px] font-bold text-slate-900 leading-snug group-hover:text-[#2764B8] transition-colors">
+                        {c.t(feature, "title")}
+                      </h3>
+                      <ul className="space-y-1 text-[13px] sm:text-sm text-slate-600 leading-relaxed font-normal">
+                        {splitLines(c.t(feature, "bullets")).map((bullet, bIdx) => (
+                          <li key={bIdx} className="flex items-start gap-1.5 sm:gap-2">
+                            <span className="text-slate-400 select-none shrink-0">-</span>
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Right Column: Dynamic & Responsive Report Card with Specialty & Mode Switcher */}
@@ -798,331 +1082,30 @@ export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCms
 
           {/* 2x2 Asymmetrical Bento Grid — Horizontal snap-scroll on mobile, grid on md+ */}
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-3 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-12 md:gap-5 sm:gap-6 md:mx-0 md:px-0 md:pb-0 md:overflow-visible items-stretch">
-            {/* ── BENTO 1 (WIDE - 7 COLS): Routine & Hematology + Analyzer Workflow ── */}
-            <div
-              id="routine-hematology"
-              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-5 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
-            >
-              <div className="mb-6 sm:mb-8">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Otomasi Hematologi & Kimia Klinik" : "Routine Hematology & Clinical Chemistry"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Menghubungkan analyzer secara langsung tanpa entri data manual."
-                    : "Direct bidirectional ASTM/HL7 interfacing with zero manual transcription."}
-                </p>
-              </div>
-
-              {/* Visual: Workflow Node Flow */}
-              <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
-                {/* Left Core Hub Node */}
-                <div className="relative z-10 w-14 h-14 rounded-2xl bg-[#0073FC] text-white shadow-[0_8px_20px_-4px_rgba(0,115,252,0.45)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  <Activity className="h-7 w-7 stroke-[2]" />
-                </div>
-
-                {/* Connector Lines (Desktop) */}
-                <svg
-                  className="hidden sm:block w-14 h-[212px] shrink-0 text-slate-300"
-                  viewBox="0 0 56 212"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d="M0 106 C24 106, 24 27, 56 27" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 106 L56 106" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 106 C24 106, 24 188, 56 188" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-
-                {/* Right Stacked Branch Cards */}
-                <div className="flex-1 w-full max-w-md space-y-2.5 sm:space-y-3">
-                  {/* Top Branch */}
-                  <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex items-center gap-2.5 text-xs">
-                    <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                      <Zap className="h-3.5 w-3.5" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-slate-900 truncate">
-                        {language === "ID" ? "Worklist Otomatis Sysmex XN-1000" : "Auto-Worklist Sysmex XN-1000"}
-                      </p>
-                      <p className="text-[11px] text-slate-500 truncate">
-                        {language === "ID" ? "Order #LAB-8841 • ASTM Bidireksional" : "Order #LAB-8841 • Direct ASTM"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Middle Branch (Multi-step Validation Card) */}
-                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-2.5 text-xs">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-slate-900">
-                        {language === "ID" ? "Validasi QC Westgard" : "Westgard QC Verification"}
-                      </span>
-                      <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        In-Control ✓
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
-                      <span className="font-semibold text-slate-900">
-                        {language === "ID" ? "Delta Check Longitudinal" : "Longitudinal Delta Check"}
-                      </span>
-                      <span className="text-[10px] font-medium text-slate-500">08:14 WIB</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
-                      <span className="font-semibold text-slate-900">
-                        {language === "ID" ? "Rilis Hasil EMR & SATUSEHAT" : "Release to EMR & FHIR Sync"}
-                      </span>
-                      <span className="text-[10px] font-medium text-[#0073FC]">Auto-Sync</span>
-                    </div>
-                  </div>
-
-                  {/* Bottom Branch */}
-                  <div className="rounded-xl bg-white border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex items-center gap-2.5 text-xs">
-                    <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center shrink-0">
-                      <QrCode className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="font-semibold text-slate-900 truncate">
-                      {language === "ID" ? "Barcode Sampel 2D Bedside" : "2D Bedside Specimen Tracking"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── BENTO 2 (NARROW - 5 COLS): Inventory & Reagent Telemetry ── */}
-            <div
-              id="inventory-reagent"
-              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-5 px-5 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
-            >
-              <div className="mb-5">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Inventori & Reagen Pintar" : "Smart Reagent Intelligence"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Pantau sisa stok lot & tanggal kedaluwarsa secara real-time."
-                    : "Real-time reagent depletion, lot tracking, and FEFO expiry alerts."}
-                </p>
-              </div>
-
-              {/* Visual: App Window + Floating KPI Card */}
-              <div className="relative mt-auto pt-4">
-                {/* Background Mockup Frame */}
-                <div className="ml-6 sm:ml-10 rounded-tl-2xl bg-white border-t border-l border-slate-200/90 shadow-sm pt-4 px-5 pb-6">
-                  <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
-                    <div className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-md bg-[#0073FC] flex items-center justify-center text-white text-[9px] font-bold">
-                        D
-                      </span>
-                      <span className="text-xs font-bold text-slate-800">Diagnova Telemetry</span>
-                    </div>
-                    <span className="text-[10px] font-semibold text-slate-400">500+ Lot</span>
-                  </div>
-
-                  {/* Subtle Area Chart SVG */}
-                  <svg className="w-full h-24 text-[#0073FC]" viewBox="0 0 240 80" fill="none" aria-hidden="true">
-                    <defs>
-                      <linearGradient id="reagentGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#0073FC" stopOpacity="0.22" />
-                        <stop offset="100%" stopColor="#0073FC" stopOpacity="0.01" />
-                      </linearGradient>
-                    </defs>
-                    <line x1="0" y1="20" x2="240" y2="20" stroke="#F1F5F9" strokeWidth="1" />
-                    <line x1="0" y1="45" x2="240" y2="45" stroke="#F1F5F9" strokeWidth="1" />
-                    <line x1="0" y1="70" x2="240" y2="70" stroke="#F1F5F9" strokeWidth="1" />
-                    <path
-                      d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12 L240 80 L0 80 Z"
-                      fill="url(#reagentGrad)"
-                    />
-                    <path
-                      d="M0 68 L48 56 L96 60 L150 32 L195 38 L240 12"
-                      stroke="#0073FC"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </div>
-
-                {/* Floating KPI Card */}
-                <div className="absolute top-16 left-0 w-[64%] sm:w-[60%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-[0_14px_30px_-10px_rgba(15,23,42,0.12)] group-hover:-translate-y-1 transition-transform duration-300">
-                  <p className="text-[11px] font-medium text-slate-500">
-                    {language === "ID" ? "Efisiensi Biaya Reagen" : "Reagent Cost Efficiency"}
-                  </p>
-                  <div className="mt-1 flex items-baseline gap-2">
-                    <span className="font-display text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight">
-                      -24%
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-600">▲</span>
-                  </div>
-                  <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200/70">
-                    ✓ {language === "ID" ? "FEFO Terkendali" : "Zero Stockout"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* ── BENTO 3 (NARROW - 5 COLS): Blood Bank (BDRS) Telemetry ── */}
-            <div
-              id="blood-bank"
-              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-5 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 pt-5 px-5 sm:pt-8 sm:px-8 pb-0 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
-            >
-              <div className="mb-6">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID" ? "Manajemen Bank Darah (BDRS)" : "Blood Bank & Transfusion (BDRS)"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Pantau stok golongan darah, suhu 2°–6°C, & crossmatch elektronik."
-                    : "Track ISBT-128 blood bags, cold-chain sensors, and electronic crossmatching."}
-                </p>
-              </div>
-
-              {/* Visual: Mini Dashboard Bar Chart Frame */}
-              <div className="mt-auto rounded-t-2xl bg-white border-t border-x border-slate-200/90 shadow-sm p-4 sm:p-5 pb-5 sm:pb-6">
-                <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-md bg-[#EBF3FE] text-[#0073FC] flex items-center justify-center">
-                      <HeartPulse className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="text-xs font-bold text-slate-800">
-                      {language === "ID" ? "Stok BDRS Aktif" : "BDRS Live Inventory"}
-                    </span>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#EBF3FE] text-[#1E5299] text-[10px] font-semibold border border-blue-200/70">
-                    {language === "ID" ? "Suhu: 4.1°C Aman" : "Temp: 4.1°C Safe"}
-                  </span>
-                </div>
-
-                {/* Vertical Bar Chart */}
-                <div className="grid grid-cols-5 gap-3 items-end h-28 pt-2">
-                  {[
-                    { label: "O+", pct: "84%" },
-                    { label: "A+", pct: "68%" },
-                    { label: "B+", pct: "76%" },
-                    { label: "AB+", pct: "48%" },
-                    { label: "PRC", pct: "90%" },
-                  ].map((bar) => (
-                    <div key={bar.label} className="flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full h-full rounded-t-lg bg-slate-100 flex items-end overflow-hidden">
-                        <div
-                          className="w-full bg-[#0073FC] rounded-t-md transition-all duration-500 group-hover:bg-[#1E5299]"
-                          style={{ height: bar.pct }}
-                        />
-                      </div>
-                      <span className="text-[10px] font-semibold text-slate-500">{bar.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* ── BENTO 4 (WIDE - 7 COLS): Pathology, Microbiology & Custom Gateway ── */}
-            <div
-              id="pathology"
-              className="w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 lg:col-span-7 rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 p-5 sm:p-8 flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300"
-            >
-              <div id="microbiology" className="mb-6 sm:mb-8">
-                <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-                  {language === "ID"
-                    ? "Patologi Anatomi, Mikrobiologi & Gateway"
-                    : "Pathology, Microbiology & Specialty Gateway"}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
-                  {language === "ID"
-                    ? "Pelacakan kaset 2D, antibiogram CLSI/PPRA, hingga parser instrumen khusus."
-                    : "2D cassette tracking, CLSI antibiograms, and custom HL7/ASTM/molecular parsers."}
-                </p>
-              </div>
-
-              {/* Visual: Connected Multi-Specialty Registry */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 py-2 my-auto">
-                {/* Left 2 Floating Module Cards */}
-                <div className="w-full sm:w-[42%] space-y-3">
-                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
-                        <Microscope className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-xs font-bold text-slate-900">
-                        {language === "ID" ? "Patologi Anatomi" : "Anatomical Pathology"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500">
-                      {language === "ID" ? "Kaset 2D • Sinoptik ICD-O-3" : "2D Cassettes • ICD-O-3 Synoptic"}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl bg-white border border-slate-200/80 p-3.5 shadow-xs space-y-1.5 group-hover:-translate-x-0.5 transition-transform duration-300">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
-                        <FlaskConical className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-xs font-bold text-slate-900">
-                        {language === "ID" ? "Mikrobiologi PPRA" : "Microbiology & AST"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500">
-                      {language === "ID" ? "Antibiogram CLSI • Alert MDRO" : "CLSI Antibiogram • MDRO Alert"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Connector SVG */}
-                <svg
-                  className="hidden sm:block w-12 h-32 shrink-0 text-slate-300"
-                  viewBox="0 0 48 128"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d="M0 30 C22 30, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0 98 C22 98, 22 64, 48 64" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-
-                {/* Right Unified Registry Card */}
+            {/* Bento cards: ilustrasi per kartu dipilih lewat field "visual" (lihat CatalogStage) */}
+            {catalogCards.map((card) => {
+              const visual = c.v(card, "visual");
+              const shell = CATALOG_SHELL[visual] ?? CATALOG_SHELL.none;
+              const span = c.v(card, "size") === "narrow" ? "lg:col-span-5" : "lg:col-span-7";
+              return (
                 <div
-                  id="custom-gateway"
-                  className="w-full sm:w-[46%] rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm space-y-2.5"
+                  key={card.id}
+                  id={card.id}
+                  className={`w-[86vw] max-w-[350px] shrink-0 snap-center md:w-auto md:max-w-none scroll-mt-32 ${span} rounded-2xl sm:rounded-[28px] bg-[#F1F4F8] border border-slate-200/80 ${shell.pad} flex flex-col justify-between overflow-hidden group hover:border-blue-200/80 transition-all duration-300`}
                 >
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    {language === "ID" ? "Ekosistem Terhubung" : "Connected Modules"}
-                  </p>
+                  <div id={visual === "specialty" ? "microbiology" : undefined} className={shell.head}>
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                      {c.t(card, "title")}
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-slate-600 font-normal">
+                      {c.t(card, "description")}
+                    </p>
+                  </div>
 
-                  {[
-                    {
-                      icon: Microscope,
-                      title: language === "ID" ? "Histopatologi & Sitologi" : "Histopathology & Cytology",
-                      tag: "ICD-O-3",
-                    },
-                    {
-                      icon: FlaskConical,
-                      title: language === "ID" ? "Kultur & Antibiogram" : "Culture & Antibiogram",
-                      tag: "CLSI",
-                    },
-                    {
-                      icon: Cpu,
-                      title: language === "ID" ? "Gateway Instrumen Khusus" : "Custom Specialty Gateway",
-                      tag: "500+ Alat",
-                    },
-                  ].map((row, rIdx) => {
-                    const RowIcon = row.icon;
-                    return (
-                      <div
-                        key={rIdx}
-                        className="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0 first:pt-0 text-xs"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="w-6 h-6 rounded-full bg-[#EBF3FE] text-[#2764B8] flex items-center justify-center shrink-0">
-                            <RowIcon className="h-3.5 w-3.5" />
-                          </span>
-                          <span className="font-semibold text-slate-800 truncate">{row.title}</span>
-                        </div>
-                        <span className="text-[10px] font-medium text-[#0073FC] bg-blue-50 px-2 py-0.5 rounded-full shrink-0">
-                          {row.tag}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  <CatalogStage card={card} c={c} language={language} />
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1153,57 +1136,35 @@ export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCms
               </p>
               <div className="pt-2">
                 <Link
-                  href="/platform"
+                  href={c.value("architecture", "linkUrl")}
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[#2466CB] hover:text-[#1E5299] transition-colors"
                 >
-                  <span>{language === "ID" ? "Pelajari Arsitektur Platform Diagnova" : "Explore Diagnova Platform Architecture"}</span>
+                  <span>{c.text("architecture", "linkLabel")}</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
 
             <div className="lg:col-span-7 flex overflow-x-auto snap-x snap-mandatory gap-3.5 -mx-5 px-5 pb-2 scrollbar-hide sm:grid sm:grid-cols-3 sm:gap-6 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible">
-              <div className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
-                <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
-                  <Database className="h-5.5 w-5.5" />
-                </div>
-                <h4 className="text-sm font-bold text-slate-900">
-                  {language === "ID" ? "Single Medical Record" : "Single Patient Record"}
-                </h4>
-                <p className="text-xs text-slate-600 font-normal leading-relaxed">
-                  {language === "ID"
-                    ? "Eliminasi duplikasi data pasien antar instalasi lab sentral, IGD, poliklinik, dan BDRS."
-                    : "Zero duplicate records across central lab, ER, outpatient wards, and transfusion units."}
-                </p>
-              </div>
-
-              <div className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
-                <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
-                  <Cpu className="h-5.5 w-5.5" />
-                </div>
-                <h4 className="text-sm font-bold text-slate-900">
-                  {language === "ID" ? "Smart Gateway Buffer" : "Smart Gateway Buffer"}
-                </h4>
-                <p className="text-xs text-slate-600 font-normal leading-relaxed">
-                  {language === "ID"
-                    ? "Satu pintu komunikasi untuk seluruh instrumen analyzer dengan buffer offline aman saat jaringan down."
-                    : "Universal gateway for all analyzers equipped with resilient offline buffering during network blips."}
-                </p>
-              </div>
-
-              <div className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3">
-                <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
-                  <FileCheck2 className="h-5.5 w-5.5" />
-                </div>
-                <h4 className="text-sm font-bold text-slate-900">
-                  {language === "ID" ? "Kepatuhan KARS & ISO" : "Regulatory Compliance"}
-                </h4>
-                <p className="text-xs text-slate-600 font-normal leading-relaxed">
-                  {language === "ID"
-                    ? "Jejak audit digital otomatis siap diuji oleh asesor akreditasi KARS, JCI, dan ISO 15189 setiap saat."
-                    : "Immutable digital audit trail ready for KARS, JCI, and ISO 15189 surveys anytime."}
-                </p>
-              </div>
+              {pillars.map((pillar) => {
+                const PillarIcon = iconOf(c.v(pillar, "icon"), Database);
+                return (
+                  <div
+                    key={pillar.id}
+                    className="w-[76vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none p-5 sm:p-6 rounded-[24px] bg-[#FAFBFD] border border-slate-200/80 shadow-2xs space-y-3"
+                  >
+                    <div className="h-11 w-11 rounded-2xl bg-[#EBF3FB] text-[#2466CB] flex items-center justify-center border border-blue-100">
+                      <PillarIcon className="h-5.5 w-5.5" />
+                    </div>
+                    <h4 className="text-sm font-bold text-slate-900">
+                      {c.t(pillar, "title")}
+                    </h4>
+                    <p className="text-xs text-slate-600 font-normal leading-relaxed">
+                      {c.t(pillar, "desc")}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -1235,91 +1196,74 @@ export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCms
                 </p>
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <Link
-                    href="/request-demo"
+                    href={c.value("scalability", "primaryUrl")}
                     className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-[#2764B8] hover:bg-[#1E5299] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98] overflow-hidden"
                   >
                     <span className="animate-shine-continuous" />
-                    <span className="relative z-10">{language === "ID" ? "Jadwalkan Demo" : "Book a Demo"}</span>
+                    <span className="relative z-10">{c.text("scalability", "primaryLabel")}</span>
                     <ArrowRight className="relative z-10 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
                   <Link
-                    href="/solutions"
+                    href={c.value("scalability", "secondaryUrl")}
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-colors shadow-xs"
                   >
-                    <span>{language === "ID" ? "Lihat Paket Solusi" : "Explore Solutions"}</span>
+                    <span>{c.text("scalability", "secondaryLabel")}</span>
                   </Link>
                 </div>
               </div>
 
               {/* Right 7 Cols: 3 Stepped Escalating Metric Bars (Ref 4) */}
               <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-end pt-4">
-                {/* Step 1: 2.4x */}
-                <div className="rounded-3xl bg-[#F4F6F9] border border-slate-200/80 p-6 flex flex-col justify-between min-h-[140px] sm:h-[210px] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
-                  <div>
-                    <div className="font-display text-4xl sm:text-[42px] font-bold text-slate-800 tracking-tight leading-none">
-                      2.4x
-                    </div>
-                    <div className="mt-3 text-xs font-semibold text-slate-700">
-                      {language === "ID" ? "Klinik & Lab Pratama" : "Primary Clinics"}
-                    </div>
-                    <p className="mt-1 text-[11.5px] text-slate-500 leading-relaxed">
-                      {language === "ID"
-                        ? "Otomatisasi registrasi & rilis hasil hematologi dasar."
-                        : "Automated intake & routine hematology sign-off."}
-                    </p>
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-400">
-                    {language === "ID" ? "< 300 sampel/hari" : "< 300 samples/day"}
-                  </div>
-                </div>
+                {steps.map((step, idx) => {
+                  const s = STEP_STYLES[step.id] ?? STEP_STYLE_LIST[Math.min(idx, STEP_STYLE_LIST.length - 1)];
+                  if (s.hero) {
+                    /* Bright Blue Hero Bar with Vertical Bar Texture */
+                    return (
+                      <div key={step.id} className={s.box}>
+                        <div className="relative z-10">
+                          <div className={s.value}>
+                            {c.t(step, "value")}
+                          </div>
+                          <div className={s.segment}>
+                            {c.t(step, "segment")}
+                          </div>
+                          <p className={s.desc}>
+                            {c.t(step, "desc")}
+                          </p>
+                        </div>
 
-                {/* Step 2: 5.1x */}
-                <div className="rounded-3xl bg-[#EEF2F7] border border-slate-200/90 p-6 flex flex-col justify-between min-h-[155px] sm:h-[285px] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
-                  <div>
-                    <div className="font-display text-4xl sm:text-[46px] font-bold text-slate-900 tracking-tight leading-none">
-                      5.1x
+                        {/* Bottom Vertical Bar Texture (Ref 4) */}
+                        <div className="relative z-10 pt-6 flex items-end justify-between gap-1.5 h-24 opacity-90" aria-hidden="true">
+                          {[38, 62, 46, 84, 52, 92, 66, 76, 48, 88, 58, 72].map((h, hIdx) => (
+                            <span
+                              key={hIdx}
+                              className="w-1.5 rounded-full bg-white/85"
+                              style={{ height: `${h}%` }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={step.id} className={s.box}>
+                      <div>
+                        <div className={s.value}>
+                          {c.t(step, "value")}
+                        </div>
+                        <div className={s.segment}>
+                          {c.t(step, "segment")}
+                        </div>
+                        <p className={s.desc}>
+                          {c.t(step, "desc")}
+                        </p>
+                      </div>
+                      <div className={s.volume}>
+                        {c.t(step, "volume")}
+                      </div>
                     </div>
-                    <div className="mt-3 text-xs font-semibold text-slate-800">
-                      {language === "ID" ? "RS Tipe B & Tipe C" : "Regional Hospitals"}
-                    </div>
-                    <p className="mt-1 text-[11.5px] text-slate-600 leading-relaxed">
-                      {language === "ID"
-                        ? "Bridging SIMRS, Westgard QC, dan modul BDRS terintegrasi."
-                        : "HIS bridging, Westgard QC & integrated blood bank."}
-                    </p>
-                  </div>
-                  <div className="text-[11px] font-semibold text-slate-500">
-                    {language === "ID" ? "300–2.000 sampel/hari" : "300–2,000 samples/day"}
-                  </div>
-                </div>
-
-                {/* Step 3: 10x Bright Blue Hero Bar with Vertical Bar Texture */}
-                <div className="group rounded-3xl bg-[#0073FC] text-white p-6 flex flex-col justify-between min-h-[200px] sm:h-[365px] relative overflow-hidden shadow-lg shadow-blue-600/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-blue-600/30">
-                  <div className="relative z-10">
-                    <div className="font-display text-5xl sm:text-[54px] font-bold text-white tracking-tight leading-none">
-                      10x
-                    </div>
-                    <div className="mt-3 text-xs font-semibold text-blue-50">
-                      {language === "ID" ? "RS Rujukan & Lab Chain" : "Reference Lab Chains"}
-                    </div>
-                    <p className="mt-1 text-[11.5px] text-blue-100/90 leading-relaxed">
-                      {language === "ID"
-                        ? "Auto-verifikasi Nova AI, PA/Mikro & sinkronisasi multi-cabang."
-                        : "Nova AI auto-verification, PA/Micro & multi-site sync."}
-                    </p>
-                  </div>
-
-                  {/* Bottom Vertical Bar Texture (Ref 4) */}
-                  <div className="relative z-10 pt-6 flex items-end justify-between gap-1.5 h-24 opacity-90" aria-hidden="true">
-                    {[38, 62, 46, 84, 52, 92, 66, 76, 48, 88, 58, 72].map((h, idx) => (
-                      <span
-                        key={idx}
-                        className="w-1.5 rounded-full bg-white/85"
-                        style={{ height: `${h}%` }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
           </div>

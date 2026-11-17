@@ -6,6 +6,8 @@ import { getCmsPageHero } from "@/lib/models/cms.model";
 import { assertNotStale } from "@/lib/models/site-content.model";
 import { HERO_DEFAULTS } from "@/lib/cms-hero-defaults";
 import type { HeroExtraContent } from "@/lib/cms-hero";
+import { PAGE_CONTENT, type InnerPageKey } from "@/lib/cms-content";
+import { resolvePageContent, validateSectionContent, type ResolvedPageContent } from "@/lib/cms-page-content";
 import {
   CMS_PAGES,
   CUSTOM_KEY_PATTERN,
@@ -46,17 +48,39 @@ function toPublicLayout(sections: ResolvedSection[]): ResolvedSection[] {
     }));
 }
 
-/** Tata letak halaman untuk website publik. Gagal membaca DB => layout bawaan. */
-export async function getPageLayout(page: CmsPageKey): Promise<ResolvedSection[]> {
+type CmsRow = Awaited<ReturnType<typeof db.cmsSection.findUnique>>;
+
+async function readLayoutRow(page: CmsPageKey): Promise<CmsRow> {
   try {
-    const row = await db.cmsSection.findUnique({ where: { sectionKey: layoutSectionKey(page) } });
-    // Layout yang di-unpublish diperlakukan seperti belum ada (tampilan bawaan).
-    if (!row || !row.isPublished) return toPublicLayout(defaultPageLayout(page));
-    return toPublicLayout(resolvePageLayout(page, row.extraContent));
+    return await db.cmsSection.findUnique({ where: { sectionKey: layoutSectionKey(page) } });
   } catch (error) {
     console.error(`Gagal memuat tata letak CMS (${page}), memakai bawaan:`, error);
-    return toPublicLayout(defaultPageLayout(page));
+    return null;
   }
+}
+
+/** Layout yang di-unpublish diperlakukan seperti belum ada (tampilan bawaan). */
+function publicLayoutFromRow(page: CmsPageKey, row: CmsRow): ResolvedSection[] {
+  if (!row || !row.isPublished) return toPublicLayout(defaultPageLayout(page));
+  return toPublicLayout(resolvePageLayout(page, row.extraContent));
+}
+
+/** Konten section bawaan untuk publik: item nonaktif dibuang di server. */
+function publicContentFromRow(page: InnerPageKey, row: CmsRow): ResolvedPageContent {
+  const stored = row && row.isPublished ? (row.extraContent as { content?: unknown } | null)?.content : null;
+  return resolvePageContent(PAGE_CONTENT[page], stored, true);
+}
+
+/** Baris CMS bersama (CTA, Alur Kerja) tanpa metadata admin (updatedBy, id, timestamp). */
+function toPublicSectionRow(row: CmsRow) {
+  if (!row || !row.isPublished) return null;
+  const { sectionKey, badgeId, badgeEn, titleId, titleEn, subtitleId, subtitleEn, extraContent, isPublished } = row;
+  return { section: { sectionKey, badgeId, badgeEn, titleId, titleEn, subtitleId, subtitleEn, extraContent, isPublished } };
+}
+
+/** Tata letak halaman untuk website publik. Gagal membaca DB => layout bawaan. */
+export async function getPageLayout(page: CmsPageKey): Promise<ResolvedSection[]> {
+  return publicLayoutFromRow(page, await readLayoutRow(page));
 }
 
 /**
@@ -64,25 +88,28 @@ export async function getPageLayout(page: CmsPageKey): Promise<ResolvedSection[]
  * hero halaman, tata letak, dan section CTA bersama (sama dengan CTA homepage).
  * Setiap bagian gagal secara independen ke tampilan bawaan.
  */
-export async function getInnerPageCmsData(page: Exclude<CmsPageKey, "home">) {
+export async function getInnerPageCmsData(page: InnerPageKey) {
   const def = getPageDefinition(page)!;
-  const [cmsHero, layout, ctaRow] = await Promise.all([
+  const [cmsHero, layoutRow, sharedRows] = await Promise.all([
     def.heroSectionKey
       ? getCmsPageHero(def.heroSectionKey).catch((err) => {
           console.error(`Gagal memuat hero CMS (${def.heroSectionKey}), memakai teks bawaan:`, err);
           return null;
         })
       : Promise.resolve(null),
-    getPageLayout(page),
-    db.cmsSection.findUnique({ where: { sectionKey: "cta" } }).catch((err) => {
-      console.error("Gagal memuat CTA CMS, memakai teks bawaan:", err);
-      return null;
+    readLayoutRow(page),
+    db.cmsSection.findMany({ where: { sectionKey: { in: ["cta", "workflow"] } } }).catch((err) => {
+      console.error("Gagal memuat CTA / Alur Kerja CMS, memakai teks bawaan:", err);
+      return [] as NonNullable<CmsRow>[];
     }),
   ]);
+  const shared = new Map(sharedRows.map((r) => [r.sectionKey, r]));
   return {
     cmsHero,
-    layout,
-    cta: ctaRow && ctaRow.isPublished ? { section: ctaRow } : null,
+    layout: publicLayoutFromRow(page, layoutRow),
+    content: publicContentFromRow(page, layoutRow),
+    cta: toPublicSectionRow(shared.get("cta") ?? null),
+    workflow: toPublicSectionRow(shared.get("workflow") ?? null),
   };
 }
 
@@ -97,7 +124,13 @@ export async function getAllPageLayoutsForAdmin() {
   return CMS_PAGES.map((p) => {
     const layoutRow = byKey.get(layoutSectionKey(p.key));
     const heroRow = p.heroSectionKey ? byKey.get(p.heroSectionKey) : undefined;
+    const storedContent = ((layoutRow?.extraContent as { content?: unknown } | null)?.content ?? null) as Record<string, unknown> | null;
+    const spec = p.key === "home" ? null : PAGE_CONTENT[p.key];
     return {
+      contentDefs: spec ? spec.defs : null,
+      // Seluruh item (termasuk nonaktif) untuk editor; bawaan dipakai bila belum disimpan.
+      content: spec ? resolvePageContent(spec, storedContent, false) : null,
+      contentCustomized: storedContent && typeof storedContent === "object" ? Object.keys(storedContent) : [],
       key: p.key,
       label: p.label,
       path: p.path,
@@ -222,16 +255,13 @@ export async function savePageLayout(input: unknown, userId?: string) {
   stored.forEach((s, i) => (s.sortOrder = (i + 1) * 10));
 
   const sectionKey = layoutSectionKey(page);
-  const existing = await db.cmsSection.findUnique({ where: { sectionKey } });
-  if (!assertNotStale(existing?.updatedAt, (input as { baseUpdatedAt?: unknown })?.baseUpdatedAt)) {
-    throw new CmsLayoutError("Tata letak halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan.", 409);
-  }
-  const extraContent = { ...((existing?.extraContent as Record<string, unknown>) || {}), sections: stored } as unknown as Prisma.InputJsonValue;
-  const saved = await db.cmsSection.upsert({
-    where: { sectionKey },
-    update: { extraContent, ...(userId && { updatedBy: userId }) },
-    create: { sectionKey, extraContent, isPublished: true, ...(userId && { updatedBy: userId }) },
-  });
+  const { existing, saved } = await writeLayoutRow(
+    sectionKey,
+    (input as { baseUpdatedAt?: unknown })?.baseUpdatedAt,
+    (prev) => ({ ...prev, sections: stored }),
+    userId,
+    "Tata letak halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan."
+  );
 
   await recordAuditLog({
     userId,
@@ -243,6 +273,99 @@ export async function savePageLayout(input: unknown, userId?: string) {
   });
 
   return { page, sections: resolvePageLayout(page, saved.extraContent), path: def.path };
+}
+
+/**
+ * Menulis extraContent baris layout_<page> secara atomik.
+ * - Bila admin mengirim baseUpdatedAt yang sudah usang → 409.
+ * - Penulisan memakai update bersyarat (updatedAt harus sama dengan yang dibaca), sehingga
+ *   penyimpanan tata letak dan konten section pada baris yang sama tidak saling menimpa
+ *   walaupun terjadi bersamaan.
+ */
+async function writeLayoutRow(
+  sectionKey: string,
+  baseUpdatedAt: unknown,
+  mutate: (prev: Record<string, unknown>) => Record<string, unknown>,
+  userId: string | undefined,
+  staleMessage: string
+) {
+  const existing = await db.cmsSection.findUnique({ where: { sectionKey } });
+  if (!assertNotStale(existing?.updatedAt, baseUpdatedAt)) throw new CmsLayoutError(staleMessage, 409);
+  const prev = (existing?.extraContent && typeof existing.extraContent === "object" && !Array.isArray(existing.extraContent)
+    ? existing.extraContent
+    : {}) as Record<string, unknown>;
+  const extraContent = mutate(prev) as Prisma.InputJsonValue;
+  if (existing) {
+    const res = await db.cmsSection.updateMany({
+      where: { sectionKey, updatedAt: existing.updatedAt },
+      data: { extraContent, ...(userId && { updatedBy: userId }) },
+    });
+    if (res.count !== 1) throw new CmsLayoutError(staleMessage, 409);
+  } else {
+    try {
+      await db.cmsSection.create({ data: { sectionKey, extraContent, isPublished: true, ...(userId && { updatedBy: userId }) } });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        throw new CmsLayoutError(staleMessage, 409);
+      }
+      throw error;
+    }
+  }
+  const saved = (await db.cmsSection.findUnique({ where: { sectionKey } }))!;
+  return { existing, saved };
+}
+
+/**
+ * Menyimpan konten satu section bawaan halaman dalam (kartu, daftar, langkah, dst.).
+ * content = null → kembali ke konten bawaan.
+ */
+export async function savePageSectionContent(input: unknown, userId?: string) {
+  const body = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
+  const page = body.page as InnerPageKey;
+  if (typeof page !== "string" || !(page in PAGE_CONTENT)) throw new CmsLayoutError("Halaman tidak dikenal.");
+  const sectionKey = body.sectionKey;
+  const spec = PAGE_CONTENT[page];
+  if (typeof sectionKey !== "string" || !spec.defs[sectionKey]) {
+    throw new CmsLayoutError("Section ini tidak memiliki konten yang dapat diedit.");
+  }
+  let value: unknown = null;
+  if (body.content !== null) {
+    const result = validateSectionContent(spec.defs[sectionKey], spec.defaults[sectionKey], body.content);
+    if (!result.ok) throw new CmsLayoutError(`Konten tidak valid: ${result.errors.join(" ")}`);
+    value = result.value;
+  }
+  const def = getPageDefinition(page)!;
+  const rowKey = layoutSectionKey(page);
+  const { existing, saved } = await writeLayoutRow(
+    rowKey,
+    body.baseUpdatedAt,
+    (prev) => {
+      const prevContent = (prev.content && typeof prev.content === "object" && !Array.isArray(prev.content) ? prev.content : {}) as Record<string, unknown>;
+      const nextContent = { ...prevContent };
+      if (value === null) delete nextContent[sectionKey];
+      else nextContent[sectionKey] = value;
+      return { ...prev, content: nextContent };
+    },
+    userId,
+    "Halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan."
+  );
+  const prevValue = ((existing?.extraContent as { content?: Record<string, unknown> } | null)?.content ?? {})[sectionKey] ?? null;
+  await recordAuditLog({
+    userId,
+    action: value === null ? "RESET_PAGE_SECTION_CONTENT" : "UPDATE_PAGE_SECTION_CONTENT",
+    entity: "cms_sections",
+    recordId: rowKey,
+    oldValue: { sectionKey, content: prevValue } as Record<string, unknown>,
+    newValue: { sectionKey, content: value } as Record<string, unknown>,
+  });
+  const storedContent = (saved.extraContent as { content?: unknown } | null)?.content ?? null;
+  return {
+    page,
+    path: def.path,
+    sectionKey,
+    updatedAt: saved.updatedAt,
+    content: resolvePageContent(spec, storedContent, false)[sectionKey],
+  };
 }
 
 const heroSchema = z.object({
@@ -310,11 +433,25 @@ export async function savePageHero(input: unknown, userId?: string) {
     ? { ...prevExtra, hero: { ...prevHero, ...heroPatch } }
     : prevExtra) as Prisma.InputJsonValue;
 
-  const saved = await db.cmsSection.upsert({
-    where: { sectionKey: def.heroSectionKey },
-    update: { ...data, extraContent, ...(userId && { updatedBy: userId }) },
-    create: { sectionKey: def.heroSectionKey, ...data, extraContent, isPublished: true, ...(userId && { updatedBy: userId }) },
-  });
+  // Update bersyarat (atomik): gagal bila baris berubah sejak dibaca.
+  const stale = "Hero halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan.";
+  if (existing) {
+    const res = await db.cmsSection.updateMany({
+      where: { sectionKey: def.heroSectionKey, updatedAt: existing.updatedAt },
+      data: { ...data, extraContent, ...(userId && { updatedBy: userId }) },
+    });
+    if (res.count !== 1) throw new CmsLayoutError(stale, 409);
+  } else {
+    try {
+      await db.cmsSection.create({
+        data: { sectionKey: def.heroSectionKey, ...data, extraContent, isPublished: true, ...(userId && { updatedBy: userId }) },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new CmsLayoutError(stale, 409);
+      throw error;
+    }
+  }
+  const saved = (await db.cmsSection.findUnique({ where: { sectionKey: def.heroSectionKey } }))!;
 
   await recordAuditLog({
     userId,

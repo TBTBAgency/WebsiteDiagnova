@@ -7,6 +7,6 @@ import { getInnerPageCmsData } from "@/lib/models/cms-layout.model";
 export const revalidate = 60;
 
 export default async function PlatformPage() {
-  const { cmsHero, layout, cta } = await getInnerPageCmsData("platform");
-  return <PlatformPageClient cmsHero={cmsHero} layout={layout} cta={cta} />;
+  const { cmsHero, layout, cta, content, workflow } = await getInnerPageCmsData("platform");
+  return <PlatformPageClient cmsHero={cmsHero} layout={layout} cta={cta} content={content} workflow={workflow} />;
 }

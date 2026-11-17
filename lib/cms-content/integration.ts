@@ -1,0 +1,680 @@
+import type { ContentFieldDef, ContentItem, PageContentSpec } from "@/lib/cms-page-content";
+
+/**
+ * Konten section bawaan halaman Integrasi yang dikelola CMS (Halaman & Section › Edit Konten).
+ * defaults = teks persis seperti sebelum dipindah ke CMS (tampilan tidak berubah sampai admin menyimpan).
+ *
+ * Ilustrasi/mockup di dalam kartu (payload contoh, kode contoh, dsb.) adalah desain dan tetap di kode
+ * (app/(marketing)/integration/IntegrationPageClient.tsx).
+ */
+
+/** Ikon yang tersedia (nama komponen lucide yang dipakai di halaman). */
+const ICON_OPTIONS = [
+  { value: "Network", label: "Jaringan (Network)" },
+  { value: "FileText", label: "Dokumen (FileText)" },
+  { value: "Cpu", label: "Mesin / Chip (Cpu)" },
+  { value: "ShieldCheck", label: "Perisai (ShieldCheck)" },
+  { value: "Wifi", label: "Wifi" },
+  { value: "Server", label: "Server" },
+  { value: "Lock", label: "Gembok (Lock)" },
+  { value: "FileCheck2", label: "Dokumen Tervalidasi (FileCheck2)" },
+  { value: "BadgeCheck", label: "Lencana (BadgeCheck)" },
+  { value: "Activity", label: "Grafik Aktivitas (Activity)" },
+  { value: "Clock", label: "Jam (Clock)" },
+  { value: "Sparkles", label: "Kilau (Sparkles)" },
+  { value: "Send", label: "Kirim (Send)" },
+  { value: "Search", label: "Cari (Search)" },
+];
+
+const iconField = (help?: string): ContentFieldDef => ({ key: "icon", label: "Ikon", type: "select", options: ICON_OPTIONS, help });
+
+/** Simpul diagram hub (id tetap — terikat posisi diagram & tautan #anchor). */
+const NODE_OPTIONS = [
+  { value: "simrs-his", label: "SIMRS / HIS" },
+  { value: "rme", label: "Rekam Medis (RME)" },
+  { value: "analyzer", label: "Direct Analyzer" },
+  { value: "satusehat", label: "SATUSEHAT Kemenkes" },
+  { value: "connectivity", label: "Smart Gateway" },
+];
+
+const CATEGORY_OPTIONS = [
+  { value: "hematology", label: "Hematologi & Koagulasi" },
+  { value: "chemistry", label: "Kimia Klinik & Imuno" },
+  { value: "microbiology", label: "Mikrobiologi & Urin" },
+  { value: "molecular", label: "Molekuler & Patologi" },
+];
+
+function step(
+  id: string,
+  node: string,
+  tag: [string, string],
+  status: "completed" | "running",
+  title: [string, string],
+  desc: [string, string],
+  chip: string
+): ContentItem {
+  return {
+    id,
+    isActive: true,
+    node,
+    tagId: tag[0],
+    tagEn: tag[1],
+    status,
+    titleId: title[0],
+    titleEn: title[1],
+    descId: desc[0],
+    descEn: desc[1],
+    chip,
+  };
+}
+
+const TRIGGER: [string, string] = ["Pemicu", "Trigger"];
+const PROCESS: [string, string] = ["Proses", "Process"];
+const DISPATCH: [string, string] = ["Rilis", "Dispatch"];
+
+function analyzer(
+  id: string,
+  category: string,
+  disciplineLabel: [string, string],
+  maker: string,
+  models: string,
+  iface: string,
+  protocol: string
+): ContentItem {
+  return {
+    id,
+    isActive: true,
+    category,
+    maker,
+    models,
+    iface,
+    protocol,
+    disciplineLabelId: disciplineLabel[0],
+    disciplineLabelEn: disciplineLabel[1],
+  };
+}
+
+const HEMA: [string, string] = ["Hematologi & Koagulasi", "Hematology & Coag"];
+const CHEM: [string, string] = ["Kimia Klinik & Imuno", "Chemistry & Immuno"];
+const MICRO: [string, string] = ["Mikrobiologi & Urin", "Microbiology & Urine"];
+const MOLE: [string, string] = ["Molekuler & Patologi", "Molecular & Pathology"];
+
+export const INTEGRATION_CONTENT: PageContentSpec = {
+  defs: {
+    "integration-explorer": {
+      help: "Diagram hub integrasi: 5 simpul (posisi tetap), panel detail, metrik, protokol, dan alur otomatisasi per simpul.",
+      fields: [
+        { key: "autoTourLabel", label: "Tombol tur otomatis (mulai)", type: "text", max: 60 },
+        { key: "pauseTourLabel", label: "Tombol tur otomatis (jeda)", type: "text", max: 60 },
+        { key: "activeLabel", label: "Label simpul aktif", type: "text", max: 30 },
+        { key: "inspectLabel", label: "Label simpul tidak aktif", type: "text", max: 30 },
+        { key: "hubName", label: "Nama hub (kartu tengah)", type: "text", bilingual: false, max: 60 },
+        { key: "hubStatus", label: "Status hub", type: "text", max: 30 },
+        { key: "hubStat1Label", label: "Statistik hub 1 — label", type: "text", max: 40 },
+        { key: "hubStat1Value", label: "Statistik hub 1 — angka", type: "text", bilingual: false, max: 20 },
+        { key: "hubStat2Label", label: "Statistik hub 2 — label", type: "text", max: 40 },
+        { key: "hubStat2Value", label: "Statistik hub 2 — angka", type: "text", bilingual: false, max: 20 },
+        { key: "ctaLabel", label: "Teks tautan panel detail", type: "text", max: 60 },
+        { key: "ctaUrl", label: "URL tautan panel detail", type: "url" },
+        { key: "pipelineLabel", label: "Judul kecil kartu alur (sebelum nama integrasi)", type: "text", max: 60 },
+        { key: "pipelineStatus", label: "Label status kartu alur", type: "text", max: 40 },
+        { key: "statusCompleted", label: "Label langkah selesai", type: "text", max: 30 },
+        { key: "statusRunning", label: "Label langkah berjalan", type: "text", max: 30 },
+      ],
+      lists: [
+        {
+          key: "nodes",
+          label: "Simpul Integrasi",
+          itemLabel: "Simpul",
+          maxItems: 5,
+          minItems: 1,
+          fixedCount: true,
+          summaryField: "tabLabel",
+          help: "Posisi simpul pada diagram terikat desain. ID simpul juga dipakai sebagai tautan #anchor (mis. /integration#rme).",
+          fields: [
+            iconField(),
+            { key: "tabLabel", label: "Nama simpul", type: "text", required: true, max: 60 },
+            { key: "shortDesc", label: "Deskripsi singkat simpul", type: "text", max: 80 },
+            { key: "name", label: "Judul panel detail", type: "text", required: true, max: 120 },
+            { key: "tagline", label: "Deskripsi panel detail", type: "textarea", max: 400 },
+            { key: "protocols", label: "Protokol", type: "textarea", bilingual: false, max: 400, help: "Satu protokol per baris." },
+            { key: "metric1Value", label: "Metrik 1 — angka", type: "text", bilingual: false, max: 20 },
+            { key: "metric1Label", label: "Metrik 1 — label", type: "text", max: 40 },
+            { key: "metric2Value", label: "Metrik 2 — angka", type: "text", bilingual: false, max: 20 },
+            { key: "metric2Label", label: "Metrik 2 — label", type: "text", max: 40 },
+          ],
+        },
+        {
+          key: "steps",
+          label: "Langkah Alur Otomatisasi",
+          itemLabel: "Langkah",
+          maxItems: 60,
+          summaryField: "title",
+          help: "Setiap langkah ditampilkan pada simpul yang dipilih, sesuai urutan daftar.",
+          fields: [
+            { key: "node", label: "Simpul", type: "select", options: NODE_OPTIONS },
+            { key: "tag", label: "Tahap", type: "text", max: 30 },
+            {
+              key: "status",
+              label: "Status",
+              type: "select",
+              options: [
+                { value: "completed", label: "Selesai" },
+                { value: "running", label: "Berjalan" },
+              ],
+            },
+            { key: "title", label: "Judul langkah", type: "text", required: true, max: 120 },
+            { key: "desc", label: "Deskripsi langkah", type: "text", max: 200 },
+            { key: "chip", label: "Kode / label kecil", type: "text", bilingual: false, max: 30 },
+          ],
+        },
+      ],
+    },
+    architecture: {
+      help: "Grid kapabilitas teknis. Setiap kartu memilih ilustrasinya; kartu baru dapat memakai ilustrasi ikon.",
+      fields: [
+        { key: "validationPrompt", label: "Teks ilustrasi mode validasi QC", type: "text", max: 80 },
+      ],
+      lists: [
+        {
+          key: "capabilities",
+          label: "Kapabilitas",
+          itemLabel: "Kartu",
+          maxItems: 12,
+          minItems: 1,
+          summaryField: "title",
+          fields: [
+            {
+              key: "visual",
+              label: "Ilustrasi",
+              type: "select",
+              options: [
+                { value: "host-query", label: "Host Query (tombol & protokol)" },
+                { value: "cito-queue", label: "Antrean prioritas Cito" },
+                { value: "validation-modes", label: "Pilihan mode validasi QC (interaktif)" },
+                { value: "critical-value", label: "Sorotan nilai kritis" },
+                { value: "payload-chat", label: "Percakapan audit payload" },
+                { value: "loinc-mapper", label: "Tabel pemetaan LOINC" },
+                { value: "none", label: "Tanpa ilustrasi (tampilkan ikon)" },
+              ],
+            },
+            iconField("Dipakai bila ilustrasi = Tanpa ilustrasi."),
+            { key: "title", label: "Judul", type: "text", required: true, max: 120 },
+            { key: "desc", label: "Deskripsi", type: "textarea", max: 400 },
+          ],
+        },
+      ],
+    },
+    "analyzer-directory": {
+      help: "Direktori kompatibilitas analyzer: tab divisi, kolom tabel, daftar analyzer, dan catatan driver kustom.",
+      fields: [
+        { key: "allLabel", label: "Tab semua divisi", type: "text", max: 40 },
+        { key: "searchPlaceholder", label: "Placeholder pencarian", type: "text", max: 120 },
+        { key: "colManufacturer", label: "Kolom pabrikan", type: "text", max: 40 },
+        { key: "colDiscipline", label: "Kolom divisi", type: "text", max: 40 },
+        { key: "colSeries", label: "Kolom seri & model", type: "text", max: 40 },
+        { key: "colInterface", label: "Kolom antarmuka", type: "text", max: 40 },
+        { key: "colProtocol", label: "Kolom protokol", type: "text", max: 40 },
+        { key: "emptyText", label: "Pesan bila tidak ada hasil", type: "text", max: 200, help: "{query} diganti dengan kata kunci pencarian." },
+        { key: "resetLabel", label: "Tombol reset filter", type: "text", max: 40 },
+        { key: "slaTitle", label: "Catatan driver kustom — judul tebal", type: "text", max: 80 },
+        { key: "slaText", label: "Catatan driver kustom — teks", type: "textarea", max: 300 },
+        { key: "slaCtaLabel", label: "Teks tautan catatan", type: "text", max: 60 },
+        { key: "slaCtaUrl", label: "URL tautan catatan", type: "url" },
+      ],
+      lists: [
+        {
+          key: "disciplines",
+          label: "Tab Divisi",
+          itemLabel: "Tab",
+          maxItems: 8,
+          summaryField: "label",
+          help: "Tab filter setelah tab 'Semua'. Setiap tab menyaring analyzer dengan kategori yang sama.",
+          fields: [
+            { key: "category", label: "Kategori", type: "select", options: CATEGORY_OPTIONS },
+            { key: "label", label: "Label tab", type: "text", required: true, max: 40 },
+          ],
+        },
+        {
+          key: "analyzers",
+          label: "Analyzer",
+          itemLabel: "Analyzer",
+          maxItems: 200,
+          summaryField: "maker",
+          fields: [
+            { key: "maker", label: "Pabrikan", type: "text", bilingual: false, required: true, max: 80 },
+            { key: "category", label: "Kategori (untuk filter)", type: "select", options: CATEGORY_OPTIONS },
+            { key: "disciplineLabel", label: "Divisi (teks di tabel)", type: "text", max: 60 },
+            { key: "models", label: "Seri & model", type: "text", bilingual: false, max: 200 },
+            { key: "iface", label: "Antarmuka", type: "text", bilingual: false, max: 60 },
+            { key: "protocol", label: "Protokol", type: "text", bilingual: false, max: 60 },
+          ],
+        },
+      ],
+    },
+    compliance: {
+      help: "Lencana kepatuhan regulasi & keamanan.",
+      lists: [
+        {
+          key: "badges",
+          label: "Lencana Kepatuhan",
+          itemLabel: "Lencana",
+          maxItems: 12,
+          summaryField: "code",
+          fields: [
+            { key: "code", label: "Kode / standar", type: "text", bilingual: false, required: true, max: 40 },
+            { key: "label", label: "Keterangan", type: "text", max: 60 },
+            iconField(),
+          ],
+        },
+      ],
+    },
+  },
+  defaults: {
+    "integration-explorer": {
+      fields: {
+        autoTourLabelId: "Putar Tur Otomatis",
+        autoTourLabelEn: "Auto-Tour",
+        pauseTourLabelId: "Jeda Tur",
+        pauseTourLabelEn: "Pause Tour",
+        activeLabelId: "Active",
+        activeLabelEn: "Active",
+        inspectLabelId: "Inspect",
+        inspectLabelEn: "Inspect",
+        hubName: "Diagnova Hub",
+        hubStatusId: "Live",
+        hubStatusEn: "Live",
+        hubStat1LabelId: "Analyzers",
+        hubStat1LabelEn: "Analyzers",
+        hubStat1Value: "500+",
+        hubStat2LabelId: "Uptime SLA",
+        hubStat2LabelEn: "Uptime SLA",
+        hubStat2Value: "99.9%",
+        ctaLabelId: "Konsultasi",
+        ctaLabelEn: "Consult",
+        ctaUrl: "/request-demo",
+        pipelineLabelId: "Automations /",
+        pipelineLabelEn: "Automations /",
+        pipelineStatusId: "Live Pipeline",
+        pipelineStatusEn: "Live Pipeline",
+        statusCompletedId: "✓ Completed",
+        statusCompletedEn: "✓ Completed",
+        statusRunningId: "● Running",
+        statusRunningEn: "● Running",
+      },
+      lists: {
+        nodes: [
+          {
+            id: "simrs-his",
+            isActive: true,
+            icon: "Network",
+            tabLabelId: "SIMRS / HIS",
+            tabLabelEn: "SIMRS / HIS",
+            shortDescId: "Order & Billing 2 Arah",
+            shortDescEn: "Bidirectional Order & Billing",
+            nameId: "SIMRS / HIS Bridging",
+            nameEn: "SIMRS / HIS Bridging",
+            taglineId: "Order dokter langsung jadi barcode worklist, hasil & billing sinkron otomatis.",
+            taglineEn: "Physician orders instantly become barcode worklists with automated billing sync.",
+            protocols: "HL7 v2.x\nREST JSON\nSOAP / XML",
+            metric1Value: "0",
+            metric1LabelId: "Entri Ulang",
+            metric1LabelEn: "Re-Entry",
+            metric2Value: "< 250ms",
+            metric2LabelId: "Latensi",
+            metric2LabelEn: "Latency",
+          },
+          {
+            id: "rme",
+            isActive: true,
+            icon: "FileText",
+            tabLabelId: "Rekam Medis (RME)",
+            tabLabelEn: "EMR Integration",
+            shortDescId: "Permenkes 24/2022",
+            shortDescEn: "EMR & Biomarker Trends",
+            nameId: "Rekam Medis Elektronik (RME)",
+            nameEn: "Rekam Medis Elektronik (RME)",
+            taglineId: "Data laboratorium terstruktur LOINC lengkap dengan tren biomarker & segel BSrE.",
+            taglineEn: "LOINC-structured lab observations with longitudinal biomarker trends & BSrE seal.",
+            protocols: "FHIR R4\nLOINC\nHL7 CDA",
+            metric1Value: "100%",
+            metric1LabelId: "PMK 24/2022",
+            metric1LabelEn: "PMK 24/2022",
+            metric2Value: "< 15m",
+            metric2LabelId: "Panic SLA",
+            metric2LabelEn: "Panic SLA",
+          },
+          {
+            id: "analyzer",
+            isActive: true,
+            icon: "Cpu",
+            tabLabelId: "Direct Analyzer",
+            tabLabelEn: "Direct Analyzer",
+            shortDescId: "500+ Mesin Lab",
+            shortDescEn: "500+ Lab Instruments",
+            nameId: "Direct Analyzer Interfacing",
+            nameEn: "Direct Analyzer Interfacing",
+            taglineId: "Host Query dua arah untuk 500+ model analyzer dengan gerbang QC Westgard.",
+            taglineEn: "Bidirectional Host Query for 500+ analyzers gated by automated Westgard QC.",
+            protocols: "ASTM E1394\nHL7 v2.5\nRS-232 / LAN",
+            metric1Value: "500+",
+            metric1LabelId: "Model Alat",
+            metric1LabelEn: "Analyzers",
+            metric2Value: "0s",
+            metric2LabelId: "Ketik Hasil",
+            metric2LabelEn: "Manual Entry",
+          },
+          {
+            id: "satusehat",
+            isActive: true,
+            icon: "ShieldCheck",
+            tabLabelId: "SATUSEHAT Kemenkes",
+            tabLabelEn: "SATUSEHAT Kemenkes",
+            shortDescId: "HL7 FHIR R4",
+            shortDescEn: "National HL7 FHIR R4",
+            nameId: "SATUSEHAT Interoperabilitas",
+            nameEn: "SATUSEHAT Interoperabilitas",
+            taglineId: "Konversi otomatis resource HL7 FHIR R4 dengan validasi IHS & ontologi LOINC.",
+            taglineEn: "Turnkey HL7 FHIR R4 transformation with IHS validation & LOINC mapping.",
+            protocols: "HL7 FHIR R4\nOAuth 2.0\nTLS 1.3",
+            metric1Value: "99.8%",
+            metric1LabelId: "Sukses Kirim",
+            metric1LabelEn: "Delivery Rate",
+            metric2Value: "FHIR R4",
+            metric2LabelId: "Standar",
+            metric2LabelEn: "Standard",
+          },
+          {
+            id: "connectivity",
+            isActive: true,
+            icon: "Wifi",
+            tabLabelId: "Smart Gateway",
+            tabLabelEn: "Smart Gateway",
+            shortDescId: "Buffer Offline 72 Jam",
+            shortDescEn: "72h Offline Buffer",
+            nameId: "Smart Resilient Gateway",
+            nameEn: "Smart Resilient Gateway",
+            taglineId: "Buffer lokal terenkripsi 72 jam menjaga layanan Cito tetap jalan saat jaringan putus.",
+            taglineEn: "72-hour encrypted local buffer keeps Cito lab operations running during outages.",
+            protocols: "Edge Cache\nAES-256\nCito Sync",
+            metric1Value: "99.9%",
+            metric1LabelId: "Uptime SLA",
+            metric1LabelEn: "Uptime SLA",
+            metric2Value: "0 Byte",
+            metric2LabelId: "Data Hilang",
+            metric2LabelEn: "Data Loss",
+          },
+        ],
+        steps: [
+          step(
+            "simrs-1",
+            "simrs-his",
+            TRIGGER,
+            "completed",
+            ["Order Poli / IGD Masuk (ORM^O01)", "ER / Clinic Order Received (ORM^O01)"],
+            ["Demografi pasien & parameter tes ditarik otomatis", "Patient demographics & test orders ingested automatically"],
+            "SIMRS"
+          ),
+          step(
+            "simrs-2",
+            "simrs-his",
+            PROCESS,
+            "completed",
+            ["Cetak Barcode & Kunci Billing", "Generate Barcode & Lock Billing"],
+            ["Status klaim BPJS/asuransi tervalidasi real-time", "Insurance & BPJS charge capture validated in real time"],
+            "DFT^P03"
+          ),
+          step(
+            "simrs-3",
+            "simrs-his",
+            DISPATCH,
+            "running",
+            ["Kirim Hasil Terverifikasi ke EMR", "Post Verified Result to EMR"],
+            ["Laporan masuk ke layar DPJP tanpa ketik ulang", "Structured report lands directly on physician screen"],
+            "ORU^R01"
+          ),
+          step(
+            "rme-1",
+            "rme",
+            TRIGGER,
+            "completed",
+            ["Validasi Sp.PK & Segel BSrE", "Pathologist Sign-Off & BSrE Seal"],
+            ["Hasil disahkan dengan tanda tangan elektronik SHA-256", "Results sealed with accredited cryptographic e-signature"],
+            "BSrE"
+          ),
+          step(
+            "rme-2",
+            "rme",
+            PROCESS,
+            "completed",
+            ["Kalkulasi Tren Longitudinal", "Compute Longitudinal Trends"],
+            ["Bandingkan Kreatinin & HbA1c lintas kunjungan", "Compare Creatinine & HbA1c across encounters"],
+            "LOINC"
+          ),
+          step(
+            "rme-3",
+            "rme",
+            DISPATCH,
+            "running",
+            ["Render DiagnosticReport di RME", "Render DiagnosticReport in EMR"],
+            ["Dokter melihat grafik tren & peringatan nilai kritis", "Physician views trend charts & critical alerts"],
+            "FHIR R4"
+          ),
+          step(
+            "analyzer-1",
+            "analyzer",
+            TRIGGER,
+            "completed",
+            ["Tabung Barcode Masuk Rak Alat", "Barcoded Tube Hits Analyzer Rack"],
+            ["Sysmex XN-1000 / Cobas c501 melakukan Host Query", "Sysmex XN-1000 / Cobas c501 initiates Host Query"],
+            "ASTM"
+          ),
+          step(
+            "analyzer-2",
+            "analyzer",
+            PROCESS,
+            "completed",
+            ["Gerbang Kontrol Kualitas Westgard", "Westgard Quality Control Gate"],
+            ["Memastikan QC harian lolos sebelum baca sampel", "Ensures daily QC passes before processing specimen"],
+            "QC PASS"
+          ),
+          step(
+            "analyzer-3",
+            "analyzer",
+            DISPATCH,
+            "running",
+            ["Ingesti Hasil & Flag Otomatis", "Auto-Ingest Results & Flags"],
+            ["Flag clot/hemolisis langsung ditandai di worklist", "Clot/hemolysis flags surfaced directly in worklist"],
+            "LIS Core"
+          ),
+          step(
+            "satusehat-1",
+            "satusehat",
+            TRIGGER,
+            "completed",
+            ["Validasi NIK ke IHS Number", "Verify NIK to IHS Patient ID"],
+            ["Pencocokan identitas pasien dengan indeks Kemenkes", "Patient identity matched against MoH registry"],
+            "OAuth 2.0"
+          ),
+          step(
+            "satusehat-2",
+            "satusehat",
+            PROCESS,
+            "completed",
+            ["Mapping LOINC & SNOMED CT", "Map LOINC & SNOMED CT"],
+            ["Normalisasi parameter lab ke kamus nasional", "Normalize lab parameters to national dictionary"],
+            "Ontology"
+          ),
+          step(
+            "satusehat-3",
+            "satusehat",
+            DISPATCH,
+            "running",
+            ["Kirim Bundle FHIR DiagnosticReport", "Dispatch FHIR DiagnosticReport"],
+            ["Konfirmasi HTTP 201 Created tercatat di audit log", "HTTP 201 Created logged in immutable audit trail"],
+            "201 OK"
+          ),
+          step(
+            "connectivity-1",
+            "connectivity",
+            TRIGGER,
+            "completed",
+            ["Deteksi Gangguan WAN / Cloud", "Detect WAN / Cloud Disruption"],
+            ["Gateway otomatis beralih ke mode penyimpanan edge", "Gateway seamlessly switches to local edge buffering"],
+            "Failover"
+          ),
+          step(
+            "connectivity-2",
+            "connectivity",
+            PROCESS,
+            "completed",
+            ["Enkripsi Lokal Hingga 72 Jam", "Encrypt Locally up to 72 Hours"],
+            ["Pembacaan analyzer tetap terekam tanpa hambatan", "Analyzer readings continue capturing uninterrupted"],
+            "AES-256"
+          ),
+          step(
+            "connectivity-3",
+            "connectivity",
+            DISPATCH,
+            "running",
+            ["Rekonsiliasi Prioritas Sampel Cito", "Reconcile Cito Specimens First"],
+            ["Sampel IGD & ICU disinkronkan lebih dulu saat online", "ER & ICU queues sync first upon reconnection"],
+            "0% Loss"
+          ),
+        ],
+      },
+    },
+    architecture: {
+      fields: {
+        validationPromptId: "Pilih Mode Validasi QC",
+        validationPromptEn: "Select QC Validation Mode",
+      },
+      lists: {
+        capabilities: [
+          {
+            id: "host-query",
+            isActive: true,
+            visual: "host-query",
+            icon: "Cpu",
+            titleId: "Host Query Satu Sentuhan",
+            titleEn: "One-Click Host Query",
+            descId: "Mesin menarik profil tes otomatis begitu barcode tabung terbaca di rak.",
+            descEn: "Instruments pull test profiles automatically the moment barcoded tubes enter the rack.",
+          },
+          {
+            id: "cito-priority",
+            isActive: true,
+            visual: "cito-queue",
+            icon: "Clock",
+            titleId: "Prioritas Antrean Cito",
+            titleEn: "Cito Priority Scheduling",
+            descId: "Sampel IGD & ICU selalu diprioritaskan saat sinkronisasi ke SIMRS dan EMR.",
+            descEn: "ER and ICU specimens always take priority when syncing to HIS and EMR.",
+          },
+          {
+            id: "validation-rules",
+            isActive: true,
+            visual: "validation-modes",
+            icon: "ShieldCheck",
+            titleId: "Aturan Validasi Fleksibel",
+            titleEn: "Configurable Validation Rules",
+            descId: "Atur auto-verifikasi hasil normal atau tahan otomatis jika Westgard QC gagal.",
+            descEn: "Configure auto-verification for normal runs or strict Westgard QC holds.",
+          },
+          {
+            id: "critical-value",
+            isActive: true,
+            visual: "critical-value",
+            icon: "Activity",
+            titleId: "Deteksi Nilai Kritis Instan",
+            titleEn: "Instant Critical Value Flag",
+            descId: "Menyorot hasil kritis secara otomatis dan memicu eskalasi KARS SKP 2.2.",
+            descEn: "Highlights critical thresholds automatically and triggers KARS SKP 2.2 alerts.",
+          },
+          {
+            id: "payload-audit",
+            isActive: true,
+            visual: "payload-chat",
+            icon: "Send",
+            titleId: "Audit Payload Real-Time",
+            titleEn: "Real-Time Payload Audit",
+            descId: "Lacak status setiap pengiriman HL7 dan FHIR R4 dalam hitungan detik.",
+            descEn: "Track every HL7 and FHIR R4 dispatch status with full auditability.",
+          },
+          {
+            id: "loinc-mapping",
+            isActive: true,
+            visual: "loinc-mapper",
+            icon: "Sparkles",
+            titleId: "Pemetaan LOINC & SNOMED",
+            titleEn: "LOINC & SNOMED Builder",
+            descId: "Normalisasi otomatis kode mentah alat menjadi kamus standar nasional.",
+            descEn: "Automatically normalizes proprietary instrument codes into national ontologies.",
+          },
+        ],
+      },
+    },
+    "analyzer-directory": {
+      fields: {
+        allLabelId: "Semua Divisi",
+        allLabelEn: "All Disciplines",
+        searchPlaceholderId: "Cari merek / seri (mis. Cobas, XN)...",
+        searchPlaceholderEn: "Search brand / series (e.g. Cobas, XN)...",
+        colManufacturerId: "Pabrikan",
+        colManufacturerEn: "Manufacturer",
+        colDisciplineId: "Divisi",
+        colDisciplineEn: "Discipline",
+        colSeriesId: "Seri & Model Teruji",
+        colSeriesEn: "Supported Series",
+        colInterfaceId: "Antarmuka",
+        colInterfaceEn: "Interface",
+        colProtocolId: "Protokol",
+        colProtocolEn: "Protocol",
+        emptyTextId: 'Model "{query}" belum tampil di ringkasan.',
+        emptyTextEn: 'Model "{query}" is not listed in the summary.',
+        resetLabelId: "Reset Filter",
+        resetLabelEn: "Reset Filter",
+        slaTitleId: "Driver Kustom 3–5 Hari Kerja:",
+        slaTitleEn: "3–5 Day Custom Driver SLA:",
+        slaTextId: "Tim engineering kami membangun konektor ASTM/HL7 baru tanpa biaya tambahan.",
+        slaTextEn: "Our engineering team builds new ASTM/HL7 instrument drivers at no extra fee.",
+        slaCtaLabelId: "Ajukan Cek Mesin",
+        slaCtaLabelEn: "Request Compatibility Check",
+        slaCtaUrl: "/request-demo",
+      },
+      lists: {
+        disciplines: [
+          { id: "hematology", isActive: true, category: "hematology", labelId: "Hematologi", labelEn: "Hematology" },
+          { id: "chemistry", isActive: true, category: "chemistry", labelId: "Kimia & Imuno", labelEn: "Chemistry" },
+          { id: "microbiology", isActive: true, category: "microbiology", labelId: "Mikrobiologi", labelEn: "Microbiology" },
+          { id: "molecular", isActive: true, category: "molecular", labelId: "Molekuler", labelEn: "Molecular" },
+        ],
+        analyzers: [
+          analyzer("sysmex", "hematology", HEMA, "Sysmex", "XN-1000, XN-550, CS-2500, UF-4000", "TCP/IP LAN", "ASTM E1394"),
+          analyzer("mindray", "hematology", HEMA, "Mindray", "BC-6000, BC-5380, CX-6000", "TCP/IP / RS-232", "HL7 v2.5"),
+          analyzer("horiba", "hematology", HEMA, "Horiba Medical", "Yumizen H550, Pentra XLR", "TCP/IP LAN", "ASTM E1381"),
+          analyzer("roche", "chemistry", CHEM, "Roche Diagnostics", "Cobas c501, e411, Pure, Pro", "TCP/IP LAN", "ASTM / HL7"),
+          analyzer("abbott", "chemistry", CHEM, "Abbott Core", "Alinity ci, Architect i1000SR", "TCP/IP / Serial", "ASTM E1381"),
+          analyzer("siemens", "chemistry", CHEM, "Siemens Healthineers", "Atellica CH/IM, Dimension EXL", "TCP/IP LAN", "HL7 v2.5"),
+          analyzer("biomerieux", "microbiology", MICRO, "bioMérieux", "VITEK 2, VIDAS, BACT/ALERT", "TCP/IP / BCI", "ASTM / BCI"),
+          analyzer("beckman", "microbiology", MICRO, "Beckman Coulter", "DxU Iris, MicroScan WalkAway", "TCP/IP LAN", "HL7 v2.x"),
+          analyzer("roche-cepheid", "molecular", MOLE, "Roche / Cepheid", "Cobas 6800, GeneXpert", "HTTPS / LAN", "HL7 FHIR / ASTM"),
+          analyzer("thermo-qiagen", "molecular", MOLE, "Thermo / Qiagen", "QuantStudio, QIAcube HT", "REST / CSV", "JSON / HL7"),
+        ],
+      },
+    },
+    compliance: {
+      fields: {},
+      lists: {
+        badges: [
+          { id: "pmk-24-2022", isActive: true, code: "PMK 24/2022", labelId: "RME Terstruktur", labelEn: "Structured EMR", icon: "FileCheck2" },
+          { id: "satusehat", isActive: true, code: "SATUSEHAT", labelId: "HL7 FHIR R4", labelEn: "HL7 FHIR R4", icon: "ShieldCheck" },
+          { id: "uu-pdp", isActive: true, code: "UU PDP 27/2022", labelId: "Privasi Pasien", labelEn: "Patient Privacy", icon: "Lock" },
+          { id: "kars-skp", isActive: true, code: "KARS SKP 2.2", labelId: "Nilai Kritis < 15m", labelEn: "Panic SLA < 15m", icon: "Activity" },
+          { id: "iso-15189", isActive: true, code: "ISO 15189", labelId: "Mutu Lab Medik", labelEn: "Lab Quality", icon: "BadgeCheck" },
+          { id: "tls-13", isActive: true, code: "TLS 1.3", labelId: "AES-256 Encrypted", labelEn: "AES-256 Encrypted", icon: "Server" },
+        ],
+      },
+    },
+  },
+};

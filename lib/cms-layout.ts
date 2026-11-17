@@ -10,12 +10,17 @@
  */
 
 import type { CmsPageHero } from "@/lib/cms-hero";
+import type { ResolvedPageContent } from "@/lib/cms-page-content";
 
 /** Props CMS yang diterima client component halaman dalam dari server page. */
 export interface InnerPageCmsProps {
   cmsHero?: CmsPageHero | null;
   layout?: ResolvedSection[] | null;
   cta?: { section?: unknown } | null;
+  /** Konten section bawaan (item aktif saja) — lihat lib/cms-page-content.ts. */
+  content?: ResolvedPageContent | null;
+  /** Section "Alur Kerja" bersama (sama dengan homepage), untuk halaman yang memakainya. */
+  workflow?: { section?: unknown } | null;
 }
 
 export type CmsPageKey ="home" | "platform" | "solutions" | "modules" | "nova_ai" | "integration";
@@ -114,7 +119,7 @@ export const CMS_PAGES: CmsPageDefinition[] = [
     heroSectionKey: "page_platform",
     sections: [
       { key: "hero", label: "Hero Halaman", locked: true },
-      { key: "workflow", label: "Alur Kerja 4 Tahap", anchor: "workflow", note: "Komponen Alur Kerja bersama (teks bawaan)." },
+      { key: "workflow", label: "Alur Kerja 4 Tahap", anchor: "workflow", note: "Konten mengikuti section Alur Kerja di CMS Homepage." },
       {
         key: "automation",
         label: "Otomatisasi 100%",

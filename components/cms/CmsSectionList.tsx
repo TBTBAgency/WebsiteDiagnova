@@ -63,6 +63,24 @@ export function CmsMultiline({ text }: { text: string }) {
 }
 
 /**
+ * Teks konten CMS dengan baris baru: "\n" menjadi <br className={brClassName} />.
+ * Dipakai untuk teks yang sebelumnya memakai jeda baris responsif, mis. brClassName="hidden sm:inline".
+ */
+export function CmsLines({ text, brClassName }: { text: string; brClassName?: string }) {
+  const lines = text.split(/\r?\n/);
+  return (
+    <>
+      {lines.map((line, i) => (
+        <React.Fragment key={i}>
+          {line}
+          {i < lines.length - 1 && <br className={brClassName} />}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
+
+/**
  * Membuat fungsi pemilih teks header: memakai override CMS untuk bahasa aktif bila ada,
  * selain itu teks/JSX bawaan halaman (fallback) apa adanya.
  */
