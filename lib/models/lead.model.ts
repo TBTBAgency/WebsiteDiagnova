@@ -12,6 +12,7 @@ import {
   Prisma,
 } from "@prisma/client";
 import { createDemoMagicLink } from "@/lib/magic-link";
+import { AppUrlConfigError, getAppBaseUrl } from "@/lib/app-url";
 
 export const institutionTypeToPrisma: Record<InstitutionType, PrismaInstitutionType> = {
   hospital: PrismaInstitutionType.HOSPITAL,
@@ -70,7 +71,7 @@ export const MANUAL_STATUS_TRANSITIONS: Record<number, number[]> = {
 export class LeadWorkflowError extends Error {
   constructor(
     message: string,
-    public readonly httpStatus: 400 | 404 | 409 = 409
+    public readonly httpStatus: 400 | 404 | 409 | 503 = 409
   ) {
     super(message);
     this.name = "LeadWorkflowError";
@@ -338,6 +339,21 @@ export async function approveLead(
 
   if (!currentLead) {
     throw new LeadWorkflowError("Data permohonan demo tidak ditemukan.", 404);
+  }
+
+  // Pastikan URL publik aplikasi valid SEBELUM ada perubahan data, agar production tidak
+  // pernah menyetujui lead dengan Magic Link yang mengarah ke localhost.
+  try {
+    getAppBaseUrl();
+  } catch (error) {
+    if (error instanceof AppUrlConfigError) {
+      console.error("Konfigurasi URL aplikasi tidak valid:", error.message);
+      throw new LeadWorkflowError(
+        "Magic Link tidak dapat dibuat: URL aplikasi (APP_URL) belum dikonfigurasi dengan benar di server. Hubungi pengelola sistem.",
+        503
+      );
+    }
+    throw error;
   }
 
   // Cegah privilege escalation: magic link tidak boleh dibuat untuk email milik akun non-USER

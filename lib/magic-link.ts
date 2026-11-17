@@ -5,6 +5,7 @@ import { AuthSessionPayload } from "@/types";
 import { setSessionCookie } from "@/lib/auth-session";
 import { recordAuditLog } from "@/lib/models/audit.model";
 import { LEAD_STATUS, transitionLeadStatus } from "@/lib/models/lead.model";
+import { buildMagicLinkUrl, getAppBaseUrl } from "@/lib/app-url";
 
 export const MAGIC_LINK_TTL_HOURS = 24;
 
@@ -62,6 +63,10 @@ export async function createDemoMagicLink(
   userId?: string | null,
   expiresInHours: number = MAGIC_LINK_TTL_HOURS
 ): Promise<MagicLinkCreationResult> {
+  // Validasi base URL lebih dulu: bila konfigurasi salah (mis. localhost di production),
+  // tidak ada token yang dibuat dan tautan lama tidak dinonaktifkan.
+  getAppBaseUrl();
+
   const rawToken = crypto.randomBytes(32).toString("hex");
   const tokenHash = hashToken(rawToken);
   const now = new Date();
@@ -83,8 +88,7 @@ export async function createDemoMagicLink(
     }),
   ]);
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const magicLinkUrl = `${baseUrl}/auth/verify-magic-link?token=${rawToken}`;
+  const magicLinkUrl = buildMagicLinkUrl(rawToken);
 
   return { rawToken, magicLinkUrl, expiresAt };
 }

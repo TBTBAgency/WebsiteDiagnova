@@ -64,7 +64,10 @@ async function adminCall(cookie, method, path, body) {
 }
 
 async function openLink(url, ua = "Mozilla/5.0 (compatible; LinkPreviewBot/1.0)") {
-  const res = await fetch(url, { headers: { "user-agent": ua }, redirect: "manual" });
+  // Selalu buka path + query yang sama di server yang sedang diuji, walaupun tautan
+  // memakai domain publik (APP_URL) — tes tidak pernah memanggil domain eksternal.
+  const u = new URL(url);
+  const res = await fetch(`${BASE}${u.pathname}${u.search}`, { headers: { "user-agent": ua }, redirect: "manual" });
   return { status: res.status, html: await res.text() };
 }
 
@@ -113,6 +116,18 @@ async function main() {
   const linkA = ap.body?.data?.magicLinkUrl;
   const tokenA = tokenOf(linkA);
   check("magic link URL returned once on approval", /^[a-f0-9]{64}$/.test(tokenA || ""));
+  const linkUrl = new URL(linkA);
+  check("magic link points to /auth/verify-magic-link", linkUrl.pathname === "/auth/verify-magic-link");
+  if (process.env.EXPECT_APP_URL) {
+    check(
+      `magic link uses configured APP_URL origin (${process.env.EXPECT_APP_URL})`,
+      linkUrl.origin === new URL(process.env.EXPECT_APP_URL).origin,
+      `got origin ${linkUrl.origin}`
+    );
+    if (!/localhost|127\.0\.0\.1/.test(process.env.EXPECT_APP_URL)) {
+      check("magic link is not localhost", !/^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])$/.test(linkUrl.hostname));
+    }
+  }
   const detail = await adminCall(admin, "GET", `/api/admin/leads/${leadA}`);
   check("lead detail does not expose token or hash", !JSON.stringify(detail.body).includes(tokenA) && detail.body?.data?.magicLinkUrl === null);
 
