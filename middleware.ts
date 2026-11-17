@@ -26,8 +26,8 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const session = await readSession(request);
 
-  // API admin: lapisan pertama (cek JWT + role). Route handler tetap memverifikasi ulang ke database.
-  if (pathname.startsWith("/api/admin")) {
+  // API admin & LIS: lapisan pertama (cek JWT + role). Route handler tetap memverifikasi ulang ke database.
+  if (pathname.startsWith("/api/admin") || pathname.startsWith("/api/lis")) {
     if (!session) {
       return NextResponse.json(
         { success: false, message: "Akses ditolak. Sesi tidak valid atau telah berakhir." },
@@ -78,5 +78,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/lis/:path*"],
 };

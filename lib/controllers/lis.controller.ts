@@ -4,14 +4,54 @@ import { searchPatients, createPatient, listPatients } from "@/lib/models/patien
 import { createLabOrder, getLabOrders, getLabOrderById } from "@/lib/models/order.model";
 import { receiveSpecimen, rejectSpecimen } from "@/lib/models/specimen.model";
 import { listPhysicians } from "@/lib/models/physician.model";
-import { getCurrentSession } from "@/lib/auth-session";
+import { Prisma } from "@prisma/client";
+import { requireAdmin } from "@/lib/auth-guard";
 import { ApiResponse, OrderPriority } from "@/types";
+
+/**
+ * Seluruh operasi LIS (data pasien, order, spesimen, katalog, dokter) hanya untuk ADMIN.
+ * Diverifikasi di setiap handler (cek ulang ke database), tidak hanya di middleware/UI.
+ */
+
+/**
+ * Pesan error yang aman dikirim ke klien. Error Prisma dapat memuat isi query/input
+ * (mis. NIK, nama pasien) sehingga tidak pernah diteruskan; hanya pesan domain dari
+ * model LIS (Error biasa) yang boleh tampil.
+ */
+function safeLisErrorMessage(error: unknown, fallback: string): string {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError ||
+    error instanceof Prisma.PrismaClientValidationError ||
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientRustPanicError
+  ) {
+    return fallback;
+  }
+  if (error instanceof SyntaxError) return "Format data permintaan tidak valid.";
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
+}
+
+async function readJsonBody(request: NextRequest): Promise<Record<string, any> | null> {
+  try {
+    const body = await request.json();
+    return body && typeof body === "object" ? body : null;
+  } catch {
+    return null;
+  }
+}
+
+const invalidBodyResponse = () =>
+  NextResponse.json<ApiResponse>({ success: false, message: "Format data permintaan tidak valid." }, { status: 400 });
 
 /**
  * Controller untuk mengambil daftar katalog tes lab
  */
 export async function getCatalogController(): Promise<NextResponse<ApiResponse>> {
   try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
     await ensureDefaultCatalog(); // Pastikan tes default RS tersedia
     const catalog = await getTestCatalog();
 
@@ -37,6 +77,8 @@ export async function getCatalogController(): Promise<NextResponse<ApiResponse>>
  */
 export async function getPatientsController(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");
 
@@ -70,7 +112,11 @@ export async function getPatientsController(request: NextRequest): Promise<NextR
  */
 export async function createPatientController(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
-    const body = await request.json();
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+
+    const body = await readJsonBody(request);
+    if (!body) return invalidBodyResponse();
     if (!body.mrn || !body.name || !body.birthDate || !body.sex) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Field mrn, name, birthDate, dan sex wajib diisi." },
@@ -78,7 +124,7 @@ export async function createPatientController(request: NextRequest): Promise<Nex
       );
     }
 
-    const patient = await createPatient(body);
+    const patient = await createPatient(body as Parameters<typeof createPatient>[0]);
     return NextResponse.json<ApiResponse>(
       {
         success: true,
@@ -89,13 +135,13 @@ export async function createPatientController(request: NextRequest): Promise<Nex
     );
   } catch (error: any) {
     console.error("createPatientController error:", error);
-    const isDuplicate = error.code === "P2002";
+    const isDuplicate = error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
     return NextResponse.json<ApiResponse>(
       {
         success: false,
         message: isDuplicate
           ? "Nomor Rekam Medis (MRN) ini sudah terdaftar di sistem."
-          : error.message || "Gagal mendaftarkan pasien.",
+          : safeLisErrorMessage(error, "Gagal mendaftarkan pasien."),
       },
       { status: isDuplicate ? 409 : 500 }
     );
@@ -107,6 +153,8 @@ export async function createPatientController(request: NextRequest): Promise<Nex
  */
 export async function getOrdersController(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") || "all";
     const priority = searchParams.get("priority") || "all";
@@ -141,6 +189,9 @@ export async function getOrderDetailController(
   id: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+
     const order = await getLabOrderById(id);
     if (!order) {
       return NextResponse.json<ApiResponse>(
@@ -171,8 +222,12 @@ export async function getOrderDetailController(
  */
 export async function createOrderController(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    const body = await request.json();
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
+
+    const body = await readJsonBody(request);
+    if (!body) return invalidBodyResponse();
 
     if (!body.patientId || !body.testCatalogCodes || body.testCatalogCodes.length === 0) {
       return NextResponse.json<ApiResponse>(
@@ -188,7 +243,7 @@ export async function createOrderController(request: NextRequest): Promise<NextR
       priority: (body.priority as OrderPriority) || "routine",
       clinicalNotes: body.clinicalNotes || null,
       testCatalogCodes: body.testCatalogCodes,
-      userId: session?.userId || null,
+      userId: session.userId,
     });
 
     return NextResponse.json<ApiResponse>(
@@ -204,7 +259,7 @@ export async function createOrderController(request: NextRequest): Promise<NextR
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "Gagal membuat order lab.",
+        message: safeLisErrorMessage(error, "Gagal membuat order lab."),
       },
       { status: 500 }
     );
@@ -219,8 +274,9 @@ export async function receiveSpecimenController(
   barcode: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    const receiverName = session?.name || "Petugas Lab";
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const receiverName = guard.session.name;
 
     const updated = await receiveSpecimen(barcode, receiverName);
 
@@ -237,7 +293,7 @@ export async function receiveSpecimenController(
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "Gagal mencatat penerimaan spesimen.",
+        message: safeLisErrorMessage(error, "Gagal mencatat penerimaan spesimen."),
       },
       { status: 400 }
     );
@@ -252,17 +308,21 @@ export async function rejectSpecimenController(
   barcode: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    const body = await request.json();
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
-    if (!body.reason || !body.reason.trim()) {
+    const body = await readJsonBody(request);
+    if (!body) return invalidBodyResponse();
+
+    if (typeof body.reason !== "string" || !body.reason.trim()) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Alasan penolakan spesimen wajib diisi." },
         { status: 400 }
       );
     }
 
-    const rejecterName = session?.name || "Petugas Lab";
+    const rejecterName = session.name;
     const updated = await rejectSpecimen(barcode, body.reason, rejecterName);
 
     return NextResponse.json<ApiResponse>(
@@ -278,7 +338,7 @@ export async function rejectSpecimenController(
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "Gagal menolak spesimen.",
+        message: safeLisErrorMessage(error, "Gagal menolak spesimen."),
       },
       { status: 400 }
     );
@@ -290,6 +350,8 @@ export async function rejectSpecimenController(
  */
 export async function getPhysiciansController(): Promise<NextResponse<ApiResponse>> {
   try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
     const physicians = await listPhysicians();
     return NextResponse.json<ApiResponse>(
       {
