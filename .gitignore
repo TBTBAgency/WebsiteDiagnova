@@ -30,3 +30,14 @@ yarn-error.log*
 prisma/migrations/dev.db
 
 *.tsbuildinfo
+
+# database backups / dumps (berisi data sensitif: hash password, leads, pasien)
+# JANGAN di-commit. Simpan di penyimpanan terenkripsi di luar repository.
+/backups/
+*.dump
+*.pgdump
+*.backup
+*_backup.sql
+*-backup.sql
+*full_backup*.sql
+*.sql.gz
