@@ -560,7 +560,7 @@ function RequestDemoForm() {
             <span>hello@diagnova.id</span>
           </a>
           <a
-            href="https://wa.me/6281234567890"
+            href="https://wa.me/6281991070928"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 hover:underline"
