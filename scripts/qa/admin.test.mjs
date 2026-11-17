@@ -59,6 +59,30 @@ async function main() {
   const dbUser = await prisma.user.findUnique({ where: { email } });
   check("no default password set for USER created without password", dbUser.passwordHash === null);
 
+  console.log("== Tambah Pengguna: USER has no password (Magic Link only)");
+  const pwEmail = `qa-pw-${RUN}@example.test`;
+  const withPw = await call(admin, "POST", "/api/admin/users", { name: "QA Password", email: pwEmail, password: "QaSecret123!" });
+  check("create USER with legacy password field -> 201", withPw.status === 201, JSON.stringify(withPw.body));
+  const pwRow = await prisma.user.findUnique({ where: { email: pwEmail } });
+  check("password sent by client is NOT stored (passwordHash null)", pwRow?.passwordHash === null);
+  const leaks = (body) => /passwordHash|"password"|\$2[aby]\$/.test(JSON.stringify(body));
+  check("create response contains no password / hash", !leaks(withPw.body));
+  const pwLogin = await fetch(`${BASE}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-forwarded-for": `10.88.${RUN.length}.9` },
+    body: JSON.stringify({ email: pwEmail, password: "QaSecret123!" }),
+  });
+  check("USER cannot log in with email + password", pwLogin.status === 401 || pwLogin.status === 403, `got ${pwLogin.status}`);
+  const list = await call(admin, "GET", "/api/admin/users");
+  check("GET /api/admin/users -> 200", list.status === 200);
+  check("user list contains no password / hash", !leaks(list.body));
+  check("user list contains no ADMIN account", !(list.body?.data || []).some((u) => u.roleName !== "USER"));
+  const badEmail = await call(admin, "POST", "/api/admin/users", { name: "QA Bad", email: "not-an-email" });
+  check("invalid email -> 400", badEmail.status === 400);
+  const dupEmail = await call(admin, "POST", "/api/admin/users", { name: "QA Dup", email: pwEmail });
+  check("duplicate email -> 400 without internals", dupEmail.status === 400 && !/prisma|P2002/i.test(JSON.stringify(dupEmail.body)));
+  if (pwRow) await call(admin, "DELETE", `/api/admin/users/${pwRow.id}`);
+
   const roleEsc = await call(admin, "POST", "/api/admin/users", {
     name: "QA Escalate",
     email: `qa-esc-${RUN}@example.test`,

@@ -92,10 +92,11 @@ export type ExtendDemoAccessSchemaType = z.infer<typeof extendDemoAccessSchema>;
 
 export type UpdateLeadStatusSchemaType = z.infer<typeof updateLeadStatusSchema>;
 
+// Akun USER tidak memiliki password (klien masuk lewat Magic Link). Field `password`
+// dari klien lama diabaikan karena zod membuang key yang tidak dikenal.
 export const createUserSchema = z.object({
-  name: z.string().min(2, "Nama minimal 2 karakter"),
-  email: z.string().email("Format email tidak valid"),
-  password: z.string().min(6, "Password minimal 6 karakter").optional(),
+  name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100, "Nama terlalu panjang"),
+  email: z.string().trim().email("Format email tidak valid").max(255),
   institution: z.string().optional().nullable(),
   jobTitle: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),

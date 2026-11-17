@@ -236,12 +236,15 @@ export async function deleteUser(id: string): Promise<SafeUser> {
 }
 
 /**
- * Membuat user baru dengan enkripsi password menggunakan bcrypt
+ * Membuat akun klien (USER) dari Manajemen Pengguna.
+ *
+ * Akun USER TIDAK memiliki password: login password hanya untuk Administrator
+ * (lihat auth.controller), sedangkan klien masuk lewat Magic Link yang dibuat saat
+ * permohonan demo dengan email yang sama disetujui. Karena itu passwordHash selalu null.
  */
 export async function createUser(data: {
   name: string;
   email: string;
-  password?: string;
   institution?: string | null;
   jobTitle?: string | null;
   phone?: string | null;
@@ -249,14 +252,6 @@ export async function createUser(data: {
   status?: number;
   demoDurationDays?: number | null;
 }): Promise<SafeUser> {
-  // Tanpa password => passwordHash null, sehingga akun tidak bisa login dengan password
-  // (klien demo masuk lewat Magic Link). Tidak ada lagi password default yang dapat ditebak.
-  let passwordHash: string | null = null;
-  if (data.password) {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash(data.password, salt);
-  }
-
   // Jika roleId tidak diberikan, default ke role USER
   let roleId = data.roleId;
   if (!roleId) {
@@ -270,7 +265,7 @@ export async function createUser(data: {
     data: {
       name: data.name,
       email: data.email.toLowerCase().trim(),
-      passwordHash,
+      passwordHash: null,
       institution: data.institution || null,
       jobTitle: data.jobTitle || null,
       phone: data.phone || null,

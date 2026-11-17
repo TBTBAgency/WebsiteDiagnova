@@ -76,7 +76,6 @@ export async function POST(request: NextRequest) {
     const newUser = await createUser({
       name: validation.data.name,
       email: validation.data.email,
-      password: validation.data.password,
       institution: validation.data.institution,
       jobTitle: validation.data.jobTitle,
       phone: validation.data.phone,
@@ -112,7 +111,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menambahkan pengguna baru." },
+      { success: false, message: "Gagal menambahkan pengguna baru." },
       { status: 500 }
     );
   }

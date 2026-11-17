@@ -41,7 +41,6 @@ export default function AdminUsersPage() {
   const [addFormData, setAddFormData] = useState({
     name: "",
     email: "",
-    password: "",
     institution: "",
     jobTitle: "",
     phone: "",
@@ -108,7 +107,6 @@ export default function AdminUsersPage() {
         setAddFormData({
           name: "",
           email: "",
-          password: "",
           institution: "",
           jobTitle: "",
           phone: "",
@@ -607,22 +605,18 @@ export default function AdminUsersPage() {
                   />
                 </div>
 
-                {/* Password */}
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="font-semibold text-slate-700">Password Akun *</label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      required
-                      value={addFormData.password}
-                      onChange={(e) =>
-                        setAddFormData((prev) => ({ ...prev, password: e.target.value }))
-                      }
-                      placeholder="Minimal 6 karakter"
-                      className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden"
-                    />
-                    <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                  </div>
+                {/* Akses login klien: tanpa password, melalui Magic Link */}
+                <div
+                  data-testid="user-access-info"
+                  className="sm:col-span-2 p-3 rounded-2xl bg-amber-50/70 border border-amber-200 text-amber-900 flex items-start gap-2"
+                >
+                  <Lock className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                  <span>
+                    Akun klien <strong>tidak memakai password</strong>. Klien masuk melalui{" "}
+                    <strong>Magic Link</strong> yang dibuat ketika permohonan demo dengan email yang sama
+                    disetujui di menu <strong>Permohonan Demo</strong>. Login email + password hanya
+                    berlaku untuk Administrator.
+                  </span>
                 </div>
 
                 {/* Institusi / RS */}
@@ -688,6 +682,9 @@ export default function AdminUsersPage() {
                     <option value={14}>14 Hari (Dua Pekan)</option>
                     <option value={30}>30 Hari (Satu Bulan Penuh)</option>
                   </select>
+                  <p className="text-[11px] text-slate-500">
+                    Durasi awal. Saat permohonan demo disetujui, durasi yang dipilih pada persetujuan yang berlaku.
+                  </p>
                 </div>
 
                 {/* Status User */}
