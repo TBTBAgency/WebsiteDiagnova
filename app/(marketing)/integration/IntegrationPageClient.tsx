@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero, heroCta, heroMetrics, HERO_DEFAULTS } from "@/lib/cms-hero";
 import type { InnerPageCmsProps } from "@/lib/cms-layout";
 import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -326,36 +326,9 @@ export default function IntegrationPageClient({ cmsHero, layout, cta }: InnerPag
             ? "Konektivitas siap pakai yang aman dan patuh regulasi: bridging dua arah SIMRS/HIS, RME Permenkes 24/2022, SATUSEHAT Kemenkes, 500+ analyzer otomatis, dan gateway buffer offline."
             : "Turnkey, regulatory-compliant interoperability: bidirectional HIS bridging, EMR Permenkes 24/2022, MoH SATUSEHAT HL7 FHIR, direct 500+ analyzer interfacing, and offline edge buffer."
         }
-        primaryCta={{
-          text: language === "ID" ? "Jadwalkan Konsultasi Integrasi" : "Schedule Integration Consultation",
-          href: "/request-demo",
-        }}
-        secondaryCta={{
-          text: language === "ID" ? "Eksplorasi Alur Integrasi" : "Explore Integration Flow",
-          href: "#integration-explorer",
-        }}
-        metrics={[
-          {
-            value: language === "ID" ? "500+ Mesin" : "500+ Analyzers",
-            label: language === "ID" ? "Analyzer Teruji" : "Supported Analyzers",
-            sub: "Roche, Sysmex, Abbott, Mindray",
-          },
-          {
-            value: "HL7 & FHIR",
-            label: language === "ID" ? "Standar Kemenkes RI" : "National Health Standard",
-            sub: "SATUSEHAT & Permenkes 24/2022",
-          },
-          {
-            value: "0 Double Entry",
-            label: language === "ID" ? "Bridging SIMRS Dua Arah" : "Bidirectional HIS Bridging",
-            sub: language === "ID" ? "Order & billing otomatis realtime" : "Real-time automatic order & billing",
-          },
-          {
-            value: language === "ID" ? "72 Jam" : "72 Hours",
-            label: language === "ID" ? "Buffer Offline Edge" : "Offline Resilient Edge",
-            sub: language === "ID" ? "Zero data loss saat jaringan putus" : "Zero data loss during downtime",
-          },
-        ]}
+        primaryCta={heroCta(cmsHero, "primaryCta", HERO_DEFAULTS.integration, language)}
+        secondaryCta={heroCta(cmsHero, "secondaryCta", HERO_DEFAULTS.integration, language)}
+        metrics={heroMetrics(cmsHero, HERO_DEFAULTS.integration, language)}
       />
       </CmsSlot>
 

@@ -12,6 +12,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 import { CmsSectionList, CmsSlot } from "@/components/cms/CmsSectionList";
 import { getCmsHomepageContent } from "@/lib/models/cms.model";
 import { getPageLayout } from "@/lib/models/cms-layout.model";
+import { getFaqContent } from "@/lib/models/site-content.model";
 
 export const metadata: Metadata = {
   title: "Diagnova — AI-Powered Laboratory Intelligence Platform",
@@ -25,7 +26,7 @@ export const revalidate = 60;
 export default async function HomePage() {
   let cmsData = null;
   try {
-    cmsData = await getCmsHomepageContent();
+    cmsData = await getCmsHomepageContent({ publicOnly: true });
   } catch (err) {
     console.error("Gagal memuat data CMS, beralih ke konten default statis:", err);
   }
@@ -45,6 +46,7 @@ export default async function HomePage() {
       .filter(([, section]) => section && section.isPublished === false)
       .map(([key]) => key)
   );
+  const faq = await getFaqContent();
   const layout = (await getPageLayout("home")).map((s) =>
     unpublished.has(s.key) ? { ...s, isActive: false } : s
   );
@@ -73,7 +75,7 @@ export default async function HomePage() {
         <TestimonialsSection initialData={cmsData?.testimonials} />
       </CmsSlot>
       <CmsSlot id="faq">
-        <FAQSection />
+        <FAQSection content={faq} />
       </CmsSlot>
       <CmsSlot id="cta">
         <CTABanner initialData={cmsData?.cta} bgClassName="bg-[#F9F9F9]" topColor="#F9F9F9" />

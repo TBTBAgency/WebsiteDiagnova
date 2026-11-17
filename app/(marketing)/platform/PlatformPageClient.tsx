@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero, heroCta, heroMetrics, HERO_DEFAULTS } from "@/lib/cms-hero";
 import type { InnerPageCmsProps } from "@/lib/cms-layout";
 import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { WorkflowSection } from "@/components/sections/WorkflowSection";
@@ -75,36 +75,9 @@ export default function PlatformPageClient({ cmsHero, layout, cta }: InnerPageCm
             ? "Menghubungkan instrumen analyzer, analis medis, dokter patologi, dan SIMRS/RME ke dalam satu alur kerja digital yang presisi, bebas salah sampel, dan terpantau secara real-time."
             : "Connecting medical analyzers, laboratory analysts, pathologists, and hospital HIS/EMR into a unified digital pipeline that is precise, error-free, and monitored in real-time."
         }
-        primaryCta={{
-          text: language === "ID" ? "Jadwalkan Demo Platform" : "Schedule Platform Demo",
-          href: "/request-demo",
-        }}
-        secondaryCta={{
-          text: language === "ID" ? "Pelajari Alur Kerja" : "Explore Workflow",
-          href: "#workflow",
-        }}
-        metrics={[
-          {
-            value: "-70%",
-            label: language === "ID" ? "Pangkas TAT" : "Cut Turnaround Time",
-            sub: language === "ID" ? "Dari order ke klinisi" : "Order to clinician",
-          },
-          {
-            value: "100%",
-            label: language === "ID" ? "Otomasi Interfacing" : "Direct Interfacing",
-            sub: language === "ID" ? "Eliminasi entri manual" : "Zero manual entry",
-          },
-          {
-            value: "0 Error",
-            label: language === "ID" ? "Salah Sampel" : "Sample Mix-ups",
-            sub: language === "ID" ? "Verifikasi barcode 2D" : "2D barcode check",
-          },
-          {
-            value: "ISO 15189",
-            label: language === "ID" ? "Kepatuhan Audit" : "Audit Compliance",
-            sub: language === "ID" ? "KARS & JCI compliant" : "KARS & JCI compliant",
-          },
-        ]}
+        primaryCta={heroCta(cmsHero, "primaryCta", HERO_DEFAULTS.platform, language)}
+        secondaryCta={heroCta(cmsHero, "secondaryCta", HERO_DEFAULTS.platform, language)}
+        metrics={heroMetrics(cmsHero, HERO_DEFAULTS.platform, language)}
       />
       </CmsSlot>
 

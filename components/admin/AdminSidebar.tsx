@@ -18,6 +18,7 @@ import {
   Globe,
   Compass,
   Layers,
+  Globe2,
 } from "lucide-react";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { AuthSessionPayload } from "@/types";
@@ -62,6 +63,11 @@ const NAV_ITEMS: NavItem[] = [
     name: "Halaman & Section",
     href: "/admin/page-sections",
     icon: Layers,
+  },
+  {
+    name: "Konten Global",
+    href: "/admin/site-content",
+    icon: Globe2,
   },
   {
     name: "Audit Log",

@@ -48,7 +48,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero, heroCta, heroMetrics, HERO_DEFAULTS } from "@/lib/cms-hero";
 import type { InnerPageCmsProps } from "@/lib/cms-layout";
 import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -106,36 +106,9 @@ export default function SolutionsPageClient({ cmsHero, layout, cta }: InnerPageC
             ? "Dari rumah sakit sentral dengan IGD bertekanan tinggi hingga jejaring lab klinik mandiri. Diagnova menghadirkan solusi yang dirancang sesuai regulasi dan alur kerja spesifik Anda."
             : "From high-acuity hospital networks to high-throughput clinical check-up laboratories. Diagnova delivers tailored architectures engineered for your specific clinical workflows."
         }
-        primaryCta={{
-          text: language === "ID" ? "Jadwalkan Konsultasi Solusi" : "Schedule Solutions Consultation",
-          href: "/request-demo",
-        }}
-        secondaryCta={{
-          text: language === "ID" ? "Eksplorasi Solusi Fasilitas" : "Explore Facility Solutions",
-          href: "#facility-solutions",
-        }}
-        metrics={[
-          {
-            value: "-60%",
-            label: language === "ID" ? "Pangkas Waktu Antre" : "Cut Queue Time",
-            sub: language === "ID" ? "Registrasi cepat MCU & RS" : "Fast MCU & Hospital check-in",
-          },
-          {
-            value: "100%",
-            label: language === "ID" ? "Bridging SIMRS & RME" : "HIS & EMR Bridging",
-            sub: language === "ID" ? "Dua arah & real-time" : "Bidirectional & real-time",
-          },
-          {
-            value: "ISO 15189",
-            label: language === "ID" ? "Kesiapan Akreditasi" : "Accreditation Ready",
-            sub: language === "ID" ? "KARS, JCI & Kemenkes" : "KARS & JCI compliant",
-          },
-          {
-            value: language === "ID" ? "5 Sektor" : "5 Verticals",
-            label: language === "ID" ? "Solusi Terdedikasi" : "Dedicated Modules",
-            sub: language === "ID" ? "RS, MCU, PA, Mikro, BDRS" : "Hospital, MCU, PA, Micro, BDRS",
-          },
-        ]}
+        primaryCta={heroCta(cmsHero, "primaryCta", HERO_DEFAULTS.solutions, language)}
+        secondaryCta={heroCta(cmsHero, "secondaryCta", HERO_DEFAULTS.solutions, language)}
+        metrics={heroMetrics(cmsHero, HERO_DEFAULTS.solutions, language)}
       />
       </CmsSlot>
 

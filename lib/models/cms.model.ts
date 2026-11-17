@@ -50,7 +50,7 @@ export interface CmsHomepageData {
  * Mengambil seluruh data CMS Homepage murni dari JSON CmsSection.extraContent
  * Tanpa query atau ketergantungan pada tabel relasional anak lama
  */
-export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
+export async function getCmsHomepageContent(options: { publicOnly?: boolean } = {}): Promise<CmsHomepageData> {
   const sections = await db.cmsSection.findMany();
 
   const sectionMap = new Map<string, (typeof sections)[0]>();
@@ -69,9 +69,13 @@ export async function getCmsHomepageContent(): Promise<CmsHomepageData> {
 
   // Item diurutkan berdasarkan sortOrder saat dibaca (bukan hanya saat disimpan),
   // sehingga urutan tetap benar walaupun data diubah di luar fungsi simpan.
+  // publicOnly: item nonaktif dibuang di server (tidak ikut terkirim ke browser); admin tetap
+  // menerima seluruh item.
   const bySortOrder = (list: unknown) =>
     Array.isArray(list)
-      ? [...list].sort((a: any, b: any) => (Number(a?.sortOrder) || 0) - (Number(b?.sortOrder) || 0))
+      ? [...list]
+          .filter((x: any) => !options.publicOnly || (x && x.isActive !== false))
+          .sort((a: any, b: any) => (Number(a?.sortOrder) || 0) - (Number(b?.sortOrder) || 0))
       : [];
 
   const heroExtra = (heroSec?.extraContent as any) || {};
@@ -1105,7 +1109,16 @@ export async function getPlatformPageData() {
 export async function getCmsPageHero(sectionKey: string): Promise<CmsPageHero | null> {
   const sec = await db.cmsSection.findUnique({ where: { sectionKey } });
   if (!sec || !sec.isPublished) return null;
+  const heroExtra = (sec.extraContent as any)?.hero;
   return {
+    // Metrik nonaktif dibuang di server agar tidak ikut terkirim ke browser.
+    heroExtra:
+      heroExtra && typeof heroExtra === "object"
+        ? {
+            ...heroExtra,
+            ...(Array.isArray(heroExtra.metrics) && { metrics: heroExtra.metrics.filter((m: any) => m && m.isActive !== false) }),
+          }
+        : null,
     badgeId: sec.badgeId,
     badgeEn: sec.badgeEn,
     titleId: sec.titleId,

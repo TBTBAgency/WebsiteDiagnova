@@ -3,6 +3,9 @@ import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { recordAuditLog } from "@/lib/models/audit.model";
 import { getCmsPageHero } from "@/lib/models/cms.model";
+import { assertNotStale } from "@/lib/models/site-content.model";
+import { HERO_DEFAULTS } from "@/lib/cms-hero-defaults";
+import type { HeroExtraContent } from "@/lib/cms-hero";
 import {
   CMS_PAGES,
   CUSTOM_KEY_PATTERN,
@@ -17,7 +20,7 @@ import {
 } from "@/lib/cms-layout";
 
 export class CmsLayoutError extends Error {
-  constructor(message: string, public readonly httpStatus: 400 | 404 = 400) {
+  constructor(message: string, public readonly httpStatus: 400 | 404 | 409 = 400) {
     super(message);
     this.name = "CmsLayoutError";
   }
@@ -28,15 +31,19 @@ export class CmsLayoutError extends Error {
  * catatan admin dari registry (mengurangi ukuran payload halaman).
  */
 function toPublicLayout(sections: ResolvedSection[]): ResolvedSection[] {
-  return sections.map(({ key, type, isActive, sortOrder, content, locked }) => ({
-    key,
-    type,
-    isActive,
-    sortOrder,
-    locked,
-    label: "",
-    ...(content && { content }),
-  }));
+  return sections
+    // Section kustom yang disembunyikan tidak dikirim sama sekali; section bawaan yang
+    // disembunyikan dikirim tanpa konten (hanya agar urutan & visibilitas konsisten).
+    .filter((s) => s.isActive || s.type === "builtin")
+    .map(({ key, type, isActive, sortOrder, content, locked }) => ({
+      key,
+      type,
+      isActive,
+      sortOrder,
+      locked,
+      label: "",
+      ...(content && isActive && { content }),
+    }));
 }
 
 /** Tata letak halaman untuk website publik. Gagal membaca DB => layout bawaan. */
@@ -97,7 +104,10 @@ export async function getAllPageLayoutsForAdmin() {
       heroSectionKey: p.heroSectionKey,
       layoutSaved: !!layoutRow,
       layoutUpdatedAt: layoutRow?.updatedAt ?? null,
+      heroUpdatedAt: heroRow?.updatedAt ?? null,
       sections: resolvePageLayout(p.key, layoutRow?.extraContent ?? null),
+      heroDefaults: p.key === "home" ? null : HERO_DEFAULTS[p.key],
+      heroExtra: ((heroRow?.extraContent as { hero?: unknown } | null)?.hero ?? null) as HeroExtraContent | null,
       hero: heroRow
         ? {
             badgeId: heroRow.badgeId,
@@ -213,6 +223,9 @@ export async function savePageLayout(input: unknown, userId?: string) {
 
   const sectionKey = layoutSectionKey(page);
   const existing = await db.cmsSection.findUnique({ where: { sectionKey } });
+  if (!assertNotStale(existing?.updatedAt, (input as { baseUpdatedAt?: unknown })?.baseUpdatedAt)) {
+    throw new CmsLayoutError("Tata letak halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan.", 409);
+  }
   const extraContent = { ...((existing?.extraContent as Record<string, unknown>) || {}), sections: stored } as unknown as Prisma.InputJsonValue;
   const saved = await db.cmsSection.upsert({
     where: { sectionKey },
@@ -240,9 +253,27 @@ const heroSchema = z.object({
   titleEn: text(300),
   subtitleId: text(1500),
   subtitleEn: text(1500),
+  // CTA & metrik hero (opsional). null = CTA disembunyikan; undefined = tidak diubah.
+  primaryCta: z.object({ textId: text(80), textEn: text(80), url: z.string().max(500).refine(isSafeCmsUrl, "URL CTA tidak aman") }).nullable().optional(),
+  secondaryCta: z.object({ textId: text(80), textEn: text(80), url: z.string().max(500).refine(isSafeCmsUrl, "URL CTA tidak aman") }).nullable().optional(),
+  metrics: z
+    .array(
+      z.object({
+        id: z.string().regex(/^[a-zA-Z0-9_-]{1,40}$/),
+        valueId: text(40),
+        valueEn: text(40),
+        labelId: text(80),
+        labelEn: text(80),
+        subId: text(120),
+        subEn: text(120),
+        isActive: z.boolean(),
+      })
+    )
+    .max(6, "Maksimal 6 metrik")
+    .optional(),
 });
 
-/** Menyimpan hero (badge/judul/subjudul) halaman dalam di baris page_* yang sudah dipakai halaman publik. */
+/** Menyimpan hero (badge/judul/subjudul + CTA & metrik) halaman dalam di baris page_* yang dipakai halaman publik. */
 export async function savePageHero(input: unknown, userId?: string) {
   const parsed = heroSchema.safeParse(input);
   if (!parsed.success) {
@@ -258,11 +289,31 @@ export async function savePageHero(input: unknown, userId?: string) {
   ) as Record<(typeof TEXT_FIELDS)[number], string | null>;
 
   const existing = await db.cmsSection.findUnique({ where: { sectionKey: def.heroSectionKey } });
+  if (!assertNotStale(existing?.updatedAt, (input as { baseUpdatedAt?: unknown })?.baseUpdatedAt)) {
+    throw new CmsLayoutError("Hero halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan.", 409);
+  }
+  const prevExtra = (existing?.extraContent && typeof existing.extraContent === "object" ? existing.extraContent : {}) as Record<string, unknown>;
+  const prevHero = (prevExtra.hero && typeof prevExtra.hero === "object" ? prevExtra.hero : {}) as Record<string, unknown>;
+  const heroPatch: Record<string, unknown> = {};
+  if (fields.primaryCta !== undefined) heroPatch.primaryCta = fields.primaryCta;
+  if (fields.secondaryCta !== undefined) heroPatch.secondaryCta = fields.secondaryCta;
+  if (fields.metrics !== undefined) {
+    const ids = new Set<string>();
+    for (const m of fields.metrics) {
+      if (ids.has(m.id)) throw new CmsLayoutError(`ID metrik '${m.id}' duplikat.`);
+      ids.add(m.id);
+    }
+    heroPatch.metrics = fields.metrics;
+  }
+  // Key lain di extraContent (mis. items, bannerUrl) dipertahankan.
+  const extraContent = (Object.keys(heroPatch).length > 0
+    ? { ...prevExtra, hero: { ...prevHero, ...heroPatch } }
+    : prevExtra) as Prisma.InputJsonValue;
+
   const saved = await db.cmsSection.upsert({
     where: { sectionKey: def.heroSectionKey },
-    update: { ...data, ...(userId && { updatedBy: userId }) },
-    // Baris baru: extraContent kosong (bukan null) agar konsisten dengan seed.
-    create: { sectionKey: def.heroSectionKey, ...data, extraContent: {}, isPublished: true, ...(userId && { updatedBy: userId }) },
+    update: { ...data, extraContent, ...(userId && { updatedBy: userId }) },
+    create: { sectionKey: def.heroSectionKey, ...data, extraContent, isPublished: true, ...(userId && { updatedBy: userId }) },
   });
 
   await recordAuditLog({
@@ -270,8 +321,8 @@ export async function savePageHero(input: unknown, userId?: string) {
     action: "UPDATE_PAGE_HERO",
     entity: "cms_sections",
     recordId: def.heroSectionKey,
-    oldValue: existing ? (Object.fromEntries(TEXT_FIELDS.map((f) => [f, existing[f]])) as Record<string, unknown>) : undefined,
-    newValue: data,
+    oldValue: existing ? ({ ...Object.fromEntries(TEXT_FIELDS.map((f) => [f, existing[f]])), hero: prevExtra.hero ?? null } as Record<string, unknown>) : undefined,
+    newValue: { ...data, ...(Object.keys(heroPatch).length > 0 && { hero: heroPatch }) },
   });
 
   return { page, path: def.path, hero: Object.fromEntries(TEXT_FIELDS.map((f) => [f, saved[f]])) };

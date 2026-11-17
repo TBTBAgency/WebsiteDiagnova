@@ -5,21 +5,25 @@ import { usePathname, useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { DEFAULT_ANNOUNCEMENT, pickLang, type AnnouncementContent } from "@/lib/site-content";
+
 interface GoalItem {
   id: string;
   label: string;
-  targetId: string;
-  href?: string;
+  href: string;
 }
 
 interface AnnouncementBarProps {
   language?: "ID" | "EN";
+  /** Konten dari CMS (baris `announcement`); bawaan = konten sebelumnya. */
+  content?: AnnouncementContent;
   onHeightChange?: (_height: number) => void;
   onDismiss?: () => void;
 }
 
 export function AnnouncementBar({
   language = "EN",
+  content = DEFAULT_ANNOUNCEMENT,
   onHeightChange,
   onDismiss,
 }: AnnouncementBarProps) {
@@ -62,79 +66,28 @@ export function AnnouncementBar({
     };
   }, [onHeightChange]);
 
-  const handleGoalClick = (targetId: string, href?: string) => {
-    if (pathname === "/") {
-      const el = document.getElementById(targetId);
+  const handleGoalClick = (href: string) => {
+    if (/^https?:\/\//i.test(href)) {
+      window.location.href = href;
+      return;
+    }
+    // Anchor di halaman yang sedang dibuka: gulir halus tanpa navigasi.
+    const [path, hash] = href.split("#");
+    if (hash && (path === "" || path === pathname)) {
+      const el = document.getElementById(hash);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
         return;
       }
     }
-    if (href) {
-      router.push(href);
-    } else {
-      router.push(`/#${targetId}`);
-    }
+    router.push(href);
   };
 
-  const goals: GoalItem[] =
-    language === "ID"
-      ? [
-          {
-            id: "demo",
-            label: "Request Demo",
-            targetId: "cta-banner",
-            href: "/request-demo",
-          },
-          {
-            id: "workflow",
-            label: "Lihat Workflow Lab",
-            targetId: "workflow",
-          },
-          {
-            id: "analyzers",
-            label: "Koneksi 500+ Alat",
-            targetId: "infrastructure",
-          },
-          {
-            id: "satusehat",
-            label: "Integrasi SATUSEHAT",
-            targetId: "infrastructure",
-          },
-          {
-            id: "comparison",
-            label: "Kenapa Diagnova",
-            targetId: "comparison",
-          },
-        ]
-      : [
-          {
-            id: "demo",
-            label: "Request a Demo",
-            targetId: "cta-banner",
-            href: "/request-demo",
-          },
-          {
-            id: "workflow",
-            label: "Explore Lab Workflow",
-            targetId: "workflow",
-          },
-          {
-            id: "analyzers",
-            label: "500+ Analyzers",
-            targetId: "infrastructure",
-          },
-          {
-            id: "satusehat",
-            label: "SATUSEHAT Bridging",
-            targetId: "infrastructure",
-          },
-          {
-            id: "comparison",
-            label: "Why Choose Diagnova",
-            targetId: "comparison",
-          },
-        ];
+  const goals: GoalItem[] = content.items
+    .filter((i) => i.isActive && i.url)
+    .map((i) => ({ id: i.id, label: pickLang(language, i.labelId, i.labelEn), href: i.url }))
+    .filter((g) => g.label);
+  const prompt = pickLang(language, content.promptId, content.promptEn);
 
   return (
     <aside
@@ -145,13 +98,11 @@ export function AnnouncementBar({
       <div className="mx-auto max-w-[1560px] px-4 sm:px-8 lg:px-10 py-2 sm:py-2.5">
         <div className="flex flex-row items-center justify-between gap-2 lg:gap-4 relative pr-8 lg:pr-10">
           {/* Prompt Headline (Desktop/Tablet) */}
-          <div className="hidden lg:flex items-center justify-start w-auto shrink-0">
-            <p className="text-[13px] font-normal text-white/95 text-left tracking-normal leading-tight">
-              {language === "ID"
-                ? "Pilih kebutuhan laboratorium Anda untuk memulai. Saya ingin..."
-                : "Select your laboratory goal to get started. I want to..."}
-            </p>
-          </div>
+          {prompt && (
+            <div className={cn("items-center justify-start w-auto shrink-0", goals.length > 0 ? "hidden lg:flex" : "flex")}>
+              <p className="text-[13px] font-normal text-white/95 text-left tracking-normal leading-tight">{prompt}</p>
+            </div>
+          )}
 
           {/* Interactive Goal Pills (Single-line horizontal scroll on mobile, centered wrap on desktop) */}
           <div className="flex flex-nowrap sm:flex-wrap items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide w-full lg:w-auto">
@@ -159,7 +110,7 @@ export function AnnouncementBar({
               <button
                 key={goal.id}
                 type="button"
-                onClick={() => handleGoalClick(goal.targetId, goal.href)}
+                onClick={() => handleGoalClick(goal.href)}
                 className={cn(
                   "shrink-0 whitespace-nowrap inline-flex items-center justify-center px-3 sm:px-3.5 py-1 rounded-full text-[10.5px] sm:text-[11px] font-semibold uppercase tracking-wider",
                   "bg-white/20 hover:bg-white text-white hover:text-[#2764B8] border border-white/30",

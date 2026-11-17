@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnnouncementBar } from "./AnnouncementBar";
+import { DEFAULT_ANNOUNCEMENT, type AnnouncementContent } from "@/lib/site-content";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface NavItem {
@@ -580,13 +581,17 @@ function getNavIcon(iconName?: string | null, iconColor?: string | null) {
   }
 }
 
-export function Navbar() {
+/**
+ * @param announcement Konten announcement dari CMS yang SUDAH dinyatakan tampil oleh server
+ *   (aktif & dalam periode). `null` = announcement disembunyikan.
+ */
+export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?: AnnouncementContent | null }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileOpenSection, setMobileOpenSection] = useState<string | null>(null);
   const { language, setLanguage } = useLanguage();
-  const [isDismissed, setIsDismissed] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(!announcement);
   const [barHeight, setBarHeight] = useState(42);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
@@ -709,8 +714,10 @@ export function Navbar() {
           isDismissed ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
       >
+        {announcement && (
         <AnnouncementBar
           language={language}
+          content={announcement}
           onHeightChange={(h) => setBarHeight(h)}
           onDismiss={() => {
             setIsDismissed(true);
@@ -720,6 +727,7 @@ export function Navbar() {
             );
           }}
         />
+        )}
       </div>
 
       {/* ── Main Navbar: z-40 with solid bg-white. Slides up and stays locked at top:0 ── */}

@@ -129,7 +129,8 @@ export function PageHero({
               </div>
             )}
 
-            {/* Architectural Hairline-Divided Hero Metric Strip */}
+            {/* Architectural Hairline-Divided Hero Metric Strip (tidak dirender bila semua metrik dinonaktifkan) */}
+            {metrics.length > 0 && (
             <div
               className="mt-10 sm:mt-12 lg:mt-14 w-full max-w-4xl rounded-2xl bg-white/95 backdrop-blur-xs border border-slate-200/85 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-2 lg:grid-cols-4 divide-y divide-slate-200/75 lg:divide-y-0 lg:divide-x animate-ll-hero"
               style={{ animationDelay: "300ms" }}
@@ -154,6 +155,7 @@ export function PageHero({
                 </div>
               ))}
             </div>
+            )}
           </div>
         </div>
       </div>

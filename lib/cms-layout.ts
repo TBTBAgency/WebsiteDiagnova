@@ -103,7 +103,7 @@ export const CMS_PAGES: CmsPageDefinition[] = [
       { key: "workflow", label: "Alur Kerja", anchor: "workflow", note: HOME_NOTE },
       { key: "infrastructure", label: "Infrastruktur", anchor: "infrastructure", note: HOME_NOTE },
       { key: "testimonials", label: "Testimoni", note: HOME_NOTE },
-      { key: "faq", label: "FAQ", note: "Isi FAQ masih berasal dari content/faq.ts (belum CMS)." },
+      { key: "faq", label: "FAQ", note: "Konten diedit di menu Konten Global › FAQ." },
       { key: "cta", label: "CTA Penutup", anchor: "cta-banner", note: HOME_NOTE },
     ],
   },

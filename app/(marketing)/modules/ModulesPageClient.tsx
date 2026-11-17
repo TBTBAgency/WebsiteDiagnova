@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero, heroCta, heroMetrics, HERO_DEFAULTS } from "@/lib/cms-hero";
 import type { InnerPageCmsProps } from "@/lib/cms-layout";
 import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -464,36 +464,9 @@ export default function ModulesPageClient({ cmsHero, layout, cta }: InnerPageCms
             ? "Aktifkan modul sesuai kebutuhan faskes Anda atau jalankan sebagai satu kesatuan. Seluruh data pasien, sampel, dan hasil mengalir dalam satu sistem yang aman dan siap akreditasi."
             : "Deploy individual modules or run the complete unified suite. All patient data, specimens, and analyzer results converge in a secure, accreditation-ready environment."
         }
-        primaryCta={{
-          text: language === "ID" ? "Jadwalkan Demo Modul" : "Schedule Module Demo",
-          href: "/request-demo",
-        }}
-        secondaryCta={{
-          text: language === "ID" ? "Eksplorasi 5 Modul" : "Explore 5 Modules",
-          href: "#modules-explorer",
-        }}
-        metrics={[
-          {
-            value: language === "ID" ? "5 Modul" : "5 Modules",
-            label: language === "ID" ? "Spesialisasi Lengkap" : "Dedicated Modules",
-            sub: language === "ID" ? "Rutin, BDRS, Stok, PA, Mikro" : "Hematology, Blood, Reagents, PA",
-          },
-          {
-            value: "100%",
-            label: language === "ID" ? "Interfacing Analyzer" : "Analyzer Interfacing",
-            sub: language === "ID" ? "ASTM & HL7 bidireksional" : "Direct bidirectional protocol",
-          },
-          {
-            value: "0 Error",
-            label: language === "ID" ? "Salah Identifikasi" : "Zero Sample Mix-ups",
-            sub: language === "ID" ? "Barcode 2D & delta-check" : "2D micro-barcode tracking",
-          },
-          {
-            value: "Plug & Play",
-            label: language === "ID" ? "Aktivasi Modular" : "Modular Activation",
-            sub: language === "ID" ? "Bebas tambah modul bertahap" : "Deploy on-demand per dept",
-          },
-        ]}
+        primaryCta={heroCta(cmsHero, "primaryCta", HERO_DEFAULTS.modules, language)}
+        secondaryCta={heroCta(cmsHero, "secondaryCta", HERO_DEFAULTS.modules, language)}
+        metrics={heroMetrics(cmsHero, HERO_DEFAULTS.modules, language)}
       />
       </CmsSlot>
 

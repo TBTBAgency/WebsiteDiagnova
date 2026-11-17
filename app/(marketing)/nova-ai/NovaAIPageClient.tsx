@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { PageHero } from "@/components/sections/PageHero";
-import { resolveCmsHero } from "@/lib/cms-hero";
+import { resolveCmsHero, heroCta, heroMetrics, HERO_DEFAULTS } from "@/lib/cms-hero";
 import type { InnerPageCmsProps } from "@/lib/cms-layout";
 import { CmsSectionList, CmsSlot, makeSectionText } from "@/components/cms/CmsSectionList";
 import { CTABanner } from "@/components/sections/CTABanner";
@@ -324,36 +324,9 @@ export default function NovaAIPageClient({ cmsHero, layout, cta }: InnerPageCmsP
             ? "Mempercepat waktu rilis hasil uji (TAT), mendeteksi deviasi biomarker longitudinal antar-kunjungan pasien, dan menyiapkan draf interpretasi klinis—dengan 100% kendali verifikasi di tangan dokter spesialis patologi."
             : "Slashing turnaround time (TAT), flagging longitudinal biomarker deviations across patient visits, and preparing structured clinical drafts—with 100% verification authority retained by certified pathologists."
         }
-        primaryCta={{
-          text: language === "ID" ? "Jadwalkan Demo Nova AI" : "Schedule Nova AI Demo",
-          href: "/request-demo",
-        }}
-        secondaryCta={{
-          text: language === "ID" ? "Lihat Meja Kerja Patologi" : "Explore Pathologist Desk",
-          href: "#workstation-demo",
-        }}
-        metrics={[
-          {
-            value: "-70%",
-            label: language === "ID" ? "Pangkas Waktu Validasi" : "Turnaround Time (TAT)",
-            sub: language === "ID" ? "Auto-verifikasi sampel normal" : "Auto-release normal routine",
-          },
-          {
-            value: language === "ID" ? "< 3 Detik" : "< 3 Sec",
-            label: language === "ID" ? "Kalkulasi Delta-Check" : "Delta-Check Speed",
-            sub: language === "ID" ? "Komparasi riwayat serial" : "Serial trend comparison",
-          },
-          {
-            value: "100%",
-            label: language === "ID" ? "Kendali Dokter Sp.PK" : "Physician Sovereignty",
-            sub: language === "ID" ? "Human-in-the-loop mutlak" : "Absolute clinical control",
-          },
-          {
-            value: "KARS & ISO",
-            label: language === "ID" ? "Kepatuhan Akreditasi" : "Audit Compliance",
-            sub: language === "ID" ? "Standar pelaporan nilai kritis" : "Accredited critical protocol",
-          },
-        ]}
+        primaryCta={heroCta(cmsHero, "primaryCta", HERO_DEFAULTS.nova_ai, language)}
+        secondaryCta={heroCta(cmsHero, "secondaryCta", HERO_DEFAULTS.nova_ai, language)}
+        metrics={heroMetrics(cmsHero, HERO_DEFAULTS.nova_ai, language)}
       />
       </CmsSlot>
 

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import type { CustomSectionContent, ResolvedSection, SectionDefaults } from "@/lib/cms-layout";
+import type { HeroCtaContent, HeroDefaults, HeroExtraContent, HeroMetricContent } from "@/lib/cms-hero";
 
 interface HeroData {
   badgeId: string | null;
@@ -38,8 +39,17 @@ interface PageData {
   heroSectionKey: string | null;
   layoutSaved: boolean;
   layoutUpdatedAt: string | null;
+  heroUpdatedAt: string | null;
   sections: ResolvedSection[];
   hero: (HeroData & { isPublished: boolean }) | null;
+  heroDefaults: HeroDefaults | null;
+  heroExtra: HeroExtraContent | null;
+}
+
+interface HeroExtraDraft {
+  primaryCta: HeroCtaContent | null;
+  secondaryCta: HeroCtaContent | null;
+  metrics: HeroMetricContent[];
 }
 
 const TEXT_FIELDS: { field: "badge" | "title" | "subtitle"; label: string; multiline: boolean }[] = [
@@ -100,6 +110,7 @@ export default function PageSectionsAdminPage() {
   const [activePage, setActivePage] = useState<string>("home");
   const [draft, setDraft] = useState<ResolvedSection[]>([]);
   const [heroDraft, setHeroDraft] = useState<HeroData | null>(null);
+  const [heroExtraDraft, setHeroExtraDraft] = useState<HeroExtraDraft | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -138,9 +149,32 @@ export default function PageSectionsAdminPage() {
           ? { badgeId: null, badgeEn: null, titleId: null, titleEn: null, subtitleId: null, subtitleEn: null }
           : null
     );
+    if (page.heroDefaults) {
+      const ex = page.heroExtra || {};
+      const d = page.heroDefaults;
+      setHeroExtraDraft({
+        primaryCta: ex.primaryCta === undefined ? { ...d.primaryCta } : ex.primaryCta,
+        secondaryCta: ex.secondaryCta === undefined ? { ...d.secondaryCta } : ex.secondaryCta,
+        metrics: (Array.isArray(ex.metrics) ? ex.metrics : d.metrics).map((m) => ({ ...m })),
+      });
+    } else {
+      setHeroExtraDraft(null);
+    }
     setExpanded(null);
     setDirty(false);
   }, [page]);
+
+  const updateMetric = (index: number, patch: Partial<HeroMetricContent>) =>
+    setHeroExtraDraft((h) => (h ? { ...h, metrics: h.metrics.map((m, i) => (i === index ? { ...m, ...patch } : m)) } : h));
+  const moveMetric = (index: number, dir: -1 | 1) =>
+    setHeroExtraDraft((h) => {
+      if (!h) return h;
+      const t = index + dir;
+      if (t < 0 || t >= h.metrics.length) return h;
+      const metrics = [...h.metrics];
+      [metrics[index], metrics[t]] = [metrics[t], metrics[index]];
+      return { ...h, metrics };
+    });
 
   const flash = (msg: string) => {
     setSuccess(msg);
@@ -204,6 +238,7 @@ export default function PageSectionsAdminPage() {
         body: JSON.stringify({
           action: "layout",
           page: page.key,
+          baseUpdatedAt: page.layoutUpdatedAt,
           sections: draft.map((s) => ({ key: s.key, type: s.type, isActive: s.isActive, content: s.content || undefined })),
         }),
       });
@@ -229,7 +264,17 @@ export default function PageSectionsAdminPage() {
         body: JSON.stringify({
           action: "hero",
           page: page.key,
-          ...Object.fromEntries(Object.entries(heroDraft).map(([k, v]) => [k, v ?? ""])),
+          baseUpdatedAt: page.heroUpdatedAt,
+          ...Object.fromEntries(
+            Object.entries(heroDraft)
+              .filter(([k]) => /^(badge|title|subtitle)(Id|En)$/.test(k))
+              .map(([k, v]) => [k, v ?? ""])
+          ),
+          ...(heroExtraDraft && {
+            primaryCta: heroExtraDraft.primaryCta,
+            secondaryCta: heroExtraDraft.secondaryCta,
+            metrics: heroExtraDraft.metrics,
+          }),
         }),
       });
       const json = await res.json();
@@ -343,6 +388,124 @@ export default function PageSectionsAdminPage() {
                   onChange={(lang, v) => setHeroDraft((h) => (h ? { ...h, [`${field}${lang}`]: v } : h))}
                 />
               ))}
+
+              {heroExtraDraft && page.heroDefaults && (
+                <div className="space-y-4 pt-3 border-t border-slate-100" data-testid="hero-extra-editor">
+                  {(["primaryCta", "secondaryCta"] as const).map((which) => {
+                    const cta = heroExtraDraft[which];
+                    const label = which === "primaryCta" ? "Tombol Utama" : "Tombol Kedua";
+                    return (
+                      <div key={which} className="space-y-2">
+                        <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                          <input
+                            type="checkbox"
+                            data-testid={`hero-${which}-enabled`}
+                            checked={!!cta}
+                            onChange={(e) =>
+                              setHeroExtraDraft((h) =>
+                                h ? { ...h, [which]: e.target.checked ? { ...page.heroDefaults![which] } : null } : h
+                              )
+                            }
+                          />
+                          {label} (CTA) ditampilkan
+                        </label>
+                        {cta && (
+                          <>
+                            <BilingualField
+                              label={`Teks ${label}`}
+                              multiline={false}
+                              testId={`hero-${which}-text`}
+                              valueId={cta.textId}
+                              valueEn={cta.textEn}
+                              placeholderId={page.heroDefaults![which].textId}
+                              placeholderEn={page.heroDefaults![which].textEn}
+                              onChange={(lang, v) =>
+                                setHeroExtraDraft((h) => (h && h[which] ? { ...h, [which]: { ...h[which]!, [`text${lang}`]: v } } : h))
+                              }
+                            />
+                            <label className="block space-y-1 text-xs">
+                              <span className="font-semibold text-slate-700">URL {label}</span>
+                              <input
+                                className={inputCls}
+                                data-testid={`hero-${which}-url`}
+                                value={cta.url}
+                                placeholder={page.heroDefaults![which].url}
+                                onChange={(e) =>
+                                  setHeroExtraDraft((h) => (h && h[which] ? { ...h, [which]: { ...h[which]!, url: e.target.value } } : h))
+                                }
+                              />
+                            </label>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-semibold text-slate-700">Metrik / Statistik Hero</p>
+                      <button
+                        type="button"
+                        data-testid="hero-metric-add"
+                        disabled={heroExtraDraft.metrics.length >= 6}
+                        onClick={() =>
+                          setHeroExtraDraft((h) =>
+                            h
+                              ? {
+                                  ...h,
+                                  metrics: [
+                                    ...h.metrics,
+                                    { id: `m${Date.now().toString(36)}`, valueId: "", valueEn: "", labelId: "", labelEn: "", subId: "", subEn: "", isActive: true },
+                                  ],
+                                }
+                              : h
+                          )
+                        }
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-blue-200 text-blue-700 text-[11px] font-semibold disabled:opacity-40"
+                      >
+                        <Plus className="h-3 w-3" /> Tambah Metrik
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-amber-700">
+                      Angka & klaim pada metrik tampil sebagai fakta produk. Nonaktifkan metrik yang belum terverifikasi.
+                    </p>
+                    {heroExtraDraft.metrics.length === 0 && (
+                      <p className="text-[11px] text-slate-500">Tidak ada metrik — strip metrik tidak ditampilkan di halaman.</p>
+                    )}
+                    {heroExtraDraft.metrics.map((m, i) => (
+                      <div key={m.id} data-testid={`hero-metric-${i}`} className={"rounded-xl border p-3 space-y-2 " + (m.isActive ? "border-slate-200" : "border-dashed border-slate-300 bg-slate-50/70")}>
+                        <div className="flex flex-wrap items-center gap-1 justify-end">
+                          <button type="button" aria-label="Naikkan metrik" onClick={() => moveMetric(i, -1)} disabled={i === 0} className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-30">
+                            <ArrowUp className="h-3 w-3" />
+                          </button>
+                          <button type="button" aria-label="Turunkan metrik" onClick={() => moveMetric(i, 1)} disabled={i === heroExtraDraft.metrics.length - 1} className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-30">
+                            <ArrowDown className="h-3 w-3" />
+                          </button>
+                          <button
+                            type="button"
+                            data-testid={`hero-metric-${i}-toggle`}
+                            onClick={() => updateMetric(i, { isActive: !m.isActive })}
+                            className={"inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold border " + (m.isActive ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-300 text-slate-600")}
+                          >
+                            {m.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />} {m.isActive ? "Tampil" : "Disembunyikan"}
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="Hapus metrik"
+                            onClick={() => setHeroExtraDraft((h) => (h ? { ...h, metrics: h.metrics.filter((_, j) => j !== i) } : h))}
+                            className="p-1.5 rounded-lg border border-red-200 text-red-600"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <BilingualField label="Nilai" multiline={false} testId={`hero-metric-${i}-value`} valueId={m.valueId} valueEn={m.valueEn} onChange={(lang, v) => updateMetric(i, { [`value${lang}`]: v })} />
+                        <BilingualField label="Label" multiline={false} valueId={m.labelId} valueEn={m.labelEn} onChange={(lang, v) => updateMetric(i, { [`label${lang}`]: v })} />
+                        <BilingualField label="Keterangan" multiline={false} valueId={m.subId} valueEn={m.subEn} onChange={(lang, v) => updateMetric(i, { [`sub${lang}`]: v })} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

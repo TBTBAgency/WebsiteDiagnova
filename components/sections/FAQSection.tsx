@@ -5,28 +5,41 @@ import Link from "next/link";
 import { Plus, Minus, ArrowRight, MessageSquare } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { faqContentID, faqContentEN } from "@/content/faq";
 import { cn } from "@/lib/utils";
+import { pickLang, type FaqContent } from "@/lib/site-content";
+import { DEFAULT_FAQ } from "@/lib/site-content-faq";
 
 export interface FAQSectionProps {
-  initialData?: any;
+  /** Konten FAQ dari CMS (baris `faq`); bawaan = isi content/faq.ts. */
+  content?: FaqContent | null;
 }
 
-export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) {
+export function FAQSection({ content: cms }: FAQSectionProps = {}) {
   const { language } = useLanguage();
-  const defaultContent = language === "ID" ? faqContentID : faqContentEN;
+  const source = cms || DEFAULT_FAQ;
+  const t = (id: string, en: string) => pickLang(language, id, en);
 
+  const items = source.items
+    .filter((i) => i.isActive && t(i.questionId, i.questionEn))
+    .map((i) => ({ id: i.id, category: i.category, question: t(i.questionId, i.questionEn), answer: t(i.answerId, i.answerEn) }));
   const content = {
-    sectionBadge: defaultContent.sectionBadge,
-    sectionTitle: defaultContent.sectionTitle,
-    sectionSubtitle: defaultContent.sectionSubtitle,
-    supportPrompt: defaultContent.supportPrompt,
-    supportCta: defaultContent.supportCta,
-    categories: defaultContent.categories,
-    items: defaultContent.items,
+    sectionBadge: t(source.badgeId, source.badgeEn),
+    sectionTitle: t(source.titleId, source.titleEn),
+    sectionSubtitle: t(source.subtitleId, source.subtitleEn),
+    supportPrompt: t(source.supportPromptId, source.supportPromptEn),
+    supportCta: t(source.supportCtaId, source.supportCtaEn),
+    supportCtaUrl: source.supportCtaUrl || "/request-demo",
+    // Kategori tanpa FAQ aktif tidak ditampilkan.
+    categories: source.categories
+      .filter((c) => items.some((i) => i.category === c.id))
+      .map((c) => ({ id: c.id, label: t(c.labelId, c.labelEn) })),
+    items,
   };
 
-  const [activeCategory, setActiveCategory] = useState<string>("general");
+  const [selectedCategory, setActiveCategory] = useState<string>(content.categories[0]?.id ?? "");
+  const activeCategory = content.categories.some((c) => c.id === selectedCategory)
+    ? selectedCategory
+    : content.categories[0]?.id ?? "";
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -54,6 +67,9 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
   const toggleAccordion = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
+
+  // Tidak ada FAQ aktif: section tidak dirender (tanpa header kosong).
+  if (content.items.length === 0) return null;
 
   return (
     <section
@@ -211,7 +227,7 @@ export function FAQSection({ initialData: _initialData }: FAQSectionProps = {}) 
             </div>
 
             <Link
-              href="/request-demo"
+              href={content.supportCtaUrl}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2568BA] hover:bg-[#1D3F82] text-white px-6 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-[0.98] shrink-0"
             >
               <span>{content.supportCta}</span>
