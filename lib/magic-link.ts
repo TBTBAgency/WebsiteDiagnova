@@ -1,7 +1,12 @@
 import crypto from "crypto";
+import { LeadApprovalStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { AuthSessionPayload } from "@/types";
 import { setSessionCookie } from "@/lib/auth-session";
+import { recordAuditLog } from "@/lib/models/audit.model";
+import { LEAD_STATUS, transitionLeadStatus } from "@/lib/models/lead.model";
+
+export const MAGIC_LINK_TTL_HOURS = 24;
 
 export interface MagicLinkCreationResult {
   rawToken: string;
@@ -9,51 +14,79 @@ export interface MagicLinkCreationResult {
   expiresAt: Date;
 }
 
-export interface VerifyMagicLinkResult {
-  success: boolean;
-  message: string;
-  sessionPayload?: AuthSessionPayload;
-  redirectUrl?: string;
-  isExpired?: boolean;
+/** Alasan kegagalan magic link (dipakai sebagai kode di URL & pesan UI). */
+export type MagicLinkFailureReason =
+  | "missing"
+  | "invalid"
+  | "used"
+  | "link_expired"
+  | "not_approved"
+  | "account_inactive"
+  | "account_forbidden"
+  | "demo_expired";
+
+export const MAGIC_LINK_FAILURE_MESSAGES: Record<MagicLinkFailureReason, string> = {
+  missing: "Tautan akses demo tidak memiliki token verifikasi yang valid.",
+  invalid: "Tautan magic link tidak valid atau tidak ditemukan.",
+  used:
+    "Tautan ini sudah pernah digunakan. Demi keamanan, setiap tautan hanya dapat digunakan satu kali. Hubungi tim Diagnova untuk tautan baru.",
+  link_expired:
+    "Tautan magic link telah kedaluwarsa atau sudah digantikan tautan yang lebih baru. Hubungi tim Diagnova untuk mendapatkan tautan baru.",
+  not_approved: "Permohonan demo untuk tautan ini tidak lagi aktif. Hubungi tim Diagnova untuk informasi lebih lanjut.",
+  account_inactive: "Akun demo Anda sedang dinonaktifkan. Hubungi tim Diagnova untuk informasi lebih lanjut.",
+  account_forbidden: "Tautan ini tidak dapat digunakan untuk akun tersebut.",
+  demo_expired:
+    "Masa aktif akun demo Anda telah berakhir. Terima kasih telah mencoba Diagnova. Hubungi tim kami untuk perpanjangan atau lisensi penuh.",
+};
+
+export type VerifyMagicLinkResult =
+  | { success: true; sessionPayload: AuthSessionPayload; redirectUrl: string }
+  | { success: false; reason: MagicLinkFailureReason; message: string };
+
+function hashToken(rawToken: string): string {
+  return crypto.createHash("sha256").update(rawToken.trim()).digest("hex");
+}
+
+function fail(reason: MagicLinkFailureReason): VerifyMagicLinkResult {
+  return { success: false, reason, message: MAGIC_LINK_FAILURE_MESSAGES[reason] };
 }
 
 /**
- * Membuat token Magic Link berkeamanan tinggi (SHA-256) untuk pemohon demo
+ * Membuat token Magic Link (32 byte acak; hanya hash SHA-256 yang disimpan).
+ * Tautan lama yang belum terpakai untuk lead yang sama otomatis dinonaktifkan,
+ * sehingga hanya tautan terbaru yang berlaku. Riwayatnya tetap tersimpan.
  */
 export async function createDemoMagicLink(
   leadId: string,
   email: string,
   userId?: string | null,
-  expiresInHours: number = 24
+  expiresInHours: number = MAGIC_LINK_TTL_HOURS
 ): Promise<MagicLinkCreationResult> {
-  // Buat random token berkekuatan 32 byte (64 hex characters)
   const rawToken = crypto.randomBytes(32).toString("hex");
+  const tokenHash = hashToken(rawToken);
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + expiresInHours * 60 * 60 * 1000);
 
-  // Hash token menggunakan SHA-256 sebelum disimpan ke database
-  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
-
-  const expiresAt = new Date();
-  expiresAt.setHours(expiresAt.getHours() + expiresInHours);
-
-  // Simpan ke database
-  await db.demoMagicLink.create({
-    data: {
-      tokenHash,
-      email: email.toLowerCase().trim(),
-      leadId,
-      userId: userId || null,
-      expiresAt,
-    },
-  });
+  await db.$transaction([
+    db.demoMagicLink.updateMany({
+      where: { leadId, usedAt: null, expiresAt: { gt: now } },
+      data: { expiresAt: now },
+    }),
+    db.demoMagicLink.create({
+      data: {
+        tokenHash,
+        email: email.toLowerCase().trim(),
+        leadId,
+        userId: userId || null,
+        expiresAt,
+      },
+    }),
+  ]);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const magicLinkUrl = `${baseUrl}/auth/verify-magic-link?token=${rawToken}`;
 
-  return {
-    rawToken,
-    magicLinkUrl,
-    expiresAt,
-  };
+  return { rawToken, magicLinkUrl, expiresAt };
 }
 
 /**
@@ -67,82 +100,98 @@ export async function getLatestMagicLinkForLead(leadId: string) {
 }
 
 /**
- * Memverifikasi dan mengonsumsi Magic Link (single-use, cek kedaluwarsa, aktivasi demo)
+ * Memeriksa status token TANPA mengonsumsinya. Dipakai oleh halaman GET agar
+ * crawler / pemindai tautan email tidak menghabiskan token sekali pakai.
+ */
+export async function inspectMagicLink(
+  rawToken: string | undefined
+): Promise<{ valid: true; leadName: string; institution: string } | { valid: false; reason: MagicLinkFailureReason }> {
+  if (!rawToken || !/^[a-f0-9]{64}$/i.test(rawToken.trim())) {
+    return { valid: false, reason: rawToken ? "invalid" : "missing" };
+  }
+  const record = await db.demoMagicLink.findUnique({
+    where: { tokenHash: hashToken(rawToken) },
+    include: { lead: { select: { name: true, institution: true, approvalStatus: true } } },
+  });
+  if (!record) return { valid: false, reason: "invalid" };
+  if (record.usedAt) return { valid: false, reason: "used" };
+  if (new Date() > record.expiresAt) return { valid: false, reason: "link_expired" };
+  if (record.lead.approvalStatus !== LeadApprovalStatus.APPROVED) return { valid: false, reason: "not_approved" };
+  return { valid: true, leadName: record.lead.name, institution: record.lead.institution };
+}
+
+/**
+ * Memverifikasi dan mengonsumsi Magic Link (dipanggil HANYA dari aksi POST eksplisit).
+ *
+ * Aturan:
+ *  - Token sekali pakai; konsumsi dilakukan atomik (aman dari race / klik ganda).
+ *  - Kegagalan login tidak mengubah status lead.
+ *  - Login pertama yang berhasil memindahkan lead Dihubungi (2) -> Jadwal Demo (3);
+ *    login berikutnya tidak menimbulkan transisi baru.
+ *  - Kedaluwarsa akses demo tidak mengubah status lead.
  */
 export async function verifyAndConsumeMagicLink(
   rawToken: string,
   clientIp?: string,
   userAgent?: string
 ): Promise<VerifyMagicLinkResult> {
-  if (!rawToken || rawToken.trim() === "") {
-    return {
-      success: false,
-      message: "Token magic link tidak disertakan.",
-    };
-  }
-
-  // Hash token mentah untuk dicocokkan dengan database
-  const tokenHash = crypto.createHash("sha256").update(rawToken.trim()).digest("hex");
+  if (!rawToken || rawToken.trim() === "") return fail("missing");
+  if (!/^[a-f0-9]{64}$/i.test(rawToken.trim())) return fail("invalid");
 
   const magicRecord = await db.demoMagicLink.findUnique({
-    where: { tokenHash },
-    include: {
-      lead: true,
-      user: {
-        include: { role: true },
-      },
-    },
+    where: { tokenHash: hashToken(rawToken) },
+    include: { lead: true, user: { include: { role: true } } },
   });
 
-  if (!magicRecord) {
-    return {
-      success: false,
-      message: "Tautan magic link tidak valid atau tidak ditemukan.",
-    };
-  }
+  if (!magicRecord) return fail("invalid");
 
-  // 1. Validasi Single-Use
-  if (magicRecord.usedAt !== null) {
-    return {
-      success: false,
-      message:
-        "Tautan ini sudah pernah digunakan sebelumnya. Demi keamanan akses laboratorium, setiap tautan hanya dapat digunakan satu kali.",
-    };
-  }
+  const auditFailure = async (reason: MagicLinkFailureReason) => {
+    await recordAuditLog({
+      userId: magicRecord.userId,
+      action: "MAGIC_LINK_FAILED",
+      entity: "Lead",
+      recordId: magicRecord.leadId,
+      newValue: { reason, magicLinkId: magicRecord.id },
+      ipAddress: clientIp,
+      userAgent,
+    });
+    return fail(reason);
+  };
 
-  // 2. Validasi Token Link Expiration (Token TTL)
+  if (magicRecord.usedAt !== null) return auditFailure("used");
   const now = new Date();
-  if (now > magicRecord.expiresAt) {
-    return {
-      success: false,
-      message:
-        "Tautan magic link telah kedaluwarsa (masa berlaku 24 jam telah berakhir). Silakan hubungi admin Diagnova untuk mendapatkan tautan baru.",
-    };
-  }
+  if (now > magicRecord.expiresAt) return auditFailure("link_expired");
+  if (magicRecord.lead.approvalStatus !== LeadApprovalStatus.APPROVED) return auditFailure("not_approved");
 
-  // 3. Pastikan Akun User Tersedia dan Terhubung
+  // Pastikan akun klien tersedia dan memang akun USER yang aktif
   let user = magicRecord.user;
   if (!user) {
-    // Cari user berdasarkan email
-    user = await db.user.findUnique({
-      where: { email: magicRecord.email },
-      include: { role: true },
-    });
+    user = await db.user.findUnique({ where: { email: magicRecord.email }, include: { role: true } });
   }
 
-  // Jika belum ada user, buat akun user dengan role USER
+  if (user && user.role?.name !== "USER") return auditFailure("account_forbidden");
+  if (user && user.status !== 1) return auditFailure("account_inactive");
+  if (user?.demoActivatedAt && user.demoExpiresAt && now > user.demoExpiresAt) {
+    return auditFailure("demo_expired");
+  }
+
+  // Konsumsi token secara atomik: hanya satu request yang bisa berhasil
+  const consumed = await db.demoMagicLink.updateMany({
+    where: { id: magicRecord.id, usedAt: null, expiresAt: { gt: now } },
+    data: {
+      usedAt: now,
+      ipAddress: clientIp ? clientIp.slice(0, 50) : null,
+      userAgent: userAgent ? userAgent.slice(0, 255) : null,
+    },
+  });
+  if (consumed.count !== 1) return auditFailure("used");
+
   if (!user) {
-    let targetRole = await db.role.findFirst({
-      where: { name: "USER" },
-    });
-    if (!targetRole) {
-      targetRole = await db.role.create({
-        data: {
-          name: "USER",
-          description: "Pengguna terdaftar / pemohon akses demo Diagnova",
-        },
-      });
-    }
+    const targetRole =
+      (await db.role.findFirst({ where: { name: "USER" } })) ||
+      (await db.role.create({
+        data: { name: "USER", description: "Pengguna terdaftar / pemohon akses demo Diagnova" },
+      }));
 
     user = await db.user.create({
       data: {
@@ -156,56 +205,62 @@ export async function verifyAndConsumeMagicLink(
       },
       include: { role: true },
     });
-
-    // Hubungkan userId ke Lead dan MagicLink
-    await db.lead.update({
-      where: { id: magicRecord.leadId },
-      data: { userId: user.id },
-    });
   }
 
-  // 4. Hitung & Tetapkan Batas Masa Aktif Akun Demo (Demo Account TTL)
-  // Dihitung sejak akun demo pertama kali diaktifkan!
-  const durationDays = magicRecord.lead.demoDurationDays || user.demoDurationDays || 7;
+  await db.demoMagicLink.update({ where: { id: magicRecord.id }, data: { userId: user.id } });
+  if (magicRecord.lead.userId !== user.id) {
+    await db.lead.update({ where: { id: magicRecord.leadId }, data: { userId: user.id } });
+  }
+
+  // Masa aktif akun demo dihitung sejak aktivasi pertama
   let demoExpiresAt = user.demoExpiresAt;
-
   if (!user.demoActivatedAt) {
-    const activatedAt = new Date();
-    const expiry = new Date(activatedAt.getTime() + durationDays * 24 * 60 * 60 * 1000);
-    demoExpiresAt = expiry;
-
+    const durationDays = magicRecord.lead.demoDurationDays || user.demoDurationDays || 7;
+    demoExpiresAt = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
     await db.user.update({
       where: { id: user.id },
-      data: {
-        demoDurationDays: durationDays,
-        demoActivatedAt: activatedAt,
-        demoExpiresAt: expiry,
-        status: 1,
-      },
+      data: { demoDurationDays: durationDays, demoActivatedAt: now, demoExpiresAt },
     });
-  } else if (demoExpiresAt && now > demoExpiresAt) {
-    // Akun sudah kedaluwarsa
-    return {
-      success: false,
-      isExpired: true,
-      message:
-        "Masa aktif akun demo Anda telah berakhir. Terima kasih telah mencoba platform Diagnova LIS. Silakan hubungi tim kami untuk aktivasi lisensi penuh.",
-      redirectUrl: "/demo-expired",
-    };
+    await recordAuditLog({
+      userId: user.id,
+      action: "DEMO_ACCESS_ACTIVATED",
+      entity: "Lead",
+      recordId: magicRecord.leadId,
+      newValue: { durationDays, demoExpiresAt: demoExpiresAt.toISOString() },
+      ipAddress: clientIp,
+      userAgent,
+    });
   }
 
-  // 5. Konsumsi Magic Link (Tandai usedAt)
-  await db.demoMagicLink.update({
-    where: { id: magicRecord.id },
-    data: {
-      usedAt: now,
-      userId: user.id,
-      ipAddress: clientIp || null,
-      userAgent: userAgent || null,
-    },
+  await recordAuditLog({
+    userId: user.id,
+    action: "MAGIC_LINK_CONSUMED",
+    entity: "Lead",
+    recordId: magicRecord.leadId,
+    newValue: { magicLinkId: magicRecord.id },
+    ipAddress: clientIp,
+    userAgent,
   });
 
-  // 6. Buat Sesi Login Diagnova Resmi (JWT Cookie)
+  // Login pertama yang berhasil: Dihubungi -> Jadwal Demo (atomik & idempoten)
+  const transitioned = await transitionLeadStatus(
+    magicRecord.leadId,
+    LEAD_STATUS.CONTACTED,
+    LEAD_STATUS.SCHEDULED
+  );
+  if (transitioned) {
+    await recordAuditLog({
+      userId: user.id,
+      action: "LEAD_STATUS_CHANGED",
+      entity: "Lead",
+      recordId: magicRecord.leadId,
+      oldValue: { status: LEAD_STATUS.CONTACTED },
+      newValue: { status: LEAD_STATUS.SCHEDULED, trigger: "FIRST_MAGIC_LINK_LOGIN" },
+      ipAddress: clientIp,
+      userAgent,
+    });
+  }
+
   const sessionPayload: AuthSessionPayload = {
     userId: user.id,
     name: user.name,
@@ -216,11 +271,5 @@ export async function verifyAndConsumeMagicLink(
 
   await setSessionCookie(sessionPayload);
 
-  return {
-    success: true,
-    message: "Autentikasi berhasil! Sesi demo Anda telah aktif.",
-    sessionPayload,
-    redirectUrl: "/",
-  };
+  return { success: true, sessionPayload, redirectUrl: "/" };
 }
-

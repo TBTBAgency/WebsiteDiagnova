@@ -6,14 +6,21 @@ import {
   getLeadMetrics,
   approveLead,
   rejectLead,
+  completeLead,
+  extendDemoAccess,
+  getLeadHistory,
+  LeadWorkflowError,
+  LEAD_STATUS,
   STATUS_LABELS,
 } from "@/lib/models/lead.model";
 import {
   updateLeadStatusSchema,
   approveLeadSchema,
   rejectLeadSchema,
+  extendDemoAccessSchema,
 } from "@/lib/validations";
-import { requireAdmin } from "@/lib/auth-guard";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { recordAuditLog } from "@/lib/models/audit.model";
 import { sendApprovalNotificationEmail } from "@/lib/email";
 import { ApiResponse, InstitutionType, LeadApprovalStatus, LeadFilterQuery } from "@/types";
 
@@ -114,7 +121,19 @@ export async function getLeadDetailController(
 }
 
 /**
- * Controller untuk menyetujui permohonan demo, menyiapkan akun demo, dan membuat Magic Link
+ * Memetakan error domain workflow ke respons HTTP yang tepat (4xx), selain itu 500.
+ */
+function workflowErrorResponse(error: unknown, fallbackMessage: string): NextResponse<ApiResponse> {
+  if (error instanceof LeadWorkflowError) {
+    return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+  }
+  console.error(fallbackMessage, error);
+  return NextResponse.json<ApiResponse>({ success: false, message: fallbackMessage }, { status: 500 });
+}
+
+/**
+ * Controller untuk menyetujui permohonan demo, menyiapkan akun demo, dan membuat Magic Link.
+ * Status pipeline lead tidak diubah (Jadwal Demo baru terjadi setelah klien login pertama).
  */
 export async function approveLeadController(
   request: NextRequest,
@@ -124,6 +143,7 @@ export async function approveLeadController(
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
     const session = guard.session;
+
     const body = await request.json().catch(() => ({}));
     const validation = approveLeadSchema.safeParse(body);
 
@@ -139,11 +159,29 @@ export async function approveLeadController(
     }
 
     const { confirmedDemoDate, durationDays } = validation.data;
+    const before = await getLeadById(id);
 
     const result = await approveLead(id, {
       confirmedDemoDate: confirmedDemoDate || null,
       durationDays: durationDays || 7,
       approvedBy: session.name || "Admin Diagnova",
+    });
+
+    const { ipAddress, userAgent } = getClientInfo(request.headers);
+    await recordAuditLog({
+      userId: session.userId,
+      action: before?.approvalStatus === "APPROVED" ? "MAGIC_LINK_REISSUED" : "LEAD_APPROVED",
+      entity: "Lead",
+      recordId: id,
+      oldValue: before ? { approvalStatus: before.approvalStatus } : undefined,
+      newValue: {
+        approvalStatus: "APPROVED",
+        durationDays,
+        confirmedDemoDate: result.lead.confirmedDemoDate,
+        magicLinkExpiresAt: result.expiresAt,
+      },
+      ipAddress,
+      userAgent,
     });
 
     // Kirim email notifikasi persetujuan ke pemohon (non-blocking)
@@ -156,17 +194,13 @@ export async function approveLeadController(
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: `Permohonan demo berhasil disetujui untuk ${durationDays} hari. Magic Link telah aktif.`,
+        message: `Permohonan demo disetujui (akses ${durationDays} hari sejak login pertama). Magic Link berlaku 24 jam.`,
         data: result,
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("approveLeadController error:", error);
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: error.message || "Gagal menyetujui permohonan demo." },
-      { status: 500 }
-    );
+  } catch (error) {
+    return workflowErrorResponse(error, "Gagal menyetujui permohonan demo.");
   }
 }
 
@@ -181,6 +215,7 @@ export async function rejectLeadController(
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
     const session = guard.session;
+
     const body = await request.json().catch(() => ({}));
     const validation = rejectLeadSchema.safeParse(body);
 
@@ -195,30 +230,40 @@ export async function rejectLeadController(
       );
     }
 
+    const before = await getLeadById(id);
     const updatedLead = await rejectLead(id, {
       rejectionReason: validation.data.rejectionReason,
       rejectedBy: session.name || "Admin Diagnova",
     });
 
+    const { ipAddress, userAgent } = getClientInfo(request.headers);
+    await recordAuditLog({
+      userId: session.userId,
+      action: "LEAD_REJECTED",
+      entity: "Lead",
+      recordId: id,
+      oldValue: before ? { approvalStatus: before.approvalStatus } : undefined,
+      newValue: { approvalStatus: "REJECTED", rejectionReason: validation.data.rejectionReason },
+      ipAddress,
+      userAgent,
+    });
+
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: "Permohonan demo telah ditolak.",
+        message: "Permohonan demo telah ditolak. Tautan magic link yang belum terpakai telah dinonaktifkan.",
         data: updatedLead,
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("rejectLeadController error:", error);
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: error.message || "Gagal menolak permohonan demo." },
-      { status: 500 }
-    );
+  } catch (error) {
+    return workflowErrorResponse(error, "Gagal menolak permohonan demo.");
   }
 }
 
 /**
- * Controller untuk memperbarui status CRM lead (Baru, Dihubungi, Jadwal Demo, Selesai)
+ * Controller untuk memperbarui jadwal demo dan/atau status lead.
+ * Hanya transisi manual yang sah yang diterima (lihat MANUAL_STATUS_TRANSITIONS).
  */
 export async function updateLeadStatusController(
   request: NextRequest,
@@ -228,7 +273,8 @@ export async function updateLeadStatusController(
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
     const session = guard.session;
-    const body = await request.json();
+
+    const body = await request.json().catch(() => ({}));
     const validation = updateLeadStatusSchema.safeParse(body);
 
     if (!validation.success) {
@@ -242,24 +288,153 @@ export async function updateLeadStatusController(
       );
     }
 
-    const { status, voucherDays, demoDate } = validation.data;
-    const updatedLead = await updateLeadStatus(id, status, voucherDays || 3, demoDate);
-    const label = STATUS_LABELS[status] || `Status ${status}`;
+    const { status, demoDate } = validation.data;
+    const result = await updateLeadStatus(id, status ?? null, demoDate);
 
+    if (result.statusChanged) {
+      const { ipAddress, userAgent } = getClientInfo(request.headers);
+      await recordAuditLog({
+        userId: session.userId,
+        action: result.lead.status === LEAD_STATUS.COMPLETED ? "LEAD_COMPLETED" : "LEAD_STATUS_CHANGED",
+        entity: "Lead",
+        recordId: id,
+        oldValue: { status: result.previousStatus },
+        newValue: { status: result.lead.status, trigger: "ADMIN_MANUAL" },
+        ipAddress,
+        userAgent,
+      });
+    }
+
+    const label = STATUS_LABELS[result.lead.status] || `Status ${result.lead.status}`;
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: `Status permohonan demo berhasil diubah menjadi ${label}.`,
-        data: updatedLead,
+        message: result.statusChanged
+          ? `Status permohonan demo berhasil diubah menjadi ${label}.`
+          : "Data permohonan demo berhasil diperbarui.",
+        data: result.lead,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("updateLeadStatusController error:", error);
+    return workflowErrorResponse(error, "Gagal memperbarui status lead.");
+  }
+}
+
+/**
+ * Controller: admin mengonfirmasi demo telah selesai (Jadwal Demo -> Selesai).
+ */
+export async function completeLeadController(
+  request: NextRequest,
+  id: string
+): Promise<NextResponse<ApiResponse>> {
+  try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
+
+    const updatedLead = await completeLead(id);
+
+    const { ipAddress, userAgent } = getClientInfo(request.headers);
+    await recordAuditLog({
+      userId: session.userId,
+      action: "LEAD_COMPLETED",
+      entity: "Lead",
+      recordId: id,
+      oldValue: { status: LEAD_STATUS.SCHEDULED },
+      newValue: { status: LEAD_STATUS.COMPLETED, trigger: "ADMIN_CONFIRMATION" },
+      ipAddress,
+      userAgent,
+    });
+
     return NextResponse.json<ApiResponse>(
-      { success: false, message: "Gagal memperbarui status lead." },
-      { status: 500 }
+      { success: true, message: "Demo telah dikonfirmasi selesai.", data: updatedLead },
+      { status: 200 }
     );
+  } catch (error) {
+    return workflowErrorResponse(error, "Gagal mengonfirmasi penyelesaian demo.");
+  }
+}
+
+/**
+ * Controller: memperpanjang masa aktif akses demo klien.
+ */
+export async function extendDemoAccessController(
+  request: NextRequest,
+  id: string
+): Promise<NextResponse<ApiResponse>> {
+  try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
+
+    const body = await request.json().catch(() => ({}));
+    const validation = extendDemoAccessSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Durasi perpanjangan tidak valid (1-90 hari).",
+          errors: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const result = await extendDemoAccess(id, validation.data.days);
+
+    const { ipAddress, userAgent } = getClientInfo(request.headers);
+    await recordAuditLog({
+      userId: session.userId,
+      action: "DEMO_ACCESS_EXTENDED",
+      entity: "Lead",
+      recordId: id,
+      oldValue: { demoExpiresAt: result.previousExpiresAt },
+      newValue: {
+        demoExpiresAt: result.newExpiresAt,
+        extendedByDays: validation.data.days,
+        reason: validation.data.reason || null,
+      },
+      ipAddress,
+      userAgent,
+    });
+
+    return NextResponse.json<ApiResponse>(
+      {
+        success: true,
+        message: `Akses demo diperpanjang ${validation.data.days} hari.`,
+        data: result,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return workflowErrorResponse(error, "Gagal memperpanjang akses demo.");
+  }
+}
+
+/**
+ * Controller: riwayat magic link & audit trail sebuah lead.
+ */
+export async function getLeadHistoryController(id: string): Promise<NextResponse<ApiResponse>> {
+  try {
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+
+    const lead = await getLeadById(id);
+    if (!lead) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Data lead tidak ditemukan." },
+        { status: 404 }
+      );
+    }
+
+    const history = await getLeadHistory(id);
+    return NextResponse.json<ApiResponse>(
+      { success: true, message: "Riwayat lead berhasil dimuat.", data: history },
+      { status: 200 }
+    );
+  } catch (error) {
+    return workflowErrorResponse(error, "Gagal memuat riwayat lead.");
   }
 }
 

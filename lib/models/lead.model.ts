@@ -46,6 +46,50 @@ export const STATUS_LABELS: Record<number, string> = {
 };
 
 /**
+ * Alur status lead (ketentuan bisnis demo request):
+ *  - Form demo tersimpan            -> 2 (Dihubungi)            [otomatis, sistem]
+ *  - Klien login pertama via Magic Link -> 2 -> 3 (Jadwal Demo) [otomatis, sistem, idempoten]
+ *  - Admin konfirmasi demo selesai  -> 3 -> 4 (Selesai)         [manual, admin]
+ * Status 1 (Baru) hanya ada pada data lama sebelum aturan ini; admin boleh memindahkannya ke 2.
+ * Kedaluwarsa akses demo TIDAK mengubah status.
+ */
+export const LEAD_STATUS = {
+  NEW: 1,
+  CONTACTED: 2,
+  SCHEDULED: 3,
+  COMPLETED: 4,
+} as const;
+
+/** Transisi status yang boleh dilakukan admin secara manual. */
+export const MANUAL_STATUS_TRANSITIONS: Record<number, number[]> = {
+  [LEAD_STATUS.NEW]: [LEAD_STATUS.CONTACTED],
+  [LEAD_STATUS.SCHEDULED]: [LEAD_STATUS.COMPLETED],
+};
+
+/** Error domain yang dipetakan ke HTTP 4xx oleh controller. */
+export class LeadWorkflowError extends Error {
+  constructor(
+    message: string,
+    public readonly httpStatus: 400 | 404 | 409 = 409
+  ) {
+    super(message);
+    this.name = "LeadWorkflowError";
+  }
+}
+
+/**
+ * Transisi status atomik: hanya berhasil bila status saat ini masih `from`.
+ * Mencegah race condition dan transisi ganda (mis. login berulang).
+ */
+export async function transitionLeadStatus(leadId: string, from: number, to: number): Promise<boolean> {
+  const result = await db.lead.updateMany({
+    where: { id: leadId, status: from },
+    data: { status: to },
+  });
+  return result.count === 1;
+}
+
+/**
  * Helper untuk format Lead Record Prisma ke DemoRequestRecord
  */
 function formatLeadRecord(record: any): DemoRequestRecord {
@@ -158,7 +202,7 @@ export async function createLead(input: DemoRequestInput): Promise<DemoRequestRe
       notes: input.notes && input.notes.trim() !== "" ? input.notes.trim() : null,
       requestedDemoDate: requestedDate,
       demoDate: requestedDate,
-      status: 1, // Status awal: 1 (Baru)
+      status: LEAD_STATUS.CONTACTED, // Ketentuan bisnis: form tersimpan => Dihubungi
       approvalStatus: PrismaLeadApprovalStatus.PENDING,
     },
     include: {
@@ -289,11 +333,32 @@ export async function approveLead(
 }> {
   const currentLead = await db.lead.findUnique({
     where: { id: leadId },
-    include: { user: true },
+    include: { user: { include: { role: true } } },
   });
 
   if (!currentLead) {
-    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan.`);
+    throw new LeadWorkflowError("Data permohonan demo tidak ditemukan.", 404);
+  }
+
+  // Cegah privilege escalation: magic link tidak boleh dibuat untuk email milik akun non-USER
+  // (mis. Administrator), karena magic link memberi sesi sesuai role akun tersebut.
+  const linkedUser =
+    currentLead.user ||
+    (await db.user.findUnique({
+      where: { email: currentLead.email.toLowerCase().trim() },
+      include: { role: true },
+    }));
+  if (linkedUser && linkedUser.role?.name !== "USER") {
+    throw new LeadWorkflowError(
+      "Email pemohon terdaftar sebagai akun non-klien (mis. Administrator). Magic Link tidak dapat dibuat untuk akun tersebut.",
+      409
+    );
+  }
+  if (linkedUser && linkedUser.status !== 1) {
+    throw new LeadWorkflowError(
+      "Akun klien demo sedang dinonaktifkan. Aktifkan kembali akun melalui Manajemen Pengguna sebelum membuat tautan baru.",
+      409
+    );
   }
 
   const durationDays = options.durationDays ? Math.max(1, options.durationDays) : 7;
@@ -302,14 +367,8 @@ export async function approveLead(
     : currentLead.requestedDemoDate || currentLead.demoDate;
 
   // 1. Dapatkan atau buat akun User dengan role "USER"
-  let userId = currentLead.userId;
-  let user = currentLead.user;
-
-  if (!user) {
-    user = await db.user.findUnique({
-      where: { email: currentLead.email.toLowerCase().trim() },
-    });
-  }
+  let userId: string;
+  let user: { id: string } | null = linkedUser;
 
   if (!user) {
     let targetRole = await db.role.findFirst({ where: { name: "USER" } });
@@ -355,7 +414,8 @@ export async function approveLead(
     24
   );
 
-  // 3. Update data lead: disetujui, sinkron status Jadwal Demo (3)
+  // 3. Update data lead: disetujui. Status lead TIDAK diubah di sini — status menjadi
+  //    Jadwal Demo (3) hanya setelah klien berhasil login pertama kali via Magic Link.
   const voucherCode = currentLead.voucherCode || generateVoucherCode();
   const voucherExpiry = new Date();
   voucherExpiry.setDate(voucherExpiry.getDate() + durationDays);
@@ -373,7 +433,6 @@ export async function approveLead(
       demoDurationDays: durationDays,
       voucherCode,
       voucherExpiry,
-      status: 3, // Otomatis sync dengan status Jadwal Demo di CRM
     },
   });
 
@@ -386,7 +445,9 @@ export async function approveLead(
 }
 
 /**
- * Menolak permohonan demo
+ * Menolak permohonan demo. Seluruh magic link yang belum terpakai untuk lead ini
+ * langsung dinonaktifkan agar tidak dapat digunakan setelah penolakan.
+ * Status pipeline lead tidak diubah.
  */
 export async function rejectLead(
   leadId: string,
@@ -397,62 +458,186 @@ export async function rejectLead(
 ): Promise<DemoRequestRecord> {
   const currentLead = await db.lead.findUnique({ where: { id: leadId } });
   if (!currentLead) {
-    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan.`);
+    throw new LeadWorkflowError("Data permohonan demo tidak ditemukan.", 404);
   }
 
-  await db.lead.update({
-    where: { id: leadId },
-    data: {
-      approvalStatus: PrismaLeadApprovalStatus.REJECTED,
-      approvedAt: new Date(),
-      approvedBy: options.rejectedBy || "Admin Diagnova",
-      rejectionReason: options.rejectionReason,
-    },
-  });
+  const now = new Date();
+  await db.$transaction([
+    db.lead.update({
+      where: { id: leadId },
+      data: {
+        approvalStatus: PrismaLeadApprovalStatus.REJECTED,
+        approvedAt: now,
+        approvedBy: options.rejectedBy || "Admin Diagnova",
+        rejectionReason: options.rejectionReason,
+      },
+    }),
+    db.demoMagicLink.updateMany({
+      where: { leadId, usedAt: null, expiresAt: { gt: now } },
+      data: { expiresAt: now },
+    }),
+  ]);
 
   return (await getLeadById(leadId))!;
 }
 
 /**
- * Memperbarui status CRM lead serta men-generate voucher jika status menjadi Jadwal Demo (3)
+ * Memperbarui jadwal demo dan/atau status lead secara terkontrol.
+ * Hanya transisi pada MANUAL_STATUS_TRANSITIONS yang diizinkan; transisi lain
+ * (mis. lompat ke Jadwal Demo, atau mundur dari Selesai) ditolak dengan 409.
  */
 export async function updateLeadStatus(
   leadId: string,
-  newStatus: number,
-  voucherDays: number = 3,
+  newStatus?: number | null,
   demoDate?: string | Date | null
-): Promise<DemoRequestRecord> {
+): Promise<{ lead: DemoRequestRecord; previousStatus: number; statusChanged: boolean }> {
   const currentLead = await db.lead.findUnique({ where: { id: leadId } });
   if (!currentLead) {
-    throw new Error(`Lead dengan ID ${leadId} tidak ditemukan`);
+    throw new LeadWorkflowError("Data permohonan demo tidak ditemukan.", 404);
   }
 
-  const updateData: Prisma.LeadUpdateInput = {
-    status: newStatus,
-  };
+  const previousStatus = currentLead.status;
+  let statusChanged = false;
+
+  if (newStatus !== undefined && newStatus !== null && newStatus !== previousStatus) {
+    const allowed = MANUAL_STATUS_TRANSITIONS[previousStatus] || [];
+    if (!allowed.includes(newStatus)) {
+      throw new LeadWorkflowError(
+        `Perubahan status dari "${STATUS_LABELS[previousStatus] ?? previousStatus}" ke "${
+          STATUS_LABELS[newStatus] ?? newStatus
+        }" tidak diizinkan. Status Jadwal Demo ditetapkan otomatis saat klien login pertama kali, dan Selesai hanya dari Jadwal Demo.`,
+        409
+      );
+    }
+    statusChanged = await transitionLeadStatus(leadId, previousStatus, newStatus);
+    if (!statusChanged) {
+      throw new LeadWorkflowError("Status lead telah berubah oleh proses lain. Muat ulang data dan coba lagi.", 409);
+    }
+  }
 
   if (demoDate !== undefined) {
     const targetDate = demoDate ? new Date(demoDate) : null;
-    updateData.confirmedDemoDate = targetDate;
-    updateData.demoDate = targetDate;
+    await db.lead.update({
+      where: { id: leadId },
+      data: { confirmedDemoDate: targetDate, demoDate: targetDate },
+    });
   }
 
-  if (newStatus === 3) {
-    const days = Math.max(3, voucherDays);
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + days);
+  return { lead: (await getLeadById(leadId))!, previousStatus, statusChanged };
+}
 
-    updateData.voucherCode = currentLead.voucherCode || generateVoucherCode();
-    updateData.voucherExpiry = expiry;
-    updateData.demoDurationDays = days;
+/**
+ * Admin mengonfirmasi demo telah benar-benar selesai: Jadwal Demo (3) -> Selesai (4).
+ */
+export async function completeLead(leadId: string): Promise<DemoRequestRecord> {
+  const currentLead = await db.lead.findUnique({ where: { id: leadId } });
+  if (!currentLead) {
+    throw new LeadWorkflowError("Data permohonan demo tidak ditemukan.", 404);
   }
-
-  await db.lead.update({
-    where: { id: leadId },
-    data: updateData,
-  });
-
+  if (currentLead.status === LEAD_STATUS.COMPLETED) {
+    throw new LeadWorkflowError("Demo untuk permohonan ini sudah dikonfirmasi selesai.", 409);
+  }
+  if (currentLead.status !== LEAD_STATUS.SCHEDULED) {
+    throw new LeadWorkflowError(
+      "Demo hanya dapat dikonfirmasi selesai setelah klien masuk melalui Magic Link (status Jadwal Demo).",
+      409
+    );
+  }
+  const ok = await transitionLeadStatus(leadId, LEAD_STATUS.SCHEDULED, LEAD_STATUS.COMPLETED);
+  if (!ok) {
+    throw new LeadWorkflowError("Status lead telah berubah oleh proses lain. Muat ulang data dan coba lagi.", 409);
+  }
   return (await getLeadById(leadId))!;
+}
+
+/**
+ * Memperpanjang masa aktif akses demo klien sebanyak `days` hari.
+ * Basis perpanjangan: tanggal kedaluwarsa saat ini, atau sekarang bila sudah lewat.
+ * Status lead tidak berubah.
+ */
+export async function extendDemoAccess(
+  leadId: string,
+  days: number
+): Promise<{ lead: DemoRequestRecord; previousExpiresAt: string | null; newExpiresAt: string }> {
+  const currentLead = await db.lead.findUnique({ where: { id: leadId }, include: { user: true } });
+  if (!currentLead) {
+    throw new LeadWorkflowError("Data permohonan demo tidak ditemukan.", 404);
+  }
+  if (currentLead.approvalStatus !== PrismaLeadApprovalStatus.APPROVED) {
+    throw new LeadWorkflowError("Akses demo hanya dapat diperpanjang untuk permohonan yang disetujui.", 409);
+  }
+  const user = currentLead.user;
+  if (!user || !user.demoActivatedAt || !user.demoExpiresAt) {
+    throw new LeadWorkflowError(
+      "Akses demo belum pernah diaktifkan (klien belum login). Atur durasi melalui approval / tautan baru.",
+      409
+    );
+  }
+
+  const now = new Date();
+  const base = user.demoExpiresAt > now ? user.demoExpiresAt : now;
+  const newExpiresAt = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+
+  await db.$transaction([
+    db.user.update({ where: { id: user.id }, data: { demoExpiresAt: newExpiresAt } }),
+    db.lead.update({ where: { id: leadId }, data: { voucherExpiry: newExpiresAt } }),
+  ]);
+
+  return {
+    lead: (await getLeadById(leadId))!,
+    previousExpiresAt: user.demoExpiresAt.toISOString(),
+    newExpiresAt: newExpiresAt.toISOString(),
+  };
+}
+
+/**
+ * Riwayat lengkap sebuah lead: penerbitan & pemakaian magic link serta audit trail.
+ */
+export async function getLeadHistory(leadId: string) {
+  const [magicLinks, auditLogs] = await Promise.all([
+    db.demoMagicLink.findMany({
+      where: { leadId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        createdAt: true,
+        expiresAt: true,
+        usedAt: true,
+        ipAddress: true,
+        userAgent: true,
+      },
+    }),
+    db.auditLog.findMany({
+      where: { entity: "Lead", recordId: leadId },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    }),
+  ]);
+
+  const userIds = Array.from(new Set(auditLogs.map((l) => l.userId).filter((id): id is string => !!id)));
+  const users = userIds.length
+    ? await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true } })
+    : [];
+  const nameById = new Map(users.map((u) => [u.id, u.name]));
+
+  return {
+    magicLinks: magicLinks.map((m) => ({
+      id: m.id,
+      createdAt: m.createdAt.toISOString(),
+      expiresAt: m.expiresAt.toISOString(),
+      usedAt: m.usedAt ? m.usedAt.toISOString() : null,
+      ipAddress: m.ipAddress,
+      userAgent: m.userAgent,
+    })),
+    events: auditLogs.map((l) => ({
+      id: l.id,
+      action: l.action,
+      actor: l.userId ? nameById.get(l.userId) || "Pengguna terhapus" : "Sistem",
+      oldValue: l.oldValue,
+      newValue: l.newValue,
+      createdAt: l.createdAt.toISOString(),
+    })),
+  };
 }
 
 /**

@@ -36,6 +36,48 @@ import { DemoRequestRecord, InstitutionType, LeadApprovalStatus } from "@/types"
 import { MetricCard } from "@/components/admin/MetricCard";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 
+interface LeadHistory {
+  magicLinks: Array<{
+    id: string;
+    createdAt: string;
+    expiresAt: string;
+    usedAt: string | null;
+    ipAddress: string | null;
+  }>;
+  events: Array<{
+    id: string;
+    action: string;
+    actor: string;
+    oldValue: any;
+    newValue: any;
+    createdAt: string;
+  }>;
+}
+
+const historyActionLabels: Record<string, string> = {
+  LEAD_CREATED: "Permohonan diterima dari formulir",
+  LEAD_APPROVED: "Permohonan disetujui & Magic Link dibuat",
+  MAGIC_LINK_REISSUED: "Magic Link baru diterbitkan",
+  LEAD_REJECTED: "Permohonan ditolak",
+  MAGIC_LINK_CONSUMED: "Klien masuk melalui Magic Link",
+  MAGIC_LINK_FAILED: "Percobaan Magic Link gagal",
+  DEMO_ACCESS_ACTIVATED: "Akses demo diaktifkan",
+  DEMO_ACCESS_EXTENDED: "Akses demo diperpanjang",
+  LEAD_STATUS_CHANGED: "Status pipeline berubah",
+  LEAD_COMPLETED: "Demo dikonfirmasi selesai",
+};
+
+const formatDateTime = (value?: string | null) =>
+  value
+    ? new Date(value).toLocaleString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "-";
+
 interface LeadMetrics {
   total: number;
   new: number;
@@ -137,12 +179,9 @@ export default function AdminLeadsPage() {
 
   // Detail Modal & Action states
   const [selectedLead, setSelectedLead] = useState<DemoRequestRecord | null>(null);
-  const [modalStatus, setModalStatus] = useState<number>(1);
-  const [voucherDurationDays, setVoucherDurationDays] = useState<number>(3);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [actionSuccessMessage, setActionSuccessMessage] = useState("");
   const [copiedVoucher, setCopiedVoucher] = useState(false);
-  const [modalDemoDate, setModalDemoDate] = useState("");
 
   // Approval Process States
   const [approvalDuration, setApprovalDuration] = useState<number>(7);
@@ -153,6 +192,10 @@ export default function AdminLeadsPage() {
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [generatedMagicLink, setGeneratedMagicLink] = useState<string>("");
   const [copiedLink, setCopiedLink] = useState(false);
+  const [extendDays, setExtendDays] = useState<number>(7);
+  const [isExtending, setIsExtending] = useState(false);
+  const [leadHistory, setLeadHistory] = useState<LeadHistory | null>(null);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setIsLoading(true);
@@ -194,18 +237,26 @@ export default function AdminLeadsPage() {
     fetchLeads();
   }, [fetchLeads]);
 
+  const fetchHistory = useCallback(async (leadId: string) => {
+    setIsHistoryLoading(true);
+    try {
+      const res = await fetch(`/api/admin/leads/${leadId}/history`);
+      const json = await res.json();
+      if (res.ok && json.success) setLeadHistory(json.data);
+    } catch (err) {
+      console.error("Error fetching lead history:", err);
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  }, []);
+
   const handleOpenDetail = (lead: DemoRequestRecord) => {
     setSelectedLead(lead);
-    setModalStatus(lead.status);
+    setLeadHistory(null);
+    fetchHistory(lead.id);
+    setExtendDays(7);
 
     const defaultDate = lead.confirmedDemoDate || lead.requestedDemoDate || lead.demoDate;
-    setModalDemoDate(
-      defaultDate
-        ? new Date(new Date(defaultDate).getTime() - new Date(defaultDate).getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 16)
-        : ""
-    );
     setApprovalConfirmedDate(
       defaultDate
         ? new Date(new Date(defaultDate).getTime() - new Date(defaultDate).getTimezoneOffset() * 60000)
@@ -214,7 +265,6 @@ export default function AdminLeadsPage() {
         : ""
     );
     setApprovalDuration(lead.demoDurationDays || 7);
-    setVoucherDurationDays(lead.demoDurationDays || 3);
     setActionSuccessMessage("");
     setCopiedVoucher(false);
     setShowRejectForm(false);
@@ -241,10 +291,9 @@ export default function AdminLeadsPage() {
       if (res.ok && json.success && json.data) {
         setSelectedLead(json.data.lead);
         setGeneratedMagicLink(json.data.magicLinkUrl);
-        setActionSuccessMessage(
-          `Permohonan demo berhasil DISETUJUI. Tautan Magic Link akses aktif selama 24 jam.`
-        );
+        setActionSuccessMessage(json.message || "Permohonan demo disetujui. Magic Link berlaku 24 jam.");
         fetchLeads();
+        fetchHistory(selectedLead.id);
       } else {
         alert(json.message || "Gagal menyetujui permohonan");
       }
@@ -274,8 +323,9 @@ export default function AdminLeadsPage() {
       if (res.ok && json.success && json.data) {
         setSelectedLead(json.data);
         setShowRejectForm(false);
-        setActionSuccessMessage("Permohonan demo telah DITOLAK.");
+        setActionSuccessMessage(json.message || "Permohonan demo telah DITOLAK.");
         fetchLeads();
+        fetchHistory(selectedLead.id);
       } else {
         alert(json.message || "Gagal menolak permohonan");
       }
@@ -287,29 +337,23 @@ export default function AdminLeadsPage() {
     }
   };
 
-  const handleUpdateStatus = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /** Transisi status manual yang diizinkan backend: Baru -> Dihubungi (data lama). */
+  const handleTransitionStatus = async (targetStatus: number) => {
     if (!selectedLead) return;
-
     setIsUpdatingStatus(true);
+    setActionSuccessMessage("");
     try {
       const res = await fetch(`/api/admin/leads/${selectedLead.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: modalStatus,
-          voucherDays: voucherDurationDays,
-          demoDate: modalDemoDate ? new Date(modalDemoDate).toISOString() : null,
-        }),
+        body: JSON.stringify({ status: targetStatus }),
       });
-
       const data = await res.json();
-
       if (res.ok && data.success && data.data) {
         setSelectedLead(data.data);
-        const statusLabel = statusBadgeStyles[modalStatus]?.label || `Status ${modalStatus}`;
-        setActionSuccessMessage(`Status CRM sales berhasil diubah menjadi ${statusLabel}.`);
+        setActionSuccessMessage(data.message);
         fetchLeads();
+        fetchHistory(selectedLead.id);
       } else {
         alert(data.message || "Gagal mengubah status");
       }
@@ -318,6 +362,59 @@ export default function AdminLeadsPage() {
       alert("Terjadi kesalahan jaringan.");
     } finally {
       setIsUpdatingStatus(false);
+    }
+  };
+
+  /** Admin mengonfirmasi demo benar-benar selesai: Jadwal Demo -> Selesai. */
+  const handleCompleteDemo = async () => {
+    if (!selectedLead) return;
+    if (!window.confirm("Konfirmasi bahwa sesi demo untuk permohonan ini benar-benar telah selesai?")) return;
+    setIsUpdatingStatus(true);
+    setActionSuccessMessage("");
+    try {
+      const res = await fetch(`/api/admin/leads/${selectedLead.id}/complete`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.success && data.data) {
+        setSelectedLead(data.data);
+        setActionSuccessMessage(data.message);
+        fetchLeads();
+        fetchHistory(selectedLead.id);
+      } else {
+        alert(data.message || "Gagal mengonfirmasi demo selesai");
+      }
+    } catch (err) {
+      console.error("Error completing demo:", err);
+      alert("Terjadi kesalahan jaringan.");
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  /** Memperpanjang masa aktif akses demo klien. */
+  const handleExtendAccess = async () => {
+    if (!selectedLead) return;
+    setIsExtending(true);
+    setActionSuccessMessage("");
+    try {
+      const res = await fetch(`/api/admin/leads/${selectedLead.id}/extend`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ days: extendDays }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.data) {
+        setSelectedLead(data.data.lead);
+        setActionSuccessMessage(`${data.message} Berlaku hingga ${formatDateTime(data.data.newExpiresAt)}.`);
+        fetchLeads();
+        fetchHistory(selectedLead.id);
+      } else {
+        alert(data.message || "Gagal memperpanjang akses demo");
+      }
+    } catch (err) {
+      console.error("Error extending access:", err);
+      alert("Terjadi kesalahan jaringan.");
+    } finally {
+      setIsExtending(false);
     }
   };
 
@@ -366,7 +463,7 @@ export default function AdminLeadsPage() {
       message += `👤 *Nama Pemohon:* ${lead.name} (${lead.jobTitle})\n`;
       message += `⏳ *Masa Aktif Akun:* ${lead.demoDurationDays || 7} Hari (sejak tautan pertama dibuka)\n\n`;
 
-      const activeLink = magicLinkUrl || lead.magicLinkUrl || generatedMagicLink;
+      const activeLink = magicLinkUrl || generatedMagicLink;
       if (activeLink) {
         message += `🔗 *Tautan Masuk Langsung (Magic Link Tanpa Password):*\n`;
         message += `${activeLink}\n\n`;
@@ -1121,7 +1218,7 @@ export default function AdminLeadsPage() {
                     </div>
 
                     {/* Kartu Tautan Magic Link */}
-                    {(generatedMagicLink || selectedLead.magicLinkUrl) && (
+                    {(
                       <div className="p-3.5 bg-blue-50/60 border border-blue-200 rounded-xl space-y-2.5">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
@@ -1133,26 +1230,39 @@ export default function AdminLeadsPage() {
                           </span>
                         </div>
 
+                        {!generatedMagicLink && (
+                          <p className="text-[11px] text-blue-900/80 leading-relaxed">
+                            {selectedLead.magicLinkUsedAt
+                              ? `Tautan terakhir sudah digunakan klien pada ${formatDateTime(selectedLead.magicLinkUsedAt)}.`
+                              : selectedLead.magicLinkExpiry && new Date(selectedLead.magicLinkExpiry) > new Date()
+                              ? `Tautan terakhir masih aktif hingga ${formatDateTime(selectedLead.magicLinkExpiry)}. Demi keamanan, tautan hanya ditampilkan sekali saat dibuat — buat tautan baru bila perlu dikirim ulang.`
+                              : "Tidak ada tautan aktif. Buat tautan baru untuk dikirim ke klien."}
+                          </p>
+                        )}
+
+                        {generatedMagicLink && (
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
                             readOnly
-                            value={generatedMagicLink || selectedLead.magicLinkUrl || ""}
+                            value={generatedMagicLink}
                             className="flex-1 px-3 py-2 rounded-xl bg-white border border-blue-200 text-xs font-mono text-slate-700 select-all"
                           />
                           <button
                             type="button"
-                            onClick={() => handleCopyMagicLink(generatedMagicLink || selectedLead.magicLinkUrl || "")}
+                            onClick={() => handleCopyMagicLink(generatedMagicLink)}
                             className="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors flex items-center gap-1 shrink-0 shadow-xs"
                           >
                             {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                             <span>{copiedLink ? "Disalin!" : "Salin Link"}</span>
                           </button>
                         </div>
+                        )}
 
                         <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                          {generatedMagicLink && (
                           <a
-                            href={formatWaUrl(selectedLead, generatedMagicLink || selectedLead.magicLinkUrl || "")}
+                            href={formatWaUrl(selectedLead, generatedMagicLink)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs"
@@ -1160,18 +1270,78 @@ export default function AdminLeadsPage() {
                             <MessageSquare className="h-3.5 w-3.5" />
                             <span>Kirim Magic Link & Rincian via WhatsApp</span>
                           </a>
+                          )}
                           <button
                             type="button"
                             onClick={handleApprove}
                             disabled={isApproving}
                             className="py-2 px-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors"
-                            title="Generate ulang magic link baru jika link sebelumnya kedaluwarsa"
+                            title="Buat tautan baru. Tautan lama yang belum terpakai otomatis dinonaktifkan."
                           >
-                            <span>Perbarui Tautan Link</span>
+                            <span>{isApproving ? "Membuat Tautan..." : "Buat Tautan Baru"}</span>
                           </button>
                         </div>
                       </div>
                     )}
+
+                    {/* Masa aktif & perpanjangan akses demo */}
+                    <div className="p-3.5 bg-white border border-slate-200 rounded-xl space-y-2.5 text-xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                          <Clock className="h-3.5 w-3.5 text-blue-600" />
+                          <span>Masa Aktif Akses Demo</span>
+                        </span>
+                        {selectedLead.user?.demoExpiresAt && (
+                          <span
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                              new Date(selectedLead.user.demoExpiresAt) > new Date()
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : "bg-rose-50 text-rose-700 border-rose-200"
+                            }`}
+                          >
+                            {new Date(selectedLead.user.demoExpiresAt) > new Date() ? "Aktif" : "Kedaluwarsa"}
+                          </span>
+                        )}
+                      </div>
+                      {selectedLead.user?.demoActivatedAt && selectedLead.user?.demoExpiresAt ? (
+                        <>
+                          <p className="text-[11px] text-slate-600">
+                            Diaktifkan {formatDateTime(selectedLead.user.demoActivatedAt)} • Berlaku hingga{" "}
+                            <strong>{formatDateTime(selectedLead.user.demoExpiresAt)}</strong>
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <select
+                              value={extendDays}
+                              onChange={(e) => setExtendDays(parseInt(e.target.value, 10))}
+                              className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800"
+                              aria-label="Durasi perpanjangan"
+                            >
+                              {[3, 7, 14, 30].map((d) => (
+                                <option key={d} value={d}>
+                                  Perpanjang {d} hari
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={handleExtendAccess}
+                              disabled={isExtending}
+                              className="py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+                            >
+                              {isExtending ? "Memproses..." : "Perpanjang Akses"}
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-slate-400">
+                            Kedaluwarsa akses tidak mengubah status pipeline. Setiap perpanjangan tercatat di riwayat.
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-[11px] text-slate-500">
+                          Belum aktif — masa aktif {selectedLead.demoDurationDays || 7} hari dihitung sejak klien pertama
+                          kali masuk melalui Magic Link.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -1199,38 +1369,126 @@ export default function AdminLeadsPage() {
                 )}
               </div>
 
-              {/* SECTION 3: PERBARUI STATUS PIPELINE CRM SALES */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              {/* SECTION 3: STATUS PIPELINE (DIKENDALIKAN ALUR BISNIS) */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-                  <span>Status Pipeline CRM Sales</span>
+                  <span>Status Pipeline</span>
                 </h4>
-                <form onSubmit={handleUpdateStatus} className="space-y-3">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {([1, 2, 3, 4] as const).map((st) => (
-                      <button
-                        key={st}
-                        type="button"
-                        onClick={() => setModalStatus(st)}
-                        className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all text-center ${
-                          modalStatus === st
-                            ? `${statusBadgeStyles[st].bg} ${statusBadgeStyles[st].border} ${statusBadgeStyles[st].text} ring-2 ring-blue-500/30`
-                            : "bg-white border-slate-200 text-slate-600 hover:bg-slate-100"
-                        }`}
-                      >
-                        {statusBadgeStyles[st].label}
-                      </button>
-                    ))}
-                  </div>
 
+                <ol className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {([1, 2, 3, 4] as const).map((st) => (
+                    <li
+                      key={st}
+                      className={`py-2 px-3 rounded-xl text-xs font-semibold border text-center ${
+                        selectedLead.status === st
+                          ? `${statusBadgeStyles[st].bg} ${statusBadgeStyles[st].border} ${statusBadgeStyles[st].text} ring-2 ring-blue-500/30`
+                          : selectedLead.status > st
+                          ? "bg-white border-slate-200 text-slate-400 line-through"
+                          : "bg-white border-slate-200 text-slate-500"
+                      }`}
+                    >
+                      {statusBadgeStyles[st].label}
+                    </li>
+                  ))}
+                </ol>
+
+                {selectedLead.status === 1 && (
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={() => handleTransitionStatus(2)}
                     disabled={isUpdatingStatus}
-                    className="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-xs"
+                    className="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-white transition-colors disabled:opacity-50"
                   >
-                    <span>{isUpdatingStatus ? "Menyimpan Status CRM..." : "Simpan Status CRM"}</span>
+                    {isUpdatingStatus ? "Menyimpan..." : "Tandai Dihubungi (data lama)"}
                   </button>
-                </form>
+                )}
+                {selectedLead.status === 2 && (
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    Status akan berubah otomatis menjadi <strong>Jadwal Demo</strong> setelah klien berhasil masuk
+                    pertama kali melalui Magic Link.
+                  </p>
+                )}
+                {selectedLead.status === 3 && (
+                  <button
+                    type="button"
+                    onClick={handleCompleteDemo}
+                    disabled={isUpdatingStatus}
+                    className="w-full py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-semibold text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>{isUpdatingStatus ? "Menyimpan..." : "Konfirmasi Demo Selesai"}</span>
+                  </button>
+                )}
+                {selectedLead.status === 4 && (
+                  <p className="text-[11px] text-emerald-700 font-semibold">Demo telah dikonfirmasi selesai.</p>
+                )}
+              </div>
+
+              {/* SECTION 4: RIWAYAT AKSES & AKTIVITAS */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
+                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5 text-blue-600" />
+                  <span>Riwayat Akses & Aktivitas</span>
+                </h4>
+                {isHistoryLoading && !leadHistory ? (
+                  <p className="text-[11px] text-slate-400">Memuat riwayat...</p>
+                ) : !leadHistory || (leadHistory.events.length === 0 && leadHistory.magicLinks.length === 0) ? (
+                  <p className="text-[11px] text-slate-400">Belum ada riwayat tercatat.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {leadHistory.magicLinks.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                          Magic Link ({leadHistory.magicLinks.length})
+                        </span>
+                        <ul className="space-y-1">
+                          {leadHistory.magicLinks.map((m) => (
+                            <li key={m.id} className="text-[11px] text-slate-600 flex flex-wrap gap-x-2">
+                              <span>Dibuat {formatDateTime(m.createdAt)}</span>
+                              <span>•</span>
+                              {m.usedAt ? (
+                                <span className="text-emerald-700">
+                                  Digunakan {formatDateTime(m.usedAt)}
+                                  {m.ipAddress ? ` (IP ${m.ipAddress})` : ""}
+                                </span>
+                              ) : new Date(m.expiresAt) > new Date() ? (
+                                <span className="text-blue-700">Aktif s/d {formatDateTime(m.expiresAt)}</span>
+                              ) : (
+                                <span className="text-slate-400">Tidak berlaku sejak {formatDateTime(m.expiresAt)}</span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {leadHistory.events.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                          Aktivitas
+                        </span>
+                        <ul className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                          {leadHistory.events.map((ev) => (
+                            <li key={ev.id} className="text-[11px] text-slate-600 border-l-2 border-slate-200 pl-2">
+                              <div className="font-semibold text-slate-800">
+                                {historyActionLabels[ev.action] || ev.action}
+                                {ev.newValue?.status && statusBadgeStyles[ev.newValue.status]
+                                  ? ` → ${statusBadgeStyles[ev.newValue.status].label}`
+                                  : ""}
+                                {ev.action === "DEMO_ACCESS_EXTENDED" && ev.newValue?.extendedByDays
+                                  ? ` (+${ev.newValue.extendedByDays} hari)`
+                                  : ""}
+                              </div>
+                              <div className="text-slate-400">
+                                {formatDateTime(ev.createdAt)} • {ev.actor}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
