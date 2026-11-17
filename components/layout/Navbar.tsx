@@ -527,7 +527,31 @@ function LanguageSwitcher({
   );
 }
 
-function getNavIcon(iconName?: string | null) {
+const NAV_ICON_COMPONENTS: Record<string, React.ComponentType<{ className?: string }>> = {
+  layers: Layers,
+  activity: Activity,
+  cpu: Cpu,
+  "shield-check": ShieldCheck,
+  sparkles: Sparkles,
+  "building-2": Building2,
+  stethoscope: Stethoscope,
+  microscope: Microscope,
+  "flask-conical": FlaskConical,
+  "heart-pulse": HeartPulse,
+  network: Network,
+};
+
+/** Hanya kelas warna teks Tailwind yang diizinkan dari data CMS. */
+function safeIconColor(iconColor?: string | null): string | null {
+  return iconColor && /^text-[a-z0-9-]+$/.test(iconColor) ? iconColor : null;
+}
+
+function getNavIcon(iconName?: string | null, iconColor?: string | null) {
+  const color = safeIconColor(iconColor);
+  if (color) {
+    const Icon = NAV_ICON_COMPONENTS[iconName?.toLowerCase() || ""] || Layers;
+    return <Icon className={`h-4 w-4 ${color}`} />;
+  }
   switch (iconName?.toLowerCase()) {
     case "layers":
       return <Layers className="h-4 w-4 text-diagnova-blue" />;
@@ -597,7 +621,7 @@ export function Navbar() {
                   description:
                     (language === "ID" ? c.descriptionId : c.descriptionEn) || "",
                   href: c.sectionKey ? `/#${c.sectionKey}` : c.url || "#",
-                  icon: getNavIcon(c.iconName),
+                  icon: getNavIcon(c.iconName, c.iconColor),
                 }))
               : undefined,
         }))

@@ -1,6 +1,19 @@
 import { db } from "@/lib/db";
 import { recordAuditLog } from "@/lib/models/audit.model";
 import { Prisma } from "@prisma/client";
+import type { CmsPageHero } from "@/lib/cms-hero";
+
+/**
+ * Mengambil section CMS; bila belum ada (mis. database baru yang belum di-seed) section
+ * kosong dibuat otomatis sehingga penyimpanan item dari admin tidak gagal.
+ */
+async function getOrCreateSection(sectionKey: string) {
+  return db.cmsSection.upsert({
+    where: { sectionKey },
+    update: {},
+    create: { sectionKey, extraContent: {}, isPublished: true },
+  });
+}
 
 export interface CmsHomepageData {
   hero: {
@@ -171,8 +184,7 @@ export async function saveHeroSlide(
   },
   userId?: string
 ) {
-  const heroSec = await db.cmsSection.findUnique({ where: { sectionKey: "hero" } });
-  if (!heroSec) throw new Error("Section 'hero' tidak ditemukan.");
+  const heroSec = await getOrCreateSection("hero");
 
   const extra = (heroSec.extraContent as any) || {};
   const slides: any[] = Array.isArray(extra.slides) ? [...extra.slides] : [];
@@ -235,8 +247,7 @@ export async function saveHeroSlide(
  * Hapus Hero Slide langsung dari CmsSection.extraContent.slides
  */
 export async function deleteHeroSlide(slideId: string, userId?: string) {
-  const heroSec = await db.cmsSection.findUnique({ where: { sectionKey: "hero" } });
-  if (!heroSec) throw new Error("Section 'hero' tidak ditemukan.");
+  const heroSec = await getOrCreateSection("hero");
 
   const extra = (heroSec.extraContent as any) || {};
   const slides: any[] = Array.isArray(extra.slides) ? [...extra.slides] : [];
@@ -275,8 +286,7 @@ export async function savePartner(
   },
   userId?: string
 ) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "trusted_by" } });
-  if (!sec) throw new Error("Section 'trusted_by' tidak ditemukan.");
+  const sec = await getOrCreateSection("trusted_by");
 
   const extra = (sec.extraContent as any) || {};
   const partners: any[] = Array.isArray(extra.partners) ? [...extra.partners] : [];
@@ -339,8 +349,7 @@ export async function savePartner(
  * Hapus Partner Logo langsung dari CmsSection.extraContent.partners
  */
 export async function deletePartner(id: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "trusted_by" } });
-  if (!sec) throw new Error("Section 'trusted_by' tidak ditemukan.");
+  const sec = await getOrCreateSection("trusted_by");
 
   const extra = (sec.extraContent as any) || {};
   const partners: any[] = Array.isArray(extra.partners) ? [...extra.partners] : [];
@@ -387,8 +396,7 @@ export async function saveComparisonItem(
   },
   userId?: string
 ) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "comparison" } });
-  if (!sec) throw new Error("Section 'comparison' tidak ditemukan.");
+  const sec = await getOrCreateSection("comparison");
 
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
@@ -451,8 +459,7 @@ export async function saveComparisonItem(
  * Hapus Comparison Item langsung dari CmsSection.extraContent.items
  */
 export async function deleteComparisonItem(id: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "comparison" } });
-  if (!sec) throw new Error("Section 'comparison' tidak ditemukan.");
+  const sec = await getOrCreateSection("comparison");
 
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
@@ -497,8 +504,7 @@ export async function saveTestimonial(
   },
   userId?: string
 ) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "testimonials" } });
-  if (!sec) throw new Error("Section 'testimonials' tidak ditemukan.");
+  const sec = await getOrCreateSection("testimonials");
 
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
@@ -561,8 +567,7 @@ export async function saveTestimonial(
  * Hapus Testimonial langsung dari CmsSection.extraContent.items
  */
 export async function deleteTestimonial(id: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "testimonials" } });
-  if (!sec) throw new Error("Section 'testimonials' tidak ditemukan.");
+  const sec = await getOrCreateSection("testimonials");
 
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
@@ -601,6 +606,8 @@ export interface CmsNavSubmenu {
   url: string;
   sectionKey?: string | null;
   iconName?: string;
+  /** Kelas warna Tailwind untuk ikon (mis. "text-rose-500"); opsional. */
+  iconColor?: string;
   sortOrder: number;
   isActive: boolean;
 }
@@ -666,8 +673,7 @@ export async function saveCmsNavigationMenu(
   },
   userId?: string
 ) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "navigation" } });
-  if (!sec) throw new Error("Section 'navigation' tidak ditemukan.");
+  const sec = await getOrCreateSection("navigation");
 
   const extra = (sec.extraContent as any) || {};
   const menus: CmsNavMenu[] = Array.isArray(extra.menus) ? [...extra.menus] : [];
@@ -787,8 +793,7 @@ export async function saveCmsNavigationMenu(
  * Menghapus menu atau submenu navigasi dari JSON
  */
 export async function deleteCmsNavigationMenu(menuId: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "navigation" } });
-  if (!sec) throw new Error("Section 'navigation' tidak ditemukan.");
+  const sec = await getOrCreateSection("navigation");
 
   const extra = (sec.extraContent as any) || {};
   let menus: CmsNavMenu[] = Array.isArray(extra.menus) ? [...extra.menus] : [];
@@ -874,8 +879,7 @@ export async function getAllCmsContent(): Promise<AllCmsData> {
  * Simpan atau perbarui item solusi pada page_solutions
  */
 export async function saveSolutionItem(item: any, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_solutions" } });
-  if (!sec) throw new Error("Section 'page_solutions' tidak ditemukan.");
+  const sec = await getOrCreateSection("page_solutions");
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
   let saved: any;
@@ -907,8 +911,7 @@ export async function saveSolutionItem(item: any, userId?: string) {
 }
 
 export async function deleteSolutionItem(slug: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_solutions" } });
-  if (!sec) throw new Error("Section 'page_solutions' tidak ditemukan.");
+  const sec = await getOrCreateSection("page_solutions");
   const extra = (sec.extraContent as any) || {};
   const items: any[] = (extra.items || []).filter((i: any) => i.slug !== slug);
   await db.cmsSection.update({
@@ -928,8 +931,7 @@ export async function deleteSolutionItem(slug: string, userId?: string) {
  * Simpan atau perbarui item modul pada page_modules
  */
 export async function saveModuleItem(item: any, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_modules" } });
-  if (!sec) throw new Error("Section 'page_modules' tidak ditemukan.");
+  const sec = await getOrCreateSection("page_modules");
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
   let saved: any;
@@ -961,8 +963,7 @@ export async function saveModuleItem(item: any, userId?: string) {
 }
 
 export async function deleteModuleItem(slug: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_modules" } });
-  if (!sec) throw new Error("Section 'page_modules' tidak ditemukan.");
+  const sec = await getOrCreateSection("page_modules");
   const extra = (sec.extraContent as any) || {};
   const items: any[] = (extra.items || []).filter((i: any) => i.slug !== slug);
   await db.cmsSection.update({
@@ -982,8 +983,7 @@ export async function deleteModuleItem(slug: string, userId?: string) {
  * Simpan atau perbarui item integrasi pada page_integrations
  */
 export async function saveIntegrationItem(item: any, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_integrations" } });
-  if (!sec) throw new Error("Section 'page_integrations' tidak ditemukan.");
+  const sec = await getOrCreateSection("page_integrations");
   const extra = (sec.extraContent as any) || {};
   const items: any[] = Array.isArray(extra.items) ? [...extra.items] : [];
   let saved: any;
@@ -1015,8 +1015,7 @@ export async function saveIntegrationItem(item: any, userId?: string) {
 }
 
 export async function deleteIntegrationItem(slug: string, userId?: string) {
-  const sec = await db.cmsSection.findUnique({ where: { sectionKey: "page_integrations" } });
-  if (!sec) throw new Error("Section 'page_integrations' tidak ditemukan.");
+  const sec = await getOrCreateSection("page_integrations");
   const extra = (sec.extraContent as any) || {};
   const items: any[] = (extra.items || []).filter((i: any) => i.slug !== slug);
   await db.cmsSection.update({
@@ -1088,5 +1087,23 @@ export async function getPlatformPageData() {
     section: sec,
     bannerUrl: extra.bannerUrl || "/images/hero-bg-1.webp",
     submodules: Array.isArray(extra.submodules) ? extra.submodules : [],
+  };
+}
+
+/**
+ * Hero (badge/title/subtitle) untuk halaman publik non-homepage (page_platform, page_solutions, ...).
+ * Mengembalikan null bila section tidak ada atau tidak dipublikasikan, sehingga halaman
+ * memakai teks bawaannya.
+ */
+export async function getCmsPageHero(sectionKey: string): Promise<CmsPageHero | null> {
+  const sec = await db.cmsSection.findUnique({ where: { sectionKey } });
+  if (!sec || !sec.isPublished) return null;
+  return {
+    badgeId: sec.badgeId,
+    badgeEn: sec.badgeEn,
+    titleId: sec.titleId,
+    titleEn: sec.titleEn,
+    subtitleId: sec.subtitleId,
+    subtitleEn: sec.subtitleEn,
   };
 }

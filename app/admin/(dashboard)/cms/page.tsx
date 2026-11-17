@@ -59,6 +59,13 @@ type HomepageSubTab =
 export default function AdminCmsUnifiedHubPage() {
   const [mainTab, setMainTab] = useState<CmsMainTab>("homepage");
   const [homepageTab, setHomepageTab] = useState<HomepageSubTab>("hero");
+
+  // Dukung deep-link ?tab=<tab> (mis. /admin/menus -> /admin/cms?tab=navigation)
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    const validTabs: CmsMainTab[] = ["navigation", "homepage", "platform", "solutions", "modules", "nova_ai", "integrations"] as CmsMainTab[];
+    if (tab && (validTabs as string[]).includes(tab)) setMainTab(tab as CmsMainTab);
+  }, []);
   const [editorLang, setEditorLang] = useState<"ID" | "EN">("ID");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

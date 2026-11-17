@@ -1,0 +1,42 @@
+{
+  "page_platform": {
+    "badgeId": "Platform Diagnova",
+    "badgeEn": "Diagnova Platform",
+    "titleId": "Platform Terpadu Pengelolaan\nAlur Kerja Laboratorium Modern",
+    "titleEn": "One Connected Platform to Manage\nModern Laboratory Workflows",
+    "subtitleId": "Menghubungkan instrumen analyzer, analis medis, dokter patologi, dan SIMRS/RME ke dalam satu alur kerja digital yang presisi, bebas salah sampel, dan terpantau secara real-time.",
+    "subtitleEn": "Connecting medical analyzers, laboratory analysts, pathologists, and hospital HIS/EMR into a unified digital pipeline that is precise, error-free, and monitored in real-time."
+  },
+  "page_solutions": {
+    "badgeId": "Solusi Diagnova",
+    "badgeEn": "Diagnova Solutions",
+    "titleId": "Solusi Terkonfigurasi untuk\nSetiap Skala Fasilitas Kesehatan",
+    "titleEn": "Configured Architectures for\nEvery Healthcare Institution Tier",
+    "subtitleId": "Dari rumah sakit sentral dengan IGD bertekanan tinggi hingga jejaring lab klinik mandiri. Diagnova menghadirkan solusi yang dirancang sesuai regulasi dan alur kerja spesifik Anda.",
+    "subtitleEn": "From high-acuity hospital networks to high-throughput clinical check-up laboratories. Diagnova delivers tailored architectures engineered for your specific clinical workflows."
+  },
+  "page_modules": {
+    "badgeId": "Modul Terintegrasi Diagnova",
+    "badgeEn": "Diagnova Modular Suite",
+    "titleId": "Modul Spesialisasi yang\nSaling Terhubung Tanpa Hambatan",
+    "titleEn": "Connected Modules for\nSpecialized Laboratory Care",
+    "subtitleId": "Aktifkan modul sesuai kebutuhan faskes Anda atau jalankan sebagai satu kesatuan. Seluruh data pasien, sampel, dan hasil mengalir dalam satu sistem yang aman dan siap akreditasi.",
+    "subtitleEn": "Deploy individual modules or run the complete unified suite. All patient data, specimens, and analyzer results converge in a secure, accreditation-ready environment."
+  },
+  "page_nova_ai": {
+    "badgeId": "Clinical Decision Support System (CDSS)",
+    "badgeEn": "Clinical Decision Support System (CDSS)",
+    "titleId": "Otomasi Delta-Check &\nValidasi Cerdas Hasil Laboratorium",
+    "titleEn": "Automated Delta-Check &\nIntelligent Laboratory Validation",
+    "subtitleId": "Mempercepat waktu rilis hasil uji (TAT), mendeteksi deviasi biomarker longitudinal antar-kunjungan pasien, dan menyiapkan draf interpretasi klinis—dengan 100% kendali verifikasi di tangan dokter spesialis patologi.",
+    "subtitleEn": "Slashing turnaround time (TAT), flagging longitudinal biomarker deviations across patient visits, and preparing structured clinical drafts—with 100% verification authority retained by certified pathologists."
+  },
+  "page_integrations": {
+    "badgeId": "Interoperabilitas Laboratorium",
+    "badgeEn": "Laboratory Interoperability Suite",
+    "titleId": "Terhubung Mulus dengan\nEkosistem RS & 500+ Mesin Lab",
+    "titleEn": "Seamless Connectivity with\nHospital IT & 500+ Medical Analyzers",
+    "subtitleId": "Konektivitas siap pakai yang aman dan patuh regulasi: bridging dua arah SIMRS/HIS, RME Permenkes 24/2022, SATUSEHAT Kemenkes, 500+ analyzer otomatis, dan gateway buffer offline.",
+    "subtitleEn": "Turnkey, regulatory-compliant interoperability: bidirectional HIS bridging, EMR Permenkes 24/2022, MoH SATUSEHAT HL7 FHIR, direct 500+ analyzer interfacing, and offline edge buffer."
+  }
+}

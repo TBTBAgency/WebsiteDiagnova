@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:seed": "tsx --env-file=.env prisma/seed.ts && tsx --env-file=.env prisma/seed-cms.ts && tsx --env-file=.env scripts/seed_other_pages_cms.js && node --env-file=.env scripts/sync_page_hero_defaults.js",
+    "test:qa": "node --env-file=.env scripts/qa/security.test.mjs && node --env-file=.env scripts/qa/demo-workflow.test.mjs && node --env-file=.env scripts/qa/admin.test.mjs && node --env-file=.env scripts/qa/cms.test.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -39,6 +41,7 @@
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
 }
