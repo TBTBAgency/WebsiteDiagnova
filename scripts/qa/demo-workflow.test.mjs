@@ -88,6 +88,8 @@ async function consume(token, { origin, ip = nextIp() } = {}) {
 }
 
 const tokenOf = (url) => new URL(url).searchParams.get("token");
+// Tujuan setelah login (lib/demo-access.ts): DEMO_ACCESS_URL atau URL demo sementara bawaan.
+const DEMO_URL = new URL(process.env.DEMO_ACCESS_URL || "https://website-diagnova.vercel.app/").toString();
 const leadStatus = async (id) => (await prisma.lead.findUnique({ where: { id } })).status;
 const countAudit = (recordId, action) => prisma.auditLog.count({ where: { entity: "Lead", recordId, action } });
 
@@ -159,34 +161,50 @@ async function main() {
 
   console.log("== 5. First successful login -> Jadwal Demo");
   const ok = await consume(tokenA, { origin: BASE });
-  check("valid token -> 303 to /", ok.status === 303 && new URL(ok.location, BASE).pathname === "/", ok.location);
+  check(`valid token -> 303 to demo destination (${DEMO_URL})`, ok.status === 303 && ok.location === DEMO_URL, ok.location);
   check("session cookie set", ok.cookie.startsWith("diagnova_session="));
   check("status 2 -> 3 after first login", (await leadStatus(leadA)) === 3);
   const userA = await prisma.user.findUnique({ where: { email: emailA }, include: { role: true } });
   check("USER account created & activated", userA?.role?.name === "USER" && !!userA.demoActivatedAt && !!userA.demoExpiresAt);
   const days = Math.round((userA.demoExpiresAt - userA.demoActivatedAt) / 86400000);
   check("demo duration = approved 7 days", days === 7, `got ${days}`);
+  const usedLinkA = await prisma.demoMagicLink.findFirst({ where: { leadId: leadA }, orderBy: { createdAt: "desc" } });
+  check("activated link stays valid until end of access period", +usedLinkA.expiresAt === +userA.demoExpiresAt);
+  check("link valid beyond the 24h first-use window", usedLinkA.expiresAt - usedLinkA.createdAt > 25 * 3600 * 1000);
 
-  console.log("== 6. Token reuse & repeated login");
-  const reuse = await consume(tokenA);
-  check("reused token -> error=used", reuse.location.includes("error=used"), reuse.location);
+  console.log("== 6. Re-login with the same link during the access period");
+  const g3 = await openLink(linkA);
+  check("verify page for an active link offers re-login", g3.status === 200 && g3.html.includes("magic-link-returning") && g3.html.includes("Masuk ke Demo"));
+  const relogin = await consume(tokenA, { origin: BASE });
+  check("re-login with same link -> 303 to demo destination", relogin.status === 303 && relogin.location === DEMO_URL, relogin.location);
+  check("re-login sets a session cookie", relogin.cookie.startsWith("diagnova_session="));
+  check("MAGIC_LINK_RELOGIN audit recorded", (await countAudit(leadA, "MAGIC_LINK_RELOGIN")) === 1);
+  const userA2 = await prisma.user.findUnique({ where: { email: emailA } });
+  check("re-login does not change the access period", +userA2.demoExpiresAt === +userA.demoExpiresAt && +userA2.demoActivatedAt === +userA.demoActivatedAt);
+  check("status stays 3 after re-login", (await leadStatus(leadA)) === 3);
+
   const ap2 = await adminCall(admin, "POST", `/api/admin/leads/${leadA}/approve`, { durationDays: 7 });
   const tokenA2 = tokenOf(ap2.body?.data?.magicLinkUrl);
+  const revokedOld = await consume(tokenA);
+  check("issuing a new link revokes the previous (activated) link", revokedOld.location.includes("error=link_expired"), revokedOld.location);
   const ap3 = await adminCall(admin, "POST", `/api/admin/leads/${leadA}/approve`, { durationDays: 7 });
   const tokenA3 = tokenOf(ap3.body?.data?.magicLinkUrl);
   const superseded = await consume(tokenA2);
   check("older unused link superseded by newer one", superseded.location.includes("error=link_expired"), superseded.location);
   const second = await consume(tokenA3);
-  check("second login with new link succeeds", second.status === 303 && second.cookie.startsWith("diagnova_session="));
+  check("login with the new link succeeds", second.status === 303 && second.cookie.startsWith("diagnova_session="));
   check("status stays 3 after repeated login", (await leadStatus(leadA)) === 3);
   check("only one automatic status transition recorded", (await countAudit(leadA, "LEAD_STATUS_CHANGED")) === 1);
 
-  console.log("== 7. Concurrent consumption is single-use");
+  console.log("== 7. Concurrent first use: token consumed once, status changes once");
   const ap4 = await adminCall(admin, "POST", `/api/admin/leads/${leadA}/approve`, { durationDays: 7 });
   const tokenA4 = tokenOf(ap4.body?.data?.magicLinkUrl);
+  const consumedBefore = await countAudit(leadA, "MAGIC_LINK_CONSUMED");
   const results = await Promise.all([consume(tokenA4), consume(tokenA4), consume(tokenA4)]);
   const wins = results.filter((r) => r.cookie.startsWith("diagnova_session=")).length;
-  check("exactly one of 3 parallel requests succeeds", wins === 1, `wins=${wins}`);
+  check("at least one of 3 parallel requests signs in, none errors with 5xx", wins >= 1 && results.every((r) => r.status === 303), `wins=${wins}`);
+  check("token consumed exactly once", (await countAudit(leadA, "MAGIC_LINK_CONSUMED")) - consumedBefore === 1);
+  check("still only one automatic status transition", (await countAudit(leadA, "LEAD_STATUS_CHANGED")) === 1);
 
   console.log("== 8. Controlled status changes");
   const back = await adminCall(admin, "PATCH", `/api/admin/leads/${leadA}`, { status: 2 });
@@ -205,6 +223,10 @@ async function main() {
   check("extend -> 200", ext.status === 200, JSON.stringify(ext.body));
   check("expiry extended by exactly 5 days", Math.round((after - before) / 86400000) === 5);
   check("DEMO_ACCESS_EXTENDED audit recorded", (await countAudit(leadA, "DEMO_ACCESS_EXTENDED")) === 1);
+  const activeLink = await prisma.demoMagicLink.findFirst({ where: { leadId: leadA, usedAt: { not: null } }, orderBy: { createdAt: "desc" } });
+  check("active link is extended together with the access period", +activeLink.expiresAt === +after);
+  const reloginAfterExt = await consume(tokenA4);
+  check("re-login still works after extension", reloginAfterExt.location === DEMO_URL, reloginAfterExt.location);
   const badExt = await adminCall(admin, "POST", `/api/admin/leads/${leadA}/extend`, { days: 0 });
   check("extend with 0 days -> 400", badExt.status === 400);
 
@@ -213,9 +235,14 @@ async function main() {
   const leadB = (await submitDemo(emailB)).body?.data?.id;
   createdLeadIds.push(leadB);
   const apB = await adminCall(admin, "POST", `/api/admin/leads/${leadB}/approve`, { durationDays: 3 });
-  const loginB = await consume(tokenOf(apB.body?.data?.magicLinkUrl));
+  const tokenB = tokenOf(apB.body?.data?.magicLinkUrl);
+  const loginB = await consume(tokenB);
   check("lead B first login -> status 3", (await leadStatus(leadB)) === 3);
   await prisma.user.update({ where: { email: emailB }, data: { demoExpiresAt: new Date(Date.now() - 60000) } });
+  const reloginExpired = await consume(tokenB);
+  check("re-login after access ended -> /demo-expired", reloginExpired.location.endsWith("/demo-expired") && !reloginExpired.cookie, reloginExpired.location);
+  const gExpired = await openLink(apB.body?.data?.magicLinkUrl);
+  check("verify page after access ended shows no login button", !gExpired.html.includes("Masuk ke Demo"));
   const apB2 = await adminCall(admin, "POST", `/api/admin/leads/${leadB}/approve`, { durationDays: 3 });
   const expired = await consume(tokenOf(apB2.body?.data?.magicLinkUrl));
   check("login after demo expiry -> /demo-expired", expired.location.endsWith("/demo-expired"), expired.location);
@@ -231,6 +258,33 @@ async function main() {
   const afterReject = await consume(tokenOf(apC.body?.data?.magicLinkUrl));
   check("link unusable after rejection", afterReject.location.includes("error="), afterReject.location);
   check("rejected lead status unchanged (2)", (await leadStatus(leadC)) === 2);
+
+  const emailD = `qa-d-${RUN}@example.test`;
+  const leadD = (await submitDemo(emailD)).body?.data?.id;
+  createdLeadIds.push(leadD);
+  const tokenD = tokenOf((await adminCall(admin, "POST", `/api/admin/leads/${leadD}/approve`, { durationDays: 7 })).body?.data?.magicLinkUrl);
+  check("lead D first login ok", (await consume(tokenD)).location === DEMO_URL);
+  const userD = await prisma.user.findUnique({ where: { email: emailD } });
+  await prisma.user.update({ where: { id: userD.id }, data: { status: 0 } });
+  check("re-login refused while the account is deactivated", (await consume(tokenD)).location.includes("error=account_inactive"));
+  await prisma.user.update({ where: { id: userD.id }, data: { status: 1 } });
+  check("re-login works again after reactivation", (await consume(tokenD)).location === DEMO_URL);
+  await adminCall(admin, "POST", `/api/admin/leads/${leadD}/reject`, { rejectionReason: "QA reject after activation" });
+  check("re-login refused after rejection (activated link revoked)", (await consume(tokenD)).location.includes("error="));
+  check("lead D status unchanged by rejection (3)", (await leadStatus(leadD)) === 3);
+
+  console.log("== 11b. Duration options 3 / 7 / 14 days / 1 month");
+  for (const d of [3, 7, 14, 30]) {
+    const em = `qa-dur${d}-${RUN}@example.test`;
+    const lid = (await submitDemo(em)).body?.data?.id;
+    createdLeadIds.push(lid);
+    check(`new lead default duration is 7 days (${d})`, (await prisma.lead.findUnique({ where: { id: lid } })).demoDurationDays === 7);
+    const tk = tokenOf((await adminCall(admin, "POST", `/api/admin/leads/${lid}/approve`, { durationDays: d })).body?.data?.magicLinkUrl);
+    await consume(tk);
+    const u = await prisma.user.findUnique({ where: { email: em } });
+    const got = Math.round((u.demoExpiresAt - u.demoActivatedAt) / 86400000);
+    check(`approved ${d} days -> access period ${d} days`, got === d, `got ${got}`);
+  }
 
   const leadAdmin = (await submitDemo("admin@diagnova.id")).body?.data?.id;
   createdLeadIds.push(leadAdmin);

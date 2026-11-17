@@ -62,12 +62,27 @@ async function main() {
     ["/nova-ai", "page_nova_ai"],
     ["/integration", "page_integrations"],
   ];
+  // Hero halaman dalam hanya diedit dari satu tempat: Halaman & Section (/api/admin/cms/layout).
+  // CMS Homepage tidak lagi boleh menulis baris page_* (dulu dua editor saling menimpa).
+  const pageKeyOf = { page_platform: "platform", page_solutions: "solutions", page_modules: "modules", page_nova_ai: "nova_ai", page_integrations: "integration" };
   for (const [path, key] of heroPages) {
     await snapshot(key);
+    const hub = await cmsPut(admin, { type: "section", sectionKey: key, data: { badgeId: "QA hub write" } });
+    check(`CMS Homepage cannot write ${key} (single editor) -> 400`, hub.status === 400, `got ${hub.status}`);
+    const layouts = await (await fetch(`${BASE}/api/admin/cms/layout`, { headers: { cookie: admin } })).json();
+    const pg = layouts.data.find((p) => p.key === pageKeyOf[key]);
     const marker = `QA Badge ${key} ${RUN}`;
-    const r = await cmsPut(admin, { type: "section", sectionKey: key, data: { badgeId: marker } });
-    check(`PUT ${key} badge -> 200`, r.status === 200, JSON.stringify(r.body));
-    const html = await page(path);
+    const r = await fetch(`${BASE}/api/admin/cms/layout`, {
+      method: "PUT",
+      headers: { cookie: admin, "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "hero", page: pg.key, baseUpdatedAt: pg.heroUpdatedAt, ...pg.hero, badgeId: marker }),
+    });
+    check(`hero badge via Halaman & Section (${key}) -> 200`, r.status === 200);
+    let html = "";
+    for (let i = 0; i < 40 && !html.includes(marker); i++) {
+      html = await page(path);
+      if (!html.includes(marker)) await new Promise((res) => setTimeout(res, 1500));
+    }
     check(`${path} shows the CMS badge`, html.includes(marker));
   }
 
