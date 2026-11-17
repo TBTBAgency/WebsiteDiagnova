@@ -4,6 +4,14 @@ import { getAllAdminMenus, createMenu } from "@/lib/models/menu.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
 
+/** Pesan aman untuk klien: hanya error domain "tidak ditemukan" yang diteruskan; selain itu generik. */
+function safeDomainMessage(error: unknown): string | null {
+  return error instanceof Error && /tidak ditemukan/i.test(error.message) && !/prisma|invalid/i.test(error.message)
+    ? error.message
+    : null;
+}
+
+
 export const dynamic = "force-dynamic";
 
 const menuSchema = z.object({
@@ -78,10 +86,10 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: unknown) {
     console.error("POST admin menu error:", error);
-    const err = error as { message?: string };
+    const domain = safeDomainMessage(error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menambahkan menu baru." },
-      { status: 400 }
+      { success: false, message: domain || "Gagal menambahkan menu baru." },
+      { status: domain ? 400 : 500 }
     );
   }
 }

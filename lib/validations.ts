@@ -97,21 +97,21 @@ export type UpdateLeadStatusSchemaType = z.infer<typeof updateLeadStatusSchema>;
 export const createUserSchema = z.object({
   name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100, "Nama terlalu panjang"),
   email: z.string().trim().email("Format email tidak valid").max(255),
-  institution: z.string().optional().nullable(),
-  jobTitle: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
+  institution: z.string().trim().max(150, "Institusi maksimal 150 karakter").optional().nullable(),
+  jobTitle: z.string().trim().max(100, "Jabatan maksimal 100 karakter").optional().nullable(),
+  phone: z.string().trim().max(30, "Nomor telepon maksimal 30 karakter").optional().nullable(),
   roleId: z.string().optional().nullable(),
-  status: z.coerce.number().default(1),
+  status: z.coerce.number().int().min(0).max(1).default(1),
   demoDurationDays: z.coerce.number().min(1).max(365).optional().default(7),
 });
 
 export type CreateUserSchemaType = z.infer<typeof createUserSchema>;
 
 export const updateUserSchema = z.object({
-  name: z.string().min(2, "Nama minimal 2 karakter").optional(),
-  institution: z.string().optional().nullable(),
-  jobTitle: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
+  name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100, "Nama terlalu panjang").optional(),
+  institution: z.string().trim().max(150, "Institusi maksimal 150 karakter").optional().nullable(),
+  jobTitle: z.string().trim().max(100, "Jabatan maksimal 100 karakter").optional().nullable(),
+  phone: z.string().trim().max(30, "Nomor telepon maksimal 30 karakter").optional().nullable(),
   status: z.coerce.number().min(0).max(1).optional(),
   demoDurationDays: z.coerce.number().min(1).max(365).optional().nullable(),
 });

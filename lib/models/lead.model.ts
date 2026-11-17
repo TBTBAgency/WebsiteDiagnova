@@ -180,9 +180,12 @@ export async function createLead(input: DemoRequestInput): Promise<DemoRequestRe
   const prismaInstitution =
     institutionTypeToPrisma[input.institutionType] ?? PrismaInstitutionType.HOSPITAL;
 
-  // Cek apakah email pemohon sudah pernah ada di database pengguna
-  const existingUser = await db.user.findUnique({
-    where: { email: input.email.toLowerCase().trim() },
+  // Cek apakah email pemohon sudah pernah ada di database pengguna. Hanya akun klien (USER)
+  // yang ditautkan: formulir publik tidak boleh menautkan lead ke akun Administrator.
+  // (Approval untuk email admin tetap ditolak 409 oleh approveLead.)
+  const existingUser = await db.user.findFirst({
+    where: { email: input.email.toLowerCase().trim(), role: { name: "USER" } },
+    select: { id: true },
   });
 
   const requestedDate = input.requestedDemoDate

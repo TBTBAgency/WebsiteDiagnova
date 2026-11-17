@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
 import { isAdminRole } from "@/lib/auth-secret";
 import { recordAuditLog } from "@/lib/models/audit.model";
-import { updateUser, deleteUser, findUserById } from "@/lib/models/user.model";
+import { updateUser, deleteUser, findUserById, UserManagementError } from "@/lib/models/user.model";
 import { updateUserSchema } from "@/lib/validations";
 import { ApiResponse } from "@/types";
 
@@ -91,12 +91,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("PUT user error:", error);
-    const err = error as { message?: string };
-    const status = err?.message?.includes("Akses ditolak") ? 403 : 500;
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal memperbarui data pengguna." },
-      { status }
-    );
+    if (error instanceof UserManagementError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
+    // Error lain (mis. Prisma) tidak diteruskan ke klien.
+    return NextResponse.json<ApiResponse>({ success: false, message: "Gagal memperbarui data pengguna." }, { status: 500 });
   }
 }
 
@@ -156,12 +155,11 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("DELETE user error:", error);
-    const err = error as { message?: string };
-    const status = err?.message?.includes("Akses ditolak") ? 403 : 500;
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menghapus pengguna." },
-      { status }
-    );
+    if (error instanceof UserManagementError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
+    // Error lain (mis. Prisma) tidak diteruskan ke klien.
+    return NextResponse.json<ApiResponse>({ success: false, message: "Gagal menghapus pengguna." }, { status: 500 });
   }
 }
 

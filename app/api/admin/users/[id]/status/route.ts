@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
 import { isAdminRole } from "@/lib/auth-secret";
 import { recordAuditLog } from "@/lib/models/audit.model";
-import { toggleUserStatus, findUserById } from "@/lib/models/user.model";
+import { toggleUserStatus, findUserById, UserManagementError } from "@/lib/models/user.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
 
@@ -84,12 +84,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("PATCH user status error:", error);
-    const err = error as { message?: string };
-    const status = err?.message?.includes("Akses ditolak") ? 403 : 500;
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal mengubah status pengguna." },
-      { status }
-    );
+    if (error instanceof UserManagementError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
+    // Error lain (mis. Prisma) tidak diteruskan ke klien.
+    return NextResponse.json<ApiResponse>({ success: false, message: "Gagal mengubah status pengguna." }, { status: 500 });
   }
 }
 

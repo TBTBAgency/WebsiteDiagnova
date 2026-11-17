@@ -2,6 +2,15 @@ import { db } from "@/lib/db";
 import { isAdminRole } from "@/lib/auth-secret";
 import { RoleRecord, UserRecord } from "@/types";
 import bcrypt from "bcryptjs";
+import { evaluateMagicLinkEligibility } from "@/lib/magic-link-eligibility";
+
+/** Error domain Manajemen Pengguna; pesan aman ditampilkan ke admin. */
+export class UserManagementError extends Error {
+  constructor(message: string, public readonly httpStatus: 400 | 403 | 404 | 409 = 400) {
+    super(message);
+    this.name = "UserManagementError";
+  }
+}
 
 export interface SafeUser {
   id: string;
@@ -18,6 +27,8 @@ export interface SafeUser {
   demoActivatedAt?: string | null;
   demoExpiresAt?: string | null;
   createdAt: string;
+  /** Kelayakan Magic Link (dievaluasi di server; lihat user-magic-link.model). */
+  magicLink?: { eligible: boolean; reason: string; code: string | null; hasDemoRequest: boolean };
 }
 
 export interface UserWithPassword extends SafeUser {
@@ -104,10 +115,14 @@ export async function getAllUsers(roleFilter: string = "USER"): Promise<SafeUser
       },
     },
     orderBy: { createdAt: "desc" },
-    include: { role: true },
+    include: { role: true, leads: { select: { id: true, approvalStatus: true, createdAt: true } } },
   });
 
   return users.map((u) => ({
+    magicLink: (() => {
+      const e = evaluateMagicLinkEligibility({ roleName: u.role?.name, status: u.status, demoExpiresAt: u.demoExpiresAt, leads: u.leads });
+      return { eligible: e.eligible, reason: e.reason, code: e.eligible ? null : e.code, hasDemoRequest: u.leads.length > 0 };
+    })(),
     id: u.id,
     name: u.name,
     email: u.email,
@@ -146,12 +161,12 @@ export async function updateUser(
   });
 
   if (!target) {
-    throw new Error("Pengguna tidak ditemukan.");
+    throw new UserManagementError("Pengguna tidak ditemukan.", 404);
   }
 
   // PROTEKSI KETAT: Dilarang mengubah akun ADMIN melalui modul Manajemen Pengguna
   if (isAdminRole(target.role?.name)) {
-    throw new Error("Akses ditolak: Akun Administrator dilindungi dari modifikasi Manajemen Pengguna.");
+    throw new UserManagementError("Akses ditolak: Akun Administrator dilindungi dari modifikasi Manajemen Pengguna.", 403);
   }
 
   const updated = await db.user.update({
@@ -204,12 +219,23 @@ export async function deleteUser(id: string): Promise<SafeUser> {
   });
 
   if (!target) {
-    throw new Error("Pengguna tidak ditemukan.");
+    throw new UserManagementError("Pengguna tidak ditemukan.", 404);
   }
 
   // PROTEKSI KETAT: Dilarang menghapus akun ADMIN
   if (isAdminRole(target.role?.name)) {
-    throw new Error("Akses ditolak: Akun Administrator dilindungi dari penghapusan.");
+    throw new UserManagementError("Akses ditolak: Akun Administrator dilindungi dari penghapusan.", 403);
+  }
+
+  // Integritas data: akun yang punya riwayat permohonan demo tidak dihapus. Penghapusan akan
+  // memutus relasi Lead/Magic Link (onDelete SetNull) dan approval berikutnya membuat akun baru
+  // dengan masa demo penuh lagi. Gunakan "Nonaktifkan" untuk mencabut akses.
+  const history = await db.lead.count({ where: { userId: id } });
+  if (history > 0) {
+    throw new UserManagementError(
+      `Akun memiliki ${history} riwayat permohonan demo dan tidak dapat dihapus. Nonaktifkan akun untuk mencabut akses.`,
+      409
+    );
   }
 
   const deleted = await db.user.delete({

@@ -23,6 +23,14 @@ import {
 import { revalidatePath } from "next/cache";
 import { ApiResponse } from "@/types";
 
+/** Pesan aman untuk klien: hanya error domain "tidak ditemukan" yang diteruskan; selain itu generik. */
+function safeDomainMessage(error: unknown): string | null {
+  return error instanceof Error && /tidak ditemukan/i.test(error.message) && !/prisma|invalid/i.test(error.message)
+    ? error.message
+    : null;
+}
+
+
 export const dynamic = "force-dynamic";
 
 /**
@@ -147,9 +155,10 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error("PUT CMS Error:", error);
+    const domain = safeDomainMessage(error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: error.message || "Gagal menyimpan perubahan konten." },
-      { status: 500 }
+      { success: false, message: domain || "Gagal menyimpan perubahan konten." },
+      { status: domain ? 400 : 500 }
     );
   }
 }

@@ -13,6 +13,16 @@ import { ApiResponse, OrderPriority } from "@/types";
  * Diverifikasi di setiap handler (cek ulang ke database), tidak hanya di middleware/UI.
  */
 
+/** Batas ukuran halaman daftar LIS agar satu request tidak dapat mengambil seluruh data pasien. */
+const MAX_PAGE_SIZE = 100;
+
+/** Parse query integer dengan default & batas (NaN / di luar rentang => dijepit). */
+function clampInt(raw: string | null, fallback: number, min: number, max: number): number {
+  const n = raw === null ? fallback : parseInt(raw, 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
+}
+
 /**
  * Pesan error yang aman dikirim ke klien. Error Prisma dapat memuat isi query/input
  * (mis. NIK, nama pasien) sehingga tidak pernah diteruskan; hanya pesan domain dari
@@ -90,8 +100,8 @@ export async function getPatientsController(request: NextRequest): Promise<NextR
       );
     }
 
-    const page = searchParams.get("page") ? parseInt(searchParams.get("page")!, 10) : 1;
-    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!, 10) : 20;
+    const page = clampInt(searchParams.get("page"), 1, 1, 100000);
+    const limit = clampInt(searchParams.get("limit"), 20, 1, MAX_PAGE_SIZE);
 
     const list = await listPatients(page, limit);
     return NextResponse.json<ApiResponse>(
@@ -159,8 +169,8 @@ export async function getOrdersController(request: NextRequest): Promise<NextRes
     const status = searchParams.get("status") || "all";
     const priority = searchParams.get("priority") || "all";
     const search = searchParams.get("search") || undefined;
-    const page = searchParams.get("page") ? parseInt(searchParams.get("page")!, 10) : 1;
-    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!, 10) : 15;
+    const page = clampInt(searchParams.get("page"), 1, 1, 100000);
+    const limit = clampInt(searchParams.get("limit"), 15, 1, MAX_PAGE_SIZE);
 
     const data = await getLabOrders({ status, priority, search, page, limit });
 

@@ -4,6 +4,14 @@ import { updateMenu, deleteMenu } from "@/lib/models/menu.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
 
+/** Pesan aman untuk klien: hanya error domain "tidak ditemukan" yang diteruskan; selain itu generik. */
+function safeDomainMessage(error: unknown): string | null {
+  return error instanceof Error && /tidak ditemukan/i.test(error.message) && !/prisma|invalid/i.test(error.message)
+    ? error.message
+    : null;
+}
+
+
 export const dynamic = "force-dynamic";
 
 interface Params {
@@ -65,10 +73,10 @@ export async function PUT(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("PUT admin menu error:", error);
-    const err = error as { message?: string };
+    const domain = safeDomainMessage(error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal memperbarui menu." },
-      { status: 400 }
+      { success: false, message: domain || "Gagal memperbarui menu." },
+      { status: domain ? 400 : 500 }
     );
   }
 }
@@ -99,10 +107,10 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("DELETE admin menu error:", error);
-    const err = error as { message?: string };
+    const domain = safeDomainMessage(error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menghapus menu." },
-      { status: 400 }
+      { success: false, message: domain || "Gagal menghapus menu." },
+      { status: domain ? 400 : 500 }
     );
   }
 }

@@ -4,6 +4,14 @@ import { toggleMenuStatus } from "@/lib/models/menu.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
 
+/** Pesan aman untuk klien: hanya error domain "tidak ditemukan" yang diteruskan; selain itu generik. */
+function safeDomainMessage(error: unknown): string | null {
+  return error instanceof Error && /tidak ditemukan/i.test(error.message) && !/prisma|invalid/i.test(error.message)
+    ? error.message
+    : null;
+}
+
+
 export const dynamic = "force-dynamic";
 
 interface Params {
@@ -52,10 +60,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("PATCH admin menu status error:", error);
-    const err = error as { message?: string };
+    const domain = safeDomainMessage(error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal mengubah status menu." },
-      { status: 500 }
+      { success: false, message: domain || "Gagal mengubah status menu." },
+      { status: domain ? 400 : 500 }
     );
   }
 }
