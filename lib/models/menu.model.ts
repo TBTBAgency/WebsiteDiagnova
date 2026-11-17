@@ -51,7 +51,8 @@ export async function toggleMenuStatus(id: string, isActive: boolean, userId?: s
   const menus: CmsNavMenu[] = Array.isArray(extra.menus) ? [...extra.menus] : [];
 
   let found: any = null;
-  const updateStatus = (list: CmsNavMenu[]) => {
+  type NavNode = { id: string; isActive?: boolean; submenus?: NavNode[] };
+  const updateStatus = (list: NavNode[]): boolean => {
     for (const m of list) {
       if (m.id === id) {
         m.isActive = isActive;

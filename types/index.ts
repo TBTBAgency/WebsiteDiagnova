@@ -50,6 +50,7 @@ export interface DemoRequestRecord extends DemoRequestInput {
   demoDate?: string | null;
   magicLinkUrl?: string | null;
   magicLinkExpiry?: string | null;
+  magicLinkUsedAt?: string | null;
 }
 
 export interface DemoMagicLinkRecord {

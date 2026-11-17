@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import {
   getAllCmsContent,
   updateCmsSection,
@@ -31,20 +31,9 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Silakan login terlebih dahulu." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN" && session.role !== "Super Admin") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Fitur CMS khusus untuk Administrator." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const data = await getAllCmsContent();
 
@@ -68,20 +57,9 @@ export async function GET() {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Silakan login terlebih dahulu." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN" && session.role !== "Super Admin") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Pengubahan CMS hanya diizinkan bagi Administrator." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const body = await request.json();
     const { type, sectionKey, action = "save", data } = body;

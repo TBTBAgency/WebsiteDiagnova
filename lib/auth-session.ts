@@ -1,11 +1,9 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { AuthSessionPayload } from "@/types";
+import { getJwtSecret } from "@/lib/auth-secret";
 
 const SESSION_COOKIE_NAME = "diagnova_session";
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "diagnova-super-secret-key-production-change-this-2026-xyz"
-);
 
 const SESSION_DURATION_HOURS = 24;
 
@@ -17,7 +15,7 @@ export async function signSessionToken(payload: AuthSessionPayload): Promise<str
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DURATION_HOURS}h`)
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 /**
@@ -25,7 +23,7 @@ export async function signSessionToken(payload: AuthSessionPayload): Promise<str
  */
 export async function verifySessionToken(token: string): Promise<AuthSessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload as unknown as AuthSessionPayload;
   } catch {
     return null;

@@ -248,13 +248,12 @@ export async function createUser(data: {
   status?: number;
   demoDurationDays?: number | null;
 }): Promise<SafeUser> {
-  let passwordHash = "";
+  // Tanpa password => passwordHash null, sehingga akun tidak bisa login dengan password
+  // (klien demo masuk lewat Magic Link). Tidak ada lagi password default yang dapat ditebak.
+  let passwordHash: string | null = null;
   if (data.password) {
     const salt = await bcrypt.genSalt(10);
     passwordHash = await bcrypt.hash(data.password, salt);
-  } else {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash("Diagnova2026!", salt);
   }
 
   // Jika roleId tidak diberikan, default ke role USER
@@ -300,79 +299,8 @@ export async function createUser(data: {
 }
 
 /**
- * Mencari atau membuat user dari pengajuan lead request demo
- */
-export async function findOrCreateUserForLead(data: {
-  name: string;
-  institution: string;
-  jobTitle: string;
-  email: string;
-  phone: string;
-}): Promise<string> {
-  const existing = await db.user.findUnique({
-    where: { email: data.email.toLowerCase().trim() },
-  });
-
-  if (existing) {
-    await db.user.update({
-      where: { id: existing.id },
-      data: {
-        name: data.name,
-        institution: data.institution,
-        jobTitle: data.jobTitle,
-        phone: data.phone,
-      },
-    });
-    return existing.id;
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash("LeadDemo2026!", salt);
-
-  const newUser = await db.user.create({
-    data: {
-      name: data.name,
-      email: data.email.toLowerCase().trim(),
-      passwordHash,
-      institution: data.institution,
-      jobTitle: data.jobTitle,
-      phone: data.phone,
-      status: 1,
-    },
-  });
-
-  return newUser.id;
-}
-
-/**
  * Verifikasi password user
  */
 export async function verifyPassword(plain: string, hash: string): Promise<boolean> {
   return bcrypt.compare(plain, hash);
-}
-
-/**
- * Menjamin adanya akun ADMIN default
- */
-export async function ensureDefaultAdmin(): Promise<SafeUser> {
-  const defaultEmail = "admin@diagnova.id";
-  const existing = await findUserByEmail(defaultEmail);
-  if (existing) {
-    return existing;
-  }
-
-  let role = await db.role.findFirst({ where: { name: "ADMIN" } });
-  if (!role) {
-    role = await db.role.create({
-      data: { name: "ADMIN", description: "Administrator pengelola sistem, website, dan otorisasi Diagnova" },
-    });
-  }
-
-  return createUser({
-    name: "Diagnova Admin",
-    email: defaultEmail,
-    password: "Diagnova2026!",
-    roleId: role.id,
-    status: 1,
-  });
 }

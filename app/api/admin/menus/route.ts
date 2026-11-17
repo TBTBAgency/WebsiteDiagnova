@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { getAllAdminMenus, createMenu } from "@/lib/models/menu.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
@@ -25,14 +25,9 @@ const menuSchema = z.object({
  */
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session || session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Fitur khusus Administrator." },
-        { status: 403 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const menus = await getAllAdminMenus();
 
     return NextResponse.json<ApiResponse>({
@@ -55,14 +50,9 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getCurrentSession();
-    if (!session || session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Fitur khusus Administrator." },
-        { status: 403 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const body = await request.json();
     const validation = menuSchema.safeParse(body);
 

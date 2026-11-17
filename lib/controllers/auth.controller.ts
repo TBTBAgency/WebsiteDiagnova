@@ -4,6 +4,13 @@ import { findUserByEmail, verifyPassword } from "@/lib/models/user.model";
 import { recordAuditLog } from "@/lib/models/audit.model";
 import { setSessionCookie, removeSessionCookie, getCurrentSession } from "@/lib/auth-session";
 import { ApiResponse, AuthSessionPayload } from "@/types";
+import { isAdminRole } from "@/lib/auth-secret";
+import { getClientInfo } from "@/lib/auth-guard";
+import { checkRateLimit, resetRateLimit } from "@/lib/rate-limit";
+
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const INVALID_CREDENTIALS_MESSAGE = "Email atau password yang Anda masukkan salah.";
 
 /**
  * Controller untuk menangani proses login pengguna
@@ -25,13 +32,22 @@ export async function loginController(request: NextRequest): Promise<NextRespons
     }
 
     const { email, password } = validation.data;
-    const user = await findUserByEmail(email);
+    const { ipAddress: clientIp, userAgent } = getClientInfo(request.headers);
 
-    const clientIp =
-      request.headers.get("x-forwarded-for")?.split(",")[0] ||
-      request.headers.get("x-real-ip") ||
-      "127.0.0.1";
-    const userAgent = request.headers.get("user-agent") || "";
+    // Batasi percobaan login per IP + email untuk mencegah brute force
+    const rateKey = `login:${clientIp}:${email.toLowerCase().trim()}`;
+    const rate = checkRateLimit(rateKey, LOGIN_MAX_ATTEMPTS, LOGIN_WINDOW_MS);
+    if (!rate.allowed) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: `Terlalu banyak percobaan login. Silakan coba lagi dalam ${Math.ceil(rate.retryAfterSeconds / 60)} menit.`,
+        },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
+    const user = await findUserByEmail(email);
 
     if (!user) {
       // Catat percobaan login gagal (tanpa memberi tahu apakah email terdaftar)
@@ -46,23 +62,13 @@ export async function loginController(request: NextRequest): Promise<NextRespons
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          message: "Email atau password yang Anda masukkan salah.",
+          message: INVALID_CREDENTIALS_MESSAGE,
         },
         { status: 401 }
       );
     }
 
-    if (user.status !== 1) {
-      return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: "Akun Anda sedang dinonaktifkan. Silakan hubungi Super Admin.",
-        },
-        { status: 403 }
-      );
-    }
-
-    const isMatch = await verifyPassword(password, user.passwordHash);
+    const isMatch = user.passwordHash ? await verifyPassword(password, user.passwordHash) : false;
     if (!isMatch) {
       await recordAuditLog({
         userId: user.id,
@@ -76,18 +82,50 @@ export async function loginController(request: NextRequest): Promise<NextRespons
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          message: "Email atau password yang Anda masukkan salah.",
+          message: INVALID_CREDENTIALS_MESSAGE,
         },
         { status: 401 }
       );
     }
+
+    if (user.status !== 1) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Akun Anda sedang dinonaktifkan. Silakan hubungi Administrator.",
+        },
+        { status: 403 }
+      );
+    }
+
+    // Login password hanya untuk Administrator. Klien demo masuk melalui Magic Link.
+    const roleName = typeof user.role === "string" ? user.role : user.roleName || "";
+    if (!isAdminRole(roleName)) {
+      await recordAuditLog({
+        userId: user.id,
+        action: "LOGIN_DENIED_NON_ADMIN",
+        entity: "User",
+        recordId: user.id,
+        ipAddress: clientIp,
+        userAgent,
+      });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Akun ini tidak memiliki akses ke panel administrasi. Klien demo masuk melalui tautan Magic Link.",
+        },
+        { status: 403 }
+      );
+    }
+
+    resetRateLimit(rateKey);
 
     // Buat session payload
     const sessionPayload: AuthSessionPayload = {
       userId: user.id,
       name: user.name,
       email: user.email,
-      role: typeof user.role === "string" ? user.role : user.roleName || "User",
+      role: roleName,
     };
 
     await setSessionCookie(sessionPayload);
@@ -128,11 +166,7 @@ export async function loginController(request: NextRequest): Promise<NextRespons
 export async function logoutController(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
     const session = await getCurrentSession();
-    const clientIp =
-      request.headers.get("x-forwarded-for")?.split(",")[0] ||
-      request.headers.get("x-real-ip") ||
-      "127.0.0.1";
-    const userAgent = request.headers.get("user-agent") || "";
+    const { ipAddress: clientIp, userAgent } = getClientInfo(request.headers);
 
     if (session) {
       await recordAuditLog({

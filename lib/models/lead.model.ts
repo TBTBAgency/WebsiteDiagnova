@@ -106,7 +106,10 @@ function formatLeadRecord(record: any): DemoRequestRecord {
     demoDurationDays: record.demoDurationDays || 3,
     voucherCode: record.voucherCode ?? null,
     voucherExpiry: record.voucherExpiry ? record.voucherExpiry.toISOString() : null,
-    magicLinkUrl: latestMagicLink ? `http://localhost:3000/auth/verify-magic-link?token=${latestMagicLink.tokenHash}` : null,
+    // Token mentah tidak pernah disimpan (hanya hash SHA-256), sehingga URL magic link
+    // hanya tersedia sekali pada respons approve. Hash tidak boleh diekspos ke klien.
+    magicLinkUrl: null,
+    magicLinkUsedAt: latestMagicLink?.usedAt ? latestMagicLink.usedAt.toISOString() : null,
     magicLinkExpiry: latestMagicLink ? latestMagicLink.expiresAt.toISOString() : null,
     createdAt: record.createdAt.toISOString(),
   };

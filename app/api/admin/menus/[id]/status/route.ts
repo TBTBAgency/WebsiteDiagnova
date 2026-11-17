@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { toggleMenuStatus } from "@/lib/models/menu.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
@@ -22,14 +22,9 @@ const toggleStatusSchema = z.object({
  */
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session || session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Fitur khusus Administrator." },
-        { status: 403 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const { id } = params;
     if (!id) {
       return NextResponse.json<ApiResponse>(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { updateUser, deleteUser, findUserById } from "@/lib/models/user.model";
 import { updateUserSchema } from "@/lib/validations";
 import { ApiResponse } from "@/types";
@@ -19,20 +19,9 @@ interface Params {
  */
 export async function PUT(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang berhak mengubah data pengguna." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const { id } = params;
     if (!id) {
@@ -100,20 +89,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
  */
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang berhak menghapus pengguna." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const { id } = params;
     if (!id) {

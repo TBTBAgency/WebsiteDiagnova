@@ -1,35 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { db } from "@/lib/db";
 import { ApiResponse } from "@/types";
 import path from "path";
 import fs from "fs/promises";
+import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/svg+xml",
-]);
-
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
+type DetectedImage = { mimeType: string; ext: string };
+
 /**
- * Membersihkan nama file dari karakter berbahaya dan path traversal
+ * Mendeteksi tipe gambar dari isi file (magic bytes), bukan dari nama file / MIME kiriman browser.
  */
-function sanitizeFileName(fileName: string): string {
-  const ext = path.extname(fileName).toLowerCase();
-  const baseName = path.basename(fileName, ext);
-  const cleanBase = baseName
-    .replace(/[^a-zA-Z0-9_-]/g, "-")
-    .replace(/-+/g, "-")
-    .substring(0, 50);
-  const timestamp = Date.now();
-  const randomSuffix = Math.random().toString(36).substring(2, 6);
-  return `${cleanBase}-${timestamp}-${randomSuffix}${ext}`;
+function detectImageType(buffer: Buffer): DetectedImage | null {
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return { mimeType: "image/jpeg", ext: ".jpg" };
+  }
+  if (
+    buffer.length >= 8 &&
+    buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  ) {
+    return { mimeType: "image/png", ext: ".png" };
+  }
+  if (
+    buffer.length >= 12 &&
+    buffer.subarray(0, 4).toString("ascii") === "RIFF" &&
+    buffer.subarray(8, 12).toString("ascii") === "WEBP"
+  ) {
+    return { mimeType: "image/webp", ext: ".webp" };
+  }
+  const head = buffer.subarray(0, 1024).toString("utf8").replace(/^﻿/, "").trimStart().toLowerCase();
+  if (head.startsWith("<svg") || (head.startsWith("<?xml") && head.includes("<svg"))) {
+    return { mimeType: "image/svg+xml", ext: ".svg" };
+  }
+  return null;
+}
+
+/**
+ * Menolak SVG yang dapat mengeksekusi script atau memuat sumber eksternal.
+ */
+function isUnsafeSvg(content: string): boolean {
+  const c = content.toLowerCase();
+  return (
+    /<script/.test(c) ||
+    /\son[a-z]+\s*=/.test(c) ||
+    /javascript:/.test(c) ||
+    /<foreignobject/.test(c) ||
+    /<(iframe|embed|object|audio|video)/.test(c) ||
+    /<!entity/.test(c) ||
+    /(?:xlink:)?href\s*=\s*["']\s*(?!#|data:image\/(?:png|jpeg|webp|gif);)/.test(c)
+  );
+}
+
+/**
+ * Membuat nama file aman: nama asli disanitasi, ekstensi diambil dari tipe hasil deteksi.
+ */
+function buildSafeFileName(originalName: string, ext: string): string {
+  const baseName = path.basename(originalName, path.extname(originalName));
+  const cleanBase =
+    baseName
+      .replace(/[^a-zA-Z0-9_-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .substring(0, 50) || "image";
+  return `${cleanBase}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}${ext}`;
 }
 
 /**
@@ -38,14 +75,8 @@ function sanitizeFileName(fileName: string): string {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getCurrentSession();
-    if (!session || session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Fitur khusus Administrator." },
-        { status: 403 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
     const formData = await request.formData();
     const files = formData.getAll("files") as File[];
     const singleFile = formData.get("file") as File | null;
@@ -85,41 +116,28 @@ export async function POST(request: NextRequest) {
     const errors: string[] = [];
 
     for (const file of fileList) {
-      // 1. Validasi Tipe MIME
-      let mimeType = file.type.toLowerCase();
-      // Fallback jika browser mengirim application/octet-stream untuk webp/svg
-      if (mimeType === "application/octet-stream" || !mimeType) {
-        const ext = path.extname(file.name).toLowerCase();
-        if (ext === ".webp") mimeType = "image/webp";
-        else if (ext === ".svg") mimeType = "image/svg+xml";
-        else if (ext === ".png") mimeType = "image/png";
-        else if (ext === ".jpg" || ext === ".jpeg") mimeType = "image/jpeg";
-      }
-
-      if (!ALLOWED_MIME_TYPES.has(mimeType)) {
-        errors.push(`File '${file.name}' memiliki format tidak didukung (${mimeType}). Hanya JPG, PNG, WEBP, dan SVG yang diizinkan.`);
-        continue;
-      }
-
-      // 2. Validasi Ukuran File
+      // 1. Validasi Ukuran File
       if (file.size > MAX_FILE_SIZE_BYTES) {
         errors.push(`File '${file.name}' melebihi batas ukuran maksimal 10MB.`);
         continue;
       }
 
-      // 3. Konversi ke Buffer & Simpan
+      // 2. Validasi tipe berdasarkan isi file (magic bytes)
       const buffer = Buffer.from(await file.arrayBuffer());
+      const detected = detectImageType(buffer);
+      if (!detected) {
+        errors.push(`File '${file.name}' bukan gambar yang didukung. Hanya JPG, PNG, WEBP, dan SVG yang diizinkan.`);
+        continue;
+      }
+      const mimeType = detected.mimeType;
 
-      // Sanitasi SVG sederhana (cegah script injection)
-      if (mimeType === "image/svg+xml") {
-        const svgContent = buffer.toString("utf8");
-        if (/<script[\s\S]*?>[\s\S]*?<\/script>/i.test(svgContent) || /onload\s*=/i.test(svgContent) || /javascript:/i.test(svgContent)) {
-          errors.push(`File SVG '${file.name}' ditolak karena mengandung script atau event handler tidak aman.`);
-          continue;
-        }
+      // 3. SVG wajib bebas script / event handler / referensi eksternal
+      if (mimeType === "image/svg+xml" && isUnsafeSvg(buffer.toString("utf8"))) {
+        errors.push(`File SVG '${file.name}' ditolak karena mengandung script, event handler, atau referensi eksternal.`);
+        continue;
       }
 
-      const safeFileName = sanitizeFileName(file.name);
+      const safeFileName = buildSafeFileName(file.name, detected.ext);
       const filePath = path.join(uploadDir, safeFileName);
       await fs.writeFile(filePath, buffer);
 
@@ -157,9 +175,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("Upload CMS error:", error);
-    const err = error as { message?: string };
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Terjadi kesalahan internal saat memproses unggahan file." },
+      { success: false, message: "Terjadi kesalahan internal saat memproses unggahan file." },
       { status: 500 }
     );
   }

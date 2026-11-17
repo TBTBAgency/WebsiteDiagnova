@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { getAllRoles } from "@/lib/models/user.model";
 import { ApiResponse } from "@/types";
 
@@ -11,14 +11,9 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const roles = await getAllRoles();
 
     return NextResponse.json<ApiResponse>({

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { toggleUserStatus, findUserById } from "@/lib/models/user.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
@@ -23,20 +23,9 @@ const updateStatusSchema = z.object({
  */
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang berhak mengubah status akun." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const { id } = params;
     if (!id) {

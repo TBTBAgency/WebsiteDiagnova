@@ -13,7 +13,7 @@ import {
   approveLeadSchema,
   rejectLeadSchema,
 } from "@/lib/validations";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin } from "@/lib/auth-guard";
 import { sendApprovalNotificationEmail } from "@/lib/email";
 import { ApiResponse, InstitutionType, LeadApprovalStatus, LeadFilterQuery } from "@/types";
 
@@ -22,14 +22,9 @@ import { ApiResponse, InstitutionType, LeadApprovalStatus, LeadFilterQuery } fro
  */
 export async function getLeadsController(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const { searchParams } = new URL(request.url);
 
     const rawStatus = searchParams.get("status");
@@ -90,14 +85,9 @@ export async function getLeadDetailController(
   id: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak." },
-        { status: 401 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const lead = await getLeadById(id);
     if (!lead) {
       return NextResponse.json<ApiResponse>(
@@ -131,14 +121,9 @@ export async function approveLeadController(
   id: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak." },
-        { status: 401 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const body = await request.json().catch(() => ({}));
     const validation = approveLeadSchema.safeParse(body);
 
@@ -193,14 +178,9 @@ export async function rejectLeadController(
   id: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak." },
-        { status: 401 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const body = await request.json().catch(() => ({}));
     const validation = rejectLeadSchema.safeParse(body);
 
@@ -245,14 +225,9 @@ export async function updateLeadStatusController(
   id: string
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak." },
-        { status: 401 }
-      );
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const body = await request.json();
     const validation = updateLeadStatusSchema.safeParse(body);
 
@@ -293,16 +268,16 @@ export async function updateLeadStatusController(
  */
 export async function exportLeadsCsvController(): Promise<NextResponse> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
     const { leads } = await getLeadsWithPagination({ limit: 1000 });
 
+    // Escape CSV + cegah formula injection (=, +, -, @, tab, CR) saat dibuka di Excel/Sheets
     const escapeCsv = (str: string | undefined | null) => {
       if (!str) return '""';
-      const escaped = str.replace(/"/g, '""');
+      const neutralized = /^[=+\-@\t\r]/.test(str) ? `'${str}` : str;
+      const escaped = neutralized.replace(/"/g, '""');
       return `"${escaped}"`;
     };
 
