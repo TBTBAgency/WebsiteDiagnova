@@ -260,9 +260,14 @@ async function main() {
 async function cleanup() {
   const ids = createdLeadIds.filter(Boolean);
   const leads = await prisma.lead.findMany({ where: { id: { in: ids } }, select: { userId: true } });
-  const userIds = leads
-    .map((l) => l.userId)
-    .filter(Boolean);
+  // Hanya akun QA (@example.test) — JANGAN pernah menghapus audit log milik akun nyata
+  // (mis. lead uji eskalasi memakai email admin; dulu userId admin ikut terhapus di sini).
+  const userIds = (
+    await prisma.user.findMany({
+      where: { id: { in: leads.map((l) => l.userId).filter(Boolean) }, email: { endsWith: "@example.test" } },
+      select: { id: true },
+    })
+  ).map((u) => u.id);
   await prisma.auditLog.deleteMany({ where: { OR: [{ recordId: { in: ids } }, { userId: { in: userIds } }] } });
   await prisma.lead.deleteMany({ where: { id: { in: ids } } }); // cascades demo_magic_links
   await prisma.user.deleteMany({ where: { id: { in: userIds }, email: { endsWith: "@example.test" } } });
