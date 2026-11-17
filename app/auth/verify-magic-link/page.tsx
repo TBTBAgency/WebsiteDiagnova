@@ -13,8 +13,9 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Akses Demo Diagnova",
   robots: { index: false, follow: false },
-  // Token ada di URL: jangan bocorkan lewat header Referer ke tautan eksternal
-  referrer: "no-referrer",
+  // Token ada di URL: Referer hanya dikirim ke origin sendiri, tidak ke tautan eksternal
+  // (mis. WhatsApp). "no-referrer" tidak dipakai karena membuat browser mengirim Origin: null.
+  referrer: "same-origin",
 };
 
 interface PageProps {

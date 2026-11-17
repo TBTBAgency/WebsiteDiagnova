@@ -131,6 +131,15 @@ async function main() {
   check("unknown token -> redirect with error=invalid", bad.status === 303 && bad.location.includes("error=invalid"), bad.location);
   const xsite = await consume(tokenA, { origin: "https://evil.example" });
   check("cross-origin POST -> 403", xsite.status === 403, `got ${xsite.status}`);
+  const nullOrigin = await consume(tokenA, { origin: "null" });
+  check("Origin: null without Sec-Fetch-Site -> 403 (no crash)", nullOrigin.status === 403, `got ${nullOrigin.status}`);
+  const crossFetch = await fetch(`${BASE}/api/auth/magic-link`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", origin: "null", "sec-fetch-site": "cross-site" },
+    body: new URLSearchParams({ token: tokenA }).toString(),
+    redirect: "manual",
+  });
+  check("Origin: null + Sec-Fetch-Site: cross-site -> 403", crossFetch.status === 403, `got ${crossFetch.status}`);
   check("status unchanged after failures", (await leadStatus(leadA)) === 2);
 
   console.log("== 5. First successful login -> Jadwal Demo");

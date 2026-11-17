@@ -13,7 +13,6 @@ export async function GET() {
   try {
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
-    const session = guard.session;
     const roles = await getAllRoles();
 
     return NextResponse.json<ApiResponse>({

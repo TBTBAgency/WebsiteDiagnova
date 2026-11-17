@@ -31,7 +31,6 @@ export async function getLeadsController(request: NextRequest): Promise<NextResp
   try {
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
-    const session = guard.session;
     const { searchParams } = new URL(request.url);
 
     const rawStatus = searchParams.get("status");
@@ -94,7 +93,6 @@ export async function getLeadDetailController(
   try {
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
-    const session = guard.session;
     const lead = await getLeadById(id);
     if (!lead) {
       return NextResponse.json<ApiResponse>(
@@ -445,7 +443,6 @@ export async function exportLeadsCsvController(): Promise<NextResponse> {
   try {
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
-    const session = guard.session;
     const { leads } = await getLeadsWithPagination({ limit: 1000 });
 
     // Escape CSV + cegah formula injection (=, +, -, @, tab, CR) saat dibuka di Excel/Sheets

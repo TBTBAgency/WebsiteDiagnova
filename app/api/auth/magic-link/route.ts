@@ -6,6 +6,25 @@ import { checkRateLimit } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 
 /**
+ * Same-origin check yang tahan terhadap `Origin: null` (dikirim browser bila referrer
+ * policy halaman sangat ketat). Bila Origin tidak dapat dipakai, gunakan Sec-Fetch-Site.
+ */
+function isSameOriginRequest(request: NextRequest): boolean {
+  const origin = request.headers.get("origin");
+  if (origin && origin !== "null") {
+    try {
+      return new URL(origin).host === request.nextUrl.host;
+    } catch {
+      return false;
+    }
+  }
+  const fetchSite = request.headers.get("sec-fetch-site");
+  if (fetchSite) return fetchSite === "same-origin" || fetchSite === "none";
+  // Klien non-browser tanpa Origin / Sec-Fetch-Site: tidak ada risiko CSRF berbasis cookie
+  return origin !== "null";
+}
+
+/**
  * POST /api/auth/magic-link
  * Mengonsumsi token magic link. Hanya dipanggil dari tombol konfirmasi pada halaman
  * /auth/verify-magic-link (form POST), sehingga pembukaan tautan oleh crawler /
@@ -15,8 +34,7 @@ export async function POST(request: NextRequest) {
   const verifyPage = new URL("/auth/verify-magic-link", request.url);
 
   // Tolak form lintas situs (login CSRF)
-  const origin = request.headers.get("origin");
-  if (origin && new URL(origin).host !== request.nextUrl.host) {
+  if (!isSameOriginRequest(request)) {
     return NextResponse.json({ success: false, message: "Origin tidak diizinkan." }, { status: 403 });
   }
 
