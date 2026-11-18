@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,6 +12,7 @@ import {
   EyeOff,
   FileText,
   FlaskConical,
+  Info,
   Loader2,
   Lock,
   Mail,
@@ -35,31 +36,37 @@ const SLIDES = [
   },
 ];
 
-/** Ilustrasi panel kanan (dekoratif, tanpa data). */
+/** Email terakhir disimpan di browser ini bila "Ingat saya" dicentang (tanpa kata sandi). */
+const REMEMBER_KEY = "diagnova_admin_email";
+
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D6FF2] focus-visible:ring-offset-2";
+
+/** Ilustrasi panel kanan: jendela dashboard + ikon mengambang (dekoratif, tanpa data). */
 function PanelIllustration() {
   return (
-    <div className="relative mx-auto w-full max-w-[460px] aspect-[4/3]" aria-hidden="true">
+    <div className="relative mx-auto aspect-[4/3] w-full max-w-[480px]" aria-hidden="true">
       {/* orbit */}
       <div className="absolute inset-[6%] rounded-full border border-white/15" />
       <div className="absolute inset-[18%] rounded-full border border-white/10" />
 
-      {/* floating tiles */}
+      {/* ikon mengambang */}
       {[
-        { Icon: FlaskConical, cls: "left-[2%] top-[12%]" },
-        { Icon: FileText, cls: "left-[-2%] top-[42%]" },
-        { Icon: Share2, cls: "left-[6%] top-[70%]" },
-      ].map(({ Icon, cls }, i) => (
+        { Icon: FlaskConical, cls: "left-[2%] top-[12%]", delay: "0s" },
+        { Icon: FileText, cls: "left-[-3%] top-[42%]", delay: "1.2s" },
+        { Icon: Share2, cls: "left-[6%] top-[70%]", delay: "2.4s" },
+      ].map(({ Icon, cls, delay }, i) => (
         <div
           key={i}
-          className={`absolute ${cls} h-12 w-12 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-blue-950/20`}
+          className={`absolute ${cls} flex h-12 w-12 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg shadow-blue-950/20 backdrop-blur-sm motion-safe:animate-[gentleFloat_6s_ease-in-out_infinite]`}
+          style={{ animationDelay: delay }}
         >
           <Icon className="h-5 w-5 text-white" />
         </div>
       ))}
 
-      {/* mock dashboard window */}
-      <div className="absolute right-[2%] top-[14%] w-[74%] rounded-2xl bg-white shadow-2xl shadow-blue-950/30 p-3.5">
-        <div className="flex items-center gap-2 mb-3">
+      {/* jendela dashboard */}
+      <div className="absolute right-[2%] top-[14%] w-[74%] rounded-2xl bg-white p-3.5 shadow-2xl shadow-blue-950/30">
+        <div className="mb-3 flex items-center gap-2">
           <Image src="/images/logo-nav.png" alt="" width={80} height={22} className="h-3.5 w-auto object-contain" />
           <span className="ml-auto flex gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-slate-200" />
@@ -68,21 +75,21 @@ function PanelIllustration() {
           </span>
         </div>
         <div className="flex gap-3">
-          <div className="hidden sm:flex w-[22%] flex-col gap-1.5 pt-0.5">
+          <div className="hidden w-[22%] flex-col gap-1.5 pt-0.5 sm:flex">
             {[0, 1, 2, 3, 4].map((i) => (
-              <span key={i} className={`h-1.5 rounded-full ${i === 0 ? "bg-blue-500/70 w-full" : "bg-slate-200 w-4/5"}`} />
+              <span key={i} className={`h-1.5 rounded-full ${i === 0 ? "w-full bg-blue-500/70" : "w-4/5 bg-slate-200"}`} />
             ))}
           </div>
           <div className="flex-1 space-y-2.5">
             <div className="grid grid-cols-3 gap-1.5">
               {["bg-blue-50", "bg-emerald-50", "bg-amber-50"].map((bg, i) => (
-                <div key={i} className={`rounded-lg ${bg} p-1.5 space-y-1`}>
+                <div key={i} className={`rounded-lg ${bg} space-y-1 p-1.5`}>
                   <span className="block h-1 w-2/3 rounded-full bg-slate-300/80" />
                   <span className="block h-2 w-1/2 rounded-full bg-slate-500/70" />
                 </div>
               ))}
             </div>
-            <svg viewBox="0 0 200 60" className="w-full h-14">
+            <svg viewBox="0 0 200 60" className="h-14 w-full">
               <defs>
                 <linearGradient id="lg-area" x1="0" x2="0" y1="0" y2="1">
                   <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25" />
@@ -105,17 +112,17 @@ function PanelIllustration() {
         </div>
       </div>
 
-      {/* assistant chip */}
-      <div className="absolute right-[-2%] bottom-[8%] rounded-2xl bg-white shadow-xl shadow-blue-950/25 px-3 py-2 flex items-center gap-2">
-        <span className="h-7 w-7 rounded-xl bg-blue-600 flex items-center justify-center">
+      {/* chip asisten */}
+      <div className="absolute bottom-[8%] right-[-2%] flex items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-xl shadow-blue-950/25 motion-safe:animate-[gentleFloat_7s_ease-in-out_infinite]">
+        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600">
           <Sparkles className="h-3.5 w-3.5 text-white" />
         </span>
         <span className="text-[11px] leading-tight">
           <span className="block font-bold text-slate-900">Nova AI</span>
-          <span className="flex gap-0.5 mt-0.5">
-            <span className="h-1 w-1 rounded-full bg-blue-500 animate-pulse" />
-            <span className="h-1 w-1 rounded-full bg-blue-400 animate-pulse [animation-delay:150ms]" />
-            <span className="h-1 w-1 rounded-full bg-blue-300 animate-pulse [animation-delay:300ms]" />
+          <span className="mt-0.5 flex gap-0.5">
+            <span className="h-1 w-1 animate-pulse rounded-full bg-blue-500" />
+            <span className="h-1 w-1 animate-pulse rounded-full bg-blue-400 [animation-delay:150ms]" />
+            <span className="h-1 w-1 animate-pulse rounded-full bg-blue-300 [animation-delay:300ms]" />
           </span>
         </span>
       </div>
@@ -130,12 +137,30 @@ function AdminLoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [capsLock, setCapsLock] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [slide, setSlide] = useState(0);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    let saved = "";
+    try {
+      saved = localStorage.getItem(REMEMBER_KEY) || "";
+    } catch {
+      /* penyimpanan browser tidak tersedia */
+    }
+    if (saved) {
+      setEmail(saved);
+      setRemember(true);
+      passwordRef.current?.focus();
+    } else {
+      emailRef.current?.focus();
+    }
     const t = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 6000);
     return () => clearInterval(t);
   }, []);
@@ -160,6 +185,12 @@ function AdminLoginForm() {
         setIsLoading(false);
         return;
       }
+      try {
+        if (remember) localStorage.setItem(REMEMBER_KEY, email.trim());
+        else localStorage.removeItem(REMEMBER_KEY);
+      } catch {
+        /* abaikan */
+      }
       router.push(from);
       router.refresh();
     } catch (err) {
@@ -169,42 +200,42 @@ function AdminLoginForm() {
     }
   };
 
+  const onPasswordKey = (e: React.KeyboardEvent<HTMLInputElement>) => setCapsLock(e.getModifierState?.("CapsLock") ?? false);
+
   const fieldCls =
-    "w-full rounded-xl border border-slate-200 bg-slate-50/70 py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 focus:outline-hidden transition-colors";
+    "w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-[#1D6FF2] focus:outline-none focus-visible:outline-none focus:ring-4 focus:ring-[#1D6FF2]/10";
 
   return (
-    <div className="min-h-screen bg-[#EEF2F8] p-3 sm:p-5 lg:p-6 flex items-stretch font-sans text-slate-800">
-      <div className="mx-auto w-full max-w-[1280px] grid lg:grid-cols-2 rounded-[28px] bg-white shadow-xl shadow-slate-300/40 overflow-hidden">
-        {/* LEFT: form */}
+    <div className="flex min-h-screen items-stretch bg-[#EEF2F8] p-3 font-sans text-slate-800 sm:p-5 lg:p-6">
+      <div className="mx-auto grid w-full max-w-[1280px] overflow-hidden rounded-[28px] bg-white shadow-xl shadow-slate-300/40 lg:grid-cols-2">
+        {/* KIRI: form */}
         <div className="flex flex-col px-6 py-8 sm:px-12 lg:px-16 xl:px-20">
-          <Link href="/" className="inline-flex w-fit hover:opacity-90 transition-opacity" aria-label="Diagnova — ke website">
-            <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-9 sm:h-10 w-auto object-contain" />
+          <Link href="/" className={`inline-flex w-fit rounded-lg transition-opacity hover:opacity-90 ${focusRing}`} aria-label="Diagnova — ke website">
+            <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-9 w-auto object-contain sm:h-10" />
           </Link>
 
-          <div className="flex-1 flex flex-col justify-center py-10 max-w-[420px] w-full mx-auto lg:mx-0">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-blue-50 border border-blue-100 px-3 py-1 text-[11px] font-semibold text-blue-700 mb-4">
-              <Lock className="h-3 w-3" /> Portal Admin Diagnova
-            </span>
-            <h1 className="font-display text-3xl sm:text-[34px] font-bold tracking-tight text-[#0F1B3D]">Selamat datang kembali!</h1>
-            <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+          <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center py-10 lg:mx-0">
+            <h1 className="font-display text-3xl font-bold tracking-tight text-[#0F1B3D] sm:text-[36px]">Selamat datang kembali!</h1>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Masuk ke akun administrator untuk mengelola konten website, permohonan demo, dan pengguna Diagnova.
             </p>
 
             {errorMessage && (
-              <div role="alert" className="mt-6 flex items-start gap-2.5 rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-700">
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-600 mt-0.5" />
+              <div role="alert" className="mt-6 flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700 motion-safe:animate-[adminShake_0.35s_ease-in-out]">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
                 <span>{errorMessage}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="mt-7 space-y-4" noValidate>
               <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label htmlFor="email" className="mb-1.5 block text-xs font-semibold text-slate-700">
                   Alamat email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <input
+                    ref={emailRef}
                     id="email"
                     type="email"
                     autoComplete="username"
@@ -218,36 +249,76 @@ function AdminLoginForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label htmlFor="password" className="mb-1.5 block text-xs font-semibold text-slate-700">
                   Kata sandi
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <input
+                    ref={passwordRef}
                     id="password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyUp={onPasswordKey}
+                    onKeyDown={onPasswordKey}
+                    onBlur={() => setCapsLock(false)}
                     placeholder="Masukkan kata sandi"
                     required
+                    aria-describedby={capsLock ? "caps-hint" : undefined}
                     className={fieldCls + " pr-12"}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                    className={`absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 ${focusRing}`}
                     aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                {capsLock && (
+                  <p id="caps-hint" className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium text-amber-700">
+                    <Info className="h-3.5 w-3.5" /> Caps Lock sedang aktif
+                  </p>
+                )}
               </div>
+
+              {/* Ingat saya + lupa kata sandi */}
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <label className="inline-flex cursor-pointer select-none items-center gap-2 text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    data-testid="remember-me"
+                    className="h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#1D6FF2]"
+                  />
+                  Ingat saya
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgot((v) => !v)}
+                  aria-expanded={showForgot}
+                  aria-controls="forgot-help"
+                  className={`rounded font-semibold text-[#1D6FF2] hover:underline ${focusRing}`}
+                >
+                  Lupa kata sandi?
+                </button>
+              </div>
+              {showForgot && (
+                <p id="forgot-help" className="flex items-start gap-2 rounded-xl border border-blue-100 bg-blue-50/70 p-3 text-xs leading-relaxed text-slate-600">
+                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1D6FF2]" />
+                  Kata sandi admin diatur ulang oleh administrator sistem Diagnova. Hubungi administrator untuk meminta
+                  kata sandi baru.
+                </p>
+              )}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-[#1D6FF2] hover:bg-[#165DD0] py-3 px-4 text-sm font-semibold text-white shadow-md shadow-blue-600/25 transition-all active:scale-[0.99] disabled:opacity-60"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1D6FF2] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/25 transition-all hover:bg-[#165DD0] active:scale-[0.99] disabled:opacity-60"
               >
                 {isLoading ? (
                   <>
@@ -261,33 +332,33 @@ function AdminLoginForm() {
               </button>
             </form>
 
-            <p className="mt-6 text-xs text-slate-500">
-              Lupa kata sandi atau belum punya akun admin? Hubungi administrator sistem Diagnova.
+            <p className="mt-6 text-center text-xs text-slate-500">
+              Belum punya akun admin? <span className="font-semibold text-slate-700">Hubungi administrator sistem.</span>
             </p>
           </div>
 
-          <Link href="/" className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors">
+          <Link href="/" className={`inline-flex w-fit items-center gap-1.5 rounded text-xs font-medium text-slate-500 transition-colors hover:text-slate-900 ${focusRing}`}>
             <ArrowLeft className="h-3.5 w-3.5" /> Kembali ke website Diagnova
           </Link>
         </div>
 
-        {/* RIGHT: brand panel */}
-        <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#1D6FF2] via-[#1659D8] to-[#0B3FA8] px-12 py-12 text-white">
+        {/* KANAN: panel brand */}
+        <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-[#1D6FF2] via-[#1659D8] to-[#0B3FA8] px-12 py-12 text-white lg:flex">
           <div
-            className="absolute inset-0 opacity-[0.12] pointer-events-none"
+            className="pointer-events-none absolute inset-0 opacity-[0.12]"
             style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "26px 26px" }}
           />
-          <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-          <div className="relative flex-1 flex items-center">
+          <div className="relative flex flex-1 items-center">
             <PanelIllustration />
           </div>
 
           <div className="relative">
-            <h2 className="font-display text-2xl xl:text-[28px] font-bold leading-tight max-w-md text-white" aria-live="polite">
+            <h2 key={slide} className="max-w-md font-display text-2xl font-bold leading-tight text-white motion-safe:animate-[fadeSlideUp_0.45s_ease-out] xl:text-[28px]" aria-live="polite">
               {SLIDES[slide].title}
             </h2>
-            <p className="mt-3 text-sm text-blue-100/90 max-w-md leading-relaxed">{SLIDES[slide].text}</p>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-blue-100/90">{SLIDES[slide].text}</p>
             <div className="mt-6 flex gap-2" role="tablist" aria-label="Pesan">
               {SLIDES.map((_, i) => (
                 <button
@@ -297,7 +368,7 @@ function AdminLoginForm() {
                   aria-selected={i === slide}
                   aria-label={`Pesan ${i + 1}`}
                   onClick={() => setSlide(i)}
-                  className={`h-2 rounded-full transition-all ${i === slide ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`}
+                  className={`h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${i === slide ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`}
                 />
               ))}
             </div>
@@ -312,7 +383,7 @@ export default function AdminLoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#EEF2F8] flex items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center bg-[#EEF2F8]">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </div>
       }

@@ -403,3 +403,10 @@ html.lenis body {
 }
 
 
+
+/* Admin login: guncangan singkat saat login gagal */
+@keyframes adminShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}

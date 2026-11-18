@@ -343,6 +343,26 @@ export default function AdminLeadsPage() {
     setCopiedLink(false);
   };
 
+  // Deep link dari dashboard: /admin/leads?lead=<id> langsung membuka detail permohonan.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("lead");
+    if (!id) return;
+    fetch(`/api/admin/leads/${encodeURIComponent(id)}`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json?.success && json.data) handleOpenDetail(json.data as DemoRequestRecord);
+      })
+      .catch(() => {})
+      .finally(() => {
+        // Bersihkan parameter agar refresh tidak membuka detail lagi.
+        const url = new URL(window.location.href);
+        url.searchParams.delete("lead");
+        window.history.replaceState(null, "", url.pathname + url.search);
+      });
+    // Hanya saat halaman pertama dibuka.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleApprove = async () => {
     if (!selectedLead) return;
     setIsApproving(true);
