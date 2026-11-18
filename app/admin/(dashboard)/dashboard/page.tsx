@@ -602,15 +602,15 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
 /* ================================================================== */
 
 function DashboardSkeleton() {
-  const block = "animate-pulse rounded-[24px] bg-white";
+  const block = "apple-shimmer rounded-[26px] bg-white/95 ring-1 ring-black/[0.04] shadow-[0_2px_12px_rgba(14,35,75,0.03)]";
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12" aria-hidden="true">
+    <div className="grid grid-cols-1 gap-4 motion-safe:animate-[fadeSlideUp_0.35s_ease-out_both] md:grid-cols-2 xl:grid-cols-12" aria-hidden="true">
       <div className={cn(block, "h-[420px] md:col-span-2 xl:col-span-5")} />
       <div className="grid gap-4 md:col-span-2 xl:col-span-7">
-        <div className="h-[176px] animate-pulse rounded-[24px] bg-[#0E234B]/15" />
+        <div className="apple-shimmer h-[176px] rounded-[26px] bg-gradient-to-br from-[#0E234B]/15 to-[#1B6FF2]/15 ring-1 ring-black/[0.04]" />
         <div className="grid grid-cols-2 gap-4">
           <div className={cn(block, "h-[228px]")} />
-          <div className="h-[228px] animate-pulse rounded-[24px] bg-[#111318]/80" />
+          <div className="apple-shimmer h-[228px] rounded-[26px] bg-[#0E234B]/12 ring-1 ring-black/[0.04]" />
         </div>
       </div>
       <div className={cn(block, "h-[380px] md:col-span-2 xl:col-span-8")} />

@@ -499,8 +499,8 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
 
           <main className="relative min-w-0 overflow-hidden bg-[#F5F7FA] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[30px] lg:px-7 lg:pt-7 lg:ring-1 lg:ring-black/[0.04]">
             {pendingHref && (
-              <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[3px] overflow-hidden bg-[#DCE6F5]">
-                <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-[#1B6FF2] via-[#56ADE2] to-[#1B6FF2]" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[3px] overflow-hidden bg-[#E5ECF6]">
+                <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-[#1B6FF2] via-[#56ADE2] to-[#0E56D8] animate-[appleIndeterminate_1.15s_cubic-bezier(0.4,0,0.2,1)_infinite]" />
               </div>
             )}
             <div className="min-w-0">{children}</div>
