@@ -231,7 +231,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className={cn("flex min-w-0 flex-col rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-shadow hover:shadow-[0_14px_34px_-12px_rgba(14,35,75,0.10)] sm:p-6", className)}>
+    <section className={cn("flex min-w-0 flex-col rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(14,35,75,0.11)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6", className)}>
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="font-display truncate text-[16px] font-semibold leading-snug text-[#0E234B] sm:text-[17px]">{title}</h2>
@@ -539,20 +539,20 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:col-span-2 sm:p-6"
+      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E234B] via-[#133A7A] to-[#0E56D8] p-5 text-white shadow-[0_16px_38px_-12px_rgba(14,35,75,0.35)] transition-all duration-300 hover:-translate-y-0.5 motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:col-span-2 sm:p-6"
     >
-      {/* Pita mengilap dekoratif */}
+      {/* Smooth ambient Diagnova glow orbs */}
       <span
-        className="pointer-events-none absolute -right-10 -top-24 h-[260px] w-[360px] rotate-[-18deg] rounded-[60px] opacity-80"
-        style={{ background: "linear-gradient(115deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.22) 45%, rgba(255,255,255,0.04) 55%, rgba(255,255,255,0.16) 75%, rgba(255,255,255,0) 90%)" }}
+        className="pointer-events-none absolute -right-10 -top-24 h-[260px] w-[360px] rotate-[-18deg] rounded-[60px] opacity-75"
+        style={{ background: "linear-gradient(115deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.20) 45%, rgba(255,255,255,0.04) 55%, rgba(255,255,255,0.14) 75%, rgba(255,255,255,0) 90%)" }}
         aria-hidden="true"
       />
-      <span className="pointer-events-none absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-[#1F6BFF]/25 blur-3xl" aria-hidden="true" />
+      <span className="pointer-events-none absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-[#56ADE2]/25 blur-3xl" aria-hidden="true" />
 
       <div className="relative flex items-start justify-between gap-4">
         <div key={index} className="min-w-0 motion-safe:animate-[fadeSlideUp_0.45s_ease-out]" aria-live="polite">
-          <h2 className="text-[13px] font-medium text-white/60">{t("Sorotan Hari Ini", "Today's Highlights")} · {slide.kicker}</h2>
-          <p className="mt-1.5 max-w-[440px] text-[21px] font-medium leading-snug text-white">
+          <h2 className="text-[13px] font-medium text-blue-100/80">{t("Sorotan Hari Ini", "Today's Highlights")} · {slide.kicker}</h2>
+          <p className="font-display mt-1.5 max-w-[440px] text-[20px] font-semibold leading-snug text-white sm:text-[21px]">
             {slide.value > 0 ? (
               <>
                 <span className="font-bold">{fmt(slide.value)}</span> {slide.text}
@@ -578,17 +578,17 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
 
       <div className="relative mt-5 flex flex-wrap items-center justify-between gap-3">
         {todayLeads !== null && (
-          <span className="inline-flex items-center gap-2 text-[12px] text-white/75">
+          <span className="inline-flex items-center gap-2 text-[12px] text-blue-100/85">
             <span className="rounded-full bg-[#22C55E]/20 px-2 py-0.5 text-[11px] font-semibold text-[#4ADE80]">+{fmt(todayLeads)}</span>
             {t("permohonan masuk hari ini", "requests received today")}
           </span>
         )}
         <Link
           href={slide.href}
-          className="group ml-auto inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] py-1.5 pl-4 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#1858D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111318]"
+          className="group ml-auto inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-[13px] font-semibold text-[#0E234B] shadow-sm transition-all hover:bg-[#EEF4FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           {slide.cta}
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:rotate-45">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#E8F1FC] text-[#0E56D8] transition-transform duration-300 group-hover:rotate-45">
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         </Link>
@@ -607,7 +607,7 @@ function DashboardSkeleton() {
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12" aria-hidden="true">
       <div className={cn(block, "h-[420px] md:col-span-2 xl:col-span-5")} />
       <div className="grid gap-4 md:col-span-2 xl:col-span-7">
-        <div className="h-[176px] animate-pulse rounded-[24px] bg-[#111318]/80" />
+        <div className="h-[176px] animate-pulse rounded-[24px] bg-[#0E234B]/15" />
         <div className="grid grid-cols-2 gap-4">
           <div className={cn(block, "h-[228px]")} />
           <div className="h-[228px] animate-pulse rounded-[24px] bg-[#111318]/80" />
@@ -896,7 +896,7 @@ export default function AdminOverviewDashboard() {
             <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 md:col-span-2 xl:col-span-7">
               <HighlightCard slides={highlights} todayLeads={todayPoint ? todayPoint.leads : null} />
 
-              <section className="flex min-w-0 flex-col justify-between rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-shadow hover:shadow-[0_14px_34px_-12px_rgba(14,35,75,0.10)] sm:p-6">
+              <section className="flex min-w-0 flex-col justify-between rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(14,35,75,0.11)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF4FF] text-[#1B6FF2]">
@@ -939,7 +939,7 @@ export default function AdminOverviewDashboard() {
                 </div>
               </section>
 
-              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E234B] via-[#153670] to-[#0A1A38] p-5 text-white shadow-[0_14px_34px_-12px_rgba(14,35,75,0.35)] sm:p-6">
+              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E234B] via-[#153670] to-[#0A1A38] p-5 text-white shadow-[0_14px_34px_-12px_rgba(14,35,75,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-12px_rgba(14,35,75,0.42)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6">
                 <span className="pointer-events-none absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.06]" aria-hidden="true" />
                 <span className="pointer-events-none absolute -bottom-28 right-10 h-40 w-40 rounded-full bg-[#1B6FF2]/30 blur-2xl" aria-hidden="true" />
                 <div className="relative flex items-center justify-between gap-2">

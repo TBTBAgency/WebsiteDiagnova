@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminSessionContext, AdminShell } from "@/components/admin/AdminShell";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { AuthSessionPayload } from "@/types";
 
 export default function AdminDashboardLayout({
@@ -40,9 +41,11 @@ export default function AdminDashboardLayout({
 
   return (
     <AdminSessionContext.Provider value={currentUser}>
-      <AdminShell currentUser={currentUser} onLogout={handleLogout} isLoggingOut={isLoggingOut}>
-        {children}
-      </AdminShell>
+      <SmoothScrollProvider>
+        <AdminShell currentUser={currentUser} onLogout={handleLogout} isLoggingOut={isLoggingOut}>
+          {children}
+        </AdminShell>
+      </SmoothScrollProvider>
     </AdminSessionContext.Provider>
   );
 }
