@@ -34,8 +34,12 @@ import {
   Link as LinkIcon,
   Tag,
   ShieldCheck,
+  ArrowUp,
+  ArrowDown,
+  EyeOff,
 } from "lucide-react";
 import ImageUploader, { UploadedFileItem } from "@/components/admin/ImageUploader";
+import { CMS_PAGES } from "@/lib/cms-layout";
 
 type CmsMainTab =
   | "navigation"
@@ -247,6 +251,8 @@ export default function AdminCmsUnifiedHubPage() {
   // NAVIGATION CRUD
   // ===========================================================================
   const handleOpenNewNavMenu = (parentId: string | null = null) => {
+    // Daftar submenu kelompok ini dibuka agar submenu baru langsung terlihat setelah disimpan.
+    if (parentId) setExpandedNavId(parentId);
     setEditingNavMenu({
       id: "",
       parentId,
@@ -257,11 +263,58 @@ export default function AdminCmsUnifiedHubPage() {
       url: "",
       sectionKey: null,
       iconName: "Layers",
-      sortOrder: (parentId ? 1 : navMenus.length + 1),
+      // Item baru ditempatkan di urutan terakhir kelompoknya.
+      sortOrder: parentId
+        ? (navMenus.find((m) => m.id === parentId)?.submenus?.length || 0) + 1
+        : navMenus.length + 1,
       isActive: true,
     });
     setIsNavFormOpen(true);
   };
+
+  const sendNavAction = async (action: "save" | "reorder", data: Record<string, unknown>, okMessage: string) => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/admin/cms/homepage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "navigation", action, data }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) showToast(okMessage);
+      else showToast(json.message || "Gagal menyimpan menu.", "error");
+    } catch {
+      showToast("Gagal menyimpan menu navigasi.", "error");
+    } finally {
+      setIsSaving(false);
+      await loadCmsData();
+    }
+  };
+
+  /** Naik/turunkan submenu di dalam kelompok menu induknya. */
+  const handleMoveSubmenu = (rootMenu: any, index: number, dir: -1 | 1) => {
+    const subs: any[] = [...(rootMenu.submenus || [])];
+    const target = index + dir;
+    if (target < 0 || target >= subs.length) return;
+    [subs[index], subs[target]] = [subs[target], subs[index]];
+    sendNavAction("reorder", { parentId: rootMenu.id, orderedIds: subs.map((s) => s.id) }, "Urutan submenu disimpan.");
+  };
+
+  /** Tampilkan / sembunyikan submenu tanpa membuka form. */
+  const handleToggleSubmenu = (rootMenu: any, sub: any) =>
+    sendNavAction(
+      "save",
+      { ...sub, parentId: rootMenu.id, isActive: !sub.isActive },
+      sub.isActive ? "Submenu disembunyikan dari navigasi." : "Submenu ditampilkan di navigasi."
+    );
+
+  /** Saran URL tujuan: halaman publik, section yang punya anchor, dan URL menu yang sudah ada. */
+  const navUrlSuggestions: string[] = Array.from(
+    new Set([
+      ...CMS_PAGES.flatMap((p) => [p.path, ...p.sections.filter((s) => s.anchor).map((s) => `${p.path === "/" ? "" : p.path}#${s.anchor}`)]),
+      ...navMenus.flatMap((m: any) => [m.url, ...(m.submenus || []).map((s: any) => s.url)]),
+    ].filter((u): u is string => typeof u === "string" && u.trim() !== ""))
+  ).sort();
 
   const handleSaveNavMenu = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -292,8 +345,15 @@ export default function AdminCmsUnifiedHubPage() {
     }
   };
 
-  const handleDeleteNavMenu = async (menuId: string) => {
-    if (!confirm("Hapus menu ini beserta seluruh submenunya?")) return;
+  const handleDeleteNavMenu = async (menuId: string, isSubmenu = false) => {
+    if (
+      !confirm(
+        isSubmenu
+          ? "Hapus submenu ini secara permanen? Untuk sementara menyembunyikannya, gunakan tombol Sembunyikan."
+          : "Hapus menu ini beserta seluruh submenunya?"
+      )
+    )
+      return;
     try {
       const res = await fetch("/api/admin/cms/homepage", {
         method: "PUT",
@@ -308,6 +368,8 @@ export default function AdminCmsUnifiedHubPage() {
       if (res.ok && json.success) {
         showToast("Menu navigasi berhasil dihapus.");
         await loadCmsData();
+      } else {
+        showToast(json.message || "Gagal menghapus menu navigasi.", "error");
       }
     } catch (err) {
       showToast("Gagal menghapus menu navigasi.", "error");
@@ -967,6 +1029,9 @@ export default function AdminCmsUnifiedHubPage() {
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
                         placeholder="Contoh: Layers, Activity, Cpu, Sparkles, Compass"
                       />
+                      <p className="mt-1 text-[10px] text-slate-500">
+                        Ikon &amp; deskripsi disimpan, tetapi desain dropdown navigasi saat ini hanya menampilkan label.
+                      </p>
                     </div>
                   </div>
 
@@ -978,6 +1043,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <input
                         type="text"
                         required
+                        data-testid="nav-form-labelId"
                         value={editingNavMenu.labelId || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, labelId: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
@@ -990,6 +1056,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <input
                         type="text"
                         required
+                        data-testid="nav-form-labelEn"
                         value={editingNavMenu.labelEn || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, labelEn: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
@@ -1004,11 +1071,22 @@ export default function AdminCmsUnifiedHubPage() {
                       </label>
                       <input
                         type="text"
+                        data-testid="nav-form-url"
+                        list="nav-url-targets"
                         value={editingNavMenu.url || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, url: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white font-mono"
-                        placeholder="Contoh: /platform/workflow atau /solutions"
+                        placeholder="Contoh: /platform#automation atau /solutions"
                       />
+                      <datalist id="nav-url-targets">
+                        {navUrlSuggestions.map((u) => (
+                          <option key={u} value={u} />
+                        ))}
+                      </datalist>
+                      <p className="mt-1 text-[10px] text-slate-500">
+                        Pilih dari saran (halaman &amp; section yang tersedia) atau ketik path sendiri. Format: /halaman,
+                        /halaman#section, atau https://…
+                      </p>
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -1071,6 +1149,7 @@ export default function AdminCmsUnifiedHubPage() {
                         <label className="text-xs font-semibold text-slate-700">Urutan:</label>
                         <input
                           type="number"
+                          data-testid="nav-form-order"
                           value={editingNavMenu.sortOrder || 1}
                           onChange={(e) =>
                             setEditingNavMenu({
@@ -1084,6 +1163,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
                         <input
                           type="checkbox"
+                          data-testid="nav-form-active"
                           checked={editingNavMenu.isActive ?? true}
                           onChange={(e) =>
                             setEditingNavMenu({ ...editingNavMenu, isActive: e.target.checked })
@@ -1111,7 +1191,7 @@ export default function AdminCmsUnifiedHubPage() {
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 shadow-xs"
                       >
                         <Save className="h-3.5 w-3.5" />
-                        <span>Simpan Menu</span>
+                        <span data-testid="nav-form-save">Simpan Menu</span>
                       </button>
                     </div>
                   </div>
@@ -1133,6 +1213,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
+                          data-testid={`nav-expand-${rootMenu.id}`}
                           onClick={() => setExpandedNavId(isExpanded ? null : rootMenu.id)}
                           className="p-1 rounded text-slate-400 hover:text-slate-600"
                         >
@@ -1163,6 +1244,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
+                          data-testid={`nav-add-sub-${rootMenu.id}`}
                           onClick={() => handleOpenNewNavMenu(rootMenu.id)}
                           className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
@@ -1192,12 +1274,21 @@ export default function AdminCmsUnifiedHubPage() {
                     </div>
 
                     {/* Submenus Drawer */}
+                    {isExpanded && !hasSubs && (
+                      <div className="border-t border-slate-100 bg-slate-50/20 p-3 text-[11px] text-slate-500">
+                        Belum ada submenu. Gunakan tombol &quot;+ Submenu&quot; untuk menambah.
+                      </div>
+                    )}
                     {isExpanded && hasSubs && (
                       <div className="border-t border-slate-100 bg-slate-50/20 p-3 space-y-2">
-                        {rootMenu.submenus.map((sub: any) => (
+                        {rootMenu.submenus.map((sub: any, subIndex: number) => (
                           <div
                             key={sub.id}
-                            className="flex items-center justify-between rounded-lg border border-slate-200/80 bg-white p-2.5 hover:border-blue-200"
+                            data-testid={`nav-sub-${rootMenu.id}-${subIndex}`}
+                            className={
+                              "flex items-center justify-between rounded-lg border p-2.5 hover:border-blue-200 " +
+                              (sub.isActive ? "border-slate-200/80 bg-white" : "border-dashed border-slate-300 bg-slate-50")
+                            }
                           >
                             <div className="flex items-center gap-2.5 pl-6">
                               <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
@@ -1218,6 +1309,41 @@ export default function AdminCmsUnifiedHubPage() {
                             <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
+                                data-testid={`nav-sub-up-${rootMenu.id}-${subIndex}`}
+                                disabled={isSaving || subIndex === 0}
+                                onClick={() => handleMoveSubmenu(rootMenu, subIndex, -1)}
+                                className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30"
+                                title="Naikkan"
+                              >
+                                <ArrowUp className="h-3 w-3" />
+                              </button>
+                              <button
+                                type="button"
+                                data-testid={`nav-sub-down-${rootMenu.id}-${subIndex}`}
+                                disabled={isSaving || subIndex === rootMenu.submenus.length - 1}
+                                onClick={() => handleMoveSubmenu(rootMenu, subIndex, 1)}
+                                className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30"
+                                title="Turunkan"
+                              >
+                                <ArrowDown className="h-3 w-3" />
+                              </button>
+                              <button
+                                type="button"
+                                data-testid={`nav-sub-toggle-${rootMenu.id}-${subIndex}`}
+                                disabled={isSaving}
+                                onClick={() => handleToggleSubmenu(rootMenu, sub)}
+                                className={
+                                  "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border " +
+                                  (sub.isActive ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-300 text-slate-600 bg-white")
+                                }
+                                title={sub.isActive ? "Sembunyikan dari navigasi" : "Tampilkan di navigasi"}
+                              >
+                                {sub.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                                {sub.isActive ? "Tampil" : "Disembunyikan"}
+                              </button>
+                              <button
+                                type="button"
+                                data-testid={`nav-sub-edit-${rootMenu.id}-${subIndex}`}
                                 onClick={() => {
                                   setEditingNavMenu({ ...sub, parentId: rootMenu.id });
                                   setIsNavFormOpen(true);
@@ -1229,7 +1355,8 @@ export default function AdminCmsUnifiedHubPage() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleDeleteNavMenu(sub.id)}
+                                data-testid={`nav-sub-delete-${rootMenu.id}-${subIndex}`}
+                                onClick={() => handleDeleteNavMenu(sub.id, true)}
                                 className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                                 title="Hapus Submenu"
                               >

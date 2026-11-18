@@ -25,12 +25,15 @@ import {
 import { cn } from "@/lib/utils";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { DEFAULT_ANNOUNCEMENT, type AnnouncementContent } from "@/lib/site-content";
+import type { PublicNavMenu } from "@/lib/models/cms.model";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface NavItem {
+  id?: string;
   label: string;
   href: string;
   children?: {
+    id?: string;
     title: string;
     description: string;
     href: string;
@@ -585,7 +588,14 @@ function getNavIcon(iconName?: string | null, iconColor?: string | null) {
  * @param announcement Konten announcement dari CMS yang SUDAH dinyatakan tampil oleh server
  *   (aktif & dalam periode). `null` = announcement disembunyikan.
  */
-export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?: AnnouncementContent | null }) {
+export function Navbar({
+  announcement = DEFAULT_ANNOUNCEMENT,
+  initialMenus,
+}: {
+  announcement?: AnnouncementContent | null;
+  /** Navigasi CMS yang sudah dimuat server. undefined = muat lewat /api/menus; null = pakai navigasi bawaan. */
+  initialMenus?: PublicNavMenu[] | null;
+}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -602,6 +612,8 @@ export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?:
   const [dbMenus, setDbMenus] = useState<any[] | null>(null);
 
   useEffect(() => {
+    // Navigasi sudah dirender server (layout publik): tidak perlu dimuat ulang di browser.
+    if (initialMenus !== undefined) return;
     fetch("/api/menus")
       .then((res) => res.json())
       .then((res) => {
@@ -612,16 +624,21 @@ export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?:
       .catch((err) => {
         console.warn("Gagal memuat dynamic menus, menggunakan static fallback:", err);
       });
-  }, []);
+  }, [initialMenus]);
 
+  // Data dari server dipakai apa adanya (perubahan admin langsung tampil, termasuk bila semua
+  // submenu disembunyikan); navigasi bawaan hanya bila CMS tidak tersedia.
+  const cmsMenus: any[] | null = initialMenus !== undefined ? initialMenus : dbMenus;
   const navItems: NavItem[] =
-    dbMenus && dbMenus.length > 0
-      ? dbMenus.map((m: any) => ({
+    cmsMenus && (initialMenus !== undefined || cmsMenus.length > 0)
+      ? cmsMenus.map((m: any) => ({
+          id: m.id,
           label: language === "ID" ? m.labelId : m.labelEn,
           href: m.sectionKey ? `/#${m.sectionKey}` : m.url || "#",
           children:
             (m.submenus || m.children) && (m.submenus || m.children).length > 0
               ? (m.submenus || m.children).map((c: any) => ({
+                  id: c.id,
                   title: language === "ID" ? c.labelId : c.labelEn,
                   description:
                     (language === "ID" ? c.descriptionId : c.descriptionEn) || "",
@@ -769,7 +786,7 @@ export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?:
         <nav className="hidden items-center justify-center gap-7 xl:gap-10 lg:flex shrink-0">
           {navItems.map((item) => (
             <div
-              key={item.label}
+              key={item.id ?? item.label}
               className="relative"
               onMouseEnter={() => setActiveDropdown(item.label)}
               onMouseLeave={() => setActiveDropdown(null)}
@@ -808,7 +825,7 @@ export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?:
                     <div className="relative z-10 flex flex-col">
                       {item.children.map((child) => (
                         <Link
-                          key={child.href}
+                          key={child.id ?? child.href}
                           href={child.href}
                           prefetch={true}
                           onClick={() => handleNavClick(child.href)}
@@ -878,7 +895,7 @@ export function Navbar({ announcement = DEFAULT_ANNOUNCEMENT }: { announcement?:
                 pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
-                  key={item.href}
+                  key={item.id ?? item.href}
                   href={item.href}
                   prefetch={true}
                   onClick={() => handleNavClick(item.href)}

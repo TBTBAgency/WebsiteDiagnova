@@ -13,6 +13,7 @@ import {
   deletePartner,
   saveCmsNavigationMenu,
   deleteCmsNavigationMenu,
+  reorderCmsNavigationMenu,
   withCmsHubWriteLock,
   CmsHubError,
 } from "@/lib/models/cms.model";
@@ -99,7 +100,11 @@ export async function PUT(request: NextRequest) {
       testimonial: () => (action === "delete" ? deleteTestimonial(data.id, session.userId) : saveTestimonial(data, session.userId)),
       partner: () => (action === "delete" ? deletePartner(data.id, session.userId) : savePartner(data, session.userId)),
       navigation: () =>
-        action === "delete" ? deleteCmsNavigationMenu(data.id, session.userId) : saveCmsNavigationMenu(data, session.userId),
+        action === "delete"
+          ? deleteCmsNavigationMenu(data.id, session.userId)
+          : action === "reorder"
+          ? reorderCmsNavigationMenu(data.parentId ?? null, data.orderedIds, session.userId)
+          : saveCmsNavigationMenu(data, session.userId),
     };
     const handler = handlers[type as string];
     if (!handler) {
@@ -119,6 +124,8 @@ export async function PUT(request: NextRequest) {
       revalidatePath("/modules");
       revalidatePath("/nova-ai");
       revalidatePath("/integration");
+      // Navigasi ada di layout semua halaman publik.
+      if (type === "navigation") revalidatePath("/", "layout");
     } catch (e) {
       console.warn("revalidatePath warning:", e);
     }

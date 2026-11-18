@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { recordAuditLog } from "@/lib/models/audit.model";
 import { Prisma } from "@prisma/client";
 import type { CmsPageHero } from "@/lib/cms-hero";
+import { isSafeCmsUrl } from "@/lib/cms-layout";
 
 /** Error domain CMS Homepage (pesan aman untuk admin). */
 export class CmsHubError extends Error {
@@ -714,138 +715,137 @@ export async function getPublicCmsNavigationMenus(): Promise<CmsNavMenu[]> {
     }));
 }
 
+/** Anchor section beranda yang boleh menjadi target menu (selain URL). */
+export const NAV_HOMEPAGE_ANCHORS = ["hero", "workflow", "infrastructure", "about", "comparison", "testimonials", "cta"];
+
+type NavInput = {
+  id?: string;
+  parentId?: string | null;
+  labelId: string;
+  labelEn: string;
+  descriptionId?: string;
+  descriptionEn?: string;
+  url: string;
+  sectionKey?: string | null;
+  iconName?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+};
+
+/** Validasi & normalisasi input menu/submenu dari admin (pesan aman untuk ditampilkan). */
+function normalizeNavInput(raw: unknown): NavInput {
+  const d = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const str = (v: unknown, max: number, label: string, required = false) => {
+    const s = typeof v === "string" ? v.trim() : "";
+    if (required && !s) throw new CmsHubError(`${label} wajib diisi.`, 400);
+    if (s.length > max) throw new CmsHubError(`${label} maksimal ${max} karakter.`, 400);
+    return s;
+  };
+  const sectionKey = typeof d.sectionKey === "string" && d.sectionKey.trim() !== "" ? d.sectionKey.trim() : null;
+  if (sectionKey && !NAV_HOMEPAGE_ANCHORS.includes(sectionKey)) throw new CmsHubError("Target anchor section tidak dikenal.", 400);
+  const url = str(d.url, 300, "URL tujuan");
+  if (!sectionKey && !url) throw new CmsHubError("URL tujuan wajib diisi (mis. /platform#automation).", 400);
+  if (url && !isSafeCmsUrl(url)) {
+    throw new CmsHubError("URL tujuan harus berupa path (/...), anchor (#...), atau http(s)://", 400);
+  }
+  const sortOrder = Number(d.sortOrder);
+  return {
+    id: typeof d.id === "string" && d.id.trim() !== "" ? d.id.trim() : undefined,
+    parentId: typeof d.parentId === "string" && d.parentId.trim() !== "" ? d.parentId.trim() : null,
+    labelId: str(d.labelId, 80, "Label menu (ID)", true),
+    labelEn: str(d.labelEn, 80, "Label menu (EN)", true),
+    descriptionId: str(d.descriptionId, 200, "Deskripsi (ID)"),
+    descriptionEn: str(d.descriptionEn, 200, "Deskripsi (EN)"),
+    url,
+    sectionKey,
+    iconName: str(d.iconName, 40, "Nama ikon") || undefined,
+    sortOrder: Number.isFinite(sortOrder) && sortOrder >= 1 ? Math.floor(sortOrder) : undefined,
+    isActive: typeof d.isActive === "boolean" ? d.isActive : undefined,
+  };
+}
+
+/**
+ * Menempatkan item pada posisi `order` (1 = paling atas) lalu menomori ulang 1..n.
+ * order undefined: item baru di posisi terakhir, item lama tetap di posisinya.
+ */
+function placeAt<T extends { id: string; sortOrder: number }>(list: T[], item: T, order: number | undefined): T[] {
+  const sorted = [...list].sort((a, b) => a.sortOrder - b.sortOrder);
+  const currentIdx = sorted.findIndex((x) => x.id === item.id);
+  const rest = sorted.filter((x) => x.id !== item.id);
+  let idx = order !== undefined ? order - 1 : currentIdx >= 0 ? currentIdx : rest.length;
+  idx = Math.max(0, Math.min(rest.length, idx));
+  rest.splice(idx, 0, item);
+  return rest.map((x, i) => ({ ...x, sortOrder: i + 1 }));
+}
+
 /**
  * Menyimpan atau memperbarui menu/submenu navigasi di JSON
  */
-export async function saveCmsNavigationMenu(
-  menuData: {
-    id?: string;
-    parentId?: string | null;
-    labelId: string;
-    labelEn: string;
-    descriptionId?: string;
-    descriptionEn?: string;
-    url: string;
-    sectionKey?: string | null;
-    iconName?: string;
-    sortOrder?: number;
-    isActive?: boolean;
-  },
-  userId?: string
-) {
+export async function saveCmsNavigationMenu(rawInput: unknown, userId?: string) {
+  const menuData = normalizeNavInput(rawInput);
   const sec = await getOrCreateSection("navigation");
 
   const extra = (sec.extraContent as any) || {};
-  const menus: CmsNavMenu[] = Array.isArray(extra.menus)
+  let menus: CmsNavMenu[] = Array.isArray(extra.menus)
     ? extra.menus.map((m: CmsNavMenu) => ({ ...m, submenus: [...(m.submenus || [])] }))
     : [];
 
-  // Field yang disimpan dari form. `submenus` dan `parentId` dari payload TIDAK pernah disalin:
-  // form edit membawa salinan submenu lama, yang akan menimpa perubahan submenu oleh admin lain.
-  const { submenus: _ignoredSubmenus, parentId: _parentId, ...menuFields } = menuData as typeof menuData & { submenus?: unknown };
+  // Hanya field yang diizinkan yang disalin dari form. `submenus`/`parentId` dari payload TIDAK
+  // pernah disalin: form edit membawa salinan submenu lama yang dapat menimpa perubahan lain.
+  const fields = {
+    labelId: menuData.labelId,
+    labelEn: menuData.labelEn,
+    descriptionId: menuData.descriptionId || "",
+    descriptionEn: menuData.descriptionEn || "",
+    url: menuData.url,
+    sectionKey: menuData.sectionKey || null,
+    ...(menuData.iconName && { iconName: menuData.iconName }),
+    ...(menuData.isActive !== undefined && { isActive: menuData.isActive }),
+  };
 
   if (menuData.parentId) {
     // Menambahkan atau mengedit submenu
     const parent = menus.find((m) => m.id === menuData.parentId);
-    if (!parent) throw new Error("Menu induk tidak ditemukan.");
+    if (!parent) throw new CmsHubError("Menu induk tidak ditemukan.", 404);
     if (menuData.id && menus.some((m) => m.id === menuData.id)) {
-      throw new Error("Menu utama tidak dapat dipindahkan menjadi submenu.");
+      throw new CmsHubError("Menu utama tidak dapat dipindahkan menjadi submenu.", 400);
     }
-
-    parent.submenus = parent.submenus || [];
+    let existing: CmsNavSubmenu | undefined;
     if (menuData.id) {
+      existing = menus.flatMap((m) => m.submenus || []).find((s) => s.id === menuData.id);
       // Pindah induk: hapus dari induk lama agar tidak tergandakan.
       for (const m of menus) {
         if (m !== parent) m.submenus = (m.submenus || []).filter((s) => s.id !== menuData.id);
       }
-      const subIdx = parent.submenus.findIndex((s) => s.id === menuData.id);
-      if (subIdx >= 0) {
-        parent.submenus[subIdx] = {
-          ...parent.submenus[subIdx],
-          ...menuFields,
-          sortOrder: menuData.sortOrder ?? parent.submenus[subIdx].sortOrder,
-          isActive: menuData.isActive ?? parent.submenus[subIdx].isActive,
-        };
-      } else {
-        parent.submenus.push({
-          id: menuData.id,
-          labelId: menuData.labelId,
-          labelEn: menuData.labelEn,
-          descriptionId: menuData.descriptionId || "",
-          descriptionEn: menuData.descriptionEn || "",
-          url: menuData.url,
-          sectionKey: menuData.sectionKey || null,
-          iconName: menuData.iconName || "Layers",
-          sortOrder: menuData.sortOrder ?? parent.submenus.length + 1,
-          isActive: menuData.isActive ?? true,
-        });
-      }
-    } else {
-      const newSubId = `sub-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-      parent.submenus.push({
-        id: newSubId,
-        labelId: menuData.labelId,
-        labelEn: menuData.labelEn,
-        descriptionId: menuData.descriptionId || "",
-        descriptionEn: menuData.descriptionEn || "",
-        url: menuData.url,
-        sectionKey: menuData.sectionKey || null,
-        iconName: menuData.iconName || "Layers",
-        sortOrder: menuData.sortOrder ?? parent.submenus.length + 1,
-        isActive: menuData.isActive ?? true,
-      });
     }
-    parent.submenus.sort((a, b) => a.sortOrder - b.sortOrder);
+    const item: CmsNavSubmenu = {
+      ...(existing || {}),
+      id: menuData.id || `sub-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      iconName: existing?.iconName || "Layers",
+      isActive: existing?.isActive ?? true,
+      ...fields,
+      sortOrder: existing?.sortOrder ?? Number.MAX_SAFE_INTEGER,
+    } as CmsNavSubmenu;
+    const movedFromOtherParent = !!existing && !(parent.submenus || []).some((s) => s.id === item.id);
+    parent.submenus = placeAt(parent.submenus || [], item, menuData.sortOrder ?? (movedFromOtherParent ? Number.MAX_SAFE_INTEGER : undefined));
   } else {
-    // Menambahkan atau mengedit root menu
-    if (menuData.id) {
-      const idx = menus.findIndex((m) => m.id === menuData.id);
-      if (idx < 0) {
-        // Submenu yang dijadikan menu utama: hapus dari induk lamanya.
-        for (const m of menus) m.submenus = (m.submenus || []).filter((s) => s.id !== menuData.id);
-      }
-      if (idx >= 0) {
-        menus[idx] = {
-          ...menus[idx],
-          ...menuFields,
-          submenus: menus[idx].submenus || [],
-          sortOrder: menuData.sortOrder ?? menus[idx].sortOrder,
-          isActive: menuData.isActive ?? menus[idx].isActive,
-        };
-      } else {
-        menus.push({
-          id: menuData.id,
-          labelId: menuData.labelId,
-          labelEn: menuData.labelEn,
-          descriptionId: menuData.descriptionId || "",
-          descriptionEn: menuData.descriptionEn || "",
-          url: menuData.url,
-          sectionKey: menuData.sectionKey || null,
-          iconName: menuData.iconName || "Layers",
-          sortOrder: menuData.sortOrder ?? menus.length + 1,
-          isActive: menuData.isActive ?? true,
-          submenus: [],
-        });
-      }
-    } else {
-      const newId = `menu-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-      menus.push({
-        id: newId,
-        labelId: menuData.labelId,
-        labelEn: menuData.labelEn,
-        descriptionId: menuData.descriptionId || "",
-        descriptionEn: menuData.descriptionEn || "",
-        url: menuData.url,
-        sectionKey: menuData.sectionKey || null,
-        iconName: menuData.iconName || "Layers",
-        sortOrder: menuData.sortOrder ?? menus.length + 1,
-        isActive: menuData.isActive ?? true,
-        submenus: [],
-      });
+    // Menambahkan atau mengedit menu utama
+    const existing = menuData.id ? menus.find((m) => m.id === menuData.id) : undefined;
+    if (menuData.id && !existing) {
+      // Submenu yang dijadikan menu utama: hapus dari induk lamanya.
+      for (const m of menus) m.submenus = (m.submenus || []).filter((s) => s.id !== menuData.id);
     }
+    const item: CmsNavMenu = {
+      ...(existing || {}),
+      id: menuData.id || `menu-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      iconName: existing?.iconName || "Layers",
+      isActive: existing?.isActive ?? true,
+      ...fields,
+      submenus: existing?.submenus || [],
+      sortOrder: existing?.sortOrder ?? Number.MAX_SAFE_INTEGER,
+    } as CmsNavMenu;
+    menus = placeAt(menus, item, menuData.sortOrder);
   }
-
-  menus.sort((a, b) => a.sortOrder - b.sortOrder);
 
   await db.cmsSection.update({
     where: { sectionKey: "navigation" },
@@ -853,7 +853,7 @@ export async function saveCmsNavigationMenu(
       extraContent: {
         ...extra,
         menus,
-      },
+      } as unknown as Prisma.InputJsonValue,
     },
   });
 
@@ -862,8 +862,50 @@ export async function saveCmsNavigationMenu(
     action: "SAVE_CMS_NAVIGATION_MENU",
     entity: "cms_sections",
     recordId: "navigation",
+    newValue: { id: menuData.id ?? null, parentId: menuData.parentId ?? null, labelId: menuData.labelId, url: menuData.url },
   });
 
+  return { success: true };
+}
+
+/**
+ * Mengatur ulang urutan menu utama (parentId null) atau submenu satu menu induk.
+ * orderedIds harus berisi tepat seluruh id pada level tersebut.
+ */
+export async function reorderCmsNavigationMenu(parentId: string | null, orderedIds: unknown, userId?: string) {
+  if (!Array.isArray(orderedIds) || orderedIds.some((x) => typeof x !== "string")) {
+    throw new CmsHubError("Urutan menu tidak valid.", 400);
+  }
+  const sec = await getOrCreateSection("navigation");
+  const extra = (sec.extraContent as any) || {};
+  let menus: CmsNavMenu[] = Array.isArray(extra.menus)
+    ? extra.menus.map((m: CmsNavMenu) => ({ ...m, submenus: [...(m.submenus || [])] }))
+    : [];
+  const apply = <T extends { id: string; sortOrder: number }>(list: T[]): T[] => {
+    const ids = list.map((x) => x.id);
+    if (orderedIds.length !== ids.length || !ids.every((id) => (orderedIds as string[]).includes(id))) {
+      throw new CmsHubError("Urutan menu tidak cocok dengan data terbaru. Muat ulang lalu ulangi.", 409);
+    }
+    return (orderedIds as string[]).map((id, i) => ({ ...list.find((x) => x.id === id)!, sortOrder: i + 1 }));
+  };
+  if (parentId) {
+    const parent = menus.find((m) => m.id === parentId);
+    if (!parent) throw new CmsHubError("Menu induk tidak ditemukan.", 404);
+    parent.submenus = apply(parent.submenus || []);
+  } else {
+    menus = apply(menus);
+  }
+  await db.cmsSection.update({
+    where: { sectionKey: "navigation" },
+    data: { extraContent: { ...extra, menus } as unknown as Prisma.InputJsonValue },
+  });
+  await recordAuditLog({
+    userId,
+    action: "REORDER_CMS_NAVIGATION_MENU",
+    entity: "cms_sections",
+    recordId: "navigation",
+    newValue: { parentId, orderedIds: orderedIds as string[] },
+  });
   return { success: true };
 }
 
@@ -878,13 +920,20 @@ export async function deleteCmsNavigationMenu(menuId: string, userId?: string) {
 
   // Cek apakah yang dihapus adalah root menu
   const isRoot = menus.some((m) => m.id === menuId);
+  const removed = isRoot
+    ? menus.find((m) => m.id === menuId)
+    : menus.flatMap((m) => m.submenus || []).find((s) => s.id === menuId);
+  if (!removed) throw new CmsHubError("Menu tidak ditemukan.", 404);
   if (isRoot) {
-    menus = menus.filter((m) => m.id !== menuId);
+    menus = menus.filter((m) => m.id !== menuId).map((m, i) => ({ ...m, sortOrder: i + 1 }));
   } else {
-    // Submenu
+    // Submenu (urutan dinomori ulang agar tetap 1..n)
     menus = menus.map((m) => ({
       ...m,
-      submenus: (m.submenus || []).filter((s) => s.id !== menuId),
+      submenus: (m.submenus || [])
+        .filter((s) => s.id !== menuId)
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map((s, i) => ({ ...s, sortOrder: i + 1 })),
     }));
   }
 
@@ -894,7 +943,7 @@ export async function deleteCmsNavigationMenu(menuId: string, userId?: string) {
       extraContent: {
         ...extra,
         menus,
-      },
+      } as unknown as Prisma.InputJsonValue,
     },
   });
 
@@ -903,9 +952,60 @@ export async function deleteCmsNavigationMenu(menuId: string, userId?: string) {
     action: "DELETE_CMS_NAVIGATION_MENU",
     entity: "cms_sections",
     recordId: menuId,
+    // Item yang dihapus dicatat lengkap agar dapat dipulihkan bila perlu.
+    oldValue: removed as unknown as Record<string, unknown>,
   });
 
   return { success: true };
+}
+
+/** Bentuk menu yang dikirim ke Navbar publik (tanpa metadata admin). */
+export interface PublicNavSubmenu {
+  id: string;
+  labelId: string;
+  labelEn: string;
+  descriptionId: string;
+  descriptionEn: string;
+  url: string;
+  sectionKey: string | null;
+  iconName: string | null;
+  iconColor: string | null;
+}
+export interface PublicNavMenu extends PublicNavSubmenu {
+  submenus: PublicNavSubmenu[];
+}
+
+/**
+ * Navigasi publik untuk Navbar (dirender di server). null = baris navigasi belum ada / DB gagal
+ * (Navbar memakai navigasi bawaan). Menu & submenu nonaktif tidak disertakan.
+ */
+export async function getPublicNavigation(): Promise<PublicNavMenu[] | null> {
+  try {
+    const sec = await db.cmsSection.findUnique({ where: { sectionKey: "navigation" } });
+    const menus = (sec?.extraContent as { menus?: unknown } | null)?.menus;
+    if (!sec || !sec.isPublished || !Array.isArray(menus)) return null;
+    const pick = (x: any): PublicNavSubmenu => ({
+      id: String(x.id),
+      labelId: String(x.labelId ?? ""),
+      labelEn: String(x.labelEn ?? ""),
+      descriptionId: String(x.descriptionId ?? ""),
+      descriptionEn: String(x.descriptionEn ?? ""),
+      url: String(x.url ?? ""),
+      sectionKey: x.sectionKey || null,
+      iconName: x.iconName || null,
+      iconColor: x.iconColor || null,
+    });
+    return (menus as CmsNavMenu[])
+      .filter((m) => m && m.isActive)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((m) => ({
+        ...pick(m),
+        submenus: (m.submenus || []).filter((s) => s && s.isActive).sort((a, b) => a.sortOrder - b.sortOrder).map(pick),
+      }));
+  } catch (error) {
+    console.error("Gagal memuat navigasi CMS, memakai navigasi bawaan:", error);
+    return null;
+  }
 }
 
 /**
