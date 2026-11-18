@@ -390,12 +390,14 @@ function AdminLoginForm() {
           </div>
         </div>
 
-        {/* KANAN: rich royal-cobalt blue brand panel matching reference */}
-        <div className="relative hidden w-full flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0E56D8] via-[#0B49B8] to-[#07348C] px-10 py-10 text-white lg:flex xl:px-14 xl:py-12">
-          {/* Subtle curved wave / orbital highlights matching reference */}
-          <div className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-[#3B82F6]/25 blur-[90px]" />
-          <div className="pointer-events-none absolute -bottom-44 -left-32 h-[480px] w-[480px] rounded-full bg-[#041E5C]/55 blur-[100px]" />
-          <div className="pointer-events-none absolute -right-24 top-1/4 h-[620px] w-[620px] rounded-full border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-transparent" />
+        {/* KANAN: smooth abstract mesh-gradient Diagnova blue brand panel */}
+        <div className="relative hidden w-full flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0F5BE0] via-[#0B46B5] to-[#072B7A] px-10 py-10 text-white lg:flex xl:px-14 xl:py-12">
+          {/* Smooth layered abstract mesh & silk-light gradients (no hard geometric edges) */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(96,165,250,0.40),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.32),transparent_55%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(4,22,72,0.72),transparent_65%)]" />
+          <div className="pointer-events-none absolute -right-24 top-1/4 h-[380px] w-[520px] -rotate-12 rounded-full bg-[#60A5FA]/20 blur-[110px]" />
+          <div className="pointer-events-none absolute -left-24 bottom-1/4 h-[320px] w-[420px] rotate-12 rounded-full bg-[#38BDF8]/15 blur-[110px]" />
 
           <div className="relative flex flex-1 items-center justify-center">
             <PanelIllustration />

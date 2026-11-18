@@ -87,15 +87,17 @@ export function AdminLanguageToggle({ className, tone = "light" }: { className?:
       data-testid="admin-lang-toggle"
       className={cn(
         "relative inline-flex items-center rounded-full p-0.5 select-none",
-        tone === "dark" ? "bg-white/10" : "border border-[#D5E5F7] bg-[#E8F1FC]",
+        tone === "dark"
+          ? "border border-white/20 bg-white/10"
+          : "border border-slate-200/90 bg-white shadow-[0_2px_8px_-2px_rgba(14,35,75,0.06)]",
         className
       )}
     >
-      {/* Smooth Sliding Pill Indicator with Border Outline */}
+      {/* Smooth Sliding Pill Indicator */}
       <div
         className={cn(
-          "pointer-events-none absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-full border shadow-sm transition-transform duration-300 ease-in-out",
-          tone === "dark" ? "border-white/40 bg-white" : "border-[#C5DAF5] bg-white",
+          "pointer-events-none absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-full border transition-transform duration-300 ease-in-out",
+          tone === "dark" ? "border-white/40 bg-white shadow-xs" : "border-[#BFDBFE] bg-[#EEF4FF]",
           lang === "ID" ? "left-0.5 translate-x-0" : "left-0.5 translate-x-full"
         )}
       />
@@ -110,10 +112,12 @@ export function AdminLanguageToggle({ className, tone = "light" }: { className?:
         className={cn(
           "relative z-10 flex min-w-[60px] cursor-pointer items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2]/40",
           lang === "ID"
-            ? "font-semibold text-[#0E234B]"
+            ? tone === "dark"
+              ? "font-semibold text-[#0E234B]"
+              : "font-semibold text-[#0E56D8]"
             : tone === "dark"
               ? "font-normal text-white/80 hover:text-white"
-              : "font-normal text-slate-600 hover:text-[#0E234B]"
+              : "font-medium text-slate-500 hover:text-[#0E234B]"
         )}
       >
         <span>ID</span>
@@ -135,10 +139,12 @@ export function AdminLanguageToggle({ className, tone = "light" }: { className?:
         className={cn(
           "relative z-10 flex min-w-[60px] cursor-pointer items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2]/40",
           lang === "EN"
-            ? "font-semibold text-[#0E234B]"
+            ? tone === "dark"
+              ? "font-semibold text-[#0E234B]"
+              : "font-semibold text-[#0E56D8]"
             : tone === "dark"
               ? "font-normal text-white/80 hover:text-white"
-              : "font-normal text-slate-600 hover:text-[#0E234B]"
+              : "font-medium text-slate-500 hover:text-[#0E234B]"
         )}
       >
         <span>EN</span>
