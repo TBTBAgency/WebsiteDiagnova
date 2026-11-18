@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
-import { toggleUserStatus, findUserById } from "@/lib/models/user.model";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { isAdminRole } from "@/lib/auth-secret";
+import { recordAuditLog } from "@/lib/models/audit.model";
+import { toggleUserStatus, findUserById, UserManagementError } from "@/lib/models/user.model";
 import { ApiResponse } from "@/types";
 import { z } from "zod";
 
@@ -23,20 +25,9 @@ const updateStatusSchema = z.object({
  */
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang berhak mengubah status akun." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const { id } = params;
     if (!id) {
@@ -55,7 +46,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (existingUser.roleName === "ADMIN" || existingUser.role === "ADMIN") {
+    if (isAdminRole(existingUser.roleName) || isAdminRole(existingUser.role)) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -77,6 +68,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     const updated = await toggleUserStatus(id, validation.data.status);
 
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_STATUS_CHANGED",
+      entity: "User",
+      recordId: id,
+      newValue: { status: validation.data.status },
+      ...getClientInfo(request.headers),
+    });
+
     return NextResponse.json<ApiResponse>({
       success: true,
       message: `Status pengguna berhasil diubah menjadi ${validation.data.status === 1 ? "Aktif" : "Nonaktif"}.`,
@@ -84,12 +84,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("PATCH user status error:", error);
-    const err = error as { message?: string };
-    const status = err?.message?.includes("Akses ditolak") ? 403 : 500;
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal mengubah status pengguna." },
-      { status }
-    );
+    if (error instanceof UserManagementError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
+    // Error lain (mis. Prisma) tidak diteruskan ke klien.
+    return NextResponse.json<ApiResponse>({ success: false, message: "Gagal mengubah status pengguna." }, { status: 500 });
   }
 }
 

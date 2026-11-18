@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { cn } from "@/lib/utils";
+import type { ResolvedCmsHero } from "@/lib/cms-hero";
 
 export interface PageHeroMetric {
   value: string;
@@ -28,6 +29,8 @@ export interface PageHeroProps {
   };
   metrics: PageHeroMetric[];
   className?: string;
+  /** Teks dari CMS; bila terisi menggantikan badge/title/subtitle bawaan. */
+  cms?: ResolvedCmsHero;
 }
 
 export function PageHero({
@@ -39,7 +42,24 @@ export function PageHero({
   secondaryCta,
   metrics,
   className,
+  cms,
 }: PageHeroProps) {
+  const heroBadge = cms?.badge ?? badge;
+  // Judul dari CMS: baris baru (\n) dirender sebagai jeda baris pada layar sm ke atas
+  const heroTitle = cms?.title
+    ? cms.title.split("\n").map((line, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && (
+            <>
+              {" "}
+              <br className="hidden sm:inline" />
+            </>
+          )}
+          {line}
+        </React.Fragment>
+      ))
+    : title;
+  const heroSubtitle = cms?.subtitle ?? subtitle;
   return (
     <section
       className={cn(
@@ -61,7 +81,7 @@ export function PageHero({
           <div className="max-w-4xl mx-auto flex flex-col items-center w-full">
             {/* Section Badge */}
             <div className="mb-4 sm:mb-6 animate-ll-hero" style={{ animationDelay: "0ms" }}>
-              <SectionBadge variant={badgeVariant}>{badge}</SectionBadge>
+              <SectionBadge variant={badgeVariant}>{heroBadge}</SectionBadge>
             </div>
 
             {/* Headline - Standardized font size & line-height */}
@@ -69,7 +89,7 @@ export function PageHero({
               className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-slate-900 min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center animate-ll-hero"
               style={{ animationDelay: "80ms" }}
             >
-              {title}
+              {heroTitle}
             </h1>
 
             {/* Subtitle - Generous breathing room, standardized typography */}
@@ -77,7 +97,7 @@ export function PageHero({
               className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] flex items-center justify-center animate-ll-hero"
               style={{ animationDelay: "160ms" }}
             >
-              {subtitle}
+              {heroSubtitle}
             </p>
 
             {/* CTA Buttons */}
@@ -109,7 +129,8 @@ export function PageHero({
               </div>
             )}
 
-            {/* Architectural Hairline-Divided Hero Metric Strip */}
+            {/* Architectural Hairline-Divided Hero Metric Strip (tidak dirender bila semua metrik dinonaktifkan) */}
+            {metrics.length > 0 && (
             <div
               className="mt-10 sm:mt-12 lg:mt-14 w-full max-w-4xl rounded-2xl bg-white/95 backdrop-blur-xs border border-slate-200/85 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-2 lg:grid-cols-4 divide-y divide-slate-200/75 lg:divide-y-0 lg:divide-x animate-ll-hero"
               style={{ animationDelay: "300ms" }}
@@ -134,6 +155,7 @@ export function PageHero({
                 </div>
               ))}
             </div>
+            )}
           </div>
         </div>
       </div>

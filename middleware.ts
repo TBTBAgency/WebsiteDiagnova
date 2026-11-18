@@ -1,65 +1,75 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { getJwtSecret, isAdminRole } from "@/lib/auth-secret";
 
 const SESSION_COOKIE_NAME = "diagnova_session";
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "diagnova-super-secret-key-production-change-this-2026-xyz"
-);
+
+async function readSession(request: NextRequest): Promise<Record<string, any> | null> {
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+  if (!sessionCookie) return null;
+  try {
+    const { payload } = await jwtVerify(sessionCookie, getJwtSecret());
+    return payload as Record<string, any>;
+  } catch {
+    return null;
+  }
+}
+
+function isDemoExpired(session: Record<string, any> | null): boolean {
+  return Boolean(
+    session?.demoExpiresAt && Date.now() > new Date(session.demoExpiresAt).getTime()
+  );
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const session = await readSession(request);
 
-  // Hanya periksa rute yang diawali dengan /admin
-  if (!pathname.startsWith("/admin")) {
+  // API admin & LIS: lapisan pertama (cek JWT + role). Route handler tetap memverifikasi ulang ke database.
+  if (pathname.startsWith("/api/admin") || pathname.startsWith("/api/lis")) {
+    if (!session) {
+      return NextResponse.json(
+        { success: false, message: "Akses ditolak. Sesi tidak valid atau telah berakhir." },
+        { status: 401 }
+      );
+    }
+    if (!isAdminRole(session.role)) {
+      return NextResponse.json(
+        { success: false, message: "Akses ditolak. Hanya Administrator yang dapat mengakses sumber daya ini." },
+        { status: 403 }
+      );
+    }
     return NextResponse.next();
   }
 
-  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  let isValidSession = false;
-  let sessionPayload: Record<string, any> | null = null;
-
-  if (sessionCookie) {
-    try {
-      const { payload } = await jwtVerify(sessionCookie, JWT_SECRET);
-      sessionPayload = payload as Record<string, any>;
-      isValidSession = true;
-    } catch {
-      isValidSession = false;
-    }
+  // 1. Sesi demo yang sudah kedaluwarsa dihapus (kedaluwarsa TIDAK mengubah status lead).
+  if (session && isDemoExpired(session)) {
+    const response = NextResponse.redirect(new URL("/demo-expired", request.url));
+    response.cookies.delete(SESSION_COOKIE_NAME);
+    return response;
   }
 
-  // 1. Cek masa aktif akses demo jika pengguna memiliki batas waktu demoExpiresAt
-  if (isValidSession && sessionPayload?.demoExpiresAt) {
-    if (Date.now() > new Date(sessionPayload.demoExpiresAt).getTime()) {
-      const response = NextResponse.redirect(new URL("/demo-expired", request.url));
-      response.cookies.delete(SESSION_COOKIE_NAME);
-      return response;
-    }
-  }
+  const isAdmin = session !== null && isAdminRole(session.role);
 
-  // 2. Proteksi RBAC Ketat: Role USER DILARANG KERAS mengakses seluruh area /admin/*
-  if (isValidSession && sessionPayload?.role === "USER") {
-    // Pengguna USER tidak memiliki hak akses ke administrasi Diagnova
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  // 3. Jika membuka halaman login tapi sudah login sebagai ADMIN, redirect langsung ke /admin/dashboard
+  // 2. Halaman login: admin yang sudah login langsung ke dashboard.
   if (pathname === "/admin/login") {
-    if (isValidSession && (sessionPayload?.role === "ADMIN" || sessionPayload?.role === "Super Admin")) {
+    if (isAdmin) {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.next();
   }
 
-  // 4. Jika membuka rute admin lain tapi belum login atau bukan ADMIN, redirect ke login
-  if (!isValidSession || (sessionPayload?.role !== "ADMIN" && sessionPayload?.role !== "Super Admin")) {
+  // 3. Selain ADMIN (termasuk role USER / klien demo) tidak boleh masuk area /admin.
+  if (!isAdmin) {
+    if (session) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 5. Jika membuka /admin root, redirect ke /admin/dashboard
   if (pathname === "/admin") {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
@@ -68,5 +78,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/lis/:path*"],
 };

@@ -3,6 +3,19 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+/**
+ * Password akun seed diambil dari environment. Nilai default hanya untuk development lokal
+ * dan DITOLAK di production agar tidak ada kredensial default yang diketahui publik.
+ */
+function seedPassword(envKey: string, devDefault: string): string {
+  const value = process.env[envKey];
+  if (value && value.length >= 8) return value;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(`${envKey} wajib diisi (minimal 8 karakter) untuk seeding di production.`);
+  }
+  return devDefault;
+}
+
 async function main() {
   console.log("Seeding Diagnova initial data...");
 
@@ -26,7 +39,7 @@ async function main() {
   // 2. Create Default ADMIN
   const adminEmail = "admin@diagnova.id";
   const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash("Diagnova2026!", salt);
+  const passwordHash = await bcrypt.hash(seedPassword("SEED_ADMIN_PASSWORD", "Diagnova2026!"), salt);
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
@@ -43,11 +56,11 @@ async function main() {
       status: 1,
     },
   });
-  console.log(`Default Admin ready: ${admin.email} (Password: Diagnova2026!)`);
+  console.log(`Default Admin ready: ${admin.email} (password dari SEED_ADMIN_PASSWORD / default development)`);
 
   // 3. Create Default Sales Staff (role ADMIN)
   const salesEmail = "sales@diagnova.id";
-  const salesHash = await bcrypt.hash("Sales2026!", salt);
+  const salesHash = await bcrypt.hash(seedPassword("SEED_SALES_PASSWORD", "Sales2026!"), salt);
 
   const sales = await prisma.user.upsert({
     where: { email: salesEmail },

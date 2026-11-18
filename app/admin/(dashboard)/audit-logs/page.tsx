@@ -115,7 +115,7 @@ export default function AdminAuditLogsPage() {
                       {log.newValue ? JSON.stringify(log.newValue) : "-"}
                     </td>
                     <td className="py-3.5 px-5 text-[#747B86] whitespace-nowrap font-mono text-[11px]">
-                      {log.ipAddress || "127.0.0.1"}
+                      {log.ipAddress || "-"}
                     </td>
                   </tr>
                 ))

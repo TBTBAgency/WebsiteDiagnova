@@ -4,104 +4,24 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { DEFAULT_FOOTER, pickLang, type FooterContent } from "@/lib/site-content";
 
-const footerSectionsID = [
-  {
-    title: "Platform",
-    links: [
-      { label: "Gambaran Platform", href: "/platform" },
-      { label: "Alur Kerja", href: "/platform/workflow" },
-      { label: "100% Otomasi", href: "/platform/automation" },
-      { label: "Pelaporan & Audit", href: "/platform/reporting" },
-      { label: "Analitik Lab", href: "/platform/analytics" },
-      { label: "Nova AI Copilot", href: "/nova-ai" },
-    ],
-  },
-  {
-    title: "Solusi",
-    links: [
-      { label: "Gambaran Solusi", href: "/solutions" },
-      { label: "Laboratorium Rumah Sakit", href: "/solutions/hospital-laboratory" },
-      { label: "Laboratorium Klinik", href: "/solutions/clinical-laboratory" },
-      { label: "Pusat Medical Check Up", href: "/solutions/health-screening" },
-      { label: "Laboratorium Multi-Cabang", href: "/solutions/multi-branch" },
-      { label: "Cara Kerja Nova AI", href: "/nova-ai/how-it-works" },
-    ],
-  },
-  {
-    title: "Modul",
-    links: [  
-      { label: "Gambaran Modul", href: "/modules" },
-      { label: "Rutin & Hematologi", href: "/modules/routine-hematology" },
-      { label: "Kimia Klinik", href: "/modules/clinical-chemistry" },
-      { label: "Manajemen Bank Darah", href: "/modules/blood-bank" },
-      { label: "Inventaris & Reagen", href: "/modules/inventory-reagent" },
-      { label: "Patologi Anatomi", href: "/modules/pathology" },
-    ],
-  },
-  {
-    title: "Integrasi",
-    links: [
-      { label: "Gambaran Integrasi", href: "/integration" },
-      { label: "Bridging SIMRS / HIS", href: "/integration/simrs-his" },
-      { label: "Rekam Medis (RME)", href: "/integration/rme" },
-      { label: "500+ Analyzer Medis", href: "/integration/analyzer" },
-      { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-      { label: "Portal Admin LIS", href: "/admin/login" },
-    ],
-  },
-];
-
-const footerSectionsEN = [
-  {
-    title: "Platform",
-    links: [
-      { label: "Overview", href: "/platform" },
-      { label: "Workflow", href: "/platform/workflow" },
-      { label: "100% Automation", href: "/platform/automation" },
-      { label: "Reporting & Audit", href: "/platform/reporting" },
-      { label: "Lab Analytics", href: "/platform/analytics" },
-      { label: "Nova AI Copilot", href: "/nova-ai" },
-    ],
-  },
-  {
-    title: "Solutions",
-    links: [
-      { label: "Overview", href: "/solutions" },
-      { label: "Hospital Laboratory", href: "/solutions/hospital-laboratory" },
-      { label: "Clinical Laboratory", href: "/solutions/clinical-laboratory" },
-      { label: "Health Screening Center", href: "/solutions/health-screening" },
-      { label: "Multi-branch Laboratory", href: "/solutions/multi-branch" },
-      { label: "How Nova AI Works", href: "/nova-ai/how-it-works" },
-    ],
-  },
-  {
-    title: "Modules",
-    links: [
-      { label: "Overview", href: "/modules" },
-      { label: "Routine & Hematology", href: "/modules/routine-hematology" },
-      { label: "Clinical Chemistry", href: "/modules/clinical-chemistry" },
-      { label: "Blood Bank Management", href: "/modules/blood-bank" },
-      { label: "Inventory & Reagent", href: "/modules/inventory-reagent" },
-      { label: "Anatomical Pathology", href: "/modules/pathology" },
-    ],
-  },
-  {
-    title: "Integration",
-    links: [
-      { label: "Overview", href: "/integration" },
-      { label: "SIMRS / HIS Bridging", href: "/integration/simrs-his" },
-      { label: "Electronic Medical Record (EMR)", href: "/integration/rme" },
-      { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
-      { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-      { label: "LIS Admin Portal", href: "/admin/login" },
-    ],
-  },
-];
-
-export function Footer() {
+export function Footer({ content = DEFAULT_FOOTER }: { content?: FooterContent }) {
   const { language } = useLanguage();
-  const footerSections = language === "ID" ? footerSectionsID : footerSectionsEN;
+  const t = (id: string, en: string) => pickLang(language, id, en);
+  const footerSections = content.columns
+    .filter((c) => c.isActive)
+    .map((c) => ({
+      id: c.id,
+      title: t(c.titleId, c.titleEn),
+      links: c.links.filter((l) => l.isActive && l.url).map((l) => ({ label: t(l.labelId, l.labelEn), href: l.url })),
+    }))
+    .filter((c) => c.title || c.links.length > 0);
+  const description = t(content.descriptionId, content.descriptionEn);
+  const address = t(content.contact.addressId, content.contact.addressEn);
+  const social = content.social.filter((s) => s.isActive && s.url);
+  const waDigits = content.contact.whatsapp.replace(/[^0-9]/g, "").replace(/^0/, "62");
+  const logo = content.logoUrl || DEFAULT_FOOTER.logoUrl;
 
   return (
     <footer className="relative overflow-hidden bg-gradient-to-b from-[#2568BA] via-[#2F79CE] to-[#56ADE2] text-white pt-16 sm:pt-20 lg:pt-24 pb-0">
@@ -116,7 +36,7 @@ export function Footer() {
                 className="flex items-center transition-opacity hover:opacity-90 shrink-0 -translate-x-0.5 sm:-translate-x-1 lg:-translate-x-1.5"
               >
                 <Image
-                  src="/images/logo-diagnova.svg"
+                  src={logo}
                   alt="Diagnova"
                   width={270}
                   height={75}
@@ -126,24 +46,59 @@ export function Footer() {
               </Link>
             </div>
 
+            {(description || content.contact.email || content.contact.phone || content.contact.whatsapp || address || social.length > 0) && (
+              <div className="space-y-2 text-[13px] text-white/85 leading-relaxed max-w-sm" data-testid="footer-about">
+                {description && <p>{description}</p>}
+                {content.contact.email && (
+                  <p>
+                    <a href={`mailto:${content.contact.email}`} className="hover:text-white transition-colors">{content.contact.email}</a>
+                  </p>
+                )}
+                {content.contact.phone && <p>{content.contact.phone}</p>}
+                {content.contact.whatsapp && waDigits && (
+                  <p>
+                    <a href={`https://wa.me/${waDigits}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                      WhatsApp {content.contact.whatsapp}
+                    </a>
+                  </p>
+                )}
+                {address && <p className="whitespace-pre-line">{address}</p>}
+                {social.length > 0 && (
+                  <p className="flex flex-wrap gap-x-3 gap-y-1">
+                    {social.map((s) => (
+                      <a key={s.id} href={s.url} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline hover:text-white">
+                        {s.platform}
+                      </a>
+                    ))}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="space-y-1 text-[11px] sm:text-xs text-white/80 font-normal leading-relaxed sm:translate-x-2 lg:translate-x-2.5">
-              <p>&copy; 2026 Diagnova by PT Tiba Tiba Agency.</p>
-              <p className="flex items-center gap-1.5 text-white/70">
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  {language === "ID" ? "Syarat & Ketentuan" : "Terms of Service"}
-                </Link>
-                <span className="text-white/40">|</span>
-                <Link href="/platform/reporting" className="hover:text-white transition-colors">
-                  {language === "ID" ? "Kebijakan Privasi" : "Privacy Policy"}
-                </Link>
-              </p>
+              {t(content.copyrightId, content.copyrightEn) && <p>{t(content.copyrightId, content.copyrightEn)}</p>}
+              {(content.legal.showTerms || content.legal.showPrivacy) && (
+                <p className="flex items-center gap-1.5 text-white/70">
+                  {content.legal.showTerms && (
+                    <Link href="/terms" className="hover:text-white transition-colors">
+                      {language === "ID" ? "Syarat & Ketentuan" : "Terms of Service"}
+                    </Link>
+                  )}
+                  {content.legal.showTerms && content.legal.showPrivacy && <span className="text-white/40">|</span>}
+                  {content.legal.showPrivacy && (
+                    <Link href="/privacy" className="hover:text-white transition-colors">
+                      {language === "ID" ? "Kebijakan Privasi" : "Privacy Policy"}
+                    </Link>
+                  )}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Col Right: 4 Nav Link Columns */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10 lg:gap-11 xl:gap-14 pt-2.5 sm:pt-3.5 lg:pt-4 lg:ml-auto">
             {footerSections.map((section) => (
-              <div key={section.title} className="space-y-3.5">
+              <div key={section.id} className="space-y-3.5">
                 <h4 className="font-semibold text-white text-[15px] sm:text-base tracking-normal">
                   {section.title}
                 </h4>

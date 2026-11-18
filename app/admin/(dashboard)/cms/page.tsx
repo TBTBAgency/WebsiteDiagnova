@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Globe,
   Save,
@@ -34,8 +34,14 @@ import {
   Link as LinkIcon,
   Tag,
   ShieldCheck,
+  ArrowUp,
+  ArrowDown,
+  EyeOff,
 } from "lucide-react";
 import ImageUploader, { UploadedFileItem } from "@/components/admin/ImageUploader";
+import { CMS_PAGES } from "@/lib/cms-layout";
+import { PAGE_CONTENT, type InnerPageKey } from "@/lib/cms-content";
+import { InnerPageContentManager } from "@/components/admin/InnerPageContentManager";
 
 type CmsMainTab =
   | "navigation"
@@ -44,7 +50,30 @@ type CmsMainTab =
   | "solutions"
   | "modules"
   | "nova_ai"
-  | "integrations";
+  | "integration";
+
+/** Section Homepage di Pusat Konten (urutan = urutan di website). */
+const HOMEPAGE_SECTIONS: { key: HomepageSubTab; label: string; icon: any }[] = [
+  { key: "hero", label: "Hero Carousel", icon: Layers },
+  { key: "trusted_by", label: "Mitra / RS", icon: Globe },
+  { key: "about", label: "Tentang Diagnova", icon: Sparkles },
+  { key: "comparison", label: "Komparasi", icon: CheckSquare },
+  { key: "workflow", label: "Alur Kerja", icon: ArrowRight },
+  { key: "infrastructure", label: "Infrastruktur", icon: ShieldAlert },
+  { key: "testimonials", label: "Testimonial", icon: Quote },
+  { key: "cta", label: "Banner CTA", icon: ExternalLink },
+];
+
+/** Tab halaman dalam (kunci = kunci halaman di CMS_PAGES). */
+const INNER_PAGE_TABS: CmsMainTab[] = ["platform", "solutions", "modules", "nova_ai", "integration"];
+
+/**
+ * Hash submenu header yang di website membuka kartu lain (bukan kartu ber-id sama).
+ * /solutions#blood-bank membuka tab Bank Darah di kartu Mikrobiologi (lihat SolutionsPageClient).
+ */
+const HEADER_HASH_ALIASES: Partial<Record<CmsMainTab, Record<string, string>>> = {
+  solutions: { "blood-bank": "microbiology" },
+};
 
 type HomepageSubTab =
   | "hero"
@@ -59,6 +88,132 @@ type HomepageSubTab =
 export default function AdminCmsUnifiedHubPage() {
   const [mainTab, setMainTab] = useState<CmsMainTab>("homepage");
   const [homepageTab, setHomepageTab] = useState<HomepageSubTab>("hero");
+  /** Section yang sedang diedit per halaman dalam. */
+  const [innerSections, setInnerSections] = useState<Record<string, string>>({});
+  /** Kartu yang dituju submenu header (mis. Solusi › Patologi Anatomi) per halaman dalam. */
+  const [innerFocus, setInnerFocus] = useState<Record<string, { itemId: string; n: number } | null>>({});
+  /** Tab yang dropdown section-nya sedang terbuka. */
+  const [openTabMenu, setOpenTabMenu] = useState<string | null>(null);
+  /** Catatan bila section halaman dalam memakai konten bersama dari Homepage. */
+  const [sharedNotice, setSharedNotice] = useState<string | null>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
+
+  /** Daftar section yang dapat dipilih dari panah dropdown sebuah tab. */
+  const pageSectionItems = (tab: CmsMainTab): { key: string; label: string; sharedWithHomepage?: HomepageSubTab }[] => {
+    if (tab === "homepage") return HOMEPAGE_SECTIONS.map((s) => ({ key: s.key, label: s.label }));
+    const def = CMS_PAGES.find((p) => p.key === tab);
+    if (!def) return [];
+    return def.sections.map((s) => {
+      // Section tanpa konten sendiri (CTA penutup, Alur Kerja di Platform) memakai konten Homepage.
+      const shared = !s.locked && !s.defaults && HOMEPAGE_SECTIONS.some((h) => h.key === s.key) ? (s.key as HomepageSubTab) : undefined;
+      return { key: s.key, label: s.key === "hero" ? `Gambaran ${def.label}` : s.label, ...(shared && { sharedWithHomepage: shared }) };
+    });
+  };
+  const currentSectionOf = (tab: CmsMainTab): string =>
+    tab === "homepage" ? homepageTab : innerSections[tab] || "hero";
+
+  /**
+   * Isi panah dropdown halaman dalam = submenu header website (dari Navigasi), lalu section lain
+   * yang tidak punya submenu. Tiap submenu diarahkan lewat URL-nya: tanpa # → Gambaran (hero),
+   * #anchor section → section itu, #id kartu (mis. /solutions#pathology) → kartu di dalam section.
+   */
+  const headerMenuItems = (
+    tab: CmsMainTab
+  ): { id: string; label: string; sectionKey: string | null; itemId: string | null; sharedWithHomepage?: HomepageSubTab }[] => {
+    const def = CMS_PAGES.find((p) => p.key === tab);
+    if (!def) return [];
+    const spec = PAGE_CONTENT[tab as InnerPageKey];
+    const sectionItems = pageSectionItems(tab);
+    const pathOf = (url: string) => (url || "").split("#")[0].split("?")[0].replace(/\/+$/, "") || "/";
+    const root = navMenus.find((m: any) => !m.parentId && pathOf(m.url) === def.path);
+    return ((root?.submenus || []) as any[])
+      .filter((sub) => sub.isActive !== false)
+      .map((sub) => {
+        const hash = String(sub.url || "").split("#")[1] || "";
+        let sectionKey: string | null = null;
+        let itemId: string | null = null;
+        if (pathOf(sub.url) === def.path) {
+          if (!hash) sectionKey = "hero";
+          else {
+            const bySection = def.sections.find((s) => !s.locked && (s.anchor === hash || s.key === hash));
+            if (bySection) sectionKey = bySection.key;
+            else {
+              const target = HEADER_HASH_ALIASES[tab]?.[hash] ?? hash;
+              for (const s of def.sections) {
+                const lists = spec?.defaults?.[s.key]?.lists || {};
+                if (Object.values(lists).some((items) => items.some((it) => it.id === target))) {
+                  sectionKey = s.key;
+                  itemId = target;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        const shared = sectionItems.find((it) => it.key === sectionKey)?.sharedWithHomepage;
+        return { id: String(sub.id), label: sub.labelId || sub.labelEn || sub.url, sectionKey, itemId, ...(shared && { sharedWithHomepage: shared }) };
+      });
+  };
+
+  const closeItemForms = () => {
+    setIsNavFormOpen(false);
+    setIsSlideFormOpen(false);
+    setIsPartnerFormOpen(false);
+    setIsTestimonialFormOpen(false);
+    setIsComparisonFormOpen(false);
+  };
+
+  /** Pindah ke tab + section (dari dropdown, pill section, atau deep-link ?tab=&section=). */
+  const goToSection = (tab: CmsMainTab, sectionKey: string | null, itemId: string | null = null) => {
+    closeItemForms();
+    setOpenTabMenu(null);
+    setSharedNotice(null);
+    if (INNER_PAGE_TABS.includes(tab)) setInnerFocus((m) => ({ ...m, [tab]: itemId ? { itemId, n: (m[tab]?.n || 0) + 1 } : null }));
+    if (tab === "navigation" || !sectionKey) {
+      setMainTab(tab);
+      return;
+    }
+    if (tab === "homepage") {
+      setMainTab("homepage");
+      setHomepageTab(sectionKey as HomepageSubTab);
+      return;
+    }
+    const item = pageSectionItems(tab).find((it) => it.key === sectionKey);
+    if (item?.sharedWithHomepage) {
+      const pageLabel = CMS_PAGES.find((p) => p.key === tab)?.label;
+      setMainTab("homepage");
+      setHomepageTab(item.sharedWithHomepage);
+      setSharedNotice(`Section "${item.label}" di halaman ${pageLabel} memakai konten yang sama dengan Homepage › ${HOMEPAGE_SECTIONS.find((h) => h.key === item.sharedWithHomepage)?.label}. Perubahan di sini tampil di kedua halaman.`);
+      return;
+    }
+    setMainTab(tab);
+    setInnerSections((m) => ({ ...m, [tab]: item ? sectionKey : "hero" }));
+  };
+
+  // Dukung deep-link ?tab=<tab>&section=<section> (mis. dari Halaman & Section).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    const section = params.get("section");
+    const validTabs: CmsMainTab[] = ["navigation", "homepage", ...INNER_PAGE_TABS];
+    if (tab && (validTabs as string[]).includes(tab)) goToSection(tab as CmsMainTab, section, params.get("item"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Dropdown tab ditutup dengan klik di luar atau Escape.
+  useEffect(() => {
+    if (!openTabMenu) return;
+    const onDown = (e: MouseEvent) => {
+      if (tabBarRef.current && !tabBarRef.current.contains(e.target as Node)) setOpenTabMenu(null);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenTabMenu(null);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openTabMenu]);
   const [editorLang, setEditorLang] = useState<"ID" | "EN">("ID");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -97,8 +252,6 @@ export default function AdminCmsUnifiedHubPage() {
   const [editingComparison, setEditingComparison] = useState<any | null>(null);
 
   // Solution Item Form
-  const [isSolutionFormOpen, setIsSolutionFormOpen] = useState(false);
-  const [editingSolution, setEditingSolution] = useState<any | null>(null);
 
   // Module Item Form
   const [isModuleFormOpen, setIsModuleFormOpen] = useState(false);
@@ -242,6 +395,8 @@ export default function AdminCmsUnifiedHubPage() {
   // NAVIGATION CRUD
   // ===========================================================================
   const handleOpenNewNavMenu = (parentId: string | null = null) => {
+    // Daftar submenu kelompok ini dibuka agar submenu baru langsung terlihat setelah disimpan.
+    if (parentId) setExpandedNavId(parentId);
     setEditingNavMenu({
       id: "",
       parentId,
@@ -252,11 +407,58 @@ export default function AdminCmsUnifiedHubPage() {
       url: "",
       sectionKey: null,
       iconName: "Layers",
-      sortOrder: (parentId ? 1 : navMenus.length + 1),
+      // Item baru ditempatkan di urutan terakhir kelompoknya.
+      sortOrder: parentId
+        ? (navMenus.find((m) => m.id === parentId)?.submenus?.length || 0) + 1
+        : navMenus.length + 1,
       isActive: true,
     });
     setIsNavFormOpen(true);
   };
+
+  const sendNavAction = async (action: "save" | "reorder", data: Record<string, unknown>, okMessage: string) => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/admin/cms/homepage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "navigation", action, data }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) showToast(okMessage);
+      else showToast(json.message || "Gagal menyimpan menu.", "error");
+    } catch {
+      showToast("Gagal menyimpan menu navigasi.", "error");
+    } finally {
+      setIsSaving(false);
+      await loadCmsData();
+    }
+  };
+
+  /** Naik/turunkan submenu di dalam kelompok menu induknya. */
+  const handleMoveSubmenu = (rootMenu: any, index: number, dir: -1 | 1) => {
+    const subs: any[] = [...(rootMenu.submenus || [])];
+    const target = index + dir;
+    if (target < 0 || target >= subs.length) return;
+    [subs[index], subs[target]] = [subs[target], subs[index]];
+    sendNavAction("reorder", { parentId: rootMenu.id, orderedIds: subs.map((s) => s.id) }, "Urutan submenu disimpan.");
+  };
+
+  /** Tampilkan / sembunyikan submenu tanpa membuka form. */
+  const handleToggleSubmenu = (rootMenu: any, sub: any) =>
+    sendNavAction(
+      "save",
+      { ...sub, parentId: rootMenu.id, isActive: !sub.isActive },
+      sub.isActive ? "Submenu disembunyikan dari navigasi." : "Submenu ditampilkan di navigasi."
+    );
+
+  /** Saran URL tujuan: halaman publik, section yang punya anchor, dan URL menu yang sudah ada. */
+  const navUrlSuggestions: string[] = Array.from(
+    new Set([
+      ...CMS_PAGES.flatMap((p) => [p.path, ...p.sections.filter((s) => s.anchor).map((s) => `${p.path === "/" ? "" : p.path}#${s.anchor}`)]),
+      ...navMenus.flatMap((m: any) => [m.url, ...(m.submenus || []).map((s: any) => s.url)]),
+    ].filter((u): u is string => typeof u === "string" && u.trim() !== ""))
+  ).sort();
 
   const handleSaveNavMenu = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -287,8 +489,15 @@ export default function AdminCmsUnifiedHubPage() {
     }
   };
 
-  const handleDeleteNavMenu = async (menuId: string) => {
-    if (!confirm("Hapus menu ini beserta seluruh submenunya?")) return;
+  const handleDeleteNavMenu = async (menuId: string, isSubmenu = false) => {
+    if (
+      !confirm(
+        isSubmenu
+          ? "Hapus submenu ini secara permanen? Untuk sementara menyembunyikannya, gunakan tombol Sembunyikan."
+          : "Hapus menu ini beserta seluruh submenunya?"
+      )
+    )
+      return;
     try {
       const res = await fetch("/api/admin/cms/homepage", {
         method: "PUT",
@@ -303,6 +512,8 @@ export default function AdminCmsUnifiedHubPage() {
       if (res.ok && json.success) {
         showToast("Menu navigasi berhasil dihapus.");
         await loadCmsData();
+      } else {
+        showToast(json.message || "Gagal menghapus menu navigasi.", "error");
       }
     } catch (err) {
       showToast("Gagal menghapus menu navigasi.", "error");
@@ -735,74 +946,6 @@ export default function AdminCmsUnifiedHubPage() {
     }
   };
 
-  // ===========================================================================
-  // SOLUTIONS CRUD
-  // ===========================================================================
-  const handleOpenNewSolution = () => {
-    setEditingSolution({
-      slug: "",
-      name: "",
-      category: "Klinik / RS",
-      tagline: "",
-      description: "",
-      icon: "Building2",
-      keyBenefits: ["Otomatisasi alur kerja", "Integrasi SIMRS", "Validasi AI"],
-      metrics: "70% TAT",
-    });
-    setIsSolutionFormOpen(true);
-  };
-
-  const handleSaveSolution = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    try {
-      const res = await fetch("/api/admin/cms/homepage", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "solution_item",
-          action: "save",
-          data: editingSolution,
-        }),
-      });
-      const json = await res.json();
-      if (res.ok && json.success) {
-        showToast("Item solusi berhasil disimpan.");
-        setIsSolutionFormOpen(false);
-        setEditingSolution(null);
-        await loadCmsData();
-      } else {
-        showToast(json.message || "Gagal menyimpan solusi.", "error");
-      }
-    } catch (err) {
-      showToast("Gagal menyimpan solusi.", "error");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDeleteSolution = async (slug: string) => {
-    if (!confirm("Hapus modul solusi ini?")) return;
-    try {
-      const res = await fetch("/api/admin/cms/homepage", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "solution_item",
-          action: "delete",
-          data: { slug },
-        }),
-      });
-      const json = await res.json();
-      if (res.ok && json.success) {
-        showToast("Solusi berhasil dihapus.");
-        await loadCmsData();
-      }
-    } catch (err) {
-      showToast("Gagal menghapus solusi.", "error");
-    }
-  };
-
   // Main Tabs Navigation Definitions
   const mainTabsList: { key: CmsMainTab; label: string; icon: any }[] = [
     { key: "navigation", label: "Navigasi Website", icon: Compass },
@@ -811,19 +954,10 @@ export default function AdminCmsUnifiedHubPage() {
     { key: "solutions", label: "Solusi", icon: Boxes },
     { key: "modules", label: "Modul", icon: Layers },
     { key: "nova_ai", label: "Nova AI", icon: BrainCircuit },
-    { key: "integrations", label: "Integrasi", icon: Network },
+    { key: "integration", label: "Integrasi", icon: Network },
   ];
 
-  const homepageSubTabsList: { key: HomepageSubTab; label: string; icon: any }[] = [
-    { key: "hero", label: "Hero Carousel", icon: Layers },
-    { key: "trusted_by", label: "Mitra / RS", icon: Globe },
-    { key: "about", label: "Tentang Diagnova", icon: Sparkles },
-    { key: "comparison", label: "Komparasi", icon: CheckSquare },
-    { key: "workflow", label: "Alur Kerja", icon: ArrowRight },
-    { key: "infrastructure", label: "Infrastruktur", icon: ShieldAlert },
-    { key: "testimonials", label: "Testimonial", icon: Quote },
-    { key: "cta", label: "Banner CTA", icon: ExternalLink },
-  ];
+  const homepageSubTabsList: { key: HomepageSubTab; label: string; icon: any }[] = HOMEPAGE_SECTIONS;
 
   if (isLoading) {
     return (
@@ -911,36 +1045,169 @@ export default function AdminCmsUnifiedHubPage() {
         </div>
       </div>
 
-      {/* INTERNAL CMS NAVIGATION BAR */}
-      <div className="flex overflow-x-auto gap-1 border-b border-slate-200/80 pb-px scrollbar-none">
+      {/* INTERNAL CMS NAVIGATION BAR — tiap halaman punya panah dropdown berisi daftar section-nya */}
+      <div ref={tabBarRef} className="flex flex-wrap gap-1 border-b border-slate-200/80 pb-px" data-testid="cms-tab-bar">
         {mainTabsList.map((tab) => {
           const Icon = tab.icon;
           const isActive = mainTab === tab.key;
+          const items = tab.key === "navigation" ? null : pageSectionItems(tab.key);
+          const isOpen = openTabMenu === tab.key;
           return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => {
-                setMainTab(tab.key);
-                setIsNavFormOpen(false);
-                setIsSlideFormOpen(false);
-                setIsPartnerFormOpen(false);
-                setIsTestimonialFormOpen(false);
-                setIsComparisonFormOpen(false);
-                setIsSolutionFormOpen(false);
-              }}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all whitespace-nowrap border-b-2 ${
-                isActive
-                  ? "border-[#087BEE] text-[#087BEE] bg-blue-50/50 shadow-xs"
-                  : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              <Icon className={`h-4 w-4 ${isActive ? "text-[#087BEE]" : "text-slate-400"}`} />
-              <span>{tab.label}</span>
-            </button>
+            <div key={tab.key} className="relative">
+              <button
+                type="button"
+                data-testid={`cms-tab-${tab.key}`}
+                aria-haspopup={items ? "menu" : undefined}
+                aria-expanded={items ? isOpen : undefined}
+                onClick={() => {
+                  if (!items) {
+                    goToSection("navigation", null);
+                    return;
+                  }
+                  setOpenTabMenu(isOpen ? null : tab.key);
+                }}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all whitespace-nowrap border-b-2 ${
+                  isActive
+                    ? "border-[#087BEE] text-[#087BEE] bg-blue-50/50 shadow-xs"
+                    : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                }`}
+              >
+                <Icon className={`h-4 w-4 ${isActive ? "text-[#087BEE]" : "text-slate-400"}`} />
+                <span>{tab.label}</span>
+                {items && <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""} ${isActive ? "text-[#087BEE]" : "text-slate-400"}`} />}
+              </button>
+              {items && isOpen && (
+                <div
+                  role="menu"
+                  data-testid={`cms-tab-menu-${tab.key}`}
+                  className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-xl border border-slate-200/90 bg-white py-2 shadow-[0_14px_36px_-10px_rgba(15,23,42,0.18)]"
+                >
+                  {(() => {
+                    const itemCls = (current: boolean) =>
+                      `flex w-full items-center justify-between gap-2 px-4 py-2 text-left text-[13px] transition-colors ${
+                        current ? "text-[#087BEE] font-semibold bg-blue-50/60" : "text-slate-600 hover:text-[#087BEE] hover:bg-slate-50"
+                      }`;
+                    const sharedTag = <span className="text-[10px] font-medium text-slate-400">di Homepage</span>;
+                    if (tab.key === "homepage") {
+                      return items.map((it) => (
+                        <button
+                          key={it.key}
+                          type="button"
+                          role="menuitem"
+                          data-testid={`cms-tab-menu-${tab.key}-${it.key}`}
+                          onClick={() => goToSection(tab.key, it.key)}
+                          className={itemCls(mainTab === "homepage" && homepageTab === it.key)}
+                        >
+                          <span>{it.label}</span>
+                        </button>
+                      ));
+                    }
+                    // Halaman dalam: submenu header website dulu (urutan & nama sama dengan header),
+                    // lalu section yang tidak punya submenu agar tetap bisa diedit.
+                    const navItems = headerMenuItems(tab.key);
+                    const covered = new Set(navItems.filter((n) => n.sectionKey && !n.itemId).map((n) => n.sectionKey));
+                    const others = items.filter((it) => !covered.has(it.key));
+                    const focusId = innerFocus[tab.key]?.itemId ?? null;
+                    return (
+                      <>
+                        {navItems.map((n, i) => {
+                          const current = mainTab === tab.key && n.sectionKey === currentSectionOf(tab.key) && n.itemId === focusId;
+                          return (
+                            <button
+                              key={n.id}
+                              type="button"
+                              role="menuitem"
+                              disabled={!n.sectionKey}
+                              title={n.sectionKey ? undefined : "URL submenu ini tidak menunjuk ke section halaman ini."}
+                              data-testid={`cms-tab-menu-${tab.key}-nav-${i}`}
+                              onClick={() => n.sectionKey && goToSection(tab.key, n.sectionKey, n.itemId)}
+                              className={`${itemCls(current)} disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-600`}
+                            >
+                              <span>{n.label}</span>
+                              {n.sharedWithHomepage && sharedTag}
+                            </button>
+                          );
+                        })}
+                        {others.length > 0 && (
+                          <>
+                            {navItems.length > 0 && (
+                              <p className="mx-4 mt-2 border-t border-slate-100 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                Section lain di halaman ini
+                              </p>
+                            )}
+                            {others.map((it) => (
+                              <button
+                                key={it.key}
+                                type="button"
+                                role="menuitem"
+                                data-testid={`cms-tab-menu-${tab.key}-${it.key}`}
+                                onClick={() => goToSection(tab.key, it.key)}
+                                className={itemCls(mainTab === tab.key && currentSectionOf(tab.key) === it.key && !focusId)}
+                              >
+                                <span>{it.label}</span>
+                                {it.sharedWithHomepage && sharedTag}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
+      <p data-testid="cms-hub-scope-note" className="text-[11px] text-slate-500">
+        Pusat Konten mengelola isi Navigasi, Homepage, dan setiap section halaman Platform, Solusi, Modul, Nova AI, dan
+        Integrasi (klik panah pada tab untuk memilih section). Urutan dan tampil/sembunyi section diatur di{" "}
+        <a href="/admin/page-sections" className="font-semibold text-[#087BEE] hover:underline">
+          Halaman &amp; Section
+        </a>
+        ; footer, FAQ, dan announcement di{" "}
+        <a href="/admin/site-content" className="font-semibold text-[#087BEE] hover:underline">
+          Konten Global
+        </a>
+        .
+      </p>
+      {sharedNotice && mainTab === "homepage" && (
+        <p data-testid="cms-shared-notice" className="rounded-xl border border-blue-200 bg-blue-50/60 px-3 py-2 text-[11px] text-blue-900">
+          {sharedNotice}
+        </p>
+      )}
+
+      {/* HALAMAN DALAM: pilihan section + editor isi section */}
+      {INNER_PAGE_TABS.includes(mainTab) && (
+        <div className="space-y-5">
+          <div className="flex overflow-x-auto gap-1 rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-semibold scrollbar-none">
+            {pageSectionItems(mainTab)
+              .filter((it) => !it.sharedWithHomepage)
+              .map((it) => {
+                const isSubActive = currentSectionOf(mainTab) === it.key;
+                return (
+                  <button
+                    key={it.key}
+                    type="button"
+                    data-testid={`cms-section-pill-${mainTab}-${it.key}`}
+                    onClick={() => goToSection(mainTab, it.key)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
+                      isSubActive ? "bg-white text-slate-900 shadow-xs font-bold" : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    <span>{it.label}</span>
+                  </button>
+                );
+              })}
+          </div>
+          <InnerPageContentManager
+            key={`${mainTab}:${currentSectionOf(mainTab)}`}
+            pageKey={mainTab}
+            sectionKey={currentSectionOf(mainTab)}
+            focusItem={innerFocus[mainTab] ?? null}
+          />
+        </div>
+      )}
 
       {/* ==================================================================== */}
       {/* 1. TAB: NAVIGASI WEBSITE */}
@@ -1024,6 +1291,9 @@ export default function AdminCmsUnifiedHubPage() {
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
                         placeholder="Contoh: Layers, Activity, Cpu, Sparkles, Compass"
                       />
+                      <p className="mt-1 text-[10px] text-slate-500">
+                        Ikon &amp; deskripsi disimpan, tetapi desain dropdown navigasi saat ini hanya menampilkan label.
+                      </p>
                     </div>
                   </div>
 
@@ -1035,6 +1305,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <input
                         type="text"
                         required
+                        data-testid="nav-form-labelId"
                         value={editingNavMenu.labelId || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, labelId: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
@@ -1047,6 +1318,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <input
                         type="text"
                         required
+                        data-testid="nav-form-labelEn"
                         value={editingNavMenu.labelEn || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, labelEn: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
@@ -1061,11 +1333,22 @@ export default function AdminCmsUnifiedHubPage() {
                       </label>
                       <input
                         type="text"
+                        data-testid="nav-form-url"
+                        list="nav-url-targets"
                         value={editingNavMenu.url || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, url: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white font-mono"
-                        placeholder="Contoh: /platform/workflow atau /solutions"
+                        placeholder="Contoh: /platform#automation atau /solutions"
                       />
+                      <datalist id="nav-url-targets">
+                        {navUrlSuggestions.map((u) => (
+                          <option key={u} value={u} />
+                        ))}
+                      </datalist>
+                      <p className="mt-1 text-[10px] text-slate-500">
+                        Pilih dari saran (halaman &amp; section yang tersedia) atau ketik path sendiri. Format: /halaman,
+                        /halaman#section, atau https://…
+                      </p>
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -1128,6 +1411,7 @@ export default function AdminCmsUnifiedHubPage() {
                         <label className="text-xs font-semibold text-slate-700">Urutan:</label>
                         <input
                           type="number"
+                          data-testid="nav-form-order"
                           value={editingNavMenu.sortOrder || 1}
                           onChange={(e) =>
                             setEditingNavMenu({
@@ -1141,6 +1425,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
                         <input
                           type="checkbox"
+                          data-testid="nav-form-active"
                           checked={editingNavMenu.isActive ?? true}
                           onChange={(e) =>
                             setEditingNavMenu({ ...editingNavMenu, isActive: e.target.checked })
@@ -1168,7 +1453,7 @@ export default function AdminCmsUnifiedHubPage() {
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 shadow-xs"
                       >
                         <Save className="h-3.5 w-3.5" />
-                        <span>Simpan Menu</span>
+                        <span data-testid="nav-form-save">Simpan Menu</span>
                       </button>
                     </div>
                   </div>
@@ -1190,6 +1475,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
+                          data-testid={`nav-expand-${rootMenu.id}`}
                           onClick={() => setExpandedNavId(isExpanded ? null : rootMenu.id)}
                           className="p-1 rounded text-slate-400 hover:text-slate-600"
                         >
@@ -1220,6 +1506,7 @@ export default function AdminCmsUnifiedHubPage() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
+                          data-testid={`nav-add-sub-${rootMenu.id}`}
                           onClick={() => handleOpenNewNavMenu(rootMenu.id)}
                           className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
@@ -1249,12 +1536,21 @@ export default function AdminCmsUnifiedHubPage() {
                     </div>
 
                     {/* Submenus Drawer */}
+                    {isExpanded && !hasSubs && (
+                      <div className="border-t border-slate-100 bg-slate-50/20 p-3 text-[11px] text-slate-500">
+                        Belum ada submenu. Gunakan tombol &quot;+ Submenu&quot; untuk menambah.
+                      </div>
+                    )}
                     {isExpanded && hasSubs && (
                       <div className="border-t border-slate-100 bg-slate-50/20 p-3 space-y-2">
-                        {rootMenu.submenus.map((sub: any) => (
+                        {rootMenu.submenus.map((sub: any, subIndex: number) => (
                           <div
                             key={sub.id}
-                            className="flex items-center justify-between rounded-lg border border-slate-200/80 bg-white p-2.5 hover:border-blue-200"
+                            data-testid={`nav-sub-${rootMenu.id}-${subIndex}`}
+                            className={
+                              "flex items-center justify-between rounded-lg border p-2.5 hover:border-blue-200 " +
+                              (sub.isActive ? "border-slate-200/80 bg-white" : "border-dashed border-slate-300 bg-slate-50")
+                            }
                           >
                             <div className="flex items-center gap-2.5 pl-6">
                               <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
@@ -1275,6 +1571,41 @@ export default function AdminCmsUnifiedHubPage() {
                             <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
+                                data-testid={`nav-sub-up-${rootMenu.id}-${subIndex}`}
+                                disabled={isSaving || subIndex === 0}
+                                onClick={() => handleMoveSubmenu(rootMenu, subIndex, -1)}
+                                className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30"
+                                title="Naikkan"
+                              >
+                                <ArrowUp className="h-3 w-3" />
+                              </button>
+                              <button
+                                type="button"
+                                data-testid={`nav-sub-down-${rootMenu.id}-${subIndex}`}
+                                disabled={isSaving || subIndex === rootMenu.submenus.length - 1}
+                                onClick={() => handleMoveSubmenu(rootMenu, subIndex, 1)}
+                                className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30"
+                                title="Turunkan"
+                              >
+                                <ArrowDown className="h-3 w-3" />
+                              </button>
+                              <button
+                                type="button"
+                                data-testid={`nav-sub-toggle-${rootMenu.id}-${subIndex}`}
+                                disabled={isSaving}
+                                onClick={() => handleToggleSubmenu(rootMenu, sub)}
+                                className={
+                                  "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border " +
+                                  (sub.isActive ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-300 text-slate-600 bg-white")
+                                }
+                                title={sub.isActive ? "Sembunyikan dari navigasi" : "Tampilkan di navigasi"}
+                              >
+                                {sub.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                                {sub.isActive ? "Tampil" : "Disembunyikan"}
+                              </button>
+                              <button
+                                type="button"
+                                data-testid={`nav-sub-edit-${rootMenu.id}-${subIndex}`}
                                 onClick={() => {
                                   setEditingNavMenu({ ...sub, parentId: rootMenu.id });
                                   setIsNavFormOpen(true);
@@ -1286,7 +1617,8 @@ export default function AdminCmsUnifiedHubPage() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleDeleteNavMenu(sub.id)}
+                                data-testid={`nav-sub-delete-${rootMenu.id}-${subIndex}`}
+                                onClick={() => handleDeleteNavMenu(sub.id, true)}
                                 className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                                 title="Hapus Submenu"
                               >
@@ -1319,13 +1651,8 @@ export default function AdminCmsUnifiedHubPage() {
                 <button
                   key={st.key}
                   type="button"
-                  onClick={() => {
-                    setHomepageTab(st.key);
-                    setIsSlideFormOpen(false);
-                    setIsPartnerFormOpen(false);
-                    setIsTestimonialFormOpen(false);
-                    setIsComparisonFormOpen(false);
-                  }}
+                  data-testid={`cms-section-pill-homepage-${st.key}`}
+                  onClick={() => goToSection("homepage", st.key)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                     isSubActive
                       ? "bg-white text-slate-900 shadow-xs font-bold"
@@ -2397,6 +2724,17 @@ export default function AdminCmsUnifiedHubPage() {
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Kutipan Testimoni (EN)</label>
+                      <textarea
+                        rows={2}
+                        value={editingTestimonial.quoteEn || ""}
+                        onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quoteEn: e.target.value })}
+                        placeholder="Kosong = tampilan bahasa Inggris memakai kutipan ID"
+                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
+                      />
+                    </div>
+
                     <div className="flex items-center justify-between border-t border-slate-200/80 pt-3">
                       <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
@@ -2586,437 +2924,6 @@ export default function AdminCmsUnifiedHubPage() {
         </div>
       )}
 
-      {/* ==================================================================== */}
-      {/* 3. TAB: PLATFORM */}
-      {/* ==================================================================== */}
-      {mainTab === "platform" && (
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Konten Halaman Platform</h3>
-                <p className="text-xs text-slate-500">Banner overview platform dan rincian modul kapabilitas teknis.</p>
-              </div>
-              <button
-                type="button"
-                disabled={isSaving}
-                onClick={() => saveCurrentSection("page_platform")}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
-              >
-                <Save className="h-3.5 w-3.5" />
-                <span>Simpan Halaman Platform</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-5">
-                <ImageUploader
-                  value={sectionForms["page_platform"]?.extraContent?.bannerUrl || ""}
-                  onChange={(url: string) => handleExtraContentChange("page_platform", "bannerUrl", url)}
-                  label="Gambar Banner Overview Platform"
-                  aspectRatio="video"
-                />
-              </div>
-              <div className="lg:col-span-7 space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Badge Section ({editorLang})</label>
-                  <input
-                    type="text"
-                    value={
-                      editorLang === "ID"
-                        ? sectionForms["page_platform"]?.badgeId || ""
-                        : sectionForms["page_platform"]?.badgeEn || ""
-                    }
-                    onChange={(e) =>
-                      handleSectionFieldChange("page_platform", editorLang === "ID" ? "badgeId" : "badgeEn", e.target.value)
-                    }
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs bg-white text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Judul Utama ({editorLang})</label>
-                  <input
-                    type="text"
-                    value={
-                      editorLang === "ID"
-                        ? sectionForms["page_platform"]?.titleId || ""
-                        : sectionForms["page_platform"]?.titleEn || ""
-                    }
-                    onChange={(e) =>
-                      handleSectionFieldChange("page_platform", editorLang === "ID" ? "titleId" : "titleEn", e.target.value)
-                    }
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs bg-white text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Deskripsi ({editorLang})</label>
-                  <textarea
-                    rows={3}
-                    value={
-                      editorLang === "ID"
-                        ? sectionForms["page_platform"]?.subtitleId || ""
-                        : sectionForms["page_platform"]?.subtitleEn || ""
-                    }
-                    onChange={(e) =>
-                      handleSectionFieldChange("page_platform", editorLang === "ID" ? "subtitleId" : "subtitleEn", e.target.value)
-                    }
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs bg-white text-slate-800"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100">
-              <h4 className="text-xs font-bold text-slate-900 mb-3">4 Submodul Platform Utama</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sectionForms["page_platform"]?.extraContent?.submodules?.map((sub: any, idx: number) => (
-                  <div key={idx} className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-2">
-                    <span className="text-[11px] font-bold text-[#087BEE]">{sub.url}</span>
-                    <input
-                      type="text"
-                      value={editorLang === "ID" ? sub.titleId : sub.titleEn}
-                      onChange={(e) => {
-                        const newSubs = [...sectionForms["page_platform"].extraContent.submodules];
-                        newSubs[idx] = {
-                          ...newSubs[idx],
-                          [editorLang === "ID" ? "titleId" : "titleEn"]: e.target.value,
-                        };
-                        handleExtraContentChange("page_platform", "submodules", newSubs);
-                      }}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs bg-white text-slate-800 font-bold"
-                    />
-                    <textarea
-                      rows={2}
-                      value={editorLang === "ID" ? sub.descId : sub.descEn}
-                      onChange={(e) => {
-                        const newSubs = [...sectionForms["page_platform"].extraContent.submodules];
-                        newSubs[idx] = {
-                          ...newSubs[idx],
-                          [editorLang === "ID" ? "descId" : "descEn"]: e.target.value,
-                        };
-                        handleExtraContentChange("page_platform", "submodules", newSubs);
-                      }}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs bg-white text-slate-800"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ==================================================================== */}
-      {/* 4. TAB: SOLUSI (SOLUTIONS) */}
-      {/* ==================================================================== */}
-      {mainTab === "solutions" && (
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Daftar Solusi Fasilitas Kesehatan</h3>
-                <p className="text-xs text-slate-500">
-                  Solusi terdedikasi untuk laboratorium RS, lab komersial, patologi, mikrobiologi, dan bank darah.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleOpenNewSolution}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs shrink-0"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Tambah Solusi Baru</span>
-              </button>
-            </div>
-
-            {isSolutionFormOpen && editingSolution && (
-              <div className="rounded-2xl border-2 border-blue-200 bg-blue-50/20 p-5 space-y-4 animate-in fade-in">
-                <div className="flex items-center justify-between border-b border-blue-100 pb-3">
-                  <h4 className="text-xs font-bold text-slate-900">
-                    {editingSolution.slug ? `Edit Solusi: ${editingSolution.name}` : "Tambah Solusi Baru"}
-                  </h4>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsSolutionFormOpen(false);
-                      setEditingSolution(null);
-                    }}
-                    className="p-1 rounded-lg text-slate-400 hover:bg-slate-100"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleSaveSolution} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Slug URL *</label>
-                      <input
-                        type="text"
-                        required
-                        value={editingSolution.slug || ""}
-                        onChange={(e) => setEditingSolution({ ...editingSolution, slug: e.target.value })}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800 font-mono"
-                        placeholder="contoh: hospital-laboratory"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Nama Solusi *</label>
-                      <input
-                        type="text"
-                        required
-                        value={editingSolution.name || ""}
-                        onChange={(e) => setEditingSolution({ ...editingSolution, name: e.target.value })}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
-                        placeholder="Laboratorium Rumah Sakit"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Kategori / Tag</label>
-                      <input
-                        type="text"
-                        value={editingSolution.category || ""}
-                        onChange={(e) => setEditingSolution({ ...editingSolution, category: e.target.value })}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Tagline</label>
-                    <input
-                      type="text"
-                      value={editingSolution.tagline || ""}
-                      onChange={(e) => setEditingSolution({ ...editingSolution, tagline: e.target.value })}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Deskripsi Lengkap</label>
-                    <textarea
-                      rows={3}
-                      value={editingSolution.description || ""}
-                      onChange={(e) => setEditingSolution({ ...editingSolution, description: e.target.value })}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200/80">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSolutionFormOpen(false);
-                        setEditingSolution(null);
-                      }}
-                      className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSaving}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
-                    >
-                      <Save className="h-3.5 w-3.5" />
-                      <span>Simpan Solusi</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {cmsData?.solutions?.items?.map((item: any) => (
-                <div
-                  key={item.slug}
-                  className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col justify-between hover:border-blue-300 hover:shadow-xs transition-all"
-                >
-                  <div>
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-[#087BEE] border border-blue-200/60">
-                      {item.category || "Solusi"}
-                    </span>
-                    <h4 className="text-xs font-bold text-slate-900 mt-2">{item.name}</h4>
-                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">/solutions/{item.slug}</p>
-                    <p className="text-xs text-slate-600 line-clamp-3 mt-2">{item.description}</p>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-1.5 border-t border-slate-100 pt-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingSolution(item);
-                        setIsSolutionFormOpen(true);
-                      }}
-                      className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:text-blue-600"
-                    >
-                      <Edit className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteSolution(item.slug)}
-                      className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ==================================================================== */}
-      {/* 5. TAB: MODUL (MODULES) */}
-      {/* ==================================================================== */}
-      {mainTab === "modules" && (
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Daftar Modul Diagnova</h3>
-                <p className="text-xs text-slate-500">Hematologi, Bank Darah, Inventaris Reagen, Patologi, dan Mikrobiologi.</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {cmsData?.modules?.items?.map((item: any) => (
-                <div
-                  key={item.slug}
-                  className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col justify-between hover:border-blue-300 hover:shadow-xs transition-all"
-                >
-                  <div>
-                    <span className="rounded-md bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-700 border border-purple-200/60">
-                      Modul Klinis
-                    </span>
-                    <h4 className="text-xs font-bold text-slate-900 mt-2">{item.name}</h4>
-                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">/modules/{item.slug}</p>
-                    <p className="text-xs text-slate-600 line-clamp-3 mt-2">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ==================================================================== */}
-      {/* 6. TAB: NOVA AI */}
-      {/* ==================================================================== */}
-      {mainTab === "nova_ai" && (
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Konten Nova AI Copilot</h3>
-                <p className="text-xs text-slate-500">AI assists. Doctors decide. Narasi klinis dan etika kolaborasi medis.</p>
-              </div>
-              <button
-                type="button"
-                disabled={isSaving}
-                onClick={() => saveCurrentSection("page_nova_ai")}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
-              >
-                <Save className="h-3.5 w-3.5" />
-                <span>Simpan Konten Nova AI</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-span-5">
-                <ImageUploader
-                  value={sectionForms["page_nova_ai"]?.extraContent?.bannerUrl || ""}
-                  onChange={(url: string) => handleExtraContentChange("page_nova_ai", "bannerUrl", url)}
-                  label="Gambar Banner Nova AI"
-                  aspectRatio="video"
-                />
-              </div>
-              <div className="lg:col-span-7 space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Badge Section ({editorLang})</label>
-                  <input
-                    type="text"
-                    value={
-                      editorLang === "ID"
-                        ? sectionForms["page_nova_ai"]?.badgeId || ""
-                        : sectionForms["page_nova_ai"]?.badgeEn || ""
-                    }
-                    onChange={(e) =>
-                      handleSectionFieldChange("page_nova_ai", editorLang === "ID" ? "badgeId" : "badgeEn", e.target.value)
-                    }
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs bg-white text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Judul Utama ({editorLang})</label>
-                  <input
-                    type="text"
-                    value={
-                      editorLang === "ID"
-                        ? sectionForms["page_nova_ai"]?.titleId || ""
-                        : sectionForms["page_nova_ai"]?.titleEn || ""
-                    }
-                    onChange={(e) =>
-                      handleSectionFieldChange("page_nova_ai", editorLang === "ID" ? "titleId" : "titleEn", e.target.value)
-                    }
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs bg-white text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Sub-Headline ({editorLang})</label>
-                  <textarea
-                    rows={3}
-                    value={
-                      editorLang === "ID"
-                        ? sectionForms["page_nova_ai"]?.subtitleId || ""
-                        : sectionForms["page_nova_ai"]?.subtitleEn || ""
-                    }
-                    onChange={(e) =>
-                      handleSectionFieldChange("page_nova_ai", editorLang === "ID" ? "subtitleId" : "subtitleEn", e.target.value)
-                    }
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs bg-white text-slate-800"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ==================================================================== */}
-      {/* 7. TAB: INTEGRASI */}
-      {/* ==================================================================== */}
-      {mainTab === "integrations" && (
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Daftar Sistem & Protokol Integrasi</h3>
-                <p className="text-xs text-slate-500">SIMRS, Analyzer LIS, SATUSEHAT Kemenkes RI, PACS/RIS, dan EMR Bridge.</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {cmsData?.integrations?.items?.map((item: any) => (
-                <div
-                  key={item.slug}
-                  className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col justify-between hover:border-blue-300 hover:shadow-xs transition-all"
-                >
-                  <div>
-                    <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200/60">
-                      {item.protocol || "Protokol"}
-                    </span>
-                    <h4 className="text-xs font-bold text-slate-900 mt-2">{item.name}</h4>
-                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">/integration/{item.slug}</p>
-                    <p className="text-xs text-slate-600 line-clamp-3 mt-2">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

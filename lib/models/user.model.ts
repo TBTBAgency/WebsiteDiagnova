@@ -1,6 +1,16 @@
 import { db } from "@/lib/db";
+import { isAdminRole } from "@/lib/auth-secret";
 import { RoleRecord, UserRecord } from "@/types";
 import bcrypt from "bcryptjs";
+import { evaluateMagicLinkEligibility } from "@/lib/magic-link-eligibility";
+
+/** Error domain Manajemen Pengguna; pesan aman ditampilkan ke admin. */
+export class UserManagementError extends Error {
+  constructor(message: string, public readonly httpStatus: 400 | 403 | 404 | 409 = 400) {
+    super(message);
+    this.name = "UserManagementError";
+  }
+}
 
 export interface SafeUser {
   id: string;
@@ -17,6 +27,8 @@ export interface SafeUser {
   demoActivatedAt?: string | null;
   demoExpiresAt?: string | null;
   createdAt: string;
+  /** Kelayakan Magic Link (dievaluasi di server; lihat user-magic-link.model). */
+  magicLink?: { eligible: boolean; reason: string; code: string | null; hasDemoRequest: boolean };
 }
 
 export interface UserWithPassword extends SafeUser {
@@ -103,10 +115,14 @@ export async function getAllUsers(roleFilter: string = "USER"): Promise<SafeUser
       },
     },
     orderBy: { createdAt: "desc" },
-    include: { role: true },
+    include: { role: true, leads: { select: { id: true, approvalStatus: true, createdAt: true } } },
   });
 
   return users.map((u) => ({
+    magicLink: (() => {
+      const e = evaluateMagicLinkEligibility({ roleName: u.role?.name, status: u.status, demoExpiresAt: u.demoExpiresAt, leads: u.leads });
+      return { eligible: e.eligible, reason: e.reason, code: e.eligible ? null : e.code, hasDemoRequest: u.leads.length > 0 };
+    })(),
     id: u.id,
     name: u.name,
     email: u.email,
@@ -145,12 +161,12 @@ export async function updateUser(
   });
 
   if (!target) {
-    throw new Error("Pengguna tidak ditemukan.");
+    throw new UserManagementError("Pengguna tidak ditemukan.", 404);
   }
 
   // PROTEKSI KETAT: Dilarang mengubah akun ADMIN melalui modul Manajemen Pengguna
-  if (target.role?.name === "ADMIN") {
-    throw new Error("Akses ditolak: Akun Administrator dilindungi dari modifikasi Manajemen Pengguna.");
+  if (isAdminRole(target.role?.name)) {
+    throw new UserManagementError("Akses ditolak: Akun Administrator dilindungi dari modifikasi Manajemen Pengguna.", 403);
   }
 
   const updated = await db.user.update({
@@ -203,12 +219,23 @@ export async function deleteUser(id: string): Promise<SafeUser> {
   });
 
   if (!target) {
-    throw new Error("Pengguna tidak ditemukan.");
+    throw new UserManagementError("Pengguna tidak ditemukan.", 404);
   }
 
   // PROTEKSI KETAT: Dilarang menghapus akun ADMIN
-  if (target.role?.name === "ADMIN") {
-    throw new Error("Akses ditolak: Akun Administrator dilindungi dari penghapusan.");
+  if (isAdminRole(target.role?.name)) {
+    throw new UserManagementError("Akses ditolak: Akun Administrator dilindungi dari penghapusan.", 403);
+  }
+
+  // Integritas data: akun yang punya riwayat permohonan demo tidak dihapus. Penghapusan akan
+  // memutus relasi Lead/Magic Link (onDelete SetNull) dan approval berikutnya membuat akun baru
+  // dengan masa demo penuh lagi. Gunakan "Nonaktifkan" untuk mencabut akses.
+  const history = await db.lead.count({ where: { userId: id } });
+  if (history > 0) {
+    throw new UserManagementError(
+      `Akun memiliki ${history} riwayat permohonan demo dan tidak dapat dihapus. Nonaktifkan akun untuk mencabut akses.`,
+      409
+    );
   }
 
   const deleted = await db.user.delete({
@@ -235,12 +262,15 @@ export async function deleteUser(id: string): Promise<SafeUser> {
 }
 
 /**
- * Membuat user baru dengan enkripsi password menggunakan bcrypt
+ * Membuat akun klien (USER) dari Manajemen Pengguna.
+ *
+ * Akun USER TIDAK memiliki password: login password hanya untuk Administrator
+ * (lihat auth.controller), sedangkan klien masuk lewat Magic Link yang dibuat saat
+ * permohonan demo dengan email yang sama disetujui. Karena itu passwordHash selalu null.
  */
 export async function createUser(data: {
   name: string;
   email: string;
-  password?: string;
   institution?: string | null;
   jobTitle?: string | null;
   phone?: string | null;
@@ -248,15 +278,6 @@ export async function createUser(data: {
   status?: number;
   demoDurationDays?: number | null;
 }): Promise<SafeUser> {
-  let passwordHash = "";
-  if (data.password) {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash(data.password, salt);
-  } else {
-    const salt = await bcrypt.genSalt(10);
-    passwordHash = await bcrypt.hash("Diagnova2026!", salt);
-  }
-
   // Jika roleId tidak diberikan, default ke role USER
   let roleId = data.roleId;
   if (!roleId) {
@@ -270,7 +291,7 @@ export async function createUser(data: {
     data: {
       name: data.name,
       email: data.email.toLowerCase().trim(),
-      passwordHash,
+      passwordHash: null,
       institution: data.institution || null,
       jobTitle: data.jobTitle || null,
       phone: data.phone || null,
@@ -300,79 +321,8 @@ export async function createUser(data: {
 }
 
 /**
- * Mencari atau membuat user dari pengajuan lead request demo
- */
-export async function findOrCreateUserForLead(data: {
-  name: string;
-  institution: string;
-  jobTitle: string;
-  email: string;
-  phone: string;
-}): Promise<string> {
-  const existing = await db.user.findUnique({
-    where: { email: data.email.toLowerCase().trim() },
-  });
-
-  if (existing) {
-    await db.user.update({
-      where: { id: existing.id },
-      data: {
-        name: data.name,
-        institution: data.institution,
-        jobTitle: data.jobTitle,
-        phone: data.phone,
-      },
-    });
-    return existing.id;
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash("LeadDemo2026!", salt);
-
-  const newUser = await db.user.create({
-    data: {
-      name: data.name,
-      email: data.email.toLowerCase().trim(),
-      passwordHash,
-      institution: data.institution,
-      jobTitle: data.jobTitle,
-      phone: data.phone,
-      status: 1,
-    },
-  });
-
-  return newUser.id;
-}
-
-/**
  * Verifikasi password user
  */
 export async function verifyPassword(plain: string, hash: string): Promise<boolean> {
   return bcrypt.compare(plain, hash);
-}
-
-/**
- * Menjamin adanya akun ADMIN default
- */
-export async function ensureDefaultAdmin(): Promise<SafeUser> {
-  const defaultEmail = "admin@diagnova.id";
-  const existing = await findUserByEmail(defaultEmail);
-  if (existing) {
-    return existing;
-  }
-
-  let role = await db.role.findFirst({ where: { name: "ADMIN" } });
-  if (!role) {
-    role = await db.role.create({
-      data: { name: "ADMIN", description: "Administrator pengelola sistem, website, dan otorisasi Diagnova" },
-    });
-  }
-
-  return createUser({
-    name: "Diagnova Admin",
-    email: defaultEmail,
-    password: "Diagnova2026!",
-    roleId: role.id,
-    status: 1,
-  });
 }

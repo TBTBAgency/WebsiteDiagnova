@@ -1,12 +1,49 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
+
+/**
+ * Seed konten CMS (homepage + navigasi) ke struktur JSON cms_sections.extraContent.
+ *
+ * AMAN untuk dijalankan ulang: section yang sudah ada TIDAK ditimpa, sehingga perubahan
+ * yang dibuat admin lewat CMS tidak hilang. Set SEED_CMS_OVERWRITE=true untuk sengaja
+ * mengembalikan konten ke nilai bawaan.
+ *   npx tsx --env-file=.env prisma/seed-cms.ts
+ */
+const OVERWRITE = process.env.SEED_CMS_OVERWRITE === "true";
+
+async function upsertSection(args: Prisma.CmsSectionUpsertArgs) {
+  const existing = await prisma.cmsSection.findUnique({ where: args.where });
+  if (existing && !OVERWRITE) {
+    console.log(`  - section '${existing.sectionKey}' sudah ada, dilewati`);
+    return existing;
+  }
+  return prisma.cmsSection.upsert(args);
+}
+
+/** Mengisi array item di extraContent[field] bila masih kosong (atau OVERWRITE). */
+async function seedItems(sectionKey: string, field: string, items: Record<string, unknown>[], idPrefix: string) {
+  const section = await prisma.cmsSection.findUnique({ where: { sectionKey } });
+  if (!section) return;
+  const extra = (section.extraContent as Record<string, unknown> | null) || {};
+  if (Array.isArray(extra[field]) && (extra[field] as unknown[]).length > 0 && !OVERWRITE) {
+    console.log(`  - ${sectionKey}.${field} sudah berisi data, dilewati`);
+    return;
+  }
+  const withIds = items.map((item, i) => ({ id: `${idPrefix}-${i + 1}`, isActive: true, ...item }));
+  await prisma.cmsSection.update({
+    where: { sectionKey },
+    data: { extraContent: { ...extra, [field]: withIds } as Prisma.InputJsonValue },
+  });
+}
 
 async function seedCms() {
   console.log("Seeding CMS Homepage initial content...");
 
   // 1. HERO SECTION
-  const heroSection = await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "hero" },
     update: {
       badgeId: "Platform Intelijen Laboratorium Berbasis AI",
@@ -94,19 +131,11 @@ async function seedCms() {
     },
   ];
 
-  await prisma.cmsHeroSlide.deleteMany({ where: { sectionId: heroSection.id } });
-  for (const slide of heroSlidesData) {
-    await prisma.cmsHeroSlide.create({
-      data: {
-        ...slide,
-        sectionId: heroSection.id,
-      },
-    });
-  }
+  await seedItems("hero", "slides", heroSlidesData, "hero-slide");
   console.log("Hero section & slides seeded.");
 
   // 2. TRUSTED BY SECTION
-  const trustedSection = await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "trusted_by" },
     update: {
       badgeId: "Kemitraan",
@@ -138,19 +167,11 @@ async function seedCms() {
     { name: "RSUD Tarakan", logoUrl: "/images/trust-logo.svg", sortOrder: 6 },
   ];
 
-  await prisma.cmsPartner.deleteMany({ where: { sectionId: trustedSection.id } });
-  for (const partner of partnersData) {
-    await prisma.cmsPartner.create({
-      data: {
-        ...partner,
-        sectionId: trustedSection.id,
-      },
-    });
-  }
+  await seedItems("trusted_by", "partners", partnersData, "partner");
   console.log("Trusted by section & partners seeded.");
 
   // 3. ABOUT SECTION
-  await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "about" },
     update: {
       badgeId: "Tentang Diagnova",
@@ -191,7 +212,7 @@ async function seedCms() {
   console.log("About section seeded.");
 
   // 4. COMPARISON SECTION
-  const comparisonSection = await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "comparison" },
     update: {
       badgeId: "Perbandingan LIS",
@@ -311,19 +332,11 @@ async function seedCms() {
     },
   ];
 
-  await prisma.cmsComparisonItem.deleteMany({ where: { sectionId: comparisonSection.id } });
-  for (const item of comparisonItemsData) {
-    await prisma.cmsComparisonItem.create({
-      data: {
-        ...item,
-        sectionId: comparisonSection.id,
-      },
-    });
-  }
+  await seedItems("comparison", "items", comparisonItemsData, "comparison");
   console.log("Comparison section & items seeded.");
 
   // 5. WORKFLOW SECTION
-  await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "workflow" },
     update: {
       badgeId: "Alur Kerja Presisi",
@@ -464,7 +477,7 @@ async function seedCms() {
   console.log("Workflow section seeded.");
 
   // 6. INFRASTRUCTURE SECTION
-  await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "infrastructure" },
     update: {
       badgeId: "Infrastruktur & Arsitektur",
@@ -561,7 +574,7 @@ async function seedCms() {
   console.log("Infrastructure section seeded.");
 
   // 7. TESTIMONIALS SECTION
-  const testimonialsSection = await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "testimonials" },
     update: {
       badgeId: "Testimoni Mitra",
@@ -651,19 +664,11 @@ async function seedCms() {
     },
   ];
 
-  await prisma.cmsTestimonial.deleteMany({ where: { sectionId: testimonialsSection.id } });
-  for (const t of testimonialsData) {
-    await prisma.cmsTestimonial.create({
-      data: {
-        ...t,
-        sectionId: testimonialsSection.id,
-      },
-    });
-  }
+  await seedItems("testimonials", "items", testimonialsData, "testimonial");
   console.log("Testimonials section & items seeded.");
 
   // 8. CTA BANNER SECTION
-  await prisma.cmsSection.upsert({
+  await upsertSection({
     where: { sectionKey: "cta" },
     update: {
       badgeId: "Mulai Sekarang",
@@ -702,6 +707,17 @@ async function seedCms() {
     },
   });
   console.log("CTA Banner section seeded.");
+
+  // 9. NAVIGATION (menu & submenu Navbar) — data awal sama dengan menu bawaan Navbar
+  const navigation = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "seed-data", "navigation.json"), "utf8")
+  ) as { menus: unknown[] };
+  await upsertSection({
+    where: { sectionKey: "navigation" },
+    update: { extraContent: navigation as Prisma.InputJsonValue, isPublished: true },
+    create: { sectionKey: "navigation", extraContent: navigation as Prisma.InputJsonValue, isPublished: true },
+  });
+  console.log("Navigation menus seeded.");
 
   console.log("ALL CMS HOMEPAGE CONTENT SEEDED SUCCESSFULLY!");
 }

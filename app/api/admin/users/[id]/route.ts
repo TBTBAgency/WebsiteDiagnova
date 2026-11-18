@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
-import { updateUser, deleteUser, findUserById } from "@/lib/models/user.model";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { isAdminRole } from "@/lib/auth-secret";
+import { recordAuditLog } from "@/lib/models/audit.model";
+import { updateUser, deleteUser, findUserById, UserManagementError } from "@/lib/models/user.model";
 import { updateUserSchema } from "@/lib/validations";
 import { ApiResponse } from "@/types";
 
@@ -19,20 +21,9 @@ interface Params {
  */
 export async function PUT(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang berhak mengubah data pengguna." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const { id } = params;
     if (!id) {
@@ -51,7 +42,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (existingUser.roleName === "ADMIN" || existingUser.role === "ADMIN") {
+    if (isAdminRole(existingUser.roleName) || isAdminRole(existingUser.role)) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -77,6 +68,22 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
     const updated = await updateUser(id, validation.data);
 
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_UPDATED",
+      entity: "User",
+      recordId: id,
+      oldValue: {
+        name: existingUser.name,
+        institution: existingUser.institution,
+        jobTitle: existingUser.jobTitle,
+        phone: existingUser.phone,
+        status: existingUser.status,
+      },
+      newValue: validation.data,
+      ...getClientInfo(request.headers),
+    });
+
     return NextResponse.json<ApiResponse>({
       success: true,
       message: "Data pengguna berhasil diperbarui.",
@@ -84,12 +91,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("PUT user error:", error);
-    const err = error as { message?: string };
-    const status = err?.message?.includes("Akses ditolak") ? 403 : 500;
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal memperbarui data pengguna." },
-      { status }
-    );
+    if (error instanceof UserManagementError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
+    // Error lain (mis. Prisma) tidak diteruskan ke klien.
+    return NextResponse.json<ApiResponse>({ success: false, message: "Gagal memperbarui data pengguna." }, { status: 500 });
   }
 }
 
@@ -100,20 +106,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
  */
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang berhak menghapus pengguna." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const { id } = params;
     if (!id) {
@@ -132,7 +127,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (existingUser.roleName === "ADMIN" || existingUser.role === "ADMIN") {
+    if (isAdminRole(existingUser.roleName) || isAdminRole(existingUser.role)) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -144,6 +139,15 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
     const deleted = await deleteUser(id);
 
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_DELETED",
+      entity: "User",
+      recordId: id,
+      oldValue: { email: deleted.email, name: deleted.name, role: deleted.roleName },
+      ...getClientInfo(request.headers),
+    });
+
     return NextResponse.json<ApiResponse>({
       success: true,
       message: "Pengguna berhasil dihapus.",
@@ -151,12 +155,11 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     });
   } catch (error: unknown) {
     console.error("DELETE user error:", error);
-    const err = error as { message?: string };
-    const status = err?.message?.includes("Akses ditolak") ? 403 : 500;
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menghapus pengguna." },
-      { status }
-    );
+    if (error instanceof UserManagementError) {
+      return NextResponse.json<ApiResponse>({ success: false, message: error.message }, { status: error.httpStatus });
+    }
+    // Error lain (mis. Prisma) tidak diteruskan ke klien.
+    return NextResponse.json<ApiResponse>({ success: false, message: "Gagal menghapus pengguna." }, { status: 500 });
   }
 }
 

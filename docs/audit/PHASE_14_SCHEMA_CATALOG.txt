@@ -1,0 +1,226 @@
+# Phase 14 - katalog struktur PostgreSQL (schema public, tanpa isi data)
+# Sumber: diagnova_baseline_test setelah 'prisma migrate deploy' baseline 20261117000000_baseline, 2026-11-17
+# Identik baris-per-baris dengan DB dev diagnova_v2 (read-only) - termasuk urutan kolom, default, constraint, index, enum.
+# Dibuat dengan query katalog read-only (lihat docs/PHASE_14_BASELINE_MIGRATION_TEST.md, lampiran B). Tabel _prisma_migrations dikecualikan.
+
+COLUMN audit_logs.action type=character varying(100) null=NO default=<none> pos=3
+COLUMN audit_logs.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=10
+COLUMN audit_logs.entity type=character varying(100) null=NO default=<none> pos=4
+COLUMN audit_logs.id type=text null=NO default=<none> pos=1
+COLUMN audit_logs.ip_address type=character varying(50) null=YES default=<none> pos=8
+COLUMN audit_logs.new_value type=jsonb null=YES default=<none> pos=7
+COLUMN audit_logs.old_value type=jsonb null=YES default=<none> pos=6
+COLUMN audit_logs.record_id type=character varying(100) null=YES default=<none> pos=5
+COLUMN audit_logs.user_agent type=character varying(255) null=YES default=<none> pos=9
+COLUMN audit_logs.user_id type=text null=YES default=<none> pos=2
+COLUMN cms_sections.badge_en type=text null=YES default=<none> pos=4
+COLUMN cms_sections.badge_id type=text null=YES default=<none> pos=3
+COLUMN cms_sections.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=12
+COLUMN cms_sections.extra_content type=jsonb null=YES default=<none> pos=9
+COLUMN cms_sections.id type=text null=NO default=<none> pos=1
+COLUMN cms_sections.is_published type=boolean null=NO default=true pos=10
+COLUMN cms_sections.section_key type=character varying(50) null=NO default=<none> pos=2
+COLUMN cms_sections.subtitle_en type=text null=YES default=<none> pos=8
+COLUMN cms_sections.subtitle_id type=text null=YES default=<none> pos=7
+COLUMN cms_sections.title_en type=text null=YES default=<none> pos=6
+COLUMN cms_sections.title_id type=text null=YES default=<none> pos=5
+COLUMN cms_sections.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=13
+COLUMN cms_sections.updated_by type=character varying(100) null=YES default=<none> pos=11
+COLUMN demo_magic_links.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=10
+COLUMN demo_magic_links.email type=character varying(255) null=NO default=<none> pos=3
+COLUMN demo_magic_links.expires_at type=timestamp without time zone p=3 null=NO default=<none> pos=6
+COLUMN demo_magic_links.id type=text null=NO default=<none> pos=1
+COLUMN demo_magic_links.ip_address type=character varying(50) null=YES default=<none> pos=8
+COLUMN demo_magic_links.lead_id type=text null=NO default=<none> pos=4
+COLUMN demo_magic_links.token_hash type=character varying(128) null=NO default=<none> pos=2
+COLUMN demo_magic_links.used_at type=timestamp without time zone p=3 null=YES default=<none> pos=7
+COLUMN demo_magic_links.user_agent type=character varying(255) null=YES default=<none> pos=9
+COLUMN demo_magic_links.user_id type=text null=YES default=<none> pos=5
+COLUMN lab_order_items.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=4
+COLUMN lab_order_items.id type=text null=NO default=<none> pos=1
+COLUMN lab_order_items.order_id type=text null=NO default=<none> pos=2
+COLUMN lab_order_items.test_catalog_id type=text null=NO default=<none> pos=3
+COLUMN lab_orders.clinical_notes type=text null=YES default=<none> pos=7
+COLUMN lab_orders.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=10
+COLUMN lab_orders.id type=text null=NO default=<none> pos=1
+COLUMN lab_orders.order_number type=character varying(50) null=NO default=<none> pos=2
+COLUMN lab_orders.ordered_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=9
+COLUMN lab_orders.patient_id type=text null=NO default=<none> pos=3
+COLUMN lab_orders.physician_id type=text null=YES default=<none> pos=4
+COLUMN lab_orders.priority type=order_priority null=NO default='routine'::order_priority pos=6
+COLUMN lab_orders.source_location type=character varying(100) null=NO default=<none> pos=5
+COLUMN lab_orders.status type=order_status null=NO default='ordered'::order_status pos=8
+COLUMN lab_orders.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=11
+COLUMN leads.approval_status type=lead_approval_status null=NO default='pending'::lead_approval_status pos=11
+COLUMN leads.approved_at type=timestamp without time zone p=3 null=YES default=<none> pos=12
+COLUMN leads.approved_by type=character varying(100) null=YES default=<none> pos=13
+COLUMN leads.confirmed_demo_date type=timestamp without time zone p=3 null=YES default=<none> pos=16
+COLUMN leads.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=21
+COLUMN leads.demo_date type=timestamp without time zone p=3 null=YES default=<none> pos=17
+COLUMN leads.demo_duration_days type=integer null=NO default=3 pos=18
+COLUMN leads.email type=character varying(255) null=NO default=<none> pos=6
+COLUMN leads.id type=text null=NO default=<none> pos=1
+COLUMN leads.institution type=character varying(150) null=NO default=<none> pos=4
+COLUMN leads.institution_type type=institution_type null=NO default='hospital'::institution_type pos=8
+COLUMN leads.jobTitle type=character varying(100) null=NO default=<none> pos=5
+COLUMN leads.name type=character varying(100) null=NO default=<none> pos=3
+COLUMN leads.notes type=text null=YES default=<none> pos=9
+COLUMN leads.phone type=character varying(30) null=NO default=<none> pos=7
+COLUMN leads.rejection_reason type=text null=YES default=<none> pos=14
+COLUMN leads.requested_demo_date type=timestamp without time zone p=3 null=YES default=<none> pos=15
+COLUMN leads.status type=integer null=NO default=1 pos=10
+COLUMN leads.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=22
+COLUMN leads.user_id type=text null=YES default=<none> pos=2
+COLUMN leads.voucher_code type=character varying(50) null=YES default=<none> pos=19
+COLUMN leads.voucher_expiry type=timestamp without time zone p=3 null=YES default=<none> pos=20
+COLUMN patients.address type=text null=YES default=<none> pos=8
+COLUMN patients.birth_date type=timestamp without time zone p=3 null=NO default=<none> pos=5
+COLUMN patients.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=9
+COLUMN patients.id type=text null=NO default=<none> pos=1
+COLUMN patients.mrn type=character varying(50) null=NO default=<none> pos=2
+COLUMN patients.name type=character varying(120) null=NO default=<none> pos=4
+COLUMN patients.national_id type=character varying(30) null=YES default=<none> pos=3
+COLUMN patients.phone type=character varying(30) null=YES default=<none> pos=7
+COLUMN patients.sex type=gender null=NO default=<none> pos=6
+COLUMN patients.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=10
+COLUMN physicians.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=6
+COLUMN physicians.department type=character varying(100) null=NO default=<none> pos=5
+COLUMN physicians.external_code type=character varying(50) null=NO default=<none> pos=2
+COLUMN physicians.id type=text null=NO default=<none> pos=1
+COLUMN physicians.name type=character varying(120) null=NO default=<none> pos=3
+COLUMN physicians.specialization type=character varying(100) null=NO default=<none> pos=4
+COLUMN physicians.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=7
+COLUMN roles.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=4
+COLUMN roles.description type=character varying(255) null=YES default=<none> pos=3
+COLUMN roles.id type=text null=NO default=<none> pos=1
+COLUMN roles.name type=character varying(50) null=NO default=<none> pos=2
+COLUMN specimens.barcode_number type=character varying(50) null=NO default=<none> pos=2
+COLUMN specimens.collected_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=7
+COLUMN specimens.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=14
+COLUMN specimens.id type=text null=NO default=<none> pos=1
+COLUMN specimens.order_id type=text null=NO default=<none> pos=3
+COLUMN specimens.received_at type=timestamp without time zone p=3 null=YES default=<none> pos=8
+COLUMN specimens.received_by type=character varying(100) null=YES default=<none> pos=13
+COLUMN specimens.rejected_at type=timestamp without time zone p=3 null=YES default=<none> pos=12
+COLUMN specimens.rejected_by type=character varying(100) null=YES default=<none> pos=11
+COLUMN specimens.rejection_reason type=text null=YES default=<none> pos=10
+COLUMN specimens.specimen_type type=specimen_type null=NO default=<none> pos=4
+COLUMN specimens.status type=specimen_status null=NO default='collected'::specimen_status pos=9
+COLUMN specimens.tube_color type=tube_color null=NO default=<none> pos=5
+COLUMN specimens.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=15
+COLUMN specimens.volume type=character varying(30) null=YES default='3.0 mL'::character varying pos=6
+COLUMN test_catalogs.category type=character varying(100) null=NO default=<none> pos=4
+COLUMN test_catalogs.code type=character varying(50) null=NO default=<none> pos=2
+COLUMN test_catalogs.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=10
+COLUMN test_catalogs.id type=text null=NO default=<none> pos=1
+COLUMN test_catalogs.is_active type=boolean null=NO default=true pos=9
+COLUMN test_catalogs.name type=character varying(150) null=NO default=<none> pos=3
+COLUMN test_catalogs.specimen_type type=specimen_type null=NO default='whole_blood'::specimen_type pos=5
+COLUMN test_catalogs.tat_minutes type=integer null=NO default=60 pos=8
+COLUMN test_catalogs.tube_color type=tube_color null=NO default='lavender_edta'::tube_color pos=6
+COLUMN test_catalogs.unit type=character varying(30) null=YES default=<none> pos=7
+COLUMN test_catalogs.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=11
+COLUMN users.created_at type=timestamp without time zone p=3 null=NO default=CURRENT_TIMESTAMP pos=13
+COLUMN users.demo_activated_at type=timestamp without time zone p=3 null=YES default=<none> pos=11
+COLUMN users.demo_duration_days type=integer null=YES default=<none> pos=10
+COLUMN users.demo_expires_at type=timestamp without time zone p=3 null=YES default=<none> pos=12
+COLUMN users.email type=character varying(255) null=NO default=<none> pos=3
+COLUMN users.id type=text null=NO default=<none> pos=1
+COLUMN users.institution type=character varying(150) null=YES default=<none> pos=5
+COLUMN users.job_title type=character varying(100) null=YES default=<none> pos=6
+COLUMN users.name type=character varying(100) null=NO default=<none> pos=2
+COLUMN users.password_hash type=character varying(255) null=YES default=<none> pos=4
+COLUMN users.phone type=character varying(30) null=YES default=<none> pos=7
+COLUMN users.role_id type=text null=YES default=<none> pos=8
+COLUMN users.status type=integer null=NO default=1 pos=9
+COLUMN users.updated_at type=timestamp without time zone p=3 null=NO default=<none> pos=14
+CONSTRAINT audit_logs.audit_logs_pkey p PRIMARY KEY (id)
+CONSTRAINT cms_sections.cms_sections_pkey p PRIMARY KEY (id)
+CONSTRAINT demo_magic_links.demo_magic_links_lead_id_fkey f FOREIGN KEY (lead_id) REFERENCES leads(id) ON UPDATE CASCADE ON DELETE CASCADE
+CONSTRAINT demo_magic_links.demo_magic_links_pkey p PRIMARY KEY (id)
+CONSTRAINT demo_magic_links.demo_magic_links_user_id_fkey f FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
+CONSTRAINT lab_order_items.lab_order_items_order_id_fkey f FOREIGN KEY (order_id) REFERENCES lab_orders(id) ON UPDATE CASCADE ON DELETE CASCADE
+CONSTRAINT lab_order_items.lab_order_items_pkey p PRIMARY KEY (id)
+CONSTRAINT lab_order_items.lab_order_items_test_catalog_id_fkey f FOREIGN KEY (test_catalog_id) REFERENCES test_catalogs(id) ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT lab_orders.lab_orders_patient_id_fkey f FOREIGN KEY (patient_id) REFERENCES patients(id) ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT lab_orders.lab_orders_physician_id_fkey f FOREIGN KEY (physician_id) REFERENCES physicians(id) ON UPDATE CASCADE ON DELETE SET NULL
+CONSTRAINT lab_orders.lab_orders_pkey p PRIMARY KEY (id)
+CONSTRAINT leads.leads_pkey p PRIMARY KEY (id)
+CONSTRAINT leads.leads_user_id_fkey f FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
+CONSTRAINT patients.patients_pkey p PRIMARY KEY (id)
+CONSTRAINT physicians.physicians_pkey p PRIMARY KEY (id)
+CONSTRAINT roles.roles_pkey p PRIMARY KEY (id)
+CONSTRAINT specimens.specimens_order_id_fkey f FOREIGN KEY (order_id) REFERENCES lab_orders(id) ON UPDATE CASCADE ON DELETE CASCADE
+CONSTRAINT specimens.specimens_pkey p PRIMARY KEY (id)
+CONSTRAINT test_catalogs.test_catalogs_pkey p PRIMARY KEY (id)
+CONSTRAINT users.users_pkey p PRIMARY KEY (id)
+CONSTRAINT users.users_role_id_fkey f FOREIGN KEY (role_id) REFERENCES roles(id) ON UPDATE CASCADE ON DELETE SET NULL
+ENUM gender [male,female]
+ENUM institution_type [hospital,clinical-lab,pathology-center,microbiology-center,blood-bank,other]
+ENUM lead_approval_status [pending,approved,rejected]
+ENUM lead_status [new,contacted,scheduled,completed]
+ENUM order_priority [routine,cito,urgent]
+ENUM order_status [ordered,specimen_received,processing,partially_validated,completed,cancelled]
+ENUM specimen_status [collected,received_in_lab,processing,archived,rejected]
+ENUM specimen_type [whole_blood,serum,plasma,urine,csf,stool,swab,other]
+ENUM tube_color [lavender_edta,red_plain,yellow_sst,light_blue_citrate,gray_fluoride,green_heparin,urine_container,other]
+ENUM user_role [admin,user]
+ENUM user_status [active,inactive]
+INDEX audit_logs.audit_logs_created_at_idx CREATE INDEX audit_logs_created_at_idx ON public.audit_logs USING btree (created_at)
+INDEX audit_logs.audit_logs_entity_record_id_idx CREATE INDEX audit_logs_entity_record_id_idx ON public.audit_logs USING btree (entity, record_id)
+INDEX audit_logs.audit_logs_pkey CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id)
+INDEX audit_logs.audit_logs_user_id_idx CREATE INDEX audit_logs_user_id_idx ON public.audit_logs USING btree (user_id)
+INDEX cms_sections.cms_sections_pkey CREATE UNIQUE INDEX cms_sections_pkey ON public.cms_sections USING btree (id)
+INDEX cms_sections.cms_sections_section_key_key CREATE UNIQUE INDEX cms_sections_section_key_key ON public.cms_sections USING btree (section_key)
+INDEX demo_magic_links.demo_magic_links_email_idx CREATE INDEX demo_magic_links_email_idx ON public.demo_magic_links USING btree (email)
+INDEX demo_magic_links.demo_magic_links_lead_id_idx CREATE INDEX demo_magic_links_lead_id_idx ON public.demo_magic_links USING btree (lead_id)
+INDEX demo_magic_links.demo_magic_links_pkey CREATE UNIQUE INDEX demo_magic_links_pkey ON public.demo_magic_links USING btree (id)
+INDEX demo_magic_links.demo_magic_links_token_hash_idx CREATE INDEX demo_magic_links_token_hash_idx ON public.demo_magic_links USING btree (token_hash)
+INDEX demo_magic_links.demo_magic_links_token_hash_key CREATE UNIQUE INDEX demo_magic_links_token_hash_key ON public.demo_magic_links USING btree (token_hash)
+INDEX lab_order_items.lab_order_items_order_id_idx CREATE INDEX lab_order_items_order_id_idx ON public.lab_order_items USING btree (order_id)
+INDEX lab_order_items.lab_order_items_pkey CREATE UNIQUE INDEX lab_order_items_pkey ON public.lab_order_items USING btree (id)
+INDEX lab_order_items.lab_order_items_test_catalog_id_idx CREATE INDEX lab_order_items_test_catalog_id_idx ON public.lab_order_items USING btree (test_catalog_id)
+INDEX lab_orders.lab_orders_order_number_idx CREATE INDEX lab_orders_order_number_idx ON public.lab_orders USING btree (order_number)
+INDEX lab_orders.lab_orders_order_number_key CREATE UNIQUE INDEX lab_orders_order_number_key ON public.lab_orders USING btree (order_number)
+INDEX lab_orders.lab_orders_ordered_at_idx CREATE INDEX lab_orders_ordered_at_idx ON public.lab_orders USING btree (ordered_at)
+INDEX lab_orders.lab_orders_patient_id_idx CREATE INDEX lab_orders_patient_id_idx ON public.lab_orders USING btree (patient_id)
+INDEX lab_orders.lab_orders_pkey CREATE UNIQUE INDEX lab_orders_pkey ON public.lab_orders USING btree (id)
+INDEX lab_orders.lab_orders_priority_idx CREATE INDEX lab_orders_priority_idx ON public.lab_orders USING btree (priority)
+INDEX lab_orders.lab_orders_status_idx CREATE INDEX lab_orders_status_idx ON public.lab_orders USING btree (status)
+INDEX leads.leads_approval_status_idx CREATE INDEX leads_approval_status_idx ON public.leads USING btree (approval_status)
+INDEX leads.leads_created_at_idx CREATE INDEX leads_created_at_idx ON public.leads USING btree (created_at)
+INDEX leads.leads_email_idx CREATE INDEX leads_email_idx ON public.leads USING btree (email)
+INDEX leads.leads_pkey CREATE UNIQUE INDEX leads_pkey ON public.leads USING btree (id)
+INDEX leads.leads_status_idx CREATE INDEX leads_status_idx ON public.leads USING btree (status)
+INDEX leads.leads_user_id_idx CREATE INDEX leads_user_id_idx ON public.leads USING btree (user_id)
+INDEX patients.patients_mrn_idx CREATE INDEX patients_mrn_idx ON public.patients USING btree (mrn)
+INDEX patients.patients_mrn_key CREATE UNIQUE INDEX patients_mrn_key ON public.patients USING btree (mrn)
+INDEX patients.patients_name_idx CREATE INDEX patients_name_idx ON public.patients USING btree (name)
+INDEX patients.patients_national_id_key CREATE UNIQUE INDEX patients_national_id_key ON public.patients USING btree (national_id)
+INDEX patients.patients_pkey CREATE UNIQUE INDEX patients_pkey ON public.patients USING btree (id)
+INDEX physicians.physicians_external_code_key CREATE UNIQUE INDEX physicians_external_code_key ON public.physicians USING btree (external_code)
+INDEX physicians.physicians_pkey CREATE UNIQUE INDEX physicians_pkey ON public.physicians USING btree (id)
+INDEX roles.roles_name_key CREATE UNIQUE INDEX roles_name_key ON public.roles USING btree (name)
+INDEX roles.roles_pkey CREATE UNIQUE INDEX roles_pkey ON public.roles USING btree (id)
+INDEX specimens.specimens_barcode_number_idx CREATE INDEX specimens_barcode_number_idx ON public.specimens USING btree (barcode_number)
+INDEX specimens.specimens_barcode_number_key CREATE UNIQUE INDEX specimens_barcode_number_key ON public.specimens USING btree (barcode_number)
+INDEX specimens.specimens_order_id_idx CREATE INDEX specimens_order_id_idx ON public.specimens USING btree (order_id)
+INDEX specimens.specimens_pkey CREATE UNIQUE INDEX specimens_pkey ON public.specimens USING btree (id)
+INDEX specimens.specimens_status_idx CREATE INDEX specimens_status_idx ON public.specimens USING btree (status)
+INDEX test_catalogs.test_catalogs_category_idx CREATE INDEX test_catalogs_category_idx ON public.test_catalogs USING btree (category)
+INDEX test_catalogs.test_catalogs_code_key CREATE UNIQUE INDEX test_catalogs_code_key ON public.test_catalogs USING btree (code)
+INDEX test_catalogs.test_catalogs_pkey CREATE UNIQUE INDEX test_catalogs_pkey ON public.test_catalogs USING btree (id)
+INDEX users.users_email_key CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)
+INDEX users.users_pkey CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)
+TABLE audit_logs
+TABLE cms_sections
+TABLE demo_magic_links
+TABLE lab_order_items
+TABLE lab_orders
+TABLE leads
+TABLE patients
+TABLE physicians
+TABLE roles
+TABLE specimens
+TABLE test_catalogs
+TABLE users

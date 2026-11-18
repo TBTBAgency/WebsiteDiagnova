@@ -23,6 +23,8 @@ import {
   ToggleRight,
   Calendar,
   Ticket,
+  Link2,
+  Copy,
 } from "lucide-react";
 import { SafeUser } from "@/lib/models/user.model";
 
@@ -41,7 +43,6 @@ export default function AdminUsersPage() {
   const [addFormData, setAddFormData] = useState({
     name: "",
     email: "",
-    password: "",
     institution: "",
     jobTitle: "",
     phone: "",
@@ -60,6 +61,39 @@ export default function AdminUsersPage() {
     status: 1,
     demoDurationDays: 7,
   });
+
+  // Magic Link (hanya untuk akun dengan permohonan demo yang disetujui; divalidasi backend)
+  const [issuingFor, setIssuingFor] = useState<string | null>(null);
+  const [magicLinkResult, setMagicLinkResult] = useState<{ url: string; expiresAt: string; user: SafeUser } | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const handleIssueMagicLink = async (u: SafeUser) => {
+    if (!window.confirm(`Terbitkan Magic Link baru untuk ${u.name}? Tautan lama yang belum dipakai akan tidak berlaku.`)) return;
+    setIssuingFor(u.id);
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      const res = await fetch(`/api/admin/users/${u.id}/magic-link`, { method: "POST" });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setLinkCopied(false);
+        setMagicLinkResult({ url: json.data.magicLinkUrl, expiresAt: json.data.expiresAt, user: u });
+      } else {
+        setErrorMessage(json.message || "Magic Link tidak dapat diterbitkan.");
+      }
+    } catch {
+      setErrorMessage("Terjadi kesalahan jaringan.");
+    } finally {
+      setIssuingFor(null);
+      fetchUsers();
+    }
+  };
+
+  const waLinkFor = (u: SafeUser, url: string) => {
+    const digits = (u.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "62");
+    const text = `Halo ${u.name}, berikut tautan masuk demo Diagnova (buka pertama kali dalam 24 jam; setelah itu tautan yang sama dapat dipakai untuk masuk kembali selama masa demo):\n${url}`;
+    return digits ? `https://wa.me/${digits}?text=${encodeURIComponent(text)}` : null;
+  };
 
   // Modal Hapus User
   const [userToDelete, setUserToDelete] = useState<SafeUser | null>(null);
@@ -108,7 +142,6 @@ export default function AdminUsersPage() {
         setAddFormData({
           name: "",
           email: "",
-          password: "",
           institution: "",
           jobTitle: "",
           phone: "",
@@ -495,6 +528,11 @@ export default function AdminUsersPage() {
                             <Clock className="h-3 w-3 text-slate-400" />
                             <span>{demoInfo.subtext}</span>
                           </div>
+                          {u.magicLink && !u.magicLink.eligible && (
+                            <p data-testid={`magic-link-reason-${u.id}`} className="text-[10.5px] text-amber-700 max-w-[260px] leading-snug">
+                              Magic Link: {u.magicLink.reason}
+                            </p>
+                          )}
                         </div>
                       </td>
 
@@ -510,6 +548,17 @@ export default function AdminUsersPage() {
                       {/* Kolom 6: Aksi */}
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            data-testid={`magic-link-${u.id}`}
+                            onClick={() => handleIssueMagicLink(u)}
+                            disabled={!u.magicLink?.eligible || issuingFor === u.id}
+                            title={u.magicLink?.reason || "Status Magic Link tidak diketahui"}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            <Link2 className="h-3 w-3" />
+                            <span>{issuingFor === u.id ? "Memproses…" : "Magic Link"}</span>
+                          </button>
                           <button
                             type="button"
                             onClick={() => openEditModal(u)}
@@ -537,6 +586,54 @@ export default function AdminUsersPage() {
           </table>
         </div>
       </div>
+
+      {/* MODAL HASIL MAGIC LINK (ditampilkan sekali; tidak disimpan di halaman) */}
+      {magicLinkResult && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg rounded-3xl bg-white shadow-xl p-5 space-y-4" data-testid="magic-link-modal">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Magic Link untuk {magicLinkResult.user.name}</h3>
+                <p className="text-xs text-slate-500">
+                  Berlaku hingga {new Date(magicLinkResult.expiresAt).toLocaleString("id-ID")} · dapat dipakai masuk kembali selama masa demo. Tautan hanya ditampilkan sekali.
+                </p>
+              </div>
+              <button type="button" aria-label="Tutup" onClick={() => setMagicLinkResult(null)} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <input readOnly value={magicLinkResult.url} data-testid="magic-link-value" className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono" />
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(magicLinkResult.url);
+                    setLinkCopied(true);
+                  } catch {
+                    setLinkCopied(false);
+                  }
+                }}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold"
+              >
+                <Copy className="h-3.5 w-3.5" /> {linkCopied ? "Tersalin" : "Salin"}
+              </button>
+            </div>
+            {waLinkFor(magicLinkResult.user, magicLinkResult.url) ? (
+              <a
+                href={waLinkFor(magicLinkResult.user, magicLinkResult.url)!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5"
+              >
+                Kirim via WhatsApp ({magicLinkResult.user.phone})
+              </a>
+            ) : (
+              <p className="text-[11px] text-slate-500">Nomor WhatsApp tidak tersedia — salin tautan dan kirim secara manual.</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* MODAL PENAMBAHAN USER (HANYA ROLE USER) */}
       {isAddModalOpen && (
@@ -607,22 +704,18 @@ export default function AdminUsersPage() {
                   />
                 </div>
 
-                {/* Password */}
-                <div className="space-y-1 sm:col-span-2">
-                  <label className="font-semibold text-slate-700">Password Akun *</label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      required
-                      value={addFormData.password}
-                      onChange={(e) =>
-                        setAddFormData((prev) => ({ ...prev, password: e.target.value }))
-                      }
-                      placeholder="Minimal 6 karakter"
-                      className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden"
-                    />
-                    <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                  </div>
+                {/* Akses login klien: tanpa password, melalui Magic Link */}
+                <div
+                  data-testid="user-access-info"
+                  className="sm:col-span-2 p-3 rounded-2xl bg-amber-50/70 border border-amber-200 text-amber-900 flex items-start gap-2"
+                >
+                  <Lock className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                  <span>
+                    Akun klien <strong>tidak memakai password</strong>. Klien masuk melalui{" "}
+                    <strong>Magic Link</strong> yang dibuat ketika permohonan demo dengan email yang sama
+                    disetujui di menu <strong>Permohonan Demo</strong>. Login email + password hanya
+                    berlaku untuk Administrator.
+                  </span>
                 </div>
 
                 {/* Institusi / RS */}
@@ -688,6 +781,9 @@ export default function AdminUsersPage() {
                     <option value={14}>14 Hari (Dua Pekan)</option>
                     <option value={30}>30 Hari (Satu Bulan Penuh)</option>
                   </select>
+                  <p className="text-[11px] text-slate-500">
+                    Hanya catatan. Masa akses demo ditentukan oleh durasi yang dipilih saat permohonan demo disetujui.
+                  </p>
                 </div>
 
                 {/* Status User */}

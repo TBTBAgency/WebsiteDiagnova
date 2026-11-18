@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentSession } from "@/lib/auth-session";
+import { requireAdmin, getClientInfo } from "@/lib/auth-guard";
+import { recordAuditLog } from "@/lib/models/audit.model";
 import { getAllUsers, createUser } from "@/lib/models/user.model";
 import { createUserSchema } from "@/lib/validations";
 import { db } from "@/lib/db";
@@ -14,20 +15,8 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang dapat mengakses data ini." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     // Server-side filter: Hanya role USER
     const users = await getAllUsers("USER");
@@ -53,20 +42,9 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Sesi tidak valid." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "ADMIN") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Akses ditolak. Hanya Administrator yang dapat menambahkan pengguna." },
-        { status: 403 }
-      );
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const session = guard.session;
 
     const body = await request.json();
     const validation = createUserSchema.safeParse(body);
@@ -98,13 +76,21 @@ export async function POST(request: NextRequest) {
     const newUser = await createUser({
       name: validation.data.name,
       email: validation.data.email,
-      password: validation.data.password,
       institution: validation.data.institution,
       jobTitle: validation.data.jobTitle,
       phone: validation.data.phone,
       roleId: userRole.id,
       status: validation.data.status,
       demoDurationDays: validation.data.demoDurationDays,
+    });
+
+    await recordAuditLog({
+      userId: session.userId,
+      action: "USER_CREATED",
+      entity: "User",
+      recordId: newUser.id,
+      newValue: { email: newUser.email, role: newUser.roleName, status: newUser.status },
+      ...getClientInfo(request.headers),
     });
 
     return NextResponse.json<ApiResponse>(
@@ -125,7 +111,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json<ApiResponse>(
-      { success: false, message: err?.message || "Gagal menambahkan pengguna baru." },
+      { success: false, message: "Gagal menambahkan pengguna baru." },
       { status: 500 }
     );
   }

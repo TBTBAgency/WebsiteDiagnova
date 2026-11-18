@@ -24,12 +24,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnnouncementBar } from "./AnnouncementBar";
+import { DEFAULT_ANNOUNCEMENT, type AnnouncementContent } from "@/lib/site-content";
+import type { PublicNavMenu } from "@/lib/models/cms.model";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface NavItem {
+  id?: string;
   label: string;
   href: string;
   children?: {
+    id?: string;
     title: string;
     description: string;
     href: string;
@@ -527,7 +531,31 @@ function LanguageSwitcher({
   );
 }
 
-function getNavIcon(iconName?: string | null) {
+const NAV_ICON_COMPONENTS: Record<string, React.ComponentType<{ className?: string }>> = {
+  layers: Layers,
+  activity: Activity,
+  cpu: Cpu,
+  "shield-check": ShieldCheck,
+  sparkles: Sparkles,
+  "building-2": Building2,
+  stethoscope: Stethoscope,
+  microscope: Microscope,
+  "flask-conical": FlaskConical,
+  "heart-pulse": HeartPulse,
+  network: Network,
+};
+
+/** Hanya kelas warna teks Tailwind yang diizinkan dari data CMS. */
+function safeIconColor(iconColor?: string | null): string | null {
+  return iconColor && /^text-[a-z0-9-]+$/.test(iconColor) ? iconColor : null;
+}
+
+function getNavIcon(iconName?: string | null, iconColor?: string | null) {
+  const color = safeIconColor(iconColor);
+  if (color) {
+    const Icon = NAV_ICON_COMPONENTS[iconName?.toLowerCase() || ""] || Layers;
+    return <Icon className={`h-4 w-4 ${color}`} />;
+  }
   switch (iconName?.toLowerCase()) {
     case "layers":
       return <Layers className="h-4 w-4 text-diagnova-blue" />;
@@ -556,13 +584,24 @@ function getNavIcon(iconName?: string | null) {
   }
 }
 
-export function Navbar() {
+/**
+ * @param announcement Konten announcement dari CMS yang SUDAH dinyatakan tampil oleh server
+ *   (aktif & dalam periode). `null` = announcement disembunyikan.
+ */
+export function Navbar({
+  announcement = DEFAULT_ANNOUNCEMENT,
+  initialMenus,
+}: {
+  announcement?: AnnouncementContent | null;
+  /** Navigasi CMS yang sudah dimuat server. undefined = muat lewat /api/menus; null = pakai navigasi bawaan. */
+  initialMenus?: PublicNavMenu[] | null;
+}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileOpenSection, setMobileOpenSection] = useState<string | null>(null);
   const { language, setLanguage } = useLanguage();
-  const [isDismissed, setIsDismissed] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(!announcement);
   const [barHeight, setBarHeight] = useState(42);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
@@ -573,6 +612,8 @@ export function Navbar() {
   const [dbMenus, setDbMenus] = useState<any[] | null>(null);
 
   useEffect(() => {
+    // Navigasi sudah dirender server (layout publik): tidak perlu dimuat ulang di browser.
+    if (initialMenus !== undefined) return;
     fetch("/api/menus")
       .then((res) => res.json())
       .then((res) => {
@@ -583,21 +624,26 @@ export function Navbar() {
       .catch((err) => {
         console.warn("Gagal memuat dynamic menus, menggunakan static fallback:", err);
       });
-  }, []);
+  }, [initialMenus]);
 
+  // Data dari server dipakai apa adanya (perubahan admin langsung tampil, termasuk bila semua
+  // submenu disembunyikan); navigasi bawaan hanya bila CMS tidak tersedia.
+  const cmsMenus: any[] | null = initialMenus !== undefined ? initialMenus : dbMenus;
   const navItems: NavItem[] =
-    dbMenus && dbMenus.length > 0
-      ? dbMenus.map((m: any) => ({
+    cmsMenus && (initialMenus !== undefined || cmsMenus.length > 0)
+      ? cmsMenus.map((m: any) => ({
+          id: m.id,
           label: language === "ID" ? m.labelId : m.labelEn,
           href: m.sectionKey ? `/#${m.sectionKey}` : m.url || "#",
           children:
             (m.submenus || m.children) && (m.submenus || m.children).length > 0
               ? (m.submenus || m.children).map((c: any) => ({
+                  id: c.id,
                   title: language === "ID" ? c.labelId : c.labelEn,
                   description:
                     (language === "ID" ? c.descriptionId : c.descriptionEn) || "",
                   href: c.sectionKey ? `/#${c.sectionKey}` : c.url || "#",
-                  icon: getNavIcon(c.iconName),
+                  icon: getNavIcon(c.iconName, c.iconColor),
                 }))
               : undefined,
         }))
@@ -685,8 +731,10 @@ export function Navbar() {
           isDismissed ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
       >
+        {announcement && (
         <AnnouncementBar
           language={language}
+          content={announcement}
           onHeightChange={(h) => setBarHeight(h)}
           onDismiss={() => {
             setIsDismissed(true);
@@ -696,6 +744,7 @@ export function Navbar() {
             );
           }}
         />
+        )}
       </div>
 
       {/* ── Main Navbar: z-40 with solid bg-white. Slides up and stays locked at top:0 ── */}
@@ -737,7 +786,7 @@ export function Navbar() {
         <nav className="hidden items-center justify-center gap-7 xl:gap-10 lg:flex shrink-0">
           {navItems.map((item) => (
             <div
-              key={item.label}
+              key={item.id ?? item.label}
               className="relative"
               onMouseEnter={() => setActiveDropdown(item.label)}
               onMouseLeave={() => setActiveDropdown(null)}
@@ -776,7 +825,7 @@ export function Navbar() {
                     <div className="relative z-10 flex flex-col">
                       {item.children.map((child) => (
                         <Link
-                          key={child.href}
+                          key={child.id ?? child.href}
                           href={child.href}
                           prefetch={true}
                           onClick={() => handleNavClick(child.href)}
@@ -846,7 +895,7 @@ export function Navbar() {
                 pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
-                  key={item.href}
+                  key={item.id ?? item.href}
                   href={item.href}
                   prefetch={true}
                   onClick={() => handleNavClick(item.href)}
