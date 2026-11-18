@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Globe,
   Globe2,
+  KeyRound,
   Layers,
   LayoutDashboard,
   LogOut,
@@ -22,6 +23,7 @@ import {
 import { AuthSessionPayload } from "@/types";
 import { cn } from "@/lib/utils";
 import { AdminLanguageToggle, AdminT, useAdminLang } from "@/components/admin/AdminLanguage";
+import { ChangePasswordDialog } from "@/components/admin/ChangePasswordDialog";
 
 /* ------------------------------------------------------------------ */
 /* Session context: dibagikan oleh layout admin ke halaman di dalamnya */
@@ -259,6 +261,8 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
   const { t } = useAdminLang();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const closePassword = useCallback(() => setPasswordOpen(false), []);
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -375,6 +379,18 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                       </div>
                       <button
                         type="button"
+                        data-testid="open-change-password"
+                        onClick={() => {
+                          setUserOpen(false);
+                          setPasswordOpen(true);
+                        }}
+                        className={cn("mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left font-medium text-[#111318] transition-colors hover:bg-[#F2F3F5]", focusRing)}
+                      >
+                        <KeyRound className="h-4 w-4" aria-hidden="true" />
+                        <span>{t("Ganti kata sandi", "Change password")}</span>
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => {
                           setUserOpen(false);
                           onLogout();
@@ -444,6 +460,8 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
           </div>
         </div>
       )}
+
+      <ChangePasswordDialog open={passwordOpen} onClose={closePassword} />
     </div>
   );
 }
