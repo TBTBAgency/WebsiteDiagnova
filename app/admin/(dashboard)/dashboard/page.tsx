@@ -1,24 +1,21 @@
 "use client";
 
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
   ArrowDownRight,
-  ArrowRight,
   ArrowUpRight,
   Building2,
-  ClipboardList,
   Download,
+  FileText,
   FlaskConical,
-  Globe,
   Minus,
-  Plus,
   RefreshCw,
   Users,
 } from "lucide-react";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { getInitials, useAdminSession } from "@/components/admin/AdminTopNav";
+import { getInitials } from "@/components/admin/AdminShell";
 import { cn } from "@/lib/utils";
 
 /* ================================================================== */
@@ -34,34 +31,13 @@ interface TimelinePoint {
 
 interface OverviewData {
   summary: {
-    leads: {
-      total: number;
-      new: number;
-      contacted: number;
-      scheduled: number;
-      completed: number;
-    };
-    orders: {
-      total: number;
-      cito: number;
-      urgent: number;
-      routine: number;
-      received: number;
-      completed: number;
-    };
-    specimens: {
-      total: number;
-      collected: number;
-      received: number;
-      rejected: number;
-    };
+    leads: { total: number; new: number; contacted: number; scheduled: number; completed: number };
+    orders: { total: number; cito: number; urgent: number; routine: number; received: number; completed: number };
+    specimens: { total: number; collected: number; received: number; rejected: number };
     activeUsers: number;
   };
   timeline: TimelinePoint[];
-  institutionDistribution: {
-    type: string;
-    count: number;
-  }[];
+  institutionDistribution: { type: string; count: number }[];
   recentLeads: {
     id: string;
     name: string;
@@ -99,33 +75,22 @@ const INSTITUTION_NAMES: Record<string, string> = {
 /* Token visual                                                        */
 /* ================================================================== */
 
-const BLUE = "#2F6FED";
-const BLUE_DARK = "#1D4FC4";
-const BLUE_SOFT = "#BFD3FA";
-const GREEN = "#16A374";
-const INK = "#1E2A3B";
-const MUTED = "#6B7585";
-const GRID = "#E9EDF3";
+const INK = "#111318";
+const BLUE = "#1F6BFF";
+const NAVY = "#123A9C";
+const SKY = "#A9C8FF";
+const EMPTY = "#E6E8EC";
 
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6FED] focus-visible:ring-offset-2";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F6BFF] focus-visible:ring-offset-2";
+
+/** Pola garis diagonal seperti batang pada desain referensi. */
+function striped(base: string, line = "rgba(255,255,255,0.16)"): React.CSSProperties {
+  return { backgroundColor: base, backgroundImage: `repeating-linear-gradient(135deg, ${line} 0 5px, transparent 5px 11px)` };
+}
 
 const fmt = (n: number) => n.toLocaleString("id-ID");
-
-function sum(points: TimelinePoint[], key: "leads" | "orders") {
-  return points.reduce((acc, p) => acc + (p[key] || 0), 0);
-}
-
-function pct(part: number, total: number) {
-  return total > 0 ? Math.round((part / total) * 100) : 0;
-}
-
-function greetingFor(hour: number) {
-  if (hour >= 4 && hour < 11) return "Selamat pagi";
-  if (hour >= 11 && hour < 15) return "Selamat siang";
-  if (hour >= 15 && hour < 18) return "Selamat sore";
-  return "Selamat malam";
-}
+const sum = (points: TimelinePoint[], key: "leads" | "orders") => points.reduce((acc, p) => acc + (p[key] || 0), 0);
+const pct = (part: number, total: number) => (total > 0 ? Math.round((part / total) * 100) : 0);
 
 function formatShortDate(iso: string) {
   const d = new Date(iso);
@@ -136,402 +101,180 @@ function formatShortDate(iso: string) {
 function formatDateTime(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleString("id-ID", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
-/** Skala sumbu Y bilangan bulat: 4 interval dengan maksimum minimal 4. */
-function niceScale(maxValue: number) {
-  const step = Math.max(1, Math.ceil(maxValue / 4));
-  return { max: step * 4, ticks: [0, step, step * 2, step * 3, step * 4] };
-}
-
-/** Kurva monoton (Fritsch–Carlson): mulus tanpa overshoot di bawah nol. */
-function monotonePath(pts: { x: number; y: number }[]) {
-  const n = pts.length;
-  if (n === 0) return "";
-  if (n === 1) return `M ${pts[0].x} ${pts[0].y}`;
-  if (n === 2) return `M ${pts[0].x} ${pts[0].y} L ${pts[1].x} ${pts[1].y}`;
-
-  const dx: number[] = [];
-  const m: number[] = [];
-  for (let i = 0; i < n - 1; i++) {
-    dx[i] = pts[i + 1].x - pts[i].x;
-    m[i] = dx[i] === 0 ? 0 : (pts[i + 1].y - pts[i].y) / dx[i];
-  }
-  const t: number[] = new Array(n).fill(0);
-  t[0] = m[0];
-  t[n - 1] = m[n - 2];
-  for (let i = 1; i < n - 1; i++) {
-    t[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
-  }
-  for (let i = 0; i < n - 1; i++) {
-    if (m[i] === 0) {
-      t[i] = 0;
-      t[i + 1] = 0;
-      continue;
-    }
-    const a = t[i] / m[i];
-    const b = t[i + 1] / m[i];
-    const s = a * a + b * b;
-    if (s > 9) {
-      const tau = 3 / Math.sqrt(s);
-      t[i] = tau * a * m[i];
-      t[i + 1] = tau * b * m[i];
-    }
-  }
-
-  let d = `M ${pts[0].x} ${pts[0].y}`;
-  for (let i = 0; i < n - 1; i++) {
-    const h = dx[i] / 3;
-    d += ` C ${pts[i].x + h} ${pts[i].y + t[i] * h}, ${pts[i + 1].x - h} ${
-      pts[i + 1].y - t[i + 1] * h
-    }, ${pts[i + 1].x} ${pts[i + 1].y}`;
-  }
-  return d;
-}
-
-/* ================================================================== */
-/* Hook utilitas grafik                                                */
-/* ================================================================== */
-
-function useElementWidth<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    setWidth(el.clientWidth);
-    if (typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver((entries) => {
-      const w = entries[0]?.contentRect.width;
-      if (typeof w === "number") setWidth(Math.floor(w));
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  return { ref, width };
-}
-
-/** Indeks aktif untuk hover + navigasi keyboard (panah kiri/kanan). */
-function useActiveIndex(count: number) {
-  const [active, setActive] = useState<number | null>(null);
-
-  useEffect(() => {
-    setActive((a) => (a !== null && a >= count ? null : a));
-  }, [count]);
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (!count) return;
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      setActive((i) => (i === null ? 0 : Math.min(count - 1, i + 1)));
-    } else if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      setActive((i) => (i === null ? count - 1 : Math.max(0, i - 1)));
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      setActive(0);
-    } else if (e.key === "End") {
-      e.preventDefault();
-      setActive(count - 1);
-    } else if (e.key === "Escape") {
-      setActive(null);
-    }
-  };
-
-  return {
-    active,
-    setActive,
-    focusProps: {
-      tabIndex: 0,
-      onKeyDown,
-      onFocus: () => setActive((a) => (a === null && count > 0 ? count - 1 : a)),
-      onBlur: () => setActive(null),
-    },
-  };
-}
-
-function svgId(raw: string) {
-  return raw.replace(/[^a-zA-Z0-9_-]/g, "");
+/** Inisial hari (Min, Sen, ...) dari tanggal YYYY-MM-DD. */
+function dayInitial(date: string) {
+  const d = new Date(`${date}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return "";
+  return ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"][d.getDay()];
 }
 
 /* ================================================================== */
 /* Komponen dasar                                                      */
 /* ================================================================== */
 
+function CircleLink({ href, label, dark = false }: { href: string; label: string; dark?: boolean }) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      title={label}
+      className={cn(
+        "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
+        focusRing,
+        dark ? "bg-white text-[#111318] hover:bg-[#E9ECF1]" : "border border-[#E4E6EA] text-[#111318] hover:bg-[#F2F3F5]"
+      )}
+    >
+      <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+    </Link>
+  );
+}
+
 function Card({
   title,
-  subtitle,
   action,
   className,
   children,
 }: {
   title: string;
-  subtitle?: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section
-      className={cn(
-        "flex min-w-0 flex-col rounded-[24px] bg-white p-5 shadow-[0_6px_24px_rgba(30,42,59,0.05)] ring-1 ring-[#E4E8EF]/80 sm:p-6",
-        className
-      )}
-    >
-      <div className="mb-4 flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h2 className="text-[15px] font-bold leading-snug text-[#1E2A3B] sm:text-base">{title}</h2>
-          {subtitle && <p className="mt-0.5 text-xs leading-relaxed text-[#6B7585]">{subtitle}</p>}
-        </div>
-        {action && <div className="shrink-0">{action}</div>}
+    <section className={cn("flex min-w-0 flex-col rounded-[24px] bg-white p-5 sm:p-6", className)}>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="min-w-0 truncate text-[17px] font-medium leading-snug text-[#111318]">{title}</h2>
+        {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
       </div>
       <div className="flex min-w-0 flex-1 flex-col">{children}</div>
     </section>
   );
 }
 
-function PillLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-[#DDE3EC] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E2A3B] transition-colors hover:border-[#2F6FED] hover:text-[#2F6FED]",
-        focusRing
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
-
-function EmptyState({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#DDE3EC] bg-[#F8F9FB] px-4 py-8 text-center">
-      <Icon className="h-5 w-5 text-[#9AA3B2]" aria-hidden="true" />
-      <p className="max-w-[240px] text-xs text-[#6B7585]">{text}</p>
-    </div>
-  );
-}
-
-function ChartTooltip({
-  x,
-  y,
-  width,
-  children,
-}: {
-  x: number;
-  y: number;
-  width: number;
-  children: React.ReactNode;
-}) {
-  const half = 72;
-  const left = Math.min(Math.max(x, half), Math.max(half, width - half));
+function EmptyState({ icon: Icon, text, dark = false }: { icon: React.ElementType; text: string; dark?: boolean }) {
   return (
     <div
-      className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-xl bg-[#1E2A3B] px-3 py-2 text-xs text-white shadow-lg"
-      style={{ left, top: Math.max(0, y - 10) }}
+      className={cn(
+        "flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed px-4 py-8 text-center",
+        dark ? "border-white/20 text-white/70" : "border-[#DDE0E5] bg-[#F7F8FA] text-[#8A8F98]"
+      )}
     >
-      {children}
+      <Icon className="h-5 w-5" aria-hidden="true" />
+      <p className="max-w-[240px] text-xs">{text}</p>
     </div>
   );
 }
 
-function SrTable({
-  caption,
-  headers,
-  rows,
-}: {
-  caption: string;
-  headers: string[];
-  rows: (string | number)[][];
-}) {
+function SrTable({ caption, headers, rows }: { caption: string; headers: string[]; rows: (string | number)[][] }) {
   // Dibungkus div: elemen <table> mengabaikan lebar 1px dari `sr-only` dan bisa melebarkan halaman di layar kecil.
   return (
     <div className="sr-only">
-    <table>
-      <caption>{caption}</caption>
-      <thead>
-        <tr>
-          {headers.map((h) => (
-            <th key={h} scope="col">
-              {h}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, i) => (
-          <tr key={i}>
-            {r.map((c, j) => (
-              <td key={j}>{c}</td>
+      <table>
+        <caption>{caption}</caption>
+        <thead>
+          <tr>
+            {headers.map((h) => (
+              <th key={h} scope="col">
+                {h}
+              </th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i}>
+              {r.map((c, j) => (
+                <td key={j}>{c}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
+function DeltaChip({ text, tone, className }: { text: string; tone: "up" | "down" | "flat"; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+        tone === "up" && "bg-[#E3F7EC] text-[#15803D]",
+        tone === "down" && "bg-[#FDECEC] text-[#B42318]",
+        tone === "flat" && "bg-[#EEF0F3] text-[#5B616B]",
+        className
+      )}
+    >
+      {tone === "up" && <ArrowUpRight className="h-3 w-3" aria-hidden="true" />}
+      {tone === "down" && <ArrowDownRight className="h-3 w-3" aria-hidden="true" />}
+      {tone === "flat" && <Minus className="h-3 w-3" aria-hidden="true" />}
+      {text}
+    </span>
+  );
+}
+
 /* ================================================================== */
-/* Grafik: aktivitas harian (garis)                                    */
+/* Aktivitas harian: matriks titik (hari × jenis aktivitas)            */
 /* ================================================================== */
 
-function ActivityLineChart({ data }: { data: TimelinePoint[] }) {
-  const { ref, width } = useElementWidth<HTMLDivElement>();
-  const { active, setActive, focusProps } = useActiveIndex(data.length);
-  const gradId = svgId(`lead-area-${useId()}`);
+const DOT_LEVELS: { label: string; style: React.CSSProperties }[] = [
+  { label: "Tidak ada", style: { backgroundColor: EMPTY } },
+  { label: "Rendah", style: striped(SKY, "rgba(255,255,255,0.45)") },
+  { label: "Sedang", style: striped(BLUE) },
+  { label: "Tertinggi", style: striped(INK, "rgba(255,255,255,0.12)") },
+];
 
-  const H = 230;
-  const padL = 30;
-  const padR = 10;
-  const padT = 14;
-  const padB = 28;
-  const plotW = Math.max(0, width - padL - padR);
-  const plotH = H - padT - padB;
-  const n = data.length;
-  const stepX = n > 1 ? plotW / (n - 1) : 0;
-
-  const { max, ticks } = niceScale(Math.max(0, ...data.map((d) => Math.max(d.leads, d.orders))));
-  const xAt = (i: number) => (n > 1 ? padL + i * stepX : padL + plotW / 2);
-  const yAt = (v: number) => padT + plotH * (1 - v / max);
-
-  const leadPts = data.map((d, i) => ({ x: xAt(i), y: yAt(d.leads) }));
-  const orderPts = data.map((d, i) => ({ x: xAt(i), y: yAt(d.orders) }));
-  const leadPath = monotonePath(leadPts);
-  const orderPath = monotonePath(orderPts);
-  const baseY = padT + plotH;
-  const areaPath =
-    n > 1 ? `${leadPath} L ${xAt(n - 1)} ${baseY} L ${xAt(0)} ${baseY} Z` : "";
-
-  const labelEvery = Math.max(1, Math.ceil(n / Math.max(1, Math.floor(plotW / 58))));
-
-  const handleMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!n) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const idx = n > 1 ? Math.round((x - padL) / stepX) : 0;
-    setActive(Math.min(n - 1, Math.max(0, idx)));
-  };
-
-  const activePoint = active !== null ? data[active] : null;
+function ActivityDots({ data }: { data: TimelinePoint[] }) {
+  const max = Math.max(1, ...data.flatMap((d) => [d.leads, d.orders]));
+  const level = (v: number) => (v <= 0 ? 0 : Math.min(3, Math.ceil((v / max) * 3)));
+  const rows: { key: "leads" | "orders"; label: string; unit: string }[] = [
+    { key: "leads", label: "Permohonan", unit: "permohonan demo" },
+    { key: "orders", label: "Order lab", unit: "order lab" },
+  ];
+  const compact = data.length > 7;
 
   return (
     <div>
-      <div className="mb-3 flex flex-wrap items-center gap-4 text-xs font-medium text-[#6B7585]">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-[3px] w-4 rounded-full" style={{ background: BLUE }} aria-hidden="true" />
-          Permohonan demo
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-[3px] w-4 rounded-full" style={{ background: GREEN }} aria-hidden="true" />
-          Order lab
-        </span>
-      </div>
       <div
-        ref={ref}
-        {...focusProps}
-        aria-label="Grafik aktivitas harian. Gunakan tombol panah kiri dan kanan untuk melihat nilai per hari."
-        className={cn("relative w-full select-none rounded-xl", focusRing)}
-        style={{ height: H }}
+        className="grid items-center gap-x-1.5 gap-y-2.5 sm:gap-x-2.5"
+        style={{ gridTemplateColumns: `minmax(64px, 84px) repeat(${data.length}, minmax(0, 1fr))` }}
+        aria-hidden="true"
       >
-        {width > 0 && (
-          <svg
-            width={width}
-            height={H}
-            className="block touch-pan-y"
-            onPointerMove={handleMove}
-            onPointerDown={handleMove}
-            onPointerLeave={() => setActive(null)}
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={BLUE} stopOpacity="0.22" />
-                <stop offset="100%" stopColor={BLUE} stopOpacity="0" />
-              </linearGradient>
-            </defs>
-
-            {ticks.map((t) => (
-              <g key={t}>
-                <line
-                  x1={padL}
-                  x2={width - padR}
-                  y1={yAt(t)}
-                  y2={yAt(t)}
-                  stroke={GRID}
-                  strokeDasharray={t === 0 ? undefined : "3 4"}
-                />
-                <text x={padL - 8} y={yAt(t) + 3.5} textAnchor="end" fontSize="10" fill={MUTED}>
-                  {t}
-                </text>
-              </g>
-            ))}
-
-            {data.map((d, i) =>
-              i % labelEvery === 0 ? (
-                <text
-                  key={d.date}
-                  x={xAt(i)}
-                  y={H - 8}
-                  textAnchor={n > 1 && i === 0 ? "start" : n > 1 && i === n - 1 ? "end" : "middle"}
-                  fontSize="10"
-                  fill={MUTED}
-                >
-                  {d.label}
-                </text>
-              ) : null
-            )}
-
-            {areaPath && <path d={areaPath} fill={`url(#${gradId})`} />}
-            <path d={orderPath} fill="none" stroke={GREEN} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d={leadPath} fill="none" stroke={BLUE} strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" />
-
-            {active !== null && activePoint && (
-              <g>
-                <line
-                  x1={xAt(active)}
-                  x2={xAt(active)}
-                  y1={padT}
-                  y2={baseY}
-                  stroke={INK}
-                  strokeOpacity="0.25"
-                  strokeDasharray="3 3"
-                />
-                <circle cx={xAt(active)} cy={yAt(activePoint.orders)} r="4.5" fill={GREEN} stroke="#fff" strokeWidth="2" />
-                <circle cx={xAt(active)} cy={yAt(activePoint.leads)} r="4.5" fill={BLUE} stroke="#fff" strokeWidth="2" />
-              </g>
-            )}
-          </svg>
-        )}
-
-        {active !== null && activePoint && (
-          <ChartTooltip
-            x={xAt(active)}
-            y={Math.min(yAt(activePoint.leads), yAt(activePoint.orders))}
-            width={width}
-          >
-            <div className="mb-1 text-[11px] text-white/70">{activePoint.label}</div>
-            <div className="flex items-center gap-2">
-              <span className="h-[3px] w-3 rounded-full" style={{ background: "#7FA8F5" }} />
-              <span className="font-bold">{fmt(activePoint.leads)}</span>
-              <span className="text-white/70">permohonan</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="h-[3px] w-3 rounded-full" style={{ background: "#5FD3A8" }} />
-              <span className="font-bold">{fmt(activePoint.orders)}</span>
-              <span className="text-white/70">order lab</span>
-            </div>
-          </ChartTooltip>
-        )}
+        {rows.map((row) => (
+          <React.Fragment key={row.key}>
+            <span className="truncate text-[12px] text-[#8A8F98]">{row.label}</span>
+            {data.map((d) => {
+              const v = d[row.key];
+              return (
+                <span key={d.date} className="flex justify-center">
+                  <span
+                    title={`${d.label}: ${fmt(v)} ${row.unit}`}
+                    className={cn("block aspect-square w-full rounded-full", compact ? "max-w-[26px]" : "max-w-[40px]")}
+                    style={DOT_LEVELS[level(v)].style}
+                  />
+                </span>
+              );
+            })}
+          </React.Fragment>
+        ))}
+        <span />
+        {data.map((d) => (
+          <span key={d.date} className="text-center text-[11px] text-[#A3A8B1]">
+            {compact ? d.label.split(" ")[0] : dayInitial(d.date)}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-[#8A8F98]">
+        {DOT_LEVELS.map((l, i) => (
+          <span key={l.label} className="inline-flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full" style={l.style} aria-hidden="true" />
+            {l.label}
+            {i === 3 && ` (${fmt(max)}/hari)`}
+          </span>
+        ))}
       </div>
       <SrTable
         caption="Aktivitas harian permohonan demo dan order lab"
@@ -543,249 +286,45 @@ function ActivityLineChart({ data }: { data: TimelinePoint[] }) {
 }
 
 /* ================================================================== */
-/* Grafik: tren 7 hari (area bertingkat)                               */
-/* ================================================================== */
-
-function TrendStepChart({ data, splitAt }: { data: TimelinePoint[]; splitAt: number }) {
-  const { ref, width } = useElementWidth<HTMLDivElement>();
-  const { active, setActive, focusProps } = useActiveIndex(data.length);
-
-  const H = 112;
-  const padT = 12;
-  const padB = 22;
-  const plotH = H - padT - padB;
-  const n = data.length;
-  const bw = n > 0 ? width / n : 0;
-  const maxV = Math.max(1, ...data.map((d) => d.leads));
-  const yAt = (v: number) => padT + plotH * (1 - v / maxV);
-  const baseY = padT + plotH;
-
-  const linePath = data
-    .map((d, i) => `${i === 0 ? "M" : "L"} ${i * bw} ${yAt(d.leads)} L ${(i + 1) * bw} ${yAt(d.leads)}`)
-    .join(" ");
-
-  const areaFor = (from: number, to: number) => {
-    if (to <= from) return "";
-    let d = `M ${from * bw} ${baseY}`;
-    for (let i = from; i < to; i++) {
-      d += ` L ${i * bw} ${yAt(data[i].leads)} L ${(i + 1) * bw} ${yAt(data[i].leads)}`;
-    }
-    return `${d} L ${to * bw} ${baseY} Z`;
-  };
-
-  const handleMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!n || !bw) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const idx = Math.floor((e.clientX - rect.left) / bw);
-    setActive(Math.min(n - 1, Math.max(0, idx)));
-  };
-
-  const activePoint = active !== null ? data[active] : null;
-
-  return (
-    <div>
-      <div
-        ref={ref}
-        {...focusProps}
-        aria-label="Grafik permohonan harian 14 hari. Gunakan tombol panah untuk melihat nilai per hari."
-        className={cn("relative w-full select-none rounded-lg", focusRing)}
-        style={{ height: H }}
-      >
-        {width > 0 && (
-          <svg
-            width={width}
-            height={H}
-            className="block touch-pan-y"
-            onPointerMove={handleMove}
-            onPointerDown={handleMove}
-            onPointerLeave={() => setActive(null)}
-            aria-hidden="true"
-          >
-            <path d={areaFor(0, splitAt)} fill={BLUE} fillOpacity="0.1" />
-            <path d={areaFor(splitAt, n)} fill={BLUE} fillOpacity="0.24" />
-            <path d={linePath} fill="none" stroke={BLUE} strokeWidth="2" strokeLinejoin="round" />
-            <line x1={0} x2={width} y1={baseY} y2={baseY} stroke={GRID} />
-            {splitAt > 0 && splitAt < n && (
-              <line
-                x1={splitAt * bw}
-                x2={splitAt * bw}
-                y1={padT - 6}
-                y2={baseY}
-                stroke={INK}
-                strokeOpacity="0.3"
-                strokeDasharray="3 3"
-              />
-            )}
-            {active !== null && (
-              <rect
-                x={active * bw + 1}
-                y={padT}
-                width={Math.max(0, bw - 2)}
-                height={plotH}
-                fill={INK}
-                fillOpacity="0.06"
-                rx="3"
-              />
-            )}
-            <text x={2} y={H - 6} fontSize="10" fill={MUTED}>
-              7 hari sebelumnya
-            </text>
-            <text x={width - 2} y={H - 6} fontSize="10" fill={MUTED} textAnchor="end">
-              7 hari terakhir
-            </text>
-          </svg>
-        )}
-        {active !== null && activePoint && (
-          <ChartTooltip x={active * bw + bw / 2} y={yAt(activePoint.leads)} width={width}>
-            <span className="font-bold">{fmt(activePoint.leads)}</span>{" "}
-            <span className="text-white/70">permohonan · {activePoint.label}</span>
-          </ChartTooltip>
-        )}
-      </div>
-      <SrTable
-        caption="Permohonan demo per hari"
-        headers={["Tanggal", "Permohonan"]}
-        rows={data.map((d) => [d.label, d.leads])}
-      />
-    </div>
-  );
-}
-
-/* ================================================================== */
-/* Grafik: batang tahapan pipeline dengan garis rata-rata              */
+/* Permohonan per tahap: batang bergaris                               */
 /* ================================================================== */
 
 interface StageDatum {
   key: string;
   label: string;
   value: number;
+  style: React.CSSProperties;
+  dot: string;
 }
 
-function PipelineBarChart({ stages, total }: { stages: StageDatum[]; total: number }) {
-  const { ref, width } = useElementWidth<HTMLDivElement>();
-  const { active, setActive, focusProps } = useActiveIndex(stages.length);
-
-  const H = 240;
-  const padL = 30;
-  const padR = 6;
-  const padT = 22;
-  const padB = 30;
-  const plotW = Math.max(0, width - padL - padR);
-  const plotH = H - padT - padB;
-  const n = stages.length;
-  const band = n > 0 ? plotW / n : 0;
-  const barW = Math.min(64, band * 0.56);
-  const { max, ticks } = niceScale(Math.max(0, ...stages.map((s) => s.value)));
-  const yAt = (v: number) => padT + plotH * (1 - v / max);
-  const baseY = padT + plotH;
-  const avg = n > 0 ? stages.reduce((a, s) => a + s.value, 0) / n : 0;
-  const avgLabel = avg.toLocaleString("id-ID", { maximumFractionDigits: 1 });
-
-  const barPath = (x: number, y: number, w: number, h: number) => {
-    const r = Math.min(8, w / 2, h);
-    return `M ${x} ${y + h} L ${x} ${y + r} Q ${x} ${y} ${x + r} ${y} L ${x + w - r} ${y} Q ${x + w} ${y} ${
-      x + w
-    } ${y + r} L ${x + w} ${y + h} Z`;
-  };
-
-  const activeStage = active !== null ? stages[active] : null;
-
+function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
+  const max = Math.max(1, ...stages.map((s) => s.value));
   return (
     <div>
-      <div
-        ref={ref}
-        {...focusProps}
-        aria-label="Grafik jumlah permohonan per tahap. Gunakan tombol panah untuk melihat nilai tiap tahap."
-        className={cn("relative w-full select-none rounded-xl", focusRing)}
-        style={{ height: H }}
-        onPointerLeave={() => setActive(null)}
-      >
-        {width > 0 && (
-          <svg width={width} height={H} className="block" aria-hidden="true">
-            {ticks.map((t) => (
-              <g key={t}>
-                <line
-                  x1={padL}
-                  x2={width - padR}
-                  y1={yAt(t)}
-                  y2={yAt(t)}
-                  stroke={GRID}
-                  strokeDasharray={t === 0 ? undefined : "3 4"}
-                />
-                <text x={padL - 8} y={yAt(t) + 3.5} textAnchor="end" fontSize="10" fill={MUTED}>
-                  {t}
-                </text>
-              </g>
-            ))}
-
-            {stages.map((s, i) => {
-              const cx = padL + band * i + band / 2;
-              const x = cx - barW / 2;
-              const y = yAt(s.value);
-              const h = baseY - y;
-              const isActive = active === i;
-              const dimmed = active !== null && !isActive;
-              return (
-                <g
-                  key={s.key}
-                  onPointerEnter={() => setActive(i)}
-                  onPointerDown={() => setActive(i)}
-                  className="cursor-default"
-                >
-                  <rect x={padL + band * i} y={padT} width={band} height={plotH + padB} fill="transparent" />
-                  {h > 0 ? (
-                    <path
-                      d={barPath(x, y, barW, h)}
-                      fill={isActive ? BLUE_DARK : dimmed ? BLUE_SOFT : BLUE}
-                      className="transition-colors duration-150"
-                    />
-                  ) : (
-                    <line x1={x} x2={x + barW} y1={baseY} y2={baseY} stroke={BLUE_SOFT} strokeWidth="3" strokeLinecap="round" />
+      <div className="flex h-[230px] items-end gap-2.5 sm:gap-3.5" aria-hidden="true">
+        {stages.map((s) => {
+          const h = s.value > 0 ? Math.max(18, (s.value / max) * 100) : 6;
+          return (
+            <div key={s.key} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end">
+              <div
+                className="relative w-full max-w-[96px] rounded-[18px] transition-[height] duration-500"
+                style={{ height: `${h}%`, ...(s.value > 0 ? s.style : { backgroundColor: EMPTY }) }}
+                title={`${s.label}: ${fmt(s.value)} permohonan (${pct(s.value, total)}%)`}
+              >
+                {/* Batang pendek: label angka di atas batang agar tidak menimpa nama tahap. */}
+                <span
+                  className={cn(
+                    "absolute left-1/2 inline-flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-[#111318] shadow-sm",
+                    h < 24 ? "bottom-full mb-1.5 ring-1 ring-[#E4E6EA]" : "top-2"
                   )}
-                  <text x={cx} y={y - 7} textAnchor="middle" fontSize="11" fontWeight="600" fill={INK}>
-                    {fmt(s.value)}
-                  </text>
-                  <text x={cx} y={H - 9} textAnchor="middle" fontSize="11" fill={MUTED}>
-                    {s.label}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Garis rata-rata */}
-            <line
-              x1={padL}
-              x2={width - padR}
-              y1={yAt(avg)}
-              y2={yAt(avg)}
-              stroke={INK}
-              strokeOpacity="0.55"
-              strokeDasharray="5 5"
-              pointerEvents="none"
-            />
-            <text
-              x={width - padR}
-              y={yAt(avg) - 6}
-              textAnchor="end"
-              fontSize="10"
-              fontWeight="600"
-              fill={INK}
-              pointerEvents="none"
-            >
-              Rata-rata {avgLabel}
-            </text>
-          </svg>
-        )}
-
-        {active !== null && activeStage && (
-          <ChartTooltip x={padL + band * active + band / 2} y={yAt(activeStage.value) - 14} width={width}>
-            <div className="text-[11px] text-white/70">{activeStage.label}</div>
-            <div>
-              <span className="font-bold">{fmt(activeStage.value)}</span>{" "}
-              <span className="text-white/70">permohonan · {pct(activeStage.value, total)}%</span>
+                >
+                  {fmt(s.value)}
+                </span>
+              </div>
+              <span className="mt-2 w-full truncate text-center text-[11px] text-[#8A8F98]">{s.label}</span>
             </div>
-          </ChartTooltip>
-        )}
+          );
+        })}
       </div>
       <SrTable
         caption="Jumlah permohonan demo per tahap"
@@ -797,7 +336,50 @@ function PipelineBarChart({ stages, total }: { stages: StageDatum[]; total: numb
 }
 
 /* ================================================================== */
-/* Kartu sorotan (biru)                                                */
+/* Konversi: gauge setengah lingkaran bersegmen                        */
+/* ================================================================== */
+
+function SegmentGauge({ percent }: { percent: number }) {
+  const N = 22;
+  const filled = Math.round((percent / 100) * N);
+  const cx = 130;
+  const cy = 128;
+  const r1 = 78;
+  const r2 = 116;
+  const mix = (t: number) => {
+    // Biru tua -> biru muda di sepanjang bagian yang terisi.
+    const a = [0x1f, 0x6b, 0xff];
+    const b = [0x8d, 0xb8, 0xff];
+    return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
+  };
+  return (
+    <svg viewBox="0 0 260 140" className="mx-auto block w-full max-w-[300px]" aria-hidden="true">
+      {Array.from({ length: N }, (_, i) => {
+        const ang = Math.PI - (i / (N - 1)) * Math.PI;
+        const x1 = cx + r1 * Math.cos(ang);
+        const y1 = cy - r1 * Math.sin(ang);
+        const x2 = cx + r2 * Math.cos(ang);
+        const y2 = cy - r2 * Math.sin(ang);
+        const on = i < filled;
+        return (
+          <line
+            key={i}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke={on ? mix(filled > 1 ? i / (filled - 1) : 0) : EMPTY}
+            strokeWidth="7"
+            strokeLinecap="round"
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+/* ================================================================== */
+/* Kartu hitam: sorotan                                                */
 /* ================================================================== */
 
 interface Highlight {
@@ -809,93 +391,89 @@ interface Highlight {
   cta: string;
 }
 
-function HighlightCard({ slides, todayLeads, todayLabel }: { slides: Highlight[]; todayLeads: number | null; todayLabel: string | null }) {
+function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads: number | null }) {
   const [index, setIndex] = useState(0);
   const slide = slides[index] ?? slides[0];
-
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Info hari ini"
-      className="relative flex min-w-0 flex-col overflow-hidden rounded-[24px] bg-gradient-to-br from-[#2F6FED] via-[#2A62D6] to-[#1D3F82] p-5 text-white shadow-[0_14px_34px_rgba(47,111,237,0.32)] sm:p-6"
+      aria-label="Sorotan hari ini"
+      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:p-6 md:col-span-2"
     >
-      <div
-        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10"
+      {/* Pita mengilap dekoratif */}
+      <span
+        className="pointer-events-none absolute -right-10 -top-24 h-[260px] w-[360px] rotate-[-18deg] rounded-[60px] opacity-80"
+        style={{ background: "linear-gradient(115deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.22) 45%, rgba(255,255,255,0.04) 55%, rgba(255,255,255,0.16) 75%, rgba(255,255,255,0) 90%)" }}
         aria-hidden="true"
       />
-      <div
-        className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-[#56ADE2]/25"
-        aria-hidden="true"
-      />
+      <span className="pointer-events-none absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-[#1F6BFF]/25 blur-3xl" aria-hidden="true" />
 
-      <div className="relative flex items-start justify-between gap-3">
-        <h2 className="text-[15px] font-bold leading-snug text-white sm:text-base">Sorotan Hari Ini</h2>
-        <span className="shrink-0 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold ring-1 ring-white/25">
-          Info hari ini
-        </span>
-      </div>
-
-      {todayLeads !== null && (
-        <p className="relative mt-1 text-xs text-white/75">
-          {todayLeads > 0
-            ? `${fmt(todayLeads)} permohonan masuk hari ini${todayLabel ? ` (${todayLabel})` : ""}.`
-            : `Belum ada permohonan masuk hari ini${todayLabel ? ` (${todayLabel})` : ""}.`}
-        </p>
-      )}
-
-      <div className="relative mt-6 flex-1" aria-live="polite">
-        <div className="text-xs font-semibold uppercase tracking-wider text-white/70">{slide.kicker}</div>
-        <div className="mt-1 font-display text-5xl font-bold tracking-tight">{fmt(slide.value)}</div>
-        <p className="mt-2 max-w-[260px] text-sm leading-relaxed text-white/85">
-          {slide.value > 0 ? slide.text : slide.emptyText}
-        </p>
-      </div>
-
-      <Link
-        href={slide.href}
-        className="relative mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-[#1D3F82] transition-colors hover:bg-[#EEF3FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#2A62D6]"
-      >
-        {slide.cta}
-        <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-      </Link>
-
-      <div className="relative mt-5 flex gap-2">
-        {slides.map((s, i) => (
-          <button
-            key={s.kicker}
-            type="button"
-            onClick={() => setIndex(i)}
-            aria-label={`Tampilkan info ${i + 1} dari ${slides.length}: ${s.kicker}`}
-            aria-current={i === index ? "true" : undefined}
-            className="group flex-1 py-2 focus-visible:outline-none"
-          >
-            <span
-              className={cn(
-                "block h-1 rounded-full transition-colors group-focus-visible:ring-2 group-focus-visible:ring-white group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-[#2A62D6]",
-                i === index ? "bg-white" : "bg-white/30 group-hover:bg-white/50"
-              )}
+      <div className="relative flex items-start justify-between gap-4">
+        <div className="min-w-0" aria-live="polite">
+          <h2 className="text-[13px] font-medium text-white/60">Sorotan Hari Ini · {slide.kicker}</h2>
+          <p className="mt-1.5 max-w-[420px] text-[21px] font-medium leading-snug text-white">
+            {slide.value > 0 ? (
+              <>
+                <span className="font-bold">{fmt(slide.value)}</span> {slide.text}
+              </>
+            ) : (
+              slide.emptyText
+            )}
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-1.5 pt-1">
+          {slides.map((s, i) => (
+            <button
+              key={s.kicker}
+              type="button"
+              onClick={() => setIndex(i)}
+              aria-label={`Tampilkan info ${i + 1} dari ${slides.length}: ${s.kicker}`}
+              aria-current={i === index ? "true" : undefined}
+              className={cn("h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white", i === index ? "w-6 bg-white" : "w-2 bg-white/30 hover:bg-white/50")}
             />
-          </button>
-        ))}
+          ))}
+        </div>
+      </div>
+
+      <div className="relative mt-5 flex flex-wrap items-center justify-between gap-3">
+        {todayLeads !== null && (
+          <span className="inline-flex items-center gap-2 text-[12px] text-white/75">
+            <span className="rounded-full bg-[#22C55E]/20 px-2 py-0.5 text-[11px] font-semibold text-[#4ADE80]">+{fmt(todayLeads)}</span>
+            permohonan masuk hari ini
+          </span>
+        )}
+        <Link
+          href={slide.href}
+          className="ml-auto inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] py-1.5 pl-4 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#1858D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111318]"
+        >
+          {slide.cta}
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20">
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        </Link>
       </div>
     </section>
   );
 }
 
 /* ================================================================== */
-/* Skeleton & error                                                    */
+/* Skeleton                                                            */
 /* ================================================================== */
 
 function DashboardSkeleton() {
-  const block = "animate-pulse rounded-[24px] bg-white ring-1 ring-[#E4E8EF]/80";
+  const block = "animate-pulse rounded-[24px] bg-white";
   return (
-    <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-4" aria-hidden="true">
-      <div className={cn(block, "h-[340px] md:col-span-2")} />
-      <div className="h-[340px] animate-pulse rounded-[24px] bg-[#2F6FED]/25" />
-      <div className={cn(block, "h-[340px]")} />
-      <div className={cn(block, "h-[340px] md:col-span-2")} />
-      <div className={cn(block, "h-[340px]")} />
-      <div className={cn(block, "h-[340px]")} />
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12" aria-hidden="true">
+      <div className={cn(block, "h-[340px] md:col-span-2 xl:col-span-5")} />
+      <div className="grid gap-4 md:col-span-2 xl:col-span-7">
+        <div className="h-[176px] animate-pulse rounded-[24px] bg-[#111318]/80" />
+        <div className="grid grid-cols-2 gap-4">
+          <div className={cn(block, "h-[148px]")} />
+          <div className="h-[148px] animate-pulse rounded-[24px] bg-[#111318]/80" />
+        </div>
+      </div>
+      <div className={cn(block, "h-[360px] md:col-span-2 xl:col-span-8")} />
+      <div className={cn(block, "h-[360px] md:col-span-2 xl:col-span-4")} />
     </div>
   );
 }
@@ -905,13 +483,11 @@ function DashboardSkeleton() {
 /* ================================================================== */
 
 export default function AdminOverviewDashboard() {
-  const currentUser = useAdminSession();
   const [data, setData] = useState<OverviewData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
-  const [period, setPeriod] = useState<7 | 14>(14);
-  const [now, setNow] = useState<Date | null>(null);
+  const [period, setPeriod] = useState<7 | 14>(7);
 
   const fetchOverview = useCallback(async () => {
     setIsLoading(true);
@@ -937,39 +513,19 @@ export default function AdminOverviewDashboard() {
     fetchOverview();
   }, [fetchOverview]);
 
-  // Waktu lokal hanya dihitung di browser (menghindari hydration mismatch)
-  useEffect(() => {
-    setNow(new Date());
-  }, []);
-
-  const firstName = currentUser?.name?.trim().split(/\s+/)[0] || null;
-  const greeting = now ? greetingFor(now.getHours()) : "Selamat datang";
-  const todayStr = now
-    ? new Intl.DateTimeFormat("id-ID", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(now)
-    : "";
-
   /* ------------------------- Turunan data ------------------------- */
   const timeline = useMemo(() => data?.timeline ?? [], [data]);
   const periodData = useMemo(() => timeline.slice(-period), [timeline, period]);
   const periodLeads = sum(periodData, "leads");
   const periodOrders = sum(periodData, "orders");
 
-  const last7 = timeline.slice(-7);
-  const prev7 = timeline.length > 7 ? timeline.slice(-14, -7) : [];
-  const last7Leads = sum(last7, "leads");
-  const prev7Leads = sum(prev7, "leads");
-  const trendData = timeline.slice(-14);
-  const trendSplit = Math.max(0, trendData.length - 7);
-
+  const last7Leads = sum(timeline.slice(-7), "leads");
+  const prev7Leads = timeline.length > 7 ? sum(timeline.slice(-14, -7), "leads") : 0;
   let deltaText = "0%";
   let deltaTone: "up" | "down" | "flat" = "flat";
   if (prev7Leads === 0 && last7Leads > 0) {
-    deltaText = "Baru";
+    // 7 hari sebelumnya nol: persentase tidak terdefinisi, tampilkan selisih jumlahnya.
+    deltaText = `+${fmt(last7Leads)}`;
     deltaTone = "up";
   } else if (prev7Leads > 0) {
     const d = Math.round(((last7Leads - prev7Leads) / prev7Leads) * 100);
@@ -981,63 +537,43 @@ export default function AdminOverviewDashboard() {
   const leadTotal = leads?.total ?? 0;
   const stages: StageDatum[] = leads
     ? [
-        { key: "new", label: "Baru", value: leads.new },
-        { key: "contacted", label: "Dihubungi", value: leads.contacted },
-        { key: "scheduled", label: "Jadwal Demo", value: leads.scheduled },
-        { key: "completed", label: "Selesai", value: leads.completed },
+        { key: "new", label: "Baru", value: leads.new, style: striped(INK, "rgba(255,255,255,0.12)"), dot: INK },
+        { key: "contacted", label: "Dihubungi", value: leads.contacted, style: striped(NAVY), dot: NAVY },
+        { key: "scheduled", label: "Jadwal Demo", value: leads.scheduled, style: striped(BLUE), dot: BLUE },
+        { key: "completed", label: "Selesai", value: leads.completed, style: striped(SKY, "rgba(255,255,255,0.45)"), dot: SKY },
       ]
     : [];
 
+  const followedUp = leads ? leads.contacted + leads.scheduled + leads.completed : 0;
   const conversions = leads
     ? [
-        {
-          label: "Sudah dihubungi",
-          hint: "Dihubungi, jadwal demo, atau selesai",
-          value: leads.contacted + leads.scheduled + leads.completed,
-          color: BLUE,
-        },
-        {
-          label: "Mencapai jadwal demo",
-          hint: "Jadwal demo atau selesai",
-          value: leads.scheduled + leads.completed,
-          color: "#5B8DF2",
-        },
-        {
-          label: "Demo selesai",
-          hint: "Status selesai",
-          value: leads.completed,
-          color: GREEN,
-        },
-        {
-          label: "Menunggu respon",
-          hint: "Status baru, belum dihubungi",
-          value: leads.new,
-          color: "#E5A23B",
-        },
+        { label: "Sudah dihubungi", value: followedUp, color: BLUE },
+        { label: "Mencapai jadwal demo", value: leads.scheduled + leads.completed, color: "#5B95FF" },
+        { label: "Demo selesai", value: leads.completed, color: SKY },
+        { label: "Menunggu respon", value: leads.new, color: EMPTY },
       ]
     : [];
 
-  const institutions = useMemo(
-    () => [...(data?.institutionDistribution ?? [])].sort((a, b) => b.count - a.count),
-    [data]
-  );
+  const institutions = useMemo(() => [...(data?.institutionDistribution ?? [])].sort((a, b) => b.count - a.count), [data]);
   const institutionTotal = institutions.reduce((a, b) => a + b.count, 0);
   const institutionMax = Math.max(1, ...institutions.map((i) => i.count));
+  const INSTITUTION_STYLES = [striped(BLUE), striped(INK, "rgba(255,255,255,0.12)"), striped(NAVY), striped(SKY, "rgba(255,255,255,0.45)")];
 
   const todayPoint = timeline.length ? timeline[timeline.length - 1] : null;
+  const yesterdayPoint = timeline.length > 1 ? timeline[timeline.length - 2] : null;
 
   const highlights: Highlight[] = data
     ? [
         {
           kicker: "Menunggu respon",
           value: data.summary.leads.new,
-          text: "permohonan demo berstatus baru dan belum dihubungi tim.",
+          text: "permohonan demo belum dihubungi tim.",
           emptyText: "Semua permohonan demo sudah ditindaklanjuti.",
           href: "/admin/leads",
           cta: "Tinjau permohonan",
         },
         {
-          kicker: "Jadwal demo aktif",
+          kicker: "Jadwal demo",
           value: data.summary.leads.scheduled,
           text: "permohonan sudah memiliki jadwal demo.",
           emptyText: "Belum ada permohonan dengan jadwal demo.",
@@ -1047,7 +583,7 @@ export default function AdminOverviewDashboard() {
         {
           kicker: "Order CITO",
           value: data.summary.orders.cito,
-          text: "order laboratorium berprioritas CITO tercatat di LIS.",
+          text: "order laboratorium berprioritas CITO di LIS.",
           emptyText: "Tidak ada order laboratorium berprioritas CITO.",
           href: "/admin/orders",
           cta: "Buka order lab",
@@ -1055,75 +591,55 @@ export default function AdminOverviewDashboard() {
       ]
     : [];
 
-  const chip = cn(
-    "inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-[#1E2A3B] shadow-[0_2px_10px_rgba(30,42,59,0.04)] ring-1 ring-[#E4E8EF] transition-colors hover:text-[#2F6FED] hover:ring-[#C9D7F6] disabled:opacity-60",
+  const toolbarBtn = cn(
+    "inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full bg-white px-5 text-[13px] font-medium text-[#111318] transition-colors hover:bg-[#F7F8FA] disabled:opacity-60",
     focusRing
   );
+  const toolbarIcon = cn("inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#111318] transition-colors hover:bg-[#F7F8FA] disabled:opacity-60", focusRing);
 
   return (
     <div className="space-y-6">
-      {/* ---------------------------- Sapaan ---------------------------- */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      {/* ---------------------------- Judul + toolbar ---------------------------- */}
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          {todayStr && <p className="text-sm font-medium text-[#6B7585]">{todayStr}</p>}
-          <h1 className="mt-1 font-display text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">
-            <span className="text-[#1D3F82]">
-              {greeting}
-              {firstName ? "," : "!"}
-            </span>
-            {firstName && <span className="text-[#2F6FED]"> {firstName}!</span>}
-          </h1>
-          <p className="mt-1.5 max-w-2xl text-sm text-[#6B7585]">
-            Ringkasan permohonan demo, aktivitas LIS, dan profil institusi pemohon Diagnova.
-          </p>
+          <h1 className="font-display text-[28px] font-medium leading-tight tracking-tight text-[#111318] sm:text-[32px]">Ringkasan Dashboard</h1>
+          <nav aria-label="Breadcrumb" className="mt-1 text-[12px] text-[#8A8F98]">
+            Dashboard <span className="mx-1">›</span> <span className="text-[#5B616B]">Semua Laporan</span>
+            {updatedAt && (
+              <span className="ml-2" aria-live="polite">
+                · Diperbarui {updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </nav>
         </div>
-        <Link
-          href="/admin/leads"
-          className={cn(
-            "inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-[#2F6FED] px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(47,111,237,0.32)] transition-colors hover:bg-[#1D4FC4]",
-            focusRing
-          )}
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          Permohonan Demo
-        </Link>
-      </div>
-
-      {/* ---------------------------- Toolbar --------------------------- */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <a href="/api/admin/leads/export" download className={chip}>
-            <Download className="h-4 w-4" aria-hidden="true" />
-            Unduh Data Leads
+          <div role="group" aria-label="Periode aktivitas" className="inline-flex h-11 items-center rounded-full bg-white p-1">
+            {([7, 14] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setPeriod(p)}
+                aria-pressed={period === p}
+                className={cn("h-9 rounded-full px-4 text-[13px] font-medium transition-colors", focusRing, period === p ? "bg-[#111318] text-white" : "text-[#5B616B] hover:text-[#111318]")}
+              >
+                {p} Hari
+              </button>
+            ))}
+          </div>
+          <a href="/api/admin/leads/export" download className={toolbarBtn}>
+            Ekspor
           </a>
-          <button type="button" onClick={fetchOverview} disabled={isLoading} className={chip}>
-            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin text-[#2F6FED]")} aria-hidden="true" />
+          <a href="/api/admin/leads/export" download aria-label="Unduh data permohonan (CSV)" title="Unduh data permohonan (CSV)" className={toolbarIcon}>
+            <Download className="h-4 w-4" aria-hidden="true" />
+          </a>
+          <button type="button" onClick={fetchOverview} disabled={isLoading} className={toolbarBtn}>
             {isLoading ? "Memuat..." : "Muat Ulang"}
+            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin text-[#1F6BFF]")} aria-hidden="true" />
           </button>
-          {updatedAt && (
-            <span className="px-1 text-xs text-[#6B7585]" aria-live="polite">
-              Diperbarui{" "}
-              {updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
-            </span>
-          )}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link href="/admin/leads" className={chip}>
-            <Users className="h-4 w-4" aria-hidden="true" />
-            Kelola Leads
-          </Link>
-          <Link href="/admin/orders" className={chip}>
-            <ClipboardList className="h-4 w-4" aria-hidden="true" />
-            Order Lab
-          </Link>
-          <Link href="/admin/cms" className={chip}>
-            <Globe className="h-4 w-4" aria-hidden="true" />
-            Pusat Konten
-          </Link>
         </div>
       </div>
 
-      {/* --------------------------- Konten ----------------------------- */}
+      {/* ---------------------------------- Konten ---------------------------------- */}
       {isLoading && !data ? (
         <>
           <span className="sr-only" role="status">
@@ -1132,25 +648,15 @@ export default function AdminOverviewDashboard() {
           <DashboardSkeleton />
         </>
       ) : !data ? (
-        <div
-          role="alert"
-          className="flex flex-col items-center gap-3 rounded-[24px] bg-white px-6 py-14 text-center ring-1 ring-[#E4E8EF]"
-        >
+        <div role="alert" className="flex flex-col items-center gap-3 rounded-[24px] bg-white px-6 py-14 text-center">
           <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
             <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>
-            <p className="font-semibold text-[#1E2A3B]">Data dashboard gagal dimuat</p>
-            <p className="mt-1 text-sm text-[#6B7585]">{error || "Terjadi kesalahan yang tidak diketahui."}</p>
+            <p className="font-semibold text-[#111318]">Data dashboard gagal dimuat</p>
+            <p className="mt-1 text-sm text-[#8A8F98]">{error || "Terjadi kesalahan yang tidak diketahui."}</p>
           </div>
-          <button
-            type="button"
-            onClick={fetchOverview}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full bg-[#2F6FED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1D4FC4]",
-              focusRing
-            )}
-          >
+          <button type="button" onClick={fetchOverview} className={cn("inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1858D6]", focusRing)}>
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Coba Lagi
           </button>
@@ -1158,194 +664,187 @@ export default function AdminOverviewDashboard() {
       ) : (
         <div className="space-y-4">
           {error && (
-            <div
-              role="alert"
-              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200"
-            >
+            <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200">
               <span className="inline-flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
                 Gagal memuat ulang ({error}). Menampilkan data terakhir.
               </span>
-              <button
-                type="button"
-                onClick={fetchOverview}
-                className={cn("rounded-full bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-rose-200", focusRing)}
-              >
+              <button type="button" onClick={fetchOverview} className={cn("rounded-full bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-rose-200", focusRing)}>
                 Coba Lagi
               </button>
             </div>
           )}
 
-          <div
-            className={cn(
-              "grid grid-cols-1 gap-4 transition-opacity sm:gap-5 md:grid-cols-2 xl:grid-cols-4",
-              isLoading && "opacity-60"
-            )}
-            aria-busy={isLoading}
-          >
-            {/* 1. Aktivitas harian */}
+          <div className={cn("grid grid-cols-1 gap-4 transition-opacity md:grid-cols-2 xl:grid-cols-12", isLoading && "opacity-60")} aria-busy={isLoading}>
+            {/* 1. Aktivitas harian (matriks titik) */}
             <Card
-              className="md:col-span-2"
+              className="md:col-span-2 xl:col-span-5"
               title="Aktivitas Harian"
-              subtitle={`${fmt(periodLeads)} permohonan demo · ${fmt(periodOrders)} order lab dalam ${period} hari terakhir`}
               action={
-                <div
-                  role="group"
-                  aria-label="Periode grafik"
-                  className="inline-flex rounded-full bg-[#F1F3F7] p-1"
-                >
-                  {([7, 14] as const).map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setPeriod(p)}
-                      aria-pressed={period === p}
-                      className={cn(
-                        "rounded-full px-3 py-1 text-xs font-semibold transition-colors",
-                        focusRing,
-                        period === p ? "bg-white text-[#1E2A3B] shadow-sm" : "text-[#6B7585] hover:text-[#1E2A3B]"
-                      )}
-                    >
-                      {p} hari
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <CircleLink href="/admin/leads" label="Buka permohonan demo" />
+                </>
               }
             >
+              <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <div className="font-display text-[34px] font-medium leading-none tracking-tight text-[#111318]">{fmt(periodLeads)}</div>
+                  <div className="mt-1.5 text-[12px] text-[#8A8F98]">
+                    permohonan demo · {fmt(periodOrders)} order lab dalam {period} hari
+                  </div>
+                </div>
+              </div>
               {periodData.length === 0 ? (
                 <EmptyState icon={Users} text="Belum ada data aktivitas untuk ditampilkan." />
-              ) : periodLeads + periodOrders === 0 ? (
-                <EmptyState
-                  icon={Users}
-                  text={`Belum ada permohonan demo maupun order lab dalam ${period} hari terakhir.`}
-                />
               ) : (
-                <ActivityLineChart data={periodData} />
+                <ActivityDots data={periodData} />
               )}
             </Card>
 
-            {/* 2. Sorotan hari ini */}
-            <HighlightCard
-              slides={highlights}
-              todayLeads={todayPoint ? todayPoint.leads : null}
-              todayLabel={todayPoint?.label ?? null}
-            />
+            {/* 2-4. Blok kanan: sorotan, hari ini, ekspor */}
+            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 md:col-span-2 xl:col-span-7">
+              <HighlightCard slides={highlights} todayLeads={todayPoint ? todayPoint.leads : null} />
 
-            {/* 3. Tren 7 hari */}
-            <Card
-              title="Tren Permohonan"
-              subtitle="7 hari terakhir dibanding 7 hari sebelumnya"
-            >
-              <div className="flex items-end justify-between gap-3">
-                <div>
-                  <div className="font-display text-4xl font-bold tracking-tight text-[#1E2A3B]">
-                    {fmt(last7Leads)}
-                  </div>
-                  <div className="mt-1 text-xs text-[#6B7585]">
-                    permohonan · sebelumnya {fmt(prev7Leads)}
+              <section className="flex min-w-0 flex-col justify-between rounded-[24px] bg-white p-5 sm:p-6">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F2F3F5] text-[#111318]">
+                    <Users className="h-[18px] w-[18px]" aria-hidden="true" />
+                  </span>
+                  <h2 className="text-[13px] font-medium leading-tight text-[#3B4049]">
+                    Permohonan
+                    <br />
+                    Hari Ini
+                  </h2>
+                </div>
+                <div className="mt-4 font-display text-[34px] font-medium leading-none tracking-tight text-[#111318]">{fmt(todayPoint?.leads ?? 0)}</div>
+                <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#EEF0F3] pt-3">
+                  <span className="text-[12px] text-[#8A8F98]">
+                    Kemarin {fmt(yesterdayPoint?.leads ?? 0)} · 7 hari{" "}
+                  </span>
+                  <DeltaChip text={deltaText} tone={deltaTone} />
+                </div>
+              </section>
+
+              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:p-6">
+                <span className="pointer-events-none absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.06]" aria-hidden="true" />
+                <div className="relative flex items-center justify-between gap-2">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+                    <FileText className="h-[18px] w-[18px]" aria-hidden="true" />
+                  </span>
+                  <div className="flex gap-2">
+                    <a
+                      href="/api/admin/leads/export"
+                      download
+                      aria-label="Unduh data permohonan (CSV)"
+                      title="Unduh data permohonan (CSV)"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111318] transition-colors hover:bg-[#E9ECF1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                      <Download className="h-4 w-4" aria-hidden="true" />
+                    </a>
+                    <CircleLink href="/admin/leads" label="Buka permohonan demo" dark />
                   </div>
                 </div>
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-                    deltaTone === "up" && "bg-emerald-50 text-emerald-700",
-                    deltaTone === "down" && "bg-rose-50 text-rose-700",
-                    deltaTone === "flat" && "bg-slate-100 text-slate-600"
-                  )}
-                  title="Perubahan dibanding 7 hari sebelumnya"
-                >
-                  {deltaTone === "up" && <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />}
-                  {deltaTone === "down" && <ArrowDownRight className="h-3.5 w-3.5" aria-hidden="true" />}
-                  {deltaTone === "flat" && <Minus className="h-3.5 w-3.5" aria-hidden="true" />}
-                  <span className="sr-only">Perubahan: </span>
-                  {deltaText}
-                </span>
-              </div>
-              <div className="mt-auto pt-6">
-                {last7Leads + prev7Leads === 0 ? (
-                  <EmptyState icon={Users} text="Belum ada permohonan dalam 14 hari terakhir." />
-                ) : (
-                  <TrendStepChart data={trendData} splitAt={trendSplit} />
-                )}
-              </div>
-            </Card>
+                <div className="relative mt-6">
+                  <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[10px] text-white/75">Unduh data permohonan (CSV)</span>
+                  <h2 className="mt-2 text-[21px] font-medium leading-tight text-white">Laporan Permohonan</h2>
+                </div>
+              </section>
+            </div>
 
-            {/* 4. Permohonan per tahap */}
+            {/* 5. Permohonan per tahap (batang bergaris) */}
             <Card
-              className="md:col-span-2"
+              className="md:col-span-2 xl:col-span-8"
               title="Permohonan per Tahap"
-              subtitle={`Total ${fmt(leadTotal)} permohonan demo berdasarkan status saat ini`}
-              action={<PillLink href="/admin/leads">Lihat Detail</PillLink>}
+              action={
+                <>
+                  <span className="hidden rounded-full border border-[#E4E6EA] px-3 py-2 text-[12px] font-medium text-[#3B4049] sm:inline-flex">Semua waktu</span>
+                  <CircleLink href="/admin/leads" label="Lihat detail permohonan" />
+                </>
+              }
             >
               {leadTotal === 0 ? (
                 <EmptyState icon={Users} text="Belum ada permohonan demo yang tercatat." />
               ) : (
-                <PipelineBarChart stages={stages} total={leadTotal} />
+                <div className="grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)]">
+                  <div className="flex flex-col">
+                    <span className="w-fit rounded-full bg-[#111318] px-3 py-1 text-[11px] font-medium text-white">Total</span>
+                    <div className="mt-3 font-display text-[34px] font-medium leading-none tracking-tight text-[#111318]">{fmt(leadTotal)}</div>
+                    <p className="mt-2 text-[12px] leading-relaxed text-[#8A8F98]">permohonan demo berdasarkan status saat ini</p>
+                    <div className="mt-5">
+                      <div className={cn("font-display text-[30px] font-medium leading-none", deltaTone === "down" ? "text-[#B42318]" : "text-[#1F6BFF]")}>{deltaText}</div>
+                      <p className="mt-1 text-[12px] text-[#8A8F98]">permohonan 7 hari terakhir dibanding 7 hari sebelumnya</p>
+                    </div>
+                    <ul className="mt-auto flex flex-wrap gap-x-4 gap-y-1.5 pt-5 text-[11px] text-[#8A8F98]">
+                      {stages.map((s) => (
+                        <li key={s.key} className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.dot }} aria-hidden="true" />
+                          {s.label} · {pct(s.value, leadTotal)}%
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <StageBars stages={stages} total={leadTotal} />
+                </div>
               )}
             </Card>
 
-            {/* 5. Konversi pipeline */}
-            <Card title="Konversi Pipeline" subtitle="Persentase permohonan yang telah mencapai tiap tahap">
+            {/* 6. Konversi pipeline (gauge) */}
+            <Card className="md:col-span-2 xl:col-span-4" title="Konversi Pipeline" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
               {leadTotal === 0 ? (
                 <EmptyState icon={Users} text="Konversi akan tampil setelah ada permohonan demo." />
               ) : (
-                <ul className="space-y-4">
-                  {conversions.map((c) => {
-                    const p = pct(c.value, leadTotal);
-                    return (
-                      <li key={c.label}>
-                        <div className="flex items-baseline justify-between gap-3">
-                          <div className="min-w-0">
-                            <div className="truncate text-[13px] font-semibold text-[#1E2A3B]">{c.label}</div>
-                            <div className="truncate text-[11px] text-[#6B7585]">{c.hint}</div>
-                          </div>
-                          <div className="shrink-0 text-right">
-                            <div className="text-sm font-bold text-[#1E2A3B]">{p}%</div>
-                            <div className="text-[11px] text-[#6B7585]">
-                              {fmt(c.value)}/{fmt(leadTotal)}
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#EEF1F5]"
-                          role="progressbar"
-                          aria-label={c.label}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-valuenow={p}
-                        >
-                          <div
-                            className="h-full rounded-full transition-[width] duration-500"
-                            style={{ width: `${p}%`, background: c.color }}
-                          />
-                        </div>
+                <>
+                  <ul className="mb-2 space-y-1.5 text-[11px] text-[#8A8F98]">
+                    {conversions.map((c) => (
+                      <li key={c.label} className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} aria-hidden="true" />
+                          {c.label}
+                        </span>
+                        <span className="font-semibold text-[#111318]">
+                          {pct(c.value, leadTotal)}% <span className="font-normal text-[#A3A8B1]">({fmt(c.value)})</span>
+                        </span>
                       </li>
-                    );
-                  })}
-                </ul>
+                    ))}
+                  </ul>
+                  <div className="relative mt-auto">
+                    <SegmentGauge percent={pct(followedUp, leadTotal)} />
+                    <div className="absolute inset-x-0 bottom-1 text-center">
+                      <div
+                        className="font-display text-[34px] font-medium leading-none text-[#111318]"
+                        role="img"
+                        aria-label={`${pct(followedUp, leadTotal)}% permohonan sudah ditindaklanjuti`}
+                      >
+                        {pct(followedUp, leadTotal)}%
+                      </div>
+                      <div className="mt-1 text-[11px] text-[#8A8F98]">sudah ditindaklanjuti</div>
+                    </div>
+                  </div>
+                  <p className="mx-auto mt-3 w-fit rounded-full bg-[#F2F3F5] px-3 py-1.5 text-[11px] text-[#5B616B]">
+                    {fmt(followedUp)} dari {fmt(leadTotal)} permohonan sudah dihubungi
+                  </p>
+                </>
               )}
             </Card>
 
-            {/* 6. Permohonan terbaru */}
-            <Card title="Permohonan Terbaru" action={<PillLink href="/admin/leads">Lihat Semua</PillLink>}>
+            {/* 7. Permohonan terbaru */}
+            <Card className="xl:col-span-5" title="Permohonan Terbaru" action={<CircleLink href="/admin/leads" label="Lihat semua permohonan" />}>
               {data.recentLeads.length === 0 ? (
                 <EmptyState icon={Users} text="Belum ada permohonan demo yang masuk." />
               ) : (
-                <ul className="-mx-2 divide-y divide-[#EEF1F5]">
+                <ul className="space-y-2">
                   {data.recentLeads.map((lead) => (
-                    <li key={lead.id} className="flex items-center gap-3 px-2 py-3">
-                      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EEF3FD] text-[13px] font-bold text-[#2F6FED]">
+                    <li key={lead.id} className="flex items-center gap-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
+                      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#111318] text-[12px] font-bold text-white">
                         {getInitials(lead.name)}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-[13px] font-semibold text-[#1E2A3B]">{lead.name}</div>
-                        <div className="truncate text-[11px] text-[#6B7585]">
-                          {lead.institution || INSTITUTION_NAMES[lead.institutionType] || "-"}
-                        </div>
+                        <div className="truncate text-[13px] font-semibold text-[#111318]">{lead.name}</div>
+                        <div className="truncate text-[11px] text-[#8A8F98]">{lead.institution || INSTITUTION_NAMES[lead.institutionType] || "-"}</div>
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <StatusBadge type={lead.status} className="px-2 text-[10px]" />
-                        <span className="text-[10px] text-[#6B7585]">{formatShortDate(lead.createdAt)}</span>
+                        <span className="text-[10px] text-[#8A8F98]">{formatShortDate(lead.createdAt)}</span>
                       </div>
                     </li>
                   ))}
@@ -1353,46 +852,31 @@ export default function AdminOverviewDashboard() {
               )}
             </Card>
 
-            {/* 7. Order lab terbaru */}
-            <Card
-              className="md:col-span-2"
-              title="Order Lab Terbaru"
-              subtitle="Diurutkan berdasarkan prioritas, lalu waktu order"
-              action={<PillLink href="/admin/orders">Buka Order</PillLink>}
-            >
+            {/* 8. Order lab terbaru */}
+            <Card className="xl:col-span-7" title="Order Lab Terbaru" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
               {data.recentOrders.length === 0 ? (
                 <EmptyState icon={FlaskConical} text="Belum ada order laboratorium yang terdaftar." />
               ) : (
-                <ul className="-mx-2 divide-y divide-[#EEF1F5]">
+                <ul className="space-y-2">
                   {data.recentOrders.map((order) => {
                     const done = order.specimensCount > 0 && order.receivedSpecimensCount >= order.specimensCount;
                     return (
-                      <li
-                        key={order.id}
-                        className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-2 py-3"
-                      >
-                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F1F3F7] text-[#4B5565]">
+                      <li key={order.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1F6BFF] text-white">
                           <FlaskConical className="h-4 w-4" aria-hidden="true" />
                         </span>
                         <div className="min-w-0">
                           <div className="flex min-w-0 flex-wrap items-center gap-x-2">
-                            <span className="truncate text-[13px] font-semibold text-[#1E2A3B]">
-                              {order.patientName}
-                            </span>
-                            <span className="font-mono text-[11px] text-[#2F6FED]">{order.orderNumber}</span>
+                            <span className="truncate text-[13px] font-semibold text-[#111318]">{order.patientName}</span>
+                            <span className="font-mono text-[11px] text-[#1F6BFF]">{order.orderNumber}</span>
                           </div>
-                          <div className="truncate text-[11px] text-[#6B7585]">
+                          <div className="truncate text-[11px] text-[#8A8F98]">
                             {order.physicianName} · {formatDateTime(order.orderedAt)}
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <StatusBadge type={order.priority} className="px-2 text-[10px]" />
-                          <span
-                            className={cn(
-                              "text-[10px] font-medium",
-                              done ? "text-emerald-700" : "text-[#6B7585]"
-                            )}
-                          >
+                          <span className={cn("text-[10px] font-medium", done ? "text-emerald-700" : "text-[#8A8F98]")}>
                             {order.receivedSpecimensCount}/{order.specimensCount} spesimen diterima
                           </span>
                         </div>
@@ -1403,50 +887,46 @@ export default function AdminOverviewDashboard() {
               )}
             </Card>
 
-            {/* 8. Ringkasan LIS (label/nilai) */}
-            <Card title="Ringkasan LIS" subtitle="Total seluruh order & spesimen">
-              <dl className="divide-y divide-[#EEF1F5]">
+            {/* 9. Ringkasan LIS */}
+            <Card className="xl:col-span-5" title="Ringkasan LIS" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
+              <dl className="grid grid-cols-2 gap-2">
                 {[
-                  { label: "Total order", value: data.summary.orders.total },
-                  { label: "Prioritas CITO", value: data.summary.orders.cito },
+                  { label: "Total order", value: data.summary.orders.total, dark: true },
+                  { label: "Prioritas CITO", value: data.summary.orders.cito, blue: true },
                   { label: "Prioritas mendesak", value: data.summary.orders.urgent },
                   { label: "Prioritas rutin", value: data.summary.orders.routine },
                   { label: "Order selesai", value: data.summary.orders.completed },
-                  { label: "Spesimen diterima lab", value: data.summary.specimens.received },
+                  { label: "Spesimen diterima", value: data.summary.specimens.received },
                   { label: "Spesimen ditolak", value: data.summary.specimens.rejected },
                   { label: "Pengguna aktif", value: data.summary.activeUsers },
                 ].map((row) => (
-                  <div key={row.label} className="flex items-center justify-between gap-3 py-2.5">
-                    <dt className="text-xs text-[#6B7585]">{row.label}</dt>
-                    <dd className="text-sm font-bold text-[#1E2A3B]">{fmt(row.value)}</dd>
+                  <div
+                    key={row.label}
+                    className={cn("rounded-2xl px-3.5 py-3", row.dark ? "bg-[#111318] text-white" : row.blue ? "text-white" : "bg-[#F7F8FA]")}
+                    style={row.blue ? striped(BLUE) : undefined}
+                  >
+                    <dt className={cn("text-[11px]", row.dark || row.blue ? "text-white/75" : "text-[#8A8F98]")}>{row.label}</dt>
+                    <dd className={cn("mt-1 font-display text-[22px] font-medium leading-none", row.dark || row.blue ? "text-white" : "text-[#111318]")}>{fmt(row.value)}</dd>
                   </div>
                 ))}
               </dl>
             </Card>
 
-            {/* 9. Profil institusi */}
-            <Card title="Profil Institusi" subtitle="Jenis institusi seluruh pemohon demo">
+            {/* 10. Profil institusi */}
+            <Card className="xl:col-span-7" title="Profil Institusi" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
               {institutions.length === 0 ? (
                 <EmptyState icon={Building2} text="Belum ada data institusi pemohon." />
               ) : (
-                <ul className="space-y-3.5">
-                  {institutions.map((inst) => (
-                    <li key={inst.type}>
-                      <div className="flex items-center justify-between gap-3 text-xs">
-                        <span className="truncate font-medium text-[#1E2A3B]">
-                          {INSTITUTION_NAMES[inst.type] || inst.type}
-                        </span>
-                        <span className="shrink-0 text-[#6B7585]">
-                          <span className="font-bold text-[#1E2A3B]">{fmt(inst.count)}</span> ·{" "}
-                          {pct(inst.count, institutionTotal)}%
-                        </span>
-                      </div>
-                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-[#EEF1F5]" aria-hidden="true">
-                        <div
-                          className="h-full rounded-full"
-                          style={{ width: `${(inst.count / institutionMax) * 100}%`, background: BLUE }}
-                        />
-                      </div>
+                <ul className="space-y-3">
+                  {institutions.map((inst, i) => (
+                    <li key={inst.type} className="grid grid-cols-[minmax(110px,160px)_minmax(0,1fr)_auto] items-center gap-3">
+                      <span className="truncate text-[12px] font-medium text-[#3B4049]">{INSTITUTION_NAMES[inst.type] || inst.type}</span>
+                      <span className="h-7 w-full overflow-hidden rounded-full bg-[#F2F3F5]" aria-hidden="true">
+                        <span className="block h-full rounded-full" style={{ width: `${Math.max(6, (inst.count / institutionMax) * 100)}%`, ...INSTITUTION_STYLES[i % INSTITUTION_STYLES.length] }} />
+                      </span>
+                      <span className="w-[72px] text-right text-[12px] text-[#8A8F98]">
+                        <span className="font-semibold text-[#111318]">{fmt(inst.count)}</span> · {pct(inst.count, institutionTotal)}%
+                      </span>
                     </li>
                   ))}
                 </ul>

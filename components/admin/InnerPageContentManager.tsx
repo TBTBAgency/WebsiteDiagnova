@@ -167,7 +167,7 @@ function HeroEditor({ page, onSaved }: { page: InnerPageData; onSaved: (msg: str
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3" data-testid="hero-editor">
-      <div className="sticky top-[88px] z-20 -mx-5 -mt-5 flex flex-wrap items-center justify-between gap-2 rounded-t-2xl border-b border-slate-100 bg-white/95 px-5 py-3 backdrop-blur">
+      <div className="sticky top-[76px] z-20 -mx-5 -mt-5 flex flex-wrap items-center justify-between gap-2 rounded-t-2xl border-b border-slate-100 bg-white/95 px-5 py-3 backdrop-blur">
         <div>
           <h3 className="text-sm font-bold text-slate-900">Gambaran {page.label} (Hero)</h3>
           <p className="text-[11px] text-slate-500">Kosongkan kolom untuk memakai teks bawaan halaman. Baris baru pada judul menjadi pemisah baris.</p>

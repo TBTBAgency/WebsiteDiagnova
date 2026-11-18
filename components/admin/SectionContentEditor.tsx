@@ -227,7 +227,7 @@ export function SectionContentEditor({
   return (
     <div className="rounded-xl border border-blue-100 bg-blue-50/30 p-3 space-y-4" data-testid={`content-editor-${sectionKey}`}>
       {/* Baris aksi menempel di bawah header admin agar tombol Simpan selalu terlihat pada form panjang. */}
-      <div className="sticky top-[88px] z-20 -mx-3 -mt-3 flex flex-wrap items-center justify-between gap-2 rounded-t-xl border-b border-blue-100 bg-white/95 px-3 py-2.5 backdrop-blur">
+      <div className="sticky top-[76px] z-20 -mx-3 -mt-3 flex flex-wrap items-center justify-between gap-2 rounded-t-xl border-b border-blue-100 bg-white/95 px-3 py-2.5 backdrop-blur">
         <div>
           <p className="text-xs font-bold text-slate-900">Isi Section</p>
           <p className="text-[11px] text-slate-500">

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AdminSessionContext, AdminTopNav } from "@/components/admin/AdminTopNav";
+import { AdminSessionContext, AdminShell } from "@/components/admin/AdminShell";
 import { AuthSessionPayload } from "@/types";
 
 export default function AdminDashboardLayout({
@@ -40,17 +40,9 @@ export default function AdminDashboardLayout({
 
   return (
     <AdminSessionContext.Provider value={currentUser}>
-      <div className="min-h-screen overflow-x-clip bg-[#E9ECF1] font-sans text-[#17191D] selection:bg-[#CAE2F1] selection:text-[#087BEE]">
-        <AdminTopNav
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-        />
-
-        <main className="px-3 pb-10 pt-5 sm:px-5 sm:pt-6 lg:px-8 lg:pt-8">
-          <div className="mx-auto min-w-0 max-w-[1440px]">{children}</div>
-        </main>
-      </div>
+      <AdminShell currentUser={currentUser} onLogout={handleLogout} isLoggingOut={isLoggingOut}>
+        {children}
+      </AdminShell>
     </AdminSessionContext.Provider>
   );
 }
