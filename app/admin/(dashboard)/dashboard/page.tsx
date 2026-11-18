@@ -231,10 +231,10 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className={cn("flex min-w-0 flex-col rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(14,35,75,0.11)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6", className)}>
+    <section className={cn("flex min-w-0 flex-col rounded-[26px] bg-white/95 p-5 shadow-[0_2px_12px_rgba(14,35,75,0.03),0_12px_32px_-8px_rgba(14,35,75,0.06)] ring-1 ring-black/[0.04] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(14,35,75,0.06),0_20px_44px_-12px_rgba(14,35,75,0.10)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6", className)}>
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="font-display truncate text-[16px] font-semibold leading-snug text-[#0E234B] sm:text-[17px]">{title}</h2>
+          <h2 className="font-display truncate text-[16px] font-semibold leading-snug tracking-[-0.015em] text-[#0E234B] sm:text-[17px]">{title}</h2>
           {subtitle && <p className="mt-0.5 truncate text-[12px] text-slate-500">{subtitle}</p>}
         </div>
         {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
@@ -539,7 +539,7 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E234B] via-[#133A7A] to-[#0E56D8] p-5 text-white shadow-[0_16px_38px_-12px_rgba(14,35,75,0.35)] transition-all duration-300 hover:-translate-y-0.5 motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:col-span-2 sm:p-6"
+      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[26px] bg-gradient-to-br from-[#0E234B] via-[#133A7A] to-[#0E56D8] p-5 text-white shadow-[0_16px_38px_-12px_rgba(14,35,75,0.35)] ring-1 ring-inset ring-white/15 transition-all duration-300 hover:-translate-y-0.5 motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:col-span-2 sm:p-6"
     >
       {/* Smooth ambient Diagnova glow orbs */}
       <span
@@ -761,17 +761,17 @@ export default function AdminOverviewDashboard() {
     : [];
 
   const toolbarBtn = cn(
-    "inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full border border-[#DCE6F5] bg-white px-5 text-[13px] font-medium text-[#0E234B] shadow-xs transition-colors hover:bg-[#EEF4FF] disabled:opacity-60",
+    "inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-full bg-white/95 px-4 text-[13px] font-medium tracking-[-0.01em] text-[#0E234B] shadow-[0_2px_8px_rgba(14,35,75,0.04)] ring-1 ring-black/[0.05] backdrop-blur-md transition-all hover:bg-white hover:shadow-[0_4px_12px_rgba(14,35,75,0.08)] active:scale-[0.98] disabled:opacity-60",
     focusRing
   );
-  const toolbarIcon = cn("inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#DCE6F5] bg-white text-[#0E234B] shadow-xs transition-colors hover:bg-[#EEF4FF] disabled:opacity-60", focusRing);
+  const toolbarIcon = cn("inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-[#0E234B] shadow-[0_2px_8px_rgba(14,35,75,0.04)] ring-1 ring-black/[0.05] transition-all hover:bg-white disabled:opacity-60", focusRing);
 
   return (
     <div className="space-y-6">
       {/* ---------------------------- Judul + toolbar ---------------------------- */}
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <h1 className="font-display text-[28px] font-bold leading-tight tracking-tight text-[#0E234B] sm:text-[32px]">{t("Ringkasan Dashboard", "Dashboard Overview")}</h1>
+          <h1 className="font-display text-[28px] font-bold leading-tight tracking-[-0.025em] text-[#0E234B] sm:text-[32px]">{t("Ringkasan Dashboard", "Dashboard Overview")}</h1>
           <nav aria-label="Breadcrumb" className="mt-1 flex flex-wrap items-center gap-x-1 text-[12px] text-slate-500">
             <span>Dashboard</span>
             <ChevronRight className="h-3 w-3" aria-hidden="true" />
@@ -900,7 +900,7 @@ export default function AdminOverviewDashboard() {
             <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 md:col-span-2 xl:col-span-7">
               <HighlightCard slides={highlights} todayLeads={todayPoint ? todayPoint.leads : null} />
 
-              <section className="flex min-w-0 flex-col justify-between rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(14,35,75,0.11)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6">
+              <section className="flex min-w-0 flex-col justify-between rounded-[26px] bg-white/95 p-5 shadow-[0_2px_12px_rgba(14,35,75,0.03),0_12px_32px_-8px_rgba(14,35,75,0.06)] ring-1 ring-black/[0.04] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(14,35,75,0.06),0_20px_44px_-12px_rgba(14,35,75,0.10)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF4FF] text-[#1B6FF2]">
@@ -943,7 +943,7 @@ export default function AdminOverviewDashboard() {
                 </div>
               </section>
 
-              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E234B] via-[#153670] to-[#0A1A38] p-5 text-white shadow-[0_14px_34px_-12px_rgba(14,35,75,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-12px_rgba(14,35,75,0.42)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6">
+              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[26px] bg-gradient-to-br from-[#0E234B] via-[#153670] to-[#0A1A38] p-5 text-white shadow-[0_14px_34px_-12px_rgba(14,35,75,0.35)] ring-1 ring-inset ring-white/15 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-12px_rgba(14,35,75,0.42)] motion-safe:animate-[fadeSlideUp_0.45s_ease-out_both] sm:p-6">
                 <span className="pointer-events-none absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.06]" aria-hidden="true" />
                 <span className="pointer-events-none absolute -bottom-28 right-10 h-40 w-40 rounded-full bg-[#1B6FF2]/30 blur-2xl" aria-hidden="true" />
                 <div className="relative flex items-center justify-between gap-2">

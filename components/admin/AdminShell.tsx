@@ -181,18 +181,18 @@ function SidebarContent({
   return (
     <div className="flex h-full flex-col">
       <div className="px-1">
-        <h2 className="font-display text-[26px] font-bold leading-[1.12] tracking-tight text-[#0E234B]">
+        <h2 className="font-display text-[26px] font-bold leading-[1.1] tracking-[-0.025em] text-[#0E234B]">
           {greeting ?? t("Selamat datang", "Welcome")},
           <br />
           {firstName ? `${firstName}!` : "Admin!"}
         </h2>
-        <p className="mt-2 text-[13px] text-slate-500">{t("Ringkasan pengelolaan website Diagnova", "Diagnova website management overview")}</p>
+        <p className="mt-2 text-[13px] tracking-[-0.01em] text-slate-500">{t("Ringkasan pengelolaan website Diagnova", "Diagnova website management overview")}</p>
       </div>
 
       <nav aria-label={t("Navigasi admin", "Admin navigation")} className="mt-7 space-y-6">
         {ADMIN_NAV_GROUPS.map((group) => (
           <div key={group.key}>
-            <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">{t(group.heading, group.headingEn)}</p>
+            <p className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">{t(group.heading, group.headingEn)}</p>
             <ul className="space-y-1">
               {group.items.map((item) => {
                 const active = isNavActive(pathname, item.href);
@@ -208,16 +208,16 @@ function SidebarContent({
                       }}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex items-center gap-3 rounded-full px-4 py-2.5 text-[13px] font-medium transition-all",
+                        "flex items-center gap-3 rounded-[14px] px-3.5 py-2.5 text-[13px] font-medium tracking-[-0.01em] transition-all duration-200",
                         focusRing,
                         active
-                          ? "bg-[#0E234B] text-white shadow-[0_8px_20px_-4px_rgba(14,35,75,0.28)]"
-                          : "text-slate-600 hover:bg-[#EEF4FF] hover:text-[#0E234B]"
+                          ? "bg-[#1B6FF2] text-white shadow-[0_6px_18px_-4px_rgba(27,111,242,0.40)]"
+                          : "text-slate-600 hover:bg-black/[0.04] hover:text-[#0E234B]"
                       )}
                     >
                       <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
                       <span className="flex-1 truncate">{t(item.name, item.en)}</span>
-                      {active && <ChevronDown className="h-4 w-4 -rotate-90 opacity-80" aria-hidden="true" />}
+                      {active && <ChevronDown className="h-4 w-4 -rotate-90 opacity-85" aria-hidden="true" />}
                     </Link>
                   </li>
                 );
@@ -228,7 +228,7 @@ function SidebarContent({
       </nav>
 
       {/* Kartu biru di bawah sidebar: pratinjau website publik */}
-      <div className="relative mt-8 block overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E56D8] via-[#1B6FF2] to-[#07348C] p-5 text-white shadow-[0_14px_30px_-10px_rgba(14,86,216,0.38)] lg:mt-auto">
+      <div className="relative mt-8 block overflow-hidden rounded-[26px] bg-gradient-to-br from-[#0E56D8] via-[#1B6FF2] to-[#07348C] p-5 text-white shadow-[0_16px_36px_-10px_rgba(14,86,216,0.40)] ring-1 ring-inset ring-white/20 lg:mt-auto">
         <Image
           src="/images/hero-scientist.jpg"
           alt=""
@@ -358,7 +358,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
       {/* Lebar penuh: tanpa bingkai/margin luar */}
       <div className="min-h-screen bg-white">
         {/* ------------------------------ Header ------------------------------ */}
-        <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-40 border-b border-black/[0.05] bg-white/78 backdrop-blur-xl">
           <div className="flex h-[76px] items-center gap-3 px-4 sm:px-6 lg:grid lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-0 lg:px-6">
             <Link
               href="/admin/dashboard"
@@ -372,7 +372,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
 
             <div className="flex min-w-0 flex-1 items-center gap-3 lg:pl-6">
               <nav aria-label={t("Bagian admin", "Admin sections")} className="hidden min-w-0 lg:block">
-                <ul className="flex items-center gap-2">
+                <ul className="inline-flex items-center gap-1 rounded-full bg-[#EEF2F7]/90 p-1 ring-1 ring-black/[0.04]">
                   {HEADER_PILLS.map((pill) => {
                     const active = pill.match.some((m) => isNavActive(effectivePath, m));
                     return (
@@ -383,11 +383,11 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                           onClick={() => handlePendingNav(pill.href)}
                           aria-current={active ? "true" : undefined}
                           className={cn(
-                            "inline-flex items-center whitespace-nowrap rounded-full px-5 py-2.5 text-[13px] font-medium transition-all",
+                            "inline-flex items-center whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-medium tracking-[-0.01em] transition-all duration-200",
                             focusRing,
                             active
-                              ? "bg-[#1B6FF2] text-white shadow-[0_8px_18px_-4px_rgba(27,111,242,0.35)]"
-                              : "bg-[#F4F8FD] text-slate-600 hover:bg-[#E8F0FC] hover:text-[#0E234B]"
+                              ? "bg-white text-[#0E234B] shadow-[0_2px_8px_rgba(14,35,75,0.08)] ring-1 ring-black/[0.04]"
+                              : "text-slate-500 hover:text-[#0E234B]"
                           )}
                         >
                           {t(pill.name, pill.en)}
@@ -497,7 +497,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
             <SidebarContent pathname={effectivePath} firstName={firstName} onPendingNav={handlePendingNav} />
           </aside>
 
-          <main className="relative min-w-0 overflow-hidden bg-[#F4F8FD] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[28px] lg:border lg:border-[#DCE6F5]/80 lg:px-7 lg:pt-7">
+          <main className="relative min-w-0 overflow-hidden bg-[#F5F7FA] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[30px] lg:px-7 lg:pt-7 lg:ring-1 lg:ring-black/[0.04]">
             {pendingHref && (
               <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[3px] overflow-hidden bg-[#DCE6F5]">
                 <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-[#1B6FF2] via-[#56ADE2] to-[#1B6FF2]" />
