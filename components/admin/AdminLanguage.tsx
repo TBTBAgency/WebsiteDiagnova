@@ -77,7 +77,7 @@ export function useAdminLang(): AdminLanguageContextValue {
   return useContext(AdminLanguageContext) ?? FALLBACK;
 }
 
-/** Tombol pilih bahasa ID / EN untuk panel admin. */
+/** Tombol pilih bahasa ID / EN dengan gaya sliding pill + bendera seperti Navbar utama. */
 export function AdminLanguageToggle({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) {
   const { lang, setLang, t } = useAdminLang();
   return (
@@ -86,36 +86,72 @@ export function AdminLanguageToggle({ className, tone = "light" }: { className?:
       aria-label={t("Bahasa antarmuka", "Interface language")}
       data-testid="admin-lang-toggle"
       className={cn(
-        "inline-flex items-center rounded-full p-1 text-[11px] font-bold",
-        tone === "dark" ? "bg-white/10" : "bg-[#EEF0F3]",
+        "relative inline-flex items-center rounded-full p-0.5 select-none",
+        tone === "dark" ? "bg-white/10" : "bg-transparent",
         className
       )}
     >
-      {(["ID", "EN"] as const).map((code) => {
-        const active = lang === code;
-        return (
-          <button
-            key={code}
-            type="button"
-            onClick={() => setLang(code)}
-            aria-pressed={active}
-            data-testid={`admin-lang-${code}`}
-            title={code === "ID" ? "Bahasa Indonesia" : "English"}
-            className={cn(
-              "min-w-[34px] rounded-full px-2.5 py-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F6BFF]/40",
-              active
-                ? tone === "dark"
-                  ? "bg-white text-[#111318]"
-                  : "bg-[#111318] text-white"
-                : tone === "dark"
-                  ? "text-white/70 hover:text-white"
-                  : "text-slate-500 hover:text-slate-900"
-            )}
-          >
-            {code}
-          </button>
-        );
-      })}
+      {/* Smooth Sliding Pill Indicator with Border Outline */}
+      <div
+        className={cn(
+          "pointer-events-none absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-full border shadow-sm transition-transform duration-300 ease-in-out",
+          tone === "dark" ? "border-white/40 bg-white" : "border-slate-300 bg-white",
+          lang === "ID" ? "left-0.5 translate-x-0" : "left-0.5 translate-x-full"
+        )}
+      />
+
+      {/* ID Option */}
+      <button
+        type="button"
+        onClick={() => setLang("ID")}
+        aria-pressed={lang === "ID"}
+        data-testid="admin-lang-ID"
+        title="Bahasa Indonesia"
+        className={cn(
+          "relative z-10 flex min-w-[60px] cursor-pointer items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2]/40",
+          lang === "ID"
+            ? "font-semibold text-slate-900"
+            : tone === "dark"
+              ? "font-normal text-white/80 hover:text-white"
+              : "font-normal text-slate-600 hover:text-slate-900"
+        )}
+      >
+        <span>ID</span>
+        <span className="inline-flex h-4 w-4 overflow-hidden rounded-full border border-slate-200" aria-hidden="true">
+          <svg viewBox="0 0 24 24" className="h-full w-full">
+            <rect width="24" height="12" fill="#E11D48" />
+            <rect y="12" width="24" height="12" fill="#FFFFFF" />
+          </svg>
+        </span>
+      </button>
+
+      {/* EN Option */}
+      <button
+        type="button"
+        onClick={() => setLang("EN")}
+        aria-pressed={lang === "EN"}
+        data-testid="admin-lang-EN"
+        title="English"
+        className={cn(
+          "relative z-10 flex min-w-[60px] cursor-pointer items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2]/40",
+          lang === "EN"
+            ? "font-semibold text-slate-900"
+            : tone === "dark"
+              ? "font-normal text-white/80 hover:text-white"
+              : "font-normal text-slate-600 hover:text-slate-900"
+        )}
+      >
+        <span>EN</span>
+        <span className="inline-flex h-4 w-4 overflow-hidden rounded-full border border-slate-200" aria-hidden="true">
+          <svg viewBox="0 0 24 24" className="h-full w-full">
+            <rect width="24" height="24" fill="#1E3A8A" />
+            <path d="M0 0L24 24M24 0L0 24" stroke="#FFFFFF" strokeWidth="4" />
+            <path d="M0 0L24 24M24 0L0 24" stroke="#DC2626" strokeWidth="2" />
+            <path d="M12 0V24M0 12H24" stroke="#FFFFFF" strokeWidth="6" />
+            <path d="M12 0V24M0 12H24" stroke="#DC2626" strokeWidth="3.5" />
+          </svg>
+        </span>
+      </button>
     </div>
   );
 }
