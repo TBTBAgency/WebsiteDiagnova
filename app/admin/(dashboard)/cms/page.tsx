@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import ImageUploader, { UploadedFileItem } from "@/components/admin/ImageUploader";
 import { CMS_PAGES } from "@/lib/cms-layout";
+import { PAGE_CONTENT, type InnerPageKey } from "@/lib/cms-content";
 import { InnerPageContentManager } from "@/components/admin/InnerPageContentManager";
 
 type CmsMainTab =
@@ -66,6 +67,14 @@ const HOMEPAGE_SECTIONS: { key: HomepageSubTab; label: string; icon: any }[] = [
 /** Tab halaman dalam (kunci = kunci halaman di CMS_PAGES). */
 const INNER_PAGE_TABS: CmsMainTab[] = ["platform", "solutions", "modules", "nova_ai", "integration"];
 
+/**
+ * Hash submenu header yang di website membuka kartu lain (bukan kartu ber-id sama).
+ * /solutions#blood-bank membuka tab Bank Darah di kartu Mikrobiologi (lihat SolutionsPageClient).
+ */
+const HEADER_HASH_ALIASES: Partial<Record<CmsMainTab, Record<string, string>>> = {
+  solutions: { "blood-bank": "microbiology" },
+};
+
 type HomepageSubTab =
   | "hero"
   | "trusted_by"
@@ -81,6 +90,8 @@ export default function AdminCmsUnifiedHubPage() {
   const [homepageTab, setHomepageTab] = useState<HomepageSubTab>("hero");
   /** Section yang sedang diedit per halaman dalam. */
   const [innerSections, setInnerSections] = useState<Record<string, string>>({});
+  /** Kartu yang dituju submenu header (mis. Solusi › Patologi Anatomi) per halaman dalam. */
+  const [innerFocus, setInnerFocus] = useState<Record<string, { itemId: string; n: number } | null>>({});
   /** Tab yang dropdown section-nya sedang terbuka. */
   const [openTabMenu, setOpenTabMenu] = useState<string | null>(null);
   /** Catatan bila section halaman dalam memakai konten bersama dari Homepage. */
@@ -101,6 +112,49 @@ export default function AdminCmsUnifiedHubPage() {
   const currentSectionOf = (tab: CmsMainTab): string =>
     tab === "homepage" ? homepageTab : innerSections[tab] || "hero";
 
+  /**
+   * Isi panah dropdown halaman dalam = submenu header website (dari Navigasi), lalu section lain
+   * yang tidak punya submenu. Tiap submenu diarahkan lewat URL-nya: tanpa # → Gambaran (hero),
+   * #anchor section → section itu, #id kartu (mis. /solutions#pathology) → kartu di dalam section.
+   */
+  const headerMenuItems = (
+    tab: CmsMainTab
+  ): { id: string; label: string; sectionKey: string | null; itemId: string | null; sharedWithHomepage?: HomepageSubTab }[] => {
+    const def = CMS_PAGES.find((p) => p.key === tab);
+    if (!def) return [];
+    const spec = PAGE_CONTENT[tab as InnerPageKey];
+    const sectionItems = pageSectionItems(tab);
+    const pathOf = (url: string) => (url || "").split("#")[0].split("?")[0].replace(/\/+$/, "") || "/";
+    const root = navMenus.find((m: any) => !m.parentId && pathOf(m.url) === def.path);
+    return ((root?.submenus || []) as any[])
+      .filter((sub) => sub.isActive !== false)
+      .map((sub) => {
+        const hash = String(sub.url || "").split("#")[1] || "";
+        let sectionKey: string | null = null;
+        let itemId: string | null = null;
+        if (pathOf(sub.url) === def.path) {
+          if (!hash) sectionKey = "hero";
+          else {
+            const bySection = def.sections.find((s) => !s.locked && (s.anchor === hash || s.key === hash));
+            if (bySection) sectionKey = bySection.key;
+            else {
+              const target = HEADER_HASH_ALIASES[tab]?.[hash] ?? hash;
+              for (const s of def.sections) {
+                const lists = spec?.defaults?.[s.key]?.lists || {};
+                if (Object.values(lists).some((items) => items.some((it) => it.id === target))) {
+                  sectionKey = s.key;
+                  itemId = target;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        const shared = sectionItems.find((it) => it.key === sectionKey)?.sharedWithHomepage;
+        return { id: String(sub.id), label: sub.labelId || sub.labelEn || sub.url, sectionKey, itemId, ...(shared && { sharedWithHomepage: shared }) };
+      });
+  };
+
   const closeItemForms = () => {
     setIsNavFormOpen(false);
     setIsSlideFormOpen(false);
@@ -110,10 +164,11 @@ export default function AdminCmsUnifiedHubPage() {
   };
 
   /** Pindah ke tab + section (dari dropdown, pill section, atau deep-link ?tab=&section=). */
-  const goToSection = (tab: CmsMainTab, sectionKey: string | null) => {
+  const goToSection = (tab: CmsMainTab, sectionKey: string | null, itemId: string | null = null) => {
     closeItemForms();
     setOpenTabMenu(null);
     setSharedNotice(null);
+    if (INNER_PAGE_TABS.includes(tab)) setInnerFocus((m) => ({ ...m, [tab]: itemId ? { itemId, n: (m[tab]?.n || 0) + 1 } : null }));
     if (tab === "navigation" || !sectionKey) {
       setMainTab(tab);
       return;
@@ -141,7 +196,7 @@ export default function AdminCmsUnifiedHubPage() {
     const tab = params.get("tab");
     const section = params.get("section");
     const validTabs: CmsMainTab[] = ["navigation", "homepage", ...INNER_PAGE_TABS];
-    if (tab && (validTabs as string[]).includes(tab)) goToSection(tab as CmsMainTab, section);
+    if (tab && (validTabs as string[]).includes(tab)) goToSection(tab as CmsMainTab, section, params.get("item"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -1027,24 +1082,77 @@ export default function AdminCmsUnifiedHubPage() {
                   data-testid={`cms-tab-menu-${tab.key}`}
                   className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-xl border border-slate-200/90 bg-white py-2 shadow-[0_14px_36px_-10px_rgba(15,23,42,0.18)]"
                 >
-                  {items.map((it) => {
-                    const current = currentSectionOf(tab.key) === it.key && mainTab === tab.key;
+                  {(() => {
+                    const itemCls = (current: boolean) =>
+                      `flex w-full items-center justify-between gap-2 px-4 py-2 text-left text-[13px] transition-colors ${
+                        current ? "text-[#087BEE] font-semibold bg-blue-50/60" : "text-slate-600 hover:text-[#087BEE] hover:bg-slate-50"
+                      }`;
+                    const sharedTag = <span className="text-[10px] font-medium text-slate-400">di Homepage</span>;
+                    if (tab.key === "homepage") {
+                      return items.map((it) => (
+                        <button
+                          key={it.key}
+                          type="button"
+                          role="menuitem"
+                          data-testid={`cms-tab-menu-${tab.key}-${it.key}`}
+                          onClick={() => goToSection(tab.key, it.key)}
+                          className={itemCls(mainTab === "homepage" && homepageTab === it.key)}
+                        >
+                          <span>{it.label}</span>
+                        </button>
+                      ));
+                    }
+                    // Halaman dalam: submenu header website dulu (urutan & nama sama dengan header),
+                    // lalu section yang tidak punya submenu agar tetap bisa diedit.
+                    const navItems = headerMenuItems(tab.key);
+                    const covered = new Set(navItems.filter((n) => n.sectionKey && !n.itemId).map((n) => n.sectionKey));
+                    const others = items.filter((it) => !covered.has(it.key));
+                    const focusId = innerFocus[tab.key]?.itemId ?? null;
                     return (
-                      <button
-                        key={it.key}
-                        type="button"
-                        role="menuitem"
-                        data-testid={`cms-tab-menu-${tab.key}-${it.key}`}
-                        onClick={() => goToSection(tab.key, it.key)}
-                        className={`flex w-full items-center justify-between gap-2 px-4 py-2 text-left text-[13px] transition-colors ${
-                          current ? "text-[#087BEE] font-semibold bg-blue-50/60" : "text-slate-600 hover:text-[#087BEE] hover:bg-slate-50"
-                        }`}
-                      >
-                        <span>{it.label}</span>
-                        {it.sharedWithHomepage && <span className="text-[10px] font-medium text-slate-400">di Homepage</span>}
-                      </button>
+                      <>
+                        {navItems.map((n, i) => {
+                          const current = mainTab === tab.key && n.sectionKey === currentSectionOf(tab.key) && n.itemId === focusId;
+                          return (
+                            <button
+                              key={n.id}
+                              type="button"
+                              role="menuitem"
+                              disabled={!n.sectionKey}
+                              title={n.sectionKey ? undefined : "URL submenu ini tidak menunjuk ke section halaman ini."}
+                              data-testid={`cms-tab-menu-${tab.key}-nav-${i}`}
+                              onClick={() => n.sectionKey && goToSection(tab.key, n.sectionKey, n.itemId)}
+                              className={`${itemCls(current)} disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-600`}
+                            >
+                              <span>{n.label}</span>
+                              {n.sharedWithHomepage && sharedTag}
+                            </button>
+                          );
+                        })}
+                        {others.length > 0 && (
+                          <>
+                            {navItems.length > 0 && (
+                              <p className="mx-4 mt-2 border-t border-slate-100 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                Section lain di halaman ini
+                              </p>
+                            )}
+                            {others.map((it) => (
+                              <button
+                                key={it.key}
+                                type="button"
+                                role="menuitem"
+                                data-testid={`cms-tab-menu-${tab.key}-${it.key}`}
+                                onClick={() => goToSection(tab.key, it.key)}
+                                className={itemCls(mainTab === tab.key && currentSectionOf(tab.key) === it.key && !focusId)}
+                              >
+                                <span>{it.label}</span>
+                                {it.sharedWithHomepage && sharedTag}
+                              </button>
+                            ))}
+                          </>
+                        )}
+                      </>
                     );
-                  })}
+                  })()}
                 </div>
               )}
             </div>
@@ -1092,7 +1200,12 @@ export default function AdminCmsUnifiedHubPage() {
                 );
               })}
           </div>
-          <InnerPageContentManager key={`${mainTab}:${currentSectionOf(mainTab)}`} pageKey={mainTab} sectionKey={currentSectionOf(mainTab)} />
+          <InnerPageContentManager
+            key={`${mainTab}:${currentSectionOf(mainTab)}`}
+            pageKey={mainTab}
+            sectionKey={currentSectionOf(mainTab)}
+            focusItem={innerFocus[mainTab] ?? null}
+          />
         </div>
       )}
 

@@ -137,6 +137,7 @@ export function SectionContentEditor({
   customized,
   baseUpdatedAt,
   disabledReason,
+  focusItem = null,
   onSaved,
 }: {
   page: string;
@@ -148,6 +149,8 @@ export function SectionContentEditor({
   customized: boolean;
   baseUpdatedAt: string | null;
   disabledReason?: string;
+  /** Buka + gulir ke kartu ini (dari submenu header di Pusat Konten). */
+  focusItem?: { itemId: string; n: number } | null;
   onSaved: (message: string) => Promise<void> | void;
 }) {
   const [draft, setDraft] = useState<SectionContent>(() => clone(value ?? emptyContent));
@@ -162,6 +165,22 @@ export function SectionContentEditor({
     setHeaderDraft({ ...(header?.value || {}) });
     setDirty(false);
   }, [value, header?.value]);
+
+  // Submenu header (mis. Solusi › Patologi Anatomi) menunjuk satu kartu: buka dan gulir ke kartu itu.
+  useEffect(() => {
+    if (!focusItem) return;
+    const listKey = Object.keys(draft.lists).find((k) => draft.lists[k]?.some((it) => it.id === focusItem.itemId));
+    if (!listKey) return;
+    setOpenItem(`${listKey}:${focusItem.itemId}`);
+    const t = setTimeout(() => {
+      document
+        .querySelector(`[data-item-id="${CSS.escape(`${sectionKey}:${listKey}:${focusItem.itemId}`)}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 60);
+    return () => clearTimeout(t);
+    // Hanya saat target berubah (klik submenu), bukan saat draft diketik.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusItem?.itemId, focusItem?.n, sectionKey]);
 
   const setField = (key: string, v: string) => {
     setDraft((d) => ({ ...d, fields: { ...d.fields, [key]: v } }));
@@ -325,7 +344,12 @@ export function SectionContentEditor({
                   <li
                     key={item.id}
                     data-testid={`content-item-${sectionKey}-${list.key}-${i}`}
-                    className={"rounded-lg border p-2 " + (item.isActive ? "border-slate-200 bg-white" : "border-dashed border-slate-300 bg-slate-50")}
+                    data-item-id={`${sectionKey}:${list.key}:${item.id}`}
+                    className={
+                      "rounded-lg border p-2 scroll-mt-40 " +
+                      (item.isActive ? "border-slate-200 bg-white" : "border-dashed border-slate-300 bg-slate-50") +
+                      (focusItem?.itemId === item.id ? " ring-2 ring-blue-300" : "")
+                    }
                   >
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="w-5 text-center text-[11px] font-bold text-slate-400">{i + 1}</span>

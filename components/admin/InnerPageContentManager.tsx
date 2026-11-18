@@ -316,7 +316,16 @@ function HeroEditor({ page, onSaved }: { page: InnerPageData; onSaved: (msg: str
  * Editor satu section halaman dalam. `sectionKey` = "hero" untuk hero halaman, selain itu kunci
  * section bawaan (lihat CMS_PAGES di lib/cms-layout.ts).
  */
-export function InnerPageContentManager({ pageKey, sectionKey }: { pageKey: string; sectionKey: string }) {
+export function InnerPageContentManager({
+  pageKey,
+  sectionKey,
+  focusItem = null,
+}: {
+  pageKey: string;
+  sectionKey: string;
+  /** Kartu yang dituju submenu header; `n` berubah tiap klik agar kartu dibuka ulang. */
+  focusItem?: { itemId: string; n: number } | null;
+}) {
   const [pages, setPages] = useState<InnerPageData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -379,7 +388,7 @@ export function InnerPageContentManager({ pageKey, sectionKey }: { pageKey: stri
         </div>
         <div className="flex items-center gap-2">
           <a
-            href={`${page.path}${section?.anchor ? `#${section.anchor}` : ""}`}
+            href={`${page.path}${focusItem ? `#${focusItem.itemId}` : section?.anchor ? `#${section.anchor}` : ""}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
@@ -419,6 +428,7 @@ export function InnerPageContentManager({ pageKey, sectionKey }: { pageKey: stri
             header={section.defaults ? { defaults: section.defaults, value: headerOverride } : null}
             customized={page.contentCustomized.includes(sectionKey) || !!headerOverride}
             baseUpdatedAt={page.layoutUpdatedAt}
+            focusItem={focusItem}
             onSaved={onSaved}
           />
         </div>
