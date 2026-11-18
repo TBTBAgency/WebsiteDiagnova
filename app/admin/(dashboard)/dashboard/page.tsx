@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
   ArrowDownRight,
   ArrowUpRight,
   Building2,
+  ChevronRight,
   Download,
   FileText,
   FlaskConical,
@@ -71,6 +72,9 @@ const INSTITUTION_NAMES: Record<string, string> = {
   other: "Lainnya",
 };
 
+/** Dashboard diperbarui otomatis selama tab terbuka. */
+const AUTO_REFRESH_MS = 60_000;
+
 /* ================================================================== */
 /* Token visual                                                        */
 /* ================================================================== */
@@ -87,6 +91,10 @@ const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible
 function striped(base: string, line = "rgba(255,255,255,0.16)"): React.CSSProperties {
   return { backgroundColor: base, backgroundImage: `repeating-linear-gradient(135deg, ${line} 0 5px, transparent 5px 11px)` };
 }
+const STYLE_INK = striped(INK, "rgba(255,255,255,0.12)");
+const STYLE_BLUE = striped(BLUE);
+const STYLE_NAVY = striped(NAVY);
+const STYLE_SKY = striped(SKY, "rgba(255,255,255,0.45)");
 
 const fmt = (n: number) => n.toLocaleString("id-ID");
 const sum = (points: TimelinePoint[], key: "leads" | "orders") => points.reduce((acc, p) => acc + (p[key] || 0), 0);
@@ -104,11 +112,61 @@ function formatDateTime(iso: string) {
   return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
-/** Inisial hari (Min, Sen, ...) dari tanggal YYYY-MM-DD. */
-function dayInitial(date: string) {
-  const d = new Date(`${date}T12:00:00`);
-  if (Number.isNaN(d.getTime())) return "";
-  return ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"][d.getDay()];
+const DAY_SHORT = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+const DAY_LONG = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const dayOf = (date: string) => new Date(`${date}T12:00:00`).getDay();
+
+/* ================================================================== */
+/* Hook animasi (menghormati prefers-reduced-motion)                   */
+/* ================================================================== */
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const on = () => setReduced(mq.matches);
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
+  }, []);
+  return reduced;
+}
+
+/** true satu frame setelah mount: dipakai untuk transisi "tumbuh". */
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+  return mounted;
+}
+
+/** Angka yang menghitung naik ke nilai baru. */
+function CountUp({ value, className }: { value: number; className?: string }) {
+  const reduced = usePrefersReducedMotion();
+  const [shown, setShown] = useState(value);
+  const from = useRef(0);
+  useEffect(() => {
+    if (reduced) {
+      setShown(value);
+      from.current = value;
+      return;
+    }
+    const start = performance.now();
+    const a = from.current;
+    let raf = 0;
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - start) / 700);
+      const eased = 1 - Math.pow(1 - k, 3);
+      setShown(Math.round(a + (value - a) * eased));
+      if (k < 1) raf = requestAnimationFrame(tick);
+      else from.current = value;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, reduced]);
+  return <span className={cn("tabular-nums", className)}>{fmt(shown)}</span>;
 }
 
 /* ================================================================== */
@@ -122,9 +180,9 @@ function CircleLink({ href, label, dark = false }: { href: string; label: string
       aria-label={label}
       title={label}
       className={cn(
-        "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
+        "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:-translate-y-0.5",
         focusRing,
-        dark ? "bg-white text-[#111318] hover:bg-[#E9ECF1]" : "border border-[#E4E6EA] text-[#111318] hover:bg-[#F2F3F5]"
+        dark ? "bg-white text-[#111318] hover:bg-[#E9ECF1]" : "border border-[#E4E6EA] text-[#111318] hover:border-[#111318] hover:bg-[#111318] hover:text-white"
       )}
     >
       <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -134,19 +192,24 @@ function CircleLink({ href, label, dark = false }: { href: string; label: string
 
 function Card({
   title,
+  subtitle,
   action,
   className,
   children,
 }: {
   title: string;
+  subtitle?: string;
   action?: React.ReactNode;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className={cn("flex min-w-0 flex-col rounded-[24px] bg-white p-5 sm:p-6", className)}>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="min-w-0 truncate text-[17px] font-medium leading-snug text-[#111318]">{title}</h2>
+    <section className={cn("flex min-w-0 flex-col rounded-[24px] bg-white p-5 transition-shadow hover:shadow-[0_10px_30px_rgba(17,19,24,0.06)] sm:p-6", className)}>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="truncate text-[17px] font-medium leading-snug text-[#111318]">{title}</h2>
+          {subtitle && <p className="mt-0.5 truncate text-[12px] text-[#8A8F98]">{subtitle}</p>}
+        </div>
         {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
       </div>
       <div className="flex min-w-0 flex-1 flex-col">{children}</div>
@@ -154,14 +217,9 @@ function Card({
   );
 }
 
-function EmptyState({ icon: Icon, text, dark = false }: { icon: React.ElementType; text: string; dark?: boolean }) {
+function EmptyState({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
   return (
-    <div
-      className={cn(
-        "flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed px-4 py-8 text-center",
-        dark ? "border-white/20 text-white/70" : "border-[#DDE0E5] bg-[#F7F8FA] text-[#8A8F98]"
-      )}
-    >
+    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#DDE0E5] bg-[#F7F8FA] px-4 py-8 text-center text-[#8A8F98]">
       <Icon className="h-5 w-5" aria-hidden="true" />
       <p className="max-w-[240px] text-xs">{text}</p>
     </div>
@@ -197,6 +255,20 @@ function SrTable({ caption, headers, rows }: { caption: string; headers: string[
   );
 }
 
+/** Tooltip gelap yang muncul saat elemen induk `group` di-hover. */
+function HoverTip({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-xl bg-[#111318] px-2.5 py-1.5 text-[11px] text-white opacity-0 shadow-lg transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 function DeltaChip({ text, tone, className }: { text: string; tone: "up" | "down" | "flat"; className?: string }) {
   return (
     <span
@@ -222,19 +294,21 @@ function DeltaChip({ text, tone, className }: { text: string; tone: "up" | "down
 
 const DOT_LEVELS: { label: string; style: React.CSSProperties }[] = [
   { label: "Tidak ada", style: { backgroundColor: EMPTY } },
-  { label: "Rendah", style: striped(SKY, "rgba(255,255,255,0.45)") },
-  { label: "Sedang", style: striped(BLUE) },
-  { label: "Tertinggi", style: striped(INK, "rgba(255,255,255,0.12)") },
+  { label: "Rendah", style: STYLE_SKY },
+  { label: "Sedang", style: STYLE_BLUE },
+  { label: "Tertinggi", style: STYLE_INK },
 ];
 
 function ActivityDots({ data }: { data: TimelinePoint[] }) {
+  const mounted = useMounted();
   const max = Math.max(1, ...data.flatMap((d) => [d.leads, d.orders]));
   const level = (v: number) => (v <= 0 ? 0 : Math.min(3, Math.ceil((v / max) * 3)));
   const rows: { key: "leads" | "orders"; label: string; unit: string }[] = [
-    { key: "leads", label: "Permohonan", unit: "permohonan demo" },
+    { key: "leads", label: "Permohonan", unit: "permohonan" },
     { key: "orders", label: "Order lab", unit: "order lab" },
   ];
   const compact = data.length > 7;
+  const today = data.length - 1;
 
   return (
     <div>
@@ -243,27 +317,38 @@ function ActivityDots({ data }: { data: TimelinePoint[] }) {
         style={{ gridTemplateColumns: `minmax(64px, 84px) repeat(${data.length}, minmax(0, 1fr))` }}
         aria-hidden="true"
       >
-        {rows.map((row) => (
+        {rows.map((row, r) => (
           <React.Fragment key={row.key}>
             <span className="truncate text-[12px] text-[#8A8F98]">{row.label}</span>
-            {data.map((d) => {
+            {data.map((d, i) => {
               const v = d[row.key];
               return (
-                <span key={d.date} className="flex justify-center">
+                <span key={d.date} className="group relative flex justify-center">
                   <span
-                    title={`${d.label}: ${fmt(v)} ${row.unit}`}
-                    className={cn("block aspect-square w-full rounded-full", compact ? "max-w-[26px]" : "max-w-[40px]")}
-                    style={DOT_LEVELS[level(v)].style}
+                    className={cn(
+                      "block aspect-square w-full rounded-full transition-all duration-500 ease-out group-hover:scale-110",
+                      compact ? "max-w-[26px]" : "max-w-[40px]",
+                      i === today && "ring-2 ring-[#1F6BFF]/25 ring-offset-2",
+                      mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
+                    )}
+                    style={{ ...DOT_LEVELS[level(v)].style, transitionDelay: `${(r * data.length + i) * 25}ms` }}
                   />
+                  <HoverTip>
+                    {DAY_LONG[dayOf(d.date)]}, {d.label} · <strong className="font-semibold">{fmt(v)}</strong> {row.unit}
+                  </HoverTip>
                 </span>
               );
             })}
           </React.Fragment>
         ))}
         <span />
-        {data.map((d) => (
-          <span key={d.date} className="text-center text-[11px] text-[#A3A8B1]">
-            {compact ? d.label.split(" ")[0] : dayInitial(d.date)}
+        {data.map((d, i) => (
+          <span
+            key={d.date}
+            title={i === today ? "Hari ini" : undefined}
+            className={cn("truncate text-center text-[11px]", i === today ? "font-semibold text-[#1F6BFF]" : "text-[#A3A8B1]")}
+          >
+            {compact ? d.label.split(" ")[0] : DAY_SHORT[dayOf(d.date)]}
           </span>
         ))}
       </div>
@@ -275,6 +360,10 @@ function ActivityDots({ data }: { data: TimelinePoint[] }) {
             {i === 3 && ` (${fmt(max)}/hari)`}
           </span>
         ))}
+        <span className="inline-flex items-center gap-1.5 font-medium text-[#1F6BFF]">
+          <span className="h-2.5 w-2.5 rounded-full ring-2 ring-[#1F6BFF]/40" aria-hidden="true" />
+          Hari ini
+        </span>
       </div>
       <SrTable
         caption="Aktivitas harian permohonan demo dan order lab"
@@ -298,18 +387,22 @@ interface StageDatum {
 }
 
 function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
+  const mounted = useMounted();
   const max = Math.max(1, ...stages.map((s) => s.value));
   return (
     <div>
-      <div className="flex h-[230px] items-end gap-2.5 sm:gap-3.5" aria-hidden="true">
-        {stages.map((s) => {
+      <div className="flex h-[240px] items-end gap-2.5 sm:gap-3.5" aria-hidden="true">
+        {stages.map((s, i) => {
           const h = s.value > 0 ? Math.max(18, (s.value / max) * 100) : 6;
           return (
-            <div key={s.key} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end">
+            <div key={s.key} className="group flex h-full min-w-0 flex-1 flex-col items-center justify-end">
               <div
-                className="relative w-full max-w-[96px] rounded-[18px] transition-[height] duration-500"
-                style={{ height: `${h}%`, ...(s.value > 0 ? s.style : { backgroundColor: EMPTY }) }}
-                title={`${s.label}: ${fmt(s.value)} permohonan (${pct(s.value, total)}%)`}
+                className="relative w-full max-w-[96px] rounded-[18px] transition-[height,filter] duration-700 ease-out group-hover:brightness-110"
+                style={{
+                  height: mounted ? `${h}%` : "6%",
+                  transitionDelay: `${i * 90}ms`,
+                  ...(s.value > 0 ? s.style : { backgroundColor: EMPTY }),
+                }}
               >
                 {/* Batang pendek: label angka di atas batang agar tidak menimpa nama tahap. */}
                 <span
@@ -318,8 +411,12 @@ function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
                     h < 24 ? "bottom-full mb-1.5 ring-1 ring-[#E4E6EA]" : "top-2"
                   )}
                 >
+                  {s.value > 0 && <ArrowUpRight className="h-3 w-3" />}
                   {fmt(s.value)}
                 </span>
+                <HoverTip className="mb-9">
+                  {s.label} · {fmt(s.value)} permohonan ({pct(s.value, total)}%)
+                </HoverTip>
               </div>
               <span className="mt-2 w-full truncate text-center text-[11px] text-[#8A8F98]">{s.label}</span>
             </div>
@@ -340,6 +437,7 @@ function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
 /* ================================================================== */
 
 function SegmentGauge({ percent }: { percent: number }) {
+  const mounted = useMounted();
   const N = 22;
   const filled = Math.round((percent / 100) * N);
   const cx = 130;
@@ -356,21 +454,18 @@ function SegmentGauge({ percent }: { percent: number }) {
     <svg viewBox="0 0 260 140" className="mx-auto block w-full max-w-[300px]" aria-hidden="true">
       {Array.from({ length: N }, (_, i) => {
         const ang = Math.PI - (i / (N - 1)) * Math.PI;
-        const x1 = cx + r1 * Math.cos(ang);
-        const y1 = cy - r1 * Math.sin(ang);
-        const x2 = cx + r2 * Math.cos(ang);
-        const y2 = cy - r2 * Math.sin(ang);
         const on = i < filled;
         return (
           <line
             key={i}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
+            x1={cx + r1 * Math.cos(ang)}
+            y1={cy - r1 * Math.sin(ang)}
+            x2={cx + r2 * Math.cos(ang)}
+            y2={cy - r2 * Math.sin(ang)}
             stroke={on ? mix(filled > 1 ? i / (filled - 1) : 0) : EMPTY}
             strokeWidth="7"
             strokeLinecap="round"
+            style={{ opacity: mounted || !on ? 1 : 0.15, transition: "opacity 300ms ease-out", transitionDelay: `${i * 35}ms` }}
           />
         );
       })}
@@ -379,7 +474,7 @@ function SegmentGauge({ percent }: { percent: number }) {
 }
 
 /* ================================================================== */
-/* Kartu hitam: sorotan                                                */
+/* Kartu hitam: sorotan (bergilir otomatis, berhenti saat di-hover)   */
 /* ================================================================== */
 
 interface Highlight {
@@ -392,13 +487,26 @@ interface Highlight {
 }
 
 function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads: number | null }) {
+  const reduced = usePrefersReducedMotion();
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const slide = slides[index] ?? slides[0];
+
+  useEffect(() => {
+    if (paused || reduced || slides.length < 2) return;
+    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), 7000);
+    return () => clearInterval(t);
+  }, [paused, reduced, slides.length]);
+
   return (
     <section
       aria-roledescription="carousel"
       aria-label="Sorotan hari ini"
-      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:p-6 md:col-span-2"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:col-span-2 sm:p-6"
     >
       {/* Pita mengilap dekoratif */}
       <span
@@ -409,9 +517,9 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
       <span className="pointer-events-none absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-[#1F6BFF]/25 blur-3xl" aria-hidden="true" />
 
       <div className="relative flex items-start justify-between gap-4">
-        <div className="min-w-0" aria-live="polite">
+        <div key={index} className="min-w-0 motion-safe:animate-[fadeSlideUp_0.45s_ease-out]" aria-live="polite">
           <h2 className="text-[13px] font-medium text-white/60">Sorotan Hari Ini · {slide.kicker}</h2>
-          <p className="mt-1.5 max-w-[420px] text-[21px] font-medium leading-snug text-white">
+          <p className="mt-1.5 max-w-[440px] text-[21px] font-medium leading-snug text-white">
             {slide.value > 0 ? (
               <>
                 <span className="font-bold">{fmt(slide.value)}</span> {slide.text}
@@ -444,10 +552,10 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
         )}
         <Link
           href={slide.href}
-          className="ml-auto inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] py-1.5 pl-4 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#1858D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111318]"
+          className="group ml-auto inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] py-1.5 pl-4 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#1858D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111318]"
         >
           {slide.cta}
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:rotate-45">
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         </Link>
@@ -464,16 +572,16 @@ function DashboardSkeleton() {
   const block = "animate-pulse rounded-[24px] bg-white";
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12" aria-hidden="true">
-      <div className={cn(block, "h-[340px] md:col-span-2 xl:col-span-5")} />
+      <div className={cn(block, "h-[420px] md:col-span-2 xl:col-span-5")} />
       <div className="grid gap-4 md:col-span-2 xl:col-span-7">
         <div className="h-[176px] animate-pulse rounded-[24px] bg-[#111318]/80" />
         <div className="grid grid-cols-2 gap-4">
-          <div className={cn(block, "h-[148px]")} />
-          <div className="h-[148px] animate-pulse rounded-[24px] bg-[#111318]/80" />
+          <div className={cn(block, "h-[228px]")} />
+          <div className="h-[228px] animate-pulse rounded-[24px] bg-[#111318]/80" />
         </div>
       </div>
-      <div className={cn(block, "h-[360px] md:col-span-2 xl:col-span-8")} />
-      <div className={cn(block, "h-[360px] md:col-span-2 xl:col-span-4")} />
+      <div className={cn(block, "h-[380px] md:col-span-2 xl:col-span-8")} />
+      <div className={cn(block, "h-[380px] md:col-span-2 xl:col-span-4")} />
     </div>
   );
 }
@@ -488,9 +596,10 @@ export default function AdminOverviewDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [period, setPeriod] = useState<7 | 14>(7);
+  const [todayStr, setTodayStr] = useState("");
 
-  const fetchOverview = useCallback(async () => {
-    setIsLoading(true);
+  const fetchOverview = useCallback(async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) setIsLoading(true);
     setError(null);
     try {
       const res = await fetch("/api/admin/overview", { cache: "no-store" });
@@ -511,6 +620,16 @@ export default function AdminOverviewDashboard() {
 
   useEffect(() => {
     fetchOverview();
+    // Tanggal lokal hanya dihitung di browser (menghindari hydration mismatch).
+    setTodayStr(new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date()));
+  }, [fetchOverview]);
+
+  // Refresh otomatis di latar selama tab terlihat.
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (document.visibilityState === "visible") fetchOverview({ silent: true });
+    }, AUTO_REFRESH_MS);
+    return () => clearInterval(t);
   }, [fetchOverview]);
 
   /* ------------------------- Turunan data ------------------------- */
@@ -518,8 +637,11 @@ export default function AdminOverviewDashboard() {
   const periodData = useMemo(() => timeline.slice(-period), [timeline, period]);
   const periodLeads = sum(periodData, "leads");
   const periodOrders = sum(periodData, "orders");
+  const busiest = periodData.reduce<TimelinePoint | null>((best, p) => (p.leads + p.orders > (best ? best.leads + best.orders : 0) ? p : best), null);
+  const avgPerDay = periodData.length ? periodLeads / periodData.length : 0;
 
-  const last7Leads = sum(timeline.slice(-7), "leads");
+  const last7 = timeline.slice(-7);
+  const last7Leads = sum(last7, "leads");
   const prev7Leads = timeline.length > 7 ? sum(timeline.slice(-14, -7), "leads") : 0;
   let deltaText = "0%";
   let deltaTone: "up" | "down" | "flat" = "flat";
@@ -532,15 +654,16 @@ export default function AdminOverviewDashboard() {
     deltaText = `${d > 0 ? "+" : ""}${d}%`;
     deltaTone = d > 0 ? "up" : d < 0 ? "down" : "flat";
   }
+  const sparkMax = Math.max(1, ...last7.map((p) => p.leads));
 
   const leads = data?.summary.leads;
   const leadTotal = leads?.total ?? 0;
   const stages: StageDatum[] = leads
     ? [
-        { key: "new", label: "Baru", value: leads.new, style: striped(INK, "rgba(255,255,255,0.12)"), dot: INK },
-        { key: "contacted", label: "Dihubungi", value: leads.contacted, style: striped(NAVY), dot: NAVY },
-        { key: "scheduled", label: "Jadwal Demo", value: leads.scheduled, style: striped(BLUE), dot: BLUE },
-        { key: "completed", label: "Selesai", value: leads.completed, style: striped(SKY, "rgba(255,255,255,0.45)"), dot: SKY },
+        { key: "new", label: "Baru", value: leads.new, style: STYLE_INK, dot: INK },
+        { key: "contacted", label: "Dihubungi", value: leads.contacted, style: STYLE_NAVY, dot: NAVY },
+        { key: "scheduled", label: "Jadwal Demo", value: leads.scheduled, style: STYLE_BLUE, dot: BLUE },
+        { key: "completed", label: "Selesai", value: leads.completed, style: STYLE_SKY, dot: SKY },
       ]
     : [];
 
@@ -557,7 +680,7 @@ export default function AdminOverviewDashboard() {
   const institutions = useMemo(() => [...(data?.institutionDistribution ?? [])].sort((a, b) => b.count - a.count), [data]);
   const institutionTotal = institutions.reduce((a, b) => a + b.count, 0);
   const institutionMax = Math.max(1, ...institutions.map((i) => i.count));
-  const INSTITUTION_STYLES = [striped(BLUE), striped(INK, "rgba(255,255,255,0.12)"), striped(NAVY), striped(SKY, "rgba(255,255,255,0.45)")];
+  const INSTITUTION_STYLES = [STYLE_BLUE, STYLE_INK, STYLE_NAVY, STYLE_SKY];
 
   const todayPoint = timeline.length ? timeline[timeline.length - 1] : null;
   const yesterdayPoint = timeline.length > 1 ? timeline[timeline.length - 2] : null;
@@ -603,16 +726,23 @@ export default function AdminOverviewDashboard() {
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
           <h1 className="font-display text-[28px] font-medium leading-tight tracking-tight text-[#111318] sm:text-[32px]">Ringkasan Dashboard</h1>
-          <nav aria-label="Breadcrumb" className="mt-1 text-[12px] text-[#8A8F98]">
-            Dashboard <span className="mx-1">›</span> <span className="text-[#5B616B]">Semua Laporan</span>
-            {updatedAt && (
-              <span className="ml-2" aria-live="polite">
-                · Diperbarui {updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
-              </span>
-            )}
+          <nav aria-label="Breadcrumb" className="mt-1 flex flex-wrap items-center gap-x-1 text-[12px] text-[#8A8F98]">
+            <span>Dashboard</span>
+            <ChevronRight className="h-3 w-3" aria-hidden="true" />
+            <span className="text-[#5B616B]">Semua Laporan</span>
+            {todayStr && <span className="ml-1 hidden sm:inline">· {todayStr}</span>}
           </nav>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {updatedAt && (
+            <span className="mr-1 inline-flex items-center gap-1.5 text-[12px] text-[#8A8F98]" aria-live="polite">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-60 motion-safe:animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
+              </span>
+              Diperbarui {updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+            </span>
+          )}
           <div role="group" aria-label="Periode aktivitas" className="inline-flex h-11 items-center rounded-full bg-white p-1">
             {([7, 14] as const).map((p) => (
               <button
@@ -632,7 +762,7 @@ export default function AdminOverviewDashboard() {
           <a href="/api/admin/leads/export" download aria-label="Unduh data permohonan (CSV)" title="Unduh data permohonan (CSV)" className={toolbarIcon}>
             <Download className="h-4 w-4" aria-hidden="true" />
           </a>
-          <button type="button" onClick={fetchOverview} disabled={isLoading} className={toolbarBtn}>
+          <button type="button" onClick={() => fetchOverview()} disabled={isLoading} className={toolbarBtn}>
             {isLoading ? "Memuat..." : "Muat Ulang"}
             <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin text-[#1F6BFF]")} aria-hidden="true" />
           </button>
@@ -656,7 +786,7 @@ export default function AdminOverviewDashboard() {
             <p className="font-semibold text-[#111318]">Data dashboard gagal dimuat</p>
             <p className="mt-1 text-sm text-[#8A8F98]">{error || "Terjadi kesalahan yang tidak diketahui."}</p>
           </div>
-          <button type="button" onClick={fetchOverview} className={cn("inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1858D6]", focusRing)}>
+          <button type="button" onClick={() => fetchOverview()} className={cn("inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1858D6]", focusRing)}>
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Coba Lagi
           </button>
@@ -669,7 +799,7 @@ export default function AdminOverviewDashboard() {
                 <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
                 Gagal memuat ulang ({error}). Menampilkan data terakhir.
               </span>
-              <button type="button" onClick={fetchOverview} className={cn("rounded-full bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-rose-200", focusRing)}>
+              <button type="button" onClick={() => fetchOverview()} className={cn("rounded-full bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-rose-200", focusRing)}>
                 Coba Lagi
               </button>
             </div>
@@ -677,28 +807,30 @@ export default function AdminOverviewDashboard() {
 
           <div className={cn("grid grid-cols-1 gap-4 transition-opacity md:grid-cols-2 xl:grid-cols-12", isLoading && "opacity-60")} aria-busy={isLoading}>
             {/* 1. Aktivitas harian (matriks titik) */}
-            <Card
-              className="md:col-span-2 xl:col-span-5"
-              title="Aktivitas Harian"
-              action={
-                <>
-                  <CircleLink href="/admin/leads" label="Buka permohonan demo" />
-                </>
-              }
-            >
-              <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <div className="font-display text-[34px] font-medium leading-none tracking-tight text-[#111318]">{fmt(periodLeads)}</div>
-                  <div className="mt-1.5 text-[12px] text-[#8A8F98]">
-                    permohonan demo · {fmt(periodOrders)} order lab dalam {period} hari
-                  </div>
+            <Card className="md:col-span-2 xl:col-span-5" title="Aktivitas Harian" subtitle={`${period} hari terakhir`} action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
+              <div className="mb-5">
+                <div className="font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
+                  <CountUp value={periodLeads} />
                 </div>
+                <div className="mt-1.5 text-[12px] text-[#8A8F98]">permohonan demo masuk dalam {period} hari</div>
               </div>
               {periodData.length === 0 ? (
                 <EmptyState icon={Users} text="Belum ada data aktivitas untuk ditampilkan." />
               ) : (
                 <ActivityDots data={periodData} />
               )}
+              <dl className="mt-auto grid grid-cols-3 gap-2 pt-5">
+                {[
+                  { label: "Order lab", value: fmt(periodOrders) },
+                  { label: "Rata-rata/hari", value: avgPerDay.toLocaleString("id-ID", { maximumFractionDigits: 1 }) },
+                  { label: "Hari tersibuk", value: busiest ? `${DAY_SHORT[dayOf(busiest.date)]}, ${busiest.label}` : "-" },
+                ].map((s) => (
+                  <div key={s.label} className="min-w-0 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
+                    <dt className="truncate text-[11px] text-[#8A8F98]">{s.label}</dt>
+                    <dd className="mt-0.5 truncate text-[14px] font-semibold text-[#111318]">{s.value}</dd>
+                  </div>
+                ))}
+              </dl>
             </Card>
 
             {/* 2-4. Blok kanan: sorotan, hari ini, ekspor */}
@@ -706,27 +838,50 @@ export default function AdminOverviewDashboard() {
               <HighlightCard slides={highlights} todayLeads={todayPoint ? todayPoint.leads : null} />
 
               <section className="flex min-w-0 flex-col justify-between rounded-[24px] bg-white p-5 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F2F3F5] text-[#111318]">
-                    <Users className="h-[18px] w-[18px]" aria-hidden="true" />
-                  </span>
-                  <h2 className="text-[13px] font-medium leading-tight text-[#3B4049]">
-                    Permohonan
-                    <br />
-                    Hari Ini
-                  </h2>
-                </div>
-                <div className="mt-4 font-display text-[34px] font-medium leading-none tracking-tight text-[#111318]">{fmt(todayPoint?.leads ?? 0)}</div>
-                <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#EEF0F3] pt-3">
-                  <span className="text-[12px] text-[#8A8F98]">
-                    Kemarin {fmt(yesterdayPoint?.leads ?? 0)} · 7 hari{" "}
-                  </span>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F2F3F5] text-[#111318]">
+                      <Users className="h-[18px] w-[18px]" aria-hidden="true" />
+                    </span>
+                    <h2 className="text-[13px] font-medium leading-tight text-[#3B4049]">
+                      Permohonan
+                      <br />
+                      Hari Ini
+                    </h2>
+                  </div>
                   <DeltaChip text={deltaText} tone={deltaTone} />
+                </div>
+                <div className="mt-4 flex items-end justify-between gap-4">
+                  <div className="font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
+                    <CountUp value={todayPoint?.leads ?? 0} />
+                  </div>
+                  {/* Sparkline 7 hari (hari ini paling kanan) */}
+                  <div className="flex h-12 items-end gap-1" aria-hidden="true">
+                    {last7.map((p, i) => (
+                      <span key={p.date} className="group relative flex h-full items-end">
+                        <span
+                          className="block w-2.5 rounded-full transition-all"
+                          style={{
+                            height: `${p.leads > 0 ? Math.max(18, (p.leads / sparkMax) * 100) : 12}%`,
+                            ...(p.leads === 0 ? { backgroundColor: EMPTY } : i === last7.length - 1 ? STYLE_BLUE : STYLE_INK),
+                          }}
+                        />
+                        <HoverTip>
+                          {p.label} · {fmt(p.leads)}
+                        </HoverTip>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-[#EEF0F3] pt-3 text-[12px] text-[#8A8F98]">
+                  Kemarin <span className="font-semibold text-[#111318]">{fmt(yesterdayPoint?.leads ?? 0)}</span> · 7 hari{" "}
+                  <span className="font-semibold text-[#111318]">{fmt(last7Leads)}</span>
                 </div>
               </section>
 
               <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:p-6">
                 <span className="pointer-events-none absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.06]" aria-hidden="true" />
+                <span className="pointer-events-none absolute -bottom-28 right-10 h-40 w-40 rounded-full bg-[#1F6BFF]/20 blur-2xl" aria-hidden="true" />
                 <div className="relative flex items-center justify-between gap-2">
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
                     <FileText className="h-[18px] w-[18px]" aria-hidden="true" />
@@ -737,7 +892,7 @@ export default function AdminOverviewDashboard() {
                       download
                       aria-label="Unduh data permohonan (CSV)"
                       title="Unduh data permohonan (CSV)"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111318] transition-colors hover:bg-[#E9ECF1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111318] transition-all hover:-translate-y-0.5 hover:bg-[#E9ECF1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       <Download className="h-4 w-4" aria-hidden="true" />
                     </a>
@@ -745,7 +900,7 @@ export default function AdminOverviewDashboard() {
                   </div>
                 </div>
                 <div className="relative mt-6">
-                  <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[10px] text-white/75">Unduh data permohonan (CSV)</span>
+                  <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[10px] text-white/75">{fmt(leadTotal)} permohonan · CSV</span>
                   <h2 className="mt-2 text-[21px] font-medium leading-tight text-white">Laporan Permohonan</h2>
                 </div>
               </section>
@@ -755,6 +910,7 @@ export default function AdminOverviewDashboard() {
             <Card
               className="md:col-span-2 xl:col-span-8"
               title="Permohonan per Tahap"
+              subtitle="Berdasarkan status pipeline saat ini"
               action={
                 <>
                   <span className="hidden rounded-full border border-[#E4E6EA] px-3 py-2 text-[12px] font-medium text-[#3B4049] sm:inline-flex">Semua waktu</span>
@@ -768,8 +924,10 @@ export default function AdminOverviewDashboard() {
                 <div className="grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)]">
                   <div className="flex flex-col">
                     <span className="w-fit rounded-full bg-[#111318] px-3 py-1 text-[11px] font-medium text-white">Total</span>
-                    <div className="mt-3 font-display text-[34px] font-medium leading-none tracking-tight text-[#111318]">{fmt(leadTotal)}</div>
-                    <p className="mt-2 text-[12px] leading-relaxed text-[#8A8F98]">permohonan demo berdasarkan status saat ini</p>
+                    <div className="mt-3 font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
+                      <CountUp value={leadTotal} />
+                    </div>
+                    <p className="mt-2 text-[12px] leading-relaxed text-[#8A8F98]">permohonan demo sejak awal</p>
                     <div className="mt-5">
                       <div className={cn("font-display text-[30px] font-medium leading-none", deltaTone === "down" ? "text-[#B42318]" : "text-[#1F6BFF]")}>{deltaText}</div>
                       <p className="mt-1 text-[12px] text-[#8A8F98]">permohonan 7 hari terakhir dibanding 7 hari sebelumnya</p>
@@ -789,7 +947,7 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 6. Konversi pipeline (gauge) */}
-            <Card className="md:col-span-2 xl:col-span-4" title="Konversi Pipeline" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
+            <Card className="md:col-span-2 xl:col-span-4" title="Konversi Pipeline" subtitle="Dari seluruh permohonan" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
               {leadTotal === 0 ? (
                 <EmptyState icon={Users} text="Konversi akan tampil setelah ada permohonan demo." />
               ) : (
@@ -810,12 +968,8 @@ export default function AdminOverviewDashboard() {
                   <div className="relative mt-auto">
                     <SegmentGauge percent={pct(followedUp, leadTotal)} />
                     <div className="absolute inset-x-0 bottom-1 text-center">
-                      <div
-                        className="font-display text-[34px] font-medium leading-none text-[#111318]"
-                        role="img"
-                        aria-label={`${pct(followedUp, leadTotal)}% permohonan sudah ditindaklanjuti`}
-                      >
-                        {pct(followedUp, leadTotal)}%
+                      <div className="font-display text-[34px] font-medium leading-none text-[#111318]" role="img" aria-label={`${pct(followedUp, leadTotal)}% permohonan sudah ditindaklanjuti`}>
+                        <CountUp value={pct(followedUp, leadTotal)} />%
                       </div>
                       <div className="mt-1 text-[11px] text-[#8A8F98]">sudah ditindaklanjuti</div>
                     </div>
@@ -827,25 +981,31 @@ export default function AdminOverviewDashboard() {
               )}
             </Card>
 
-            {/* 7. Permohonan terbaru */}
-            <Card className="xl:col-span-5" title="Permohonan Terbaru" action={<CircleLink href="/admin/leads" label="Lihat semua permohonan" />}>
+            {/* 7. Permohonan terbaru — klik untuk membuka detailnya */}
+            <Card className="xl:col-span-5" title="Permohonan Terbaru" subtitle="Klik untuk membuka detail" action={<CircleLink href="/admin/leads" label="Lihat semua permohonan" />}>
               {data.recentLeads.length === 0 ? (
                 <EmptyState icon={Users} text="Belum ada permohonan demo yang masuk." />
               ) : (
                 <ul className="space-y-2">
                   {data.recentLeads.map((lead) => (
-                    <li key={lead.id} className="flex items-center gap-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
-                      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#111318] text-[12px] font-bold text-white">
-                        {getInitials(lead.name)}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-[13px] font-semibold text-[#111318]">{lead.name}</div>
-                        <div className="truncate text-[11px] text-[#8A8F98]">{lead.institution || INSTITUTION_NAMES[lead.institutionType] || "-"}</div>
-                      </div>
-                      <div className="flex shrink-0 flex-col items-end gap-1">
-                        <StatusBadge type={lead.status} className="px-2 text-[10px]" />
-                        <span className="text-[10px] text-[#8A8F98]">{formatShortDate(lead.createdAt)}</span>
-                      </div>
+                    <li key={lead.id}>
+                      <Link
+                        href={`/admin/leads?lead=${encodeURIComponent(lead.id)}`}
+                        className={cn("group flex items-center gap-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5 transition-colors hover:bg-[#EEF0F3]", focusRing)}
+                      >
+                        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#111318] text-[12px] font-bold text-white">
+                          {getInitials(lead.name)}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[13px] font-semibold text-[#111318]">{lead.name}</span>
+                          <span className="block truncate text-[11px] text-[#8A8F98]">{lead.institution || INSTITUTION_NAMES[lead.institutionType] || "-"}</span>
+                        </span>
+                        <span className="flex shrink-0 flex-col items-end gap-1">
+                          <StatusBadge type={lead.status} className="px-2 text-[10px]" />
+                          <span className="text-[10px] text-[#8A8F98]">{formatShortDate(lead.createdAt)}</span>
+                        </span>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-[#A3A8B1] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -853,13 +1013,14 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 8. Order lab terbaru */}
-            <Card className="xl:col-span-7" title="Order Lab Terbaru" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
+            <Card className="xl:col-span-7" title="Order Lab Terbaru" subtitle="Diurutkan berdasarkan prioritas, lalu waktu order" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
               {data.recentOrders.length === 0 ? (
                 <EmptyState icon={FlaskConical} text="Belum ada order laboratorium yang terdaftar." />
               ) : (
                 <ul className="space-y-2">
                   {data.recentOrders.map((order) => {
                     const done = order.specimensCount > 0 && order.receivedSpecimensCount >= order.specimensCount;
+                    const progress = order.specimensCount > 0 ? (order.receivedSpecimensCount / order.specimensCount) * 100 : 0;
                     return (
                       <li key={order.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
                         <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1F6BFF] text-white">
@@ -874,8 +1035,11 @@ export default function AdminOverviewDashboard() {
                             {order.physicianName} · {formatDateTime(order.orderedAt)}
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-1">
+                        <div className="flex w-[132px] flex-col items-end gap-1">
                           <StatusBadge type={order.priority} className="px-2 text-[10px]" />
+                          <span className="h-1.5 w-full overflow-hidden rounded-full bg-[#E6E8EC]" aria-hidden="true">
+                            <span className="block h-full rounded-full" style={{ width: `${progress}%`, ...(done ? { backgroundColor: "#16A34A" } : STYLE_BLUE) }} />
+                          </span>
                           <span className={cn("text-[10px] font-medium", done ? "text-emerald-700" : "text-[#8A8F98]")}>
                             {order.receivedSpecimensCount}/{order.specimensCount} spesimen diterima
                           </span>
@@ -888,43 +1052,51 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 9. Ringkasan LIS */}
-            <Card className="xl:col-span-5" title="Ringkasan LIS" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
-              <dl className="grid grid-cols-2 gap-2">
+            <Card className="md:col-span-2 xl:col-span-7" title="Ringkasan LIS" subtitle="Total seluruh order & spesimen" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
+              <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
-                  { label: "Total order", value: data.summary.orders.total, dark: true },
-                  { label: "Prioritas CITO", value: data.summary.orders.cito, blue: true },
+                  { label: "Total order", value: data.summary.orders.total, tone: "dark" },
+                  { label: "Prioritas CITO", value: data.summary.orders.cito, tone: "blue" },
                   { label: "Prioritas mendesak", value: data.summary.orders.urgent },
                   { label: "Prioritas rutin", value: data.summary.orders.routine },
                   { label: "Order selesai", value: data.summary.orders.completed },
                   { label: "Spesimen diterima", value: data.summary.specimens.received },
                   { label: "Spesimen ditolak", value: data.summary.specimens.rejected },
                   { label: "Pengguna aktif", value: data.summary.activeUsers },
-                ].map((row) => (
-                  <div
-                    key={row.label}
-                    className={cn("rounded-2xl px-3.5 py-3", row.dark ? "bg-[#111318] text-white" : row.blue ? "text-white" : "bg-[#F7F8FA]")}
-                    style={row.blue ? striped(BLUE) : undefined}
-                  >
-                    <dt className={cn("text-[11px]", row.dark || row.blue ? "text-white/75" : "text-[#8A8F98]")}>{row.label}</dt>
-                    <dd className={cn("mt-1 font-display text-[22px] font-medium leading-none", row.dark || row.blue ? "text-white" : "text-[#111318]")}>{fmt(row.value)}</dd>
-                  </div>
-                ))}
+                ].map((row) => {
+                  const strong = row.tone === "dark" || row.tone === "blue";
+                  return (
+                    <div
+                      key={row.label}
+                      className={cn("rounded-2xl px-3.5 py-3 transition-transform hover:-translate-y-0.5", row.tone === "dark" ? "bg-[#111318]" : row.tone === "blue" ? "" : "bg-[#F7F8FA]")}
+                      style={row.tone === "blue" ? STYLE_BLUE : undefined}
+                    >
+                      <dt className={cn("text-[11px]", strong ? "text-white/75" : "text-[#8A8F98]")}>{row.label}</dt>
+                      <dd className={cn("mt-1 font-display text-[22px] font-medium leading-none", strong ? "text-white" : "text-[#111318]")}>
+                        <CountUp value={row.value} />
+                      </dd>
+                    </div>
+                  );
+                })}
               </dl>
             </Card>
 
             {/* 10. Profil institusi */}
-            <Card className="xl:col-span-7" title="Profil Institusi" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
+            <Card className="md:col-span-2 xl:col-span-5" title="Profil Institusi" subtitle="Jenis institusi seluruh pemohon demo" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
               {institutions.length === 0 ? (
                 <EmptyState icon={Building2} text="Belum ada data institusi pemohon." />
               ) : (
                 <ul className="space-y-3">
                   {institutions.map((inst, i) => (
-                    <li key={inst.type} className="grid grid-cols-[minmax(110px,160px)_minmax(0,1fr)_auto] items-center gap-3">
+                    <li key={inst.type} className="group grid grid-cols-[minmax(100px,140px)_minmax(0,1fr)_auto] items-center gap-3">
                       <span className="truncate text-[12px] font-medium text-[#3B4049]">{INSTITUTION_NAMES[inst.type] || inst.type}</span>
                       <span className="h-7 w-full overflow-hidden rounded-full bg-[#F2F3F5]" aria-hidden="true">
-                        <span className="block h-full rounded-full" style={{ width: `${Math.max(6, (inst.count / institutionMax) * 100)}%`, ...INSTITUTION_STYLES[i % INSTITUTION_STYLES.length] }} />
+                        <span
+                          className="block h-full rounded-full transition-[filter] group-hover:brightness-110"
+                          style={{ width: `${Math.max(6, (inst.count / institutionMax) * 100)}%`, ...INSTITUTION_STYLES[i % INSTITUTION_STYLES.length] }}
+                        />
                       </span>
-                      <span className="w-[72px] text-right text-[12px] text-[#8A8F98]">
+                      <span className="w-[64px] text-right text-[12px] text-[#8A8F98]">
                         <span className="font-semibold text-[#111318]">{fmt(inst.count)}</span> · {pct(inst.count, institutionTotal)}%
                       </span>
                     </li>
