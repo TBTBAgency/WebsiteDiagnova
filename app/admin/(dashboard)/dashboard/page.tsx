@@ -85,13 +85,13 @@ const AUTO_REFRESH_MS = 60_000;
 /* Token visual                                                        */
 /* ================================================================== */
 
-const INK = "#111318";
-const BLUE = "#1F6BFF";
-const NAVY = "#123A9C";
-const SKY = "#A9C8FF";
-const EMPTY = "#E6E8EC";
+const INK = "#0E234B";
+const BLUE = "#1B6FF2";
+const NAVY = "#0E56D8";
+const SKY = "#93C5FD";
+const EMPTY = "#E2E8F0";
 
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F6BFF] focus-visible:ring-offset-2";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2] focus-visible:ring-offset-2";
 
 /** Pola garis diagonal seperti batang pada desain referensi. */
 function striped(base: string, line = "rgba(255,255,255,0.16)"): React.CSSProperties {
@@ -209,7 +209,7 @@ function CircleLink({ href, label, dark = false }: { href: string; label: string
       className={cn(
         "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:-translate-y-0.5",
         focusRing,
-        dark ? "bg-white text-[#111318] hover:bg-[#E9ECF1]" : "border border-[#E4E6EA] text-[#111318] hover:border-[#111318] hover:bg-[#111318] hover:text-white"
+        dark ? "bg-white text-[#0E234B] hover:bg-[#EEF4FF]" : "border border-[#DCE6F5] text-[#0E234B] hover:border-[#0E234B] hover:bg-[#0E234B] hover:text-white"
       )}
     >
       <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -231,11 +231,11 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className={cn("flex min-w-0 flex-col rounded-[24px] bg-white p-5 transition-shadow hover:shadow-[0_10px_30px_rgba(17,19,24,0.06)] sm:p-6", className)}>
+    <section className={cn("flex min-w-0 flex-col rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-shadow hover:shadow-[0_14px_34px_-12px_rgba(14,35,75,0.10)] sm:p-6", className)}>
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="truncate text-[17px] font-medium leading-snug text-[#111318]">{title}</h2>
-          {subtitle && <p className="mt-0.5 truncate text-[12px] text-[#8A8F98]">{subtitle}</p>}
+          <h2 className="font-display truncate text-[16px] font-semibold leading-snug text-[#0E234B] sm:text-[17px]">{title}</h2>
+          {subtitle && <p className="mt-0.5 truncate text-[12px] text-slate-500">{subtitle}</p>}
         </div>
         {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
       </div>
@@ -761,21 +761,21 @@ export default function AdminOverviewDashboard() {
     : [];
 
   const toolbarBtn = cn(
-    "inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full bg-white px-5 text-[13px] font-medium text-[#111318] transition-colors hover:bg-[#F7F8FA] disabled:opacity-60",
+    "inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full border border-[#DCE6F5] bg-white px-5 text-[13px] font-medium text-[#0E234B] shadow-xs transition-colors hover:bg-[#EEF4FF] disabled:opacity-60",
     focusRing
   );
-  const toolbarIcon = cn("inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#111318] transition-colors hover:bg-[#F7F8FA] disabled:opacity-60", focusRing);
+  const toolbarIcon = cn("inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#DCE6F5] bg-white text-[#0E234B] shadow-xs transition-colors hover:bg-[#EEF4FF] disabled:opacity-60", focusRing);
 
   return (
     <div className="space-y-6">
       {/* ---------------------------- Judul + toolbar ---------------------------- */}
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <h1 className="font-display text-[28px] font-medium leading-tight tracking-tight text-[#111318] sm:text-[32px]">{t("Ringkasan Dashboard", "Dashboard Overview")}</h1>
-          <nav aria-label="Breadcrumb" className="mt-1 flex flex-wrap items-center gap-x-1 text-[12px] text-[#8A8F98]">
+          <h1 className="font-display text-[28px] font-bold leading-tight tracking-tight text-[#0E234B] sm:text-[32px]">{t("Ringkasan Dashboard", "Dashboard Overview")}</h1>
+          <nav aria-label="Breadcrumb" className="mt-1 flex flex-wrap items-center gap-x-1 text-[12px] text-slate-500">
             <span>Dashboard</span>
             <ChevronRight className="h-3 w-3" aria-hidden="true" />
-            <span className="text-[#5B616B]">{t("Semua Laporan", "All Reports")}</span>
+            <span className="font-medium text-[#0E234B]">{t("Semua Laporan", "All Reports")}</span>
             {todayStr && <span className="ml-1 hidden sm:inline">· {todayStr}</span>}
           </nav>
         </div>
@@ -866,10 +866,10 @@ export default function AdminOverviewDashboard() {
               action={<CircleLink href="/admin/leads" label={t("Buka permohonan demo", "Open demo requests")} />}
             >
               <div className="mb-5">
-                <div className="font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
+                <div className="font-display text-[38px] font-bold leading-none tracking-tight text-[#0E234B]">
                   <CountUp value={periodLeads} />
                 </div>
-                <div className="mt-1.5 text-[12px] text-[#8A8F98]">
+                <div className="mt-1.5 text-[12px] text-slate-500">
                   {t(`permohonan demo masuk dalam ${period} hari`, `demo requests received in ${period} days`)}
                 </div>
               </div>
@@ -896,13 +896,13 @@ export default function AdminOverviewDashboard() {
             <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 md:col-span-2 xl:col-span-7">
               <HighlightCard slides={highlights} todayLeads={todayPoint ? todayPoint.leads : null} />
 
-              <section className="flex min-w-0 flex-col justify-between rounded-[24px] bg-white p-5 sm:p-6">
+              <section className="flex min-w-0 flex-col justify-between rounded-[24px] border border-[#DCE6F5]/85 bg-white p-5 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] transition-shadow hover:shadow-[0_14px_34px_-12px_rgba(14,35,75,0.10)] sm:p-6">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F2F3F5] text-[#111318]">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF4FF] text-[#1B6FF2]">
                       <Users className="h-[18px] w-[18px]" aria-hidden="true" />
                     </span>
-                    <h2 className="text-[13px] font-medium leading-tight text-[#3B4049]">
+                    <h2 className="font-display text-[13px] font-semibold leading-tight text-[#0E234B]">
                       {t("Permohonan", "Requests")}
                       <br />
                       {t("Hari Ini", "Today")}
@@ -911,7 +911,7 @@ export default function AdminOverviewDashboard() {
                   <DeltaChip text={deltaText} tone={deltaTone} />
                 </div>
                 <div className="mt-4 flex items-end justify-between gap-4">
-                  <div className="font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
+                  <div className="font-display text-[38px] font-bold leading-none tracking-tight text-[#0E234B]">
                     <CountUp value={todayPoint?.leads ?? 0} />
                   </div>
                   {/* Sparkline 7 hari (hari ini paling kanan) */}
@@ -939,9 +939,9 @@ export default function AdminOverviewDashboard() {
                 </div>
               </section>
 
-              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-[#111318] p-5 text-white sm:p-6">
+              <section className="relative flex min-h-[176px] min-w-0 flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E234B] via-[#153670] to-[#0A1A38] p-5 text-white shadow-[0_14px_34px_-12px_rgba(14,35,75,0.35)] sm:p-6">
                 <span className="pointer-events-none absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.06]" aria-hidden="true" />
-                <span className="pointer-events-none absolute -bottom-28 right-10 h-40 w-40 rounded-full bg-[#1F6BFF]/20 blur-2xl" aria-hidden="true" />
+                <span className="pointer-events-none absolute -bottom-28 right-10 h-40 w-40 rounded-full bg-[#1B6FF2]/30 blur-2xl" aria-hidden="true" />
                 <div className="relative flex items-center justify-between gap-2">
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
                     <FileText className="h-[18px] w-[18px]" aria-hidden="true" />
@@ -952,7 +952,7 @@ export default function AdminOverviewDashboard() {
                       download
                       aria-label={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
                       title={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111318] transition-all hover:-translate-y-0.5 hover:bg-[#E9ECF1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#0E234B] transition-all hover:-translate-y-0.5 hover:bg-[#EEF4FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       <Download className="h-4 w-4" aria-hidden="true" />
                     </a>
@@ -960,10 +960,10 @@ export default function AdminOverviewDashboard() {
                   </div>
                 </div>
                 <div className="relative mt-6">
-                  <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[10px] text-white/75">
+                  <span className="inline-flex rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-medium text-blue-100">
                     {fmt(leadTotal)} {t("permohonan", leadTotal === 1 ? "request" : "requests")} · CSV
                   </span>
-                  <h2 className="mt-2 text-[21px] font-medium leading-tight text-white">{t("Laporan Permohonan", "Requests Report")}</h2>
+                  <h2 className="mt-2 font-display text-[21px] font-semibold leading-tight text-white">{t("Laporan Permohonan", "Requests Report")}</h2>
                 </div>
               </section>
             </div>
@@ -987,13 +987,13 @@ export default function AdminOverviewDashboard() {
               ) : (
                 <div className="grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)]">
                   <div className="flex flex-col">
-                    <span className="w-fit rounded-full bg-[#111318] px-3 py-1 text-[11px] font-medium text-white">Total</span>
-                    <div className="mt-3 font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
+                    <span className="w-fit rounded-full bg-[#0E234B] px-3 py-1 text-[11px] font-medium text-white">Total</span>
+                    <div className="mt-3 font-display text-[38px] font-bold leading-none tracking-tight text-[#0E234B]">
                       <CountUp value={leadTotal} />
                     </div>
-                    <p className="mt-2 text-[12px] leading-relaxed text-[#8A8F98]">{t("permohonan demo sejak awal", "demo requests since the start")}</p>
+                    <p className="mt-2 text-[12px] leading-relaxed text-slate-500">{t("permohonan demo sejak awal", "demo requests since the start")}</p>
                     <div className="mt-5">
-                      <div className={cn("font-display text-[30px] font-medium leading-none", deltaTone === "down" ? "text-[#B42318]" : "text-[#1F6BFF]")}>{deltaText}</div>
+                      <div className={cn("font-display text-[30px] font-bold leading-none", deltaTone === "down" ? "text-[#B42318]" : "text-[#1B6FF2]")}>{deltaText}</div>
                       <p className="mt-1 text-[12px] text-[#8A8F98]">
                         {t("permohonan 7 hari terakhir dibanding 7 hari sebelumnya", "requests in the last 7 days vs. the previous 7 days")}
                       </p>

@@ -155,7 +155,7 @@ function useDismiss(open: boolean, close: () => void, containerRef: React.RefObj
   }, [open, close, containerRef, triggerRef]);
 }
 
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F6BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
 /* ------------------------------------------------------------------ */
 /* Sidebar (dipakai di desktop dan di laci menu mobile)                */
@@ -171,18 +171,18 @@ function SidebarContent({ pathname, firstName, onNavigate }: { pathname: string;
   return (
     <div className="flex h-full flex-col">
       <div className="px-1">
-        <h2 className="font-display text-[28px] font-bold leading-[1.1] tracking-tight text-[#111318]">
+        <h2 className="font-display text-[26px] font-bold leading-[1.12] tracking-tight text-[#0E234B]">
           {greeting ?? t("Selamat datang", "Welcome")},
           <br />
           {firstName ? `${firstName}!` : "Admin!"}
         </h2>
-        <p className="mt-2 text-[13px] text-[#8A8F98]">{t("Ringkasan pengelolaan website Diagnova", "Diagnova website management overview")}</p>
+        <p className="mt-2 text-[13px] text-slate-500">{t("Ringkasan pengelolaan website Diagnova", "Diagnova website management overview")}</p>
       </div>
 
       <nav aria-label={t("Navigasi admin", "Admin navigation")} className="mt-7 space-y-6">
         {ADMIN_NAV_GROUPS.map((group) => (
           <div key={group.key}>
-            <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#A3A8B1]">{t(group.heading, group.headingEn)}</p>
+            <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">{t(group.heading, group.headingEn)}</p>
             <ul className="space-y-1">
               {group.items.map((item) => {
                 const active = isNavActive(pathname, item.href);
@@ -194,9 +194,11 @@ function SidebarContent({ pathname, firstName, onNavigate }: { pathname: string;
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex items-center gap-3 rounded-full px-4 py-2.5 text-[13px] font-medium transition-colors",
+                        "flex items-center gap-3 rounded-full px-4 py-2.5 text-[13px] font-medium transition-all",
                         focusRing,
-                        active ? "bg-[#111318] text-white shadow-[0_8px_20px_rgba(17,19,24,0.18)]" : "text-[#3B4049] hover:bg-[#F2F3F5] hover:text-[#111318]"
+                        active
+                          ? "bg-[#0E234B] text-white shadow-[0_8px_20px_-4px_rgba(14,35,75,0.28)]"
+                          : "text-slate-600 hover:bg-[#EEF4FF] hover:text-[#0E234B]"
                       )}
                     >
                       <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
@@ -216,24 +218,24 @@ function SidebarContent({ pathname, firstName, onNavigate }: { pathname: string;
         href="/"
         target="_blank"
         rel="noopener noreferrer"
-        className={cn("group relative mt-8 block overflow-hidden rounded-[24px] bg-[#1F6BFF] p-5 text-white lg:mt-auto", focusRing)}
+        className={cn("group relative mt-8 block overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E56D8] via-[#1B6FF2] to-[#07348C] p-5 text-white shadow-[0_14px_30px_-10px_rgba(14,86,216,0.38)] lg:mt-auto", focusRing)}
       >
         <Image
           src="/images/hero-scientist.jpg"
           alt=""
           fill
           sizes="240px"
-          className="object-cover object-[78%_50%] opacity-90 transition-transform duration-500 group-hover:scale-105"
+          className="object-cover object-[78%_50%] opacity-85 transition-transform duration-500 group-hover:scale-105"
         />
-        <span className="absolute inset-0 bg-gradient-to-r from-[#1F6BFF] via-[#1F6BFF]/80 to-transparent" aria-hidden="true" />
+        <span className="absolute inset-0 bg-gradient-to-r from-[#0E56D8] via-[#1B6FF2]/85 to-transparent" aria-hidden="true" />
         <span className="relative block">
           <span className="block font-display text-[20px] font-bold leading-tight">
             {t("Lihat", "View")}
             <br />
             website
           </span>
-          <span className="mt-1 block text-[11px] text-white/80">{t("Cek perubahan konten", "Check your content changes")}</span>
-          <span className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#111318] py-1.5 pl-4 pr-1.5 text-[11px] font-semibold">
+          <span className="mt-1 block text-[11px] text-blue-100/90">{t("Cek perubahan konten", "Check your content changes")}</span>
+          <span className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#0E234B] py-1.5 pl-4 pr-1.5 text-[11px] font-semibold shadow-sm transition-colors group-hover:bg-[#091836]">
             {t("Buka website", "Open website")}
             <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -298,11 +300,11 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
   const initials = getInitials(currentUser?.name);
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-white font-sans text-[#111318] selection:bg-[#CFE0FF] selection:text-[#1F6BFF]">
+    <div className="min-h-screen overflow-x-clip bg-white font-sans text-[#0E234B] selection:bg-[#CFE0FF] selection:text-[#1B6FF2]">
       {/* Lebar penuh: tanpa bingkai/margin luar */}
       <div className="min-h-screen bg-white">
         {/* ------------------------------ Header ------------------------------ */}
-        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur">
           <div className="flex h-[76px] items-center gap-3 px-4 sm:px-6 lg:grid lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-0 lg:px-6">
             <Link href="/admin/dashboard" className={cn("flex shrink-0 items-center gap-2 rounded-full pr-1", focusRing)} aria-label={t("Diagnova Admin - ke Dashboard", "Diagnova Admin - go to Dashboard")}>
               <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-8 w-auto object-contain" />
@@ -319,9 +321,11 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                           href={pill.href}
                           aria-current={active ? "true" : undefined}
                           className={cn(
-                            "inline-flex items-center whitespace-nowrap rounded-full px-5 py-2.5 text-[13px] font-medium transition-colors",
+                            "inline-flex items-center whitespace-nowrap rounded-full px-5 py-2.5 text-[13px] font-medium transition-all",
                             focusRing,
-                            active ? "bg-[#1F6BFF] text-white shadow-[0_8px_18px_rgba(31,107,255,0.3)]" : "bg-[#F2F3F5] text-[#5B616B] hover:bg-[#E8EAED] hover:text-[#111318]"
+                            active
+                              ? "bg-[#1B6FF2] text-white shadow-[0_8px_18px_-4px_rgba(27,111,242,0.35)]"
+                              : "bg-[#F4F8FD] text-slate-600 hover:bg-[#E8F0FC] hover:text-[#0E234B]"
                           )}
                         >
                           {t(pill.name, pill.en)}
@@ -340,7 +344,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                   rel="noopener noreferrer"
                   title={t("Lihat Website", "View Website")}
                   aria-label={t("Lihat Website (tab baru)", "View Website (new tab)")}
-                  className={cn("inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E4E6EA] text-[#5B616B] transition-colors hover:bg-[#F2F3F5] hover:text-[#111318]", focusRing)}
+                  className={cn("inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/90 text-slate-600 transition-colors hover:bg-[#F4F8FD] hover:text-[#0E234B]", focusRing)}
                 >
                   <ExternalLink className="h-[17px] w-[17px]" aria-hidden="true" />
                 </a>
@@ -354,14 +358,14 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                     aria-expanded={userOpen}
                     aria-controls={userPanelId}
                     aria-label={t(`Menu akun ${displayName}`, `Account menu for ${displayName}`)}
-                    className={cn("flex items-center gap-3 rounded-full p-0.5 text-left transition-colors hover:bg-[#F2F3F5] sm:pr-3", focusRing)}
+                    className={cn("flex items-center gap-3 rounded-full p-0.5 text-left transition-colors hover:bg-[#F4F8FD] sm:pr-3", focusRing)}
                   >
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1F6BFF] to-[#5AA2FF] text-[13px] font-bold text-white">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#0E56D8] to-[#56ADE2] text-[13px] font-bold text-white shadow-sm">
                       {initials}
                     </span>
                     <span className="hidden min-w-0 max-w-[180px] sm:block">
-                      <span className="block truncate text-[13px] font-semibold text-[#111318]">{displayName}</span>
-                      <span className="block truncate text-[11px] text-[#8A8F98]">{currentUser?.email || formatRole(t, currentUser?.role)}</span>
+                      <span className="block truncate text-[13px] font-semibold text-[#0E234B]">{displayName}</span>
+                      <span className="block truncate text-[11px] text-slate-500">{currentUser?.email || formatRole(t, currentUser?.role)}</span>
                     </span>
                   </button>
 
@@ -431,7 +435,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
             <SidebarContent pathname={pathname} firstName={firstName} />
           </aside>
 
-          <main className="min-w-0 bg-[#EEF0F3] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[28px] lg:px-7 lg:pt-7">
+          <main className="min-w-0 bg-[#F4F8FD] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[28px] lg:border lg:border-[#DCE6F5]/80 lg:px-7 lg:pt-7">
             <div className="min-w-0">{children}</div>
           </main>
         </div>
