@@ -87,7 +87,7 @@ export function AdminLanguageToggle({ className, tone = "light" }: { className?:
       data-testid="admin-lang-toggle"
       className={cn(
         "relative inline-flex items-center rounded-full p-0.5 select-none",
-        tone === "dark" ? "bg-white/10" : "bg-transparent",
+        tone === "dark" ? "bg-white/10" : "bg-[#EEF0F3] border border-slate-200/70",
         className
       )}
     >
