@@ -41,7 +41,7 @@ export default function AdminDashboardLayout({
 
   return (
     <AdminSessionContext.Provider value={currentUser}>
-      <SmoothScrollProvider>
+      <SmoothScrollProvider duration={0.8}>
         <AdminShell currentUser={currentUser} onLogout={handleLogout} isLoggingOut={isLoggingOut}>
           {children}
         </AdminShell>

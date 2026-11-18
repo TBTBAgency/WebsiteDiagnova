@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   ChevronDown,
@@ -161,7 +161,17 @@ const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible
 /* Sidebar (dipakai di desktop dan di laci menu mobile)                */
 /* ------------------------------------------------------------------ */
 
-function SidebarContent({ pathname, firstName, onNavigate }: { pathname: string; firstName: string | null; onNavigate?: () => void }) {
+function SidebarContent({
+  pathname,
+  firstName,
+  onNavigate,
+  onPendingNav,
+}: {
+  pathname: string;
+  firstName: string | null;
+  onNavigate?: () => void;
+  onPendingNav?: (_href: string) => void;
+}) {
   const { t } = useAdminLang();
   const [hour, setHour] = useState<number | null>(null);
   // Jam lokal hanya dihitung di browser (menghindari hydration mismatch).
@@ -191,7 +201,11 @@ function SidebarContent({ pathname, firstName, onNavigate }: { pathname: string;
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      onClick={onNavigate}
+                      prefetch={true}
+                      onClick={() => {
+                        onPendingNav?.(item.href);
+                        onNavigate?.();
+                      }}
                       aria-current={active ? "page" : undefined}
                       className={cn(
                         "flex items-center gap-3 rounded-full px-4 py-2.5 text-[13px] font-medium transition-all",
@@ -260,11 +274,24 @@ interface AdminShellProps {
 
 export function AdminShell({ currentUser, onLogout, isLoggingOut = false, children }: AdminShellProps) {
   const pathname = usePathname() || "";
+  const router = useRouter();
   const { t } = useAdminLang();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const closePassword = useCallback(() => setPasswordOpen(false), []);
+
+  const handlePendingNav = useCallback(
+    (href: string) => {
+      if (!isNavActive(pathname, href)) {
+        setPendingHref(href);
+      }
+    },
+    [pathname]
+  );
+
+  const effectivePath = pendingHref || pathname;
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -289,11 +316,34 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
-  // Tutup semua panel saat berpindah halaman
+  // Tutup semua panel & reset pending state saat berpindah halaman
   useEffect(() => {
     setMobileOpen(false);
     setUserOpen(false);
+    setPendingHref(null);
   }, [pathname]);
+
+  // Safety timeout jika navigasi dibatalkan atau lambat
+  useEffect(() => {
+    if (!pendingHref) return;
+    const timer = setTimeout(() => setPendingHref(null), 5000);
+    return () => clearTimeout(timer);
+  }, [pendingHref]);
+
+  // Warm-prefetch seluruh rute admin saat idle agar perpindahan halaman instan
+  useEffect(() => {
+    const routes = ADMIN_NAV_GROUPS.flatMap((g) => g.items.map((item) => item.href));
+    const timer = setTimeout(() => {
+      routes.forEach((route) => {
+        try {
+          router.prefetch(route);
+        } catch {
+          /* abaikan */
+        }
+      });
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   const displayName = currentUser?.name || "Admin Diagnova";
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] || null;
@@ -306,7 +356,13 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
         {/* ------------------------------ Header ------------------------------ */}
         <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur">
           <div className="flex h-[76px] items-center gap-3 px-4 sm:px-6 lg:grid lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-0 lg:px-6">
-            <Link href="/admin/dashboard" className={cn("flex shrink-0 items-center gap-2 rounded-full pr-1", focusRing)} aria-label={t("Diagnova Admin - ke Dashboard", "Diagnova Admin - go to Dashboard")}>
+            <Link
+              href="/admin/dashboard"
+              prefetch={true}
+              onClick={() => handlePendingNav("/admin/dashboard")}
+              className={cn("flex shrink-0 items-center gap-2 rounded-full pr-1", focusRing)}
+              aria-label={t("Diagnova Admin - ke Dashboard", "Diagnova Admin - go to Dashboard")}
+            >
               <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-8 w-auto object-contain" />
             </Link>
 
@@ -314,11 +370,13 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
               <nav aria-label={t("Bagian admin", "Admin sections")} className="hidden min-w-0 lg:block">
                 <ul className="flex items-center gap-2">
                   {HEADER_PILLS.map((pill) => {
-                    const active = pill.match.some((m) => isNavActive(pathname, m));
+                    const active = pill.match.some((m) => isNavActive(effectivePath, m));
                     return (
                       <li key={pill.href}>
                         <Link
                           href={pill.href}
+                          prefetch={true}
+                          onClick={() => handlePendingNav(pill.href)}
                           aria-current={active ? "true" : undefined}
                           className={cn(
                             "inline-flex items-center whitespace-nowrap rounded-full px-5 py-2.5 text-[13px] font-medium transition-all",
@@ -432,10 +490,15 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
         {/* ------------------------- Sidebar + konten ------------------------- */}
         <div className="lg:grid lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:pb-6">
           <aside className="hidden lg:sticky lg:top-[76px] lg:block lg:h-[calc(100vh-76px-1.5rem)] lg:self-start lg:overflow-y-auto lg:pb-2 lg:pt-4 scrollbar-none">
-            <SidebarContent pathname={pathname} firstName={firstName} />
+            <SidebarContent pathname={effectivePath} firstName={firstName} onPendingNav={handlePendingNav} />
           </aside>
 
-          <main className="min-w-0 bg-[#F4F8FD] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[28px] lg:border lg:border-[#DCE6F5]/80 lg:px-7 lg:pt-7">
+          <main className="relative min-w-0 overflow-hidden bg-[#F4F8FD] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[28px] lg:border lg:border-[#DCE6F5]/80 lg:px-7 lg:pt-7">
+            {pendingHref && (
+              <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[3px] overflow-hidden bg-[#DCE6F5]">
+                <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-[#1B6FF2] via-[#56ADE2] to-[#1B6FF2]" />
+              </div>
+            )}
             <div className="min-w-0">{children}</div>
           </main>
         </div>
@@ -460,7 +523,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
               </button>
             </div>
             <AdminLanguageToggle className="mb-5 self-start sm:hidden" />
-            <SidebarContent pathname={pathname} firstName={firstName} onNavigate={closeMobile} />
+            <SidebarContent pathname={effectivePath} firstName={firstName} onNavigate={closeMobile} onPendingNav={handlePendingNav} />
           </div>
         </div>
       )}

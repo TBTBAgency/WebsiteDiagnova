@@ -6,8 +6,10 @@ import Lenis from "lenis";
 
 export function SmoothScrollProvider({
   children,
+  duration = 1.2,
 }: {
   children: React.ReactNode;
+  duration?: number;
 }) {
   const lenisRef = useRef<Lenis | null>(null);
   const pathname = usePathname();
@@ -23,7 +25,7 @@ export function SmoothScrollProvider({
     }
 
     const lenis = new Lenis({
-      duration: 1.2,
+      duration,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Silky smooth organic momentum
       orientation: "vertical",
       gestureOrientation: "vertical",
