@@ -28,35 +28,36 @@ const REMEMBER_KEY = "diagnova_admin_email";
 
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B6FF2] focus-visible:ring-offset-2";
 
-/** Ilustrasi panel kanan: jendela dashboard Diagnova LIS + ikon modul mengambang (dekoratif, responsif tanpa tabrakan). */
+/** Ilustrasi panel kanan: jendela dashboard Diagnova LIS + ikon modul mengambang (rata tengah presisi). */
 function PanelIllustration() {
   return (
-    <div className="relative mx-auto flex w-full max-w-[580px] items-center gap-3.5 pb-8 pt-3 select-none lg:gap-5 xl:gap-6" aria-hidden="true">
-      {/* Concentric orbital rings */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 xl:h-[430px] xl:w-[430px]" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
+    <div className="relative mx-auto flex w-full max-w-[540px] items-center justify-center px-3 pb-7 pt-3 select-none" aria-hidden="true">
+      {/* Concentric orbital rings centered directly behind the visual */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 xl:h-[420px] xl:w-[420px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[270px] w-[270px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#3B82F6]/30 blur-3xl" />
 
-      {/* Left Column: 3 Glassmorphic LIS Icons with guaranteed responsive gap */}
-      <div className="relative z-20 flex shrink-0 flex-col items-center justify-center gap-4 lg:gap-5 xl:gap-6">
-        {[
-          { Icon: FlaskConical, offsetCls: "translate-x-1.5", delay: "0s" },
-          { Icon: FileText, offsetCls: "-translate-x-2", delay: "1.2s" },
-          { Icon: Share2, offsetCls: "translate-x-1.5", delay: "2.4s" },
-        ].map(({ Icon, offsetCls, delay }, i) => (
-          <div key={i} className={offsetCls}>
-            <div
-              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/35 bg-gradient-to-br from-[#3B82F6]/60 to-[#1D4ED8]/50 shadow-[0_16px_36px_-8px_rgba(4,24,78,0.5)] backdrop-blur-md motion-safe:animate-[gentleFloat_5.5s_ease-in-out_infinite] xl:h-16 xl:w-16"
-              style={{ animationDelay: delay }}
-            >
-              <Icon className="h-6 w-6 text-white drop-shadow-sm xl:h-7 xl:w-7" />
+      <div className="relative flex w-full items-center justify-center gap-4 lg:gap-5">
+        {/* Left Column: 3 Glassmorphic LIS Icons */}
+        <div className="relative z-20 flex shrink-0 flex-col items-center justify-center gap-4 lg:gap-5">
+          {[
+            { Icon: FlaskConical, offsetCls: "translate-x-1", delay: "0s" },
+            { Icon: FileText, offsetCls: "-translate-x-1.5", delay: "1.2s" },
+            { Icon: Share2, offsetCls: "translate-x-1", delay: "2.4s" },
+          ].map(({ Icon, offsetCls, delay }, i) => (
+            <div key={i} className={offsetCls}>
+              <div
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/35 bg-gradient-to-br from-[#3B82F6]/60 to-[#1D4ED8]/50 shadow-[0_16px_36px_-8px_rgba(4,24,78,0.5)] backdrop-blur-md motion-safe:animate-[gentleFloat_5.5s_ease-in-out_infinite] xl:h-14 xl:w-14"
+                style={{ animationDelay: delay }}
+              >
+                <Icon className="h-6 w-6 text-white drop-shadow-sm xl:h-7 xl:w-7" />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Main Dashboard Window */}
-      <div className="relative z-10 min-w-0 flex-1 rounded-2xl border border-white/65 bg-white p-3.5 shadow-[0_30px_75px_-15px_rgba(4,24,78,0.55)] xl:p-5">
+        {/* Main Dashboard Window */}
+        <div className="relative z-10 min-w-0 flex-1 rounded-2xl border border-white/65 bg-white p-3.5 shadow-[0_30px_75px_-15px_rgba(4,24,78,0.55)] xl:p-5">
         {/* Top Bar */}
         <div className="mb-3.5 flex items-center justify-between border-b border-slate-100 pb-3">
           <Image src="/images/logo-nav.png" alt="" width={100} height={28} className="h-4 w-auto object-contain" />
@@ -145,9 +146,10 @@ function PanelIllustration() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* Dynamic Floating System Active Card */}
-      <div className="absolute bottom-0 right-4 z-20 flex items-center gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 shadow-[0_22px_48px_-10px_rgba(4,24,78,0.45)] motion-safe:animate-[gentleFloat_6.5s_ease-in-out_infinite]">
+      <div className="absolute bottom-0 right-5 z-20 flex items-center gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 shadow-[0_22px_48px_-10px_rgba(4,24,78,0.45)] motion-safe:animate-[gentleFloat_6.5s_ease-in-out_infinite]">
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0E56D8] shadow-sm ring-4 ring-[#EBF3FF]">
           <Check className="h-5 w-5 stroke-[2.5] text-white" />
         </span>
@@ -411,7 +413,7 @@ function AdminLoginForm() {
             <PanelIllustration />
           </div>
 
-          <div className="relative mx-auto w-full max-w-[580px] text-left">
+          <div className="relative mx-auto w-full max-w-[540px] px-3 text-left">
             <h2 className="max-w-lg font-display text-2xl font-bold leading-tight text-white sm:text-[32px] xl:text-[34px]">
               {t("Laboratorium Lebih Cerdas untuk Keputusan Lebih Baik", "Smarter Laboratory for Better Decisions")}
             </h2>
