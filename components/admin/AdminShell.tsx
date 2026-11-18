@@ -239,7 +239,7 @@ function SidebarContent({
           alt=""
           fill
           sizes="240px"
-          className="object-cover object-[78%_50%] opacity-85 transition-transform duration-500 group-hover:scale-105"
+          className="object-cover object-[78%_50%] opacity-85"
         />
         <span className="absolute inset-0 bg-gradient-to-r from-[#0E56D8] via-[#1B6FF2]/85 to-transparent" aria-hidden="true" />
         <span className="relative block">
