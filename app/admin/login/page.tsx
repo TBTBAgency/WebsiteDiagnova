@@ -390,14 +390,22 @@ function AdminLoginForm() {
           </div>
         </div>
 
-        {/* KANAN: smooth abstract mesh-gradient Diagnova blue brand panel */}
+        {/* KANAN: smooth abstract mesh-gradient + layered circular shapes Diagnova blue panel */}
         <div className="relative hidden w-full flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0F5BE0] via-[#0B46B5] to-[#072B7A] px-10 py-10 text-white lg:flex xl:px-14 xl:py-12">
-          {/* Smooth layered abstract mesh & silk-light gradients (no hard geometric edges) */}
+          {/* Smooth layered abstract mesh gradients */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(96,165,250,0.40),transparent_60%)]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.32),transparent_55%)]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(4,22,72,0.72),transparent_65%)]" />
+
+          {/* Multi-layer smooth translucent circular shapes */}
+          <div className="pointer-events-none absolute -right-28 -top-28 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-white/[0.11] via-[#60A5FA]/[0.08] to-transparent" />
+          <div className="pointer-events-none absolute -left-20 top-10 h-[240px] w-[240px] rounded-full border border-white/[0.08] bg-white/[0.04]" />
+          <div className="pointer-events-none absolute -bottom-36 -right-20 h-[460px] w-[460px] rounded-full bg-gradient-to-tl from-[#38BDF8]/[0.12] via-white/[0.05] to-transparent" />
+          <div className="pointer-events-none absolute -bottom-20 -left-16 h-[280px] w-[280px] rounded-full border border-white/[0.07] bg-white/[0.04]" />
+          <div className="pointer-events-none absolute right-14 top-14 h-20 w-20 rounded-full border border-white/[0.12] bg-white/[0.06] backdrop-blur-[2px]" />
+          <div className="pointer-events-none absolute left-10 top-1/2 h-12 w-12 -translate-y-1/2 rounded-full bg-white/[0.07]" />
+          <div className="pointer-events-none absolute bottom-12 right-24 h-16 w-16 rounded-full border border-white/[0.10] bg-white/[0.05]" />
           <div className="pointer-events-none absolute -right-24 top-1/4 h-[380px] w-[520px] -rotate-12 rounded-full bg-[#60A5FA]/20 blur-[110px]" />
-          <div className="pointer-events-none absolute -left-24 bottom-1/4 h-[320px] w-[420px] rotate-12 rounded-full bg-[#38BDF8]/15 blur-[110px]" />
 
           <div className="relative flex flex-1 items-center justify-center">
             <PanelIllustration />
