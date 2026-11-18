@@ -244,6 +244,46 @@ async function main() {
   pages = await getPages(admin);
   check("saving the layout keeps saved section content", pages.find((x) => x.key === "platform").contentCustomized.includes(kA));
 
+  console.log("== 3b. Pusat Konten: section title + content saved together (action 'section')");
+  pages = await getPages(admin);
+  const pp = pages.find((x) => x.key === "platform");
+  const secKey = "automation";
+  const hdr = `QH${RUN.slice(-4)}hdr`;
+  const body = `QB${RUN.slice(-4)}body`;
+  const v = JSON.parse(JSON.stringify(pp.content[secKey]));
+  const l0 = pp.contentDefs[secKey].lists[0];
+  const tf = firstTextField(l0.fields);
+  v.lists[l0.key][0][`${tf.key}Id`] = body;
+  const sec = await call(admin, "PUT", "/api/admin/cms/layout", {
+    action: "section", page: "platform", sectionKey: secKey, header: { titleId: hdr }, content: v, baseUpdatedAt: pp.layoutUpdatedAt,
+  });
+  check("section save (title + content) -> 200", sec.status === 200, JSON.stringify(sec.json).slice(0, 200));
+  let hs = await publicHtml("/platform", (h) => h.includes(hdr) && h.includes(body));
+  check("section title and content both appear on /platform", hs.includes(hdr) && hs.includes(body));
+  pages = await getPages(admin);
+  const pp2 = pages.find((x) => x.key === "platform");
+  const lay = await call(admin, "PUT", "/api/admin/cms/layout", {
+    action: "layout", page: "platform", baseUpdatedAt: pp2.layoutUpdatedAt,
+    sections: pp2.sections.map((s) => ({ key: s.key, type: s.type, isActive: s.isActive, content: s.content })),
+  });
+  check("saving the order in Halaman & Section -> 200", lay.status === 200);
+  hs = await publicHtml("/platform", (h) => h.includes(hdr));
+  check("…keeps the section title and content edited in Pusat Konten", hs.includes(hdr) && hs.includes(body));
+  check("section save with stale base -> 409", (await call(admin, "PUT", "/api/admin/cms/layout", {
+    action: "section", page: "platform", sectionKey: secKey, header: { titleId: "x" }, baseUpdatedAt: pp.layoutUpdatedAt,
+  })).status === 409);
+  check("title override on a section without a title -> 400", (await call(admin, "PUT", "/api/admin/cms/layout", {
+    action: "section", page: "platform", sectionKey: "cta", header: { titleId: "x" }, baseUpdatedAt: null,
+  })).status === 400);
+  pages = await getPages(admin);
+  const pp3 = pages.find((x) => x.key === "platform");
+  const resetSec = await call(admin, "PUT", "/api/admin/cms/layout", {
+    action: "section", page: "platform", sectionKey: secKey, header: {}, content: null, baseUpdatedAt: pp3.layoutUpdatedAt,
+  });
+  check("reset section to defaults -> 200", resetSec.status === 200);
+  hs = await publicHtml("/platform", (h) => !h.includes(hdr) && !h.includes(body));
+  check("defaults back on /platform after reset", !hs.includes(hdr) && !hs.includes(body));
+
   console.log("== 4. CMS Homepage (hub) guards");
   const heroRow = await prisma.cmsSection.findUnique({ where: { sectionKey: "hero" } });
   const slidesBefore = JSON.stringify(heroRow?.extraContent?.slides ?? null);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Globe,
   Save,
@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import ImageUploader, { UploadedFileItem } from "@/components/admin/ImageUploader";
 import { CMS_PAGES } from "@/lib/cms-layout";
+import { InnerPageContentManager } from "@/components/admin/InnerPageContentManager";
 
 type CmsMainTab =
   | "navigation"
@@ -48,7 +49,22 @@ type CmsMainTab =
   | "solutions"
   | "modules"
   | "nova_ai"
-  | "integrations";
+  | "integration";
+
+/** Section Homepage di Pusat Konten (urutan = urutan di website). */
+const HOMEPAGE_SECTIONS: { key: HomepageSubTab; label: string; icon: any }[] = [
+  { key: "hero", label: "Hero Carousel", icon: Layers },
+  { key: "trusted_by", label: "Mitra / RS", icon: Globe },
+  { key: "about", label: "Tentang Diagnova", icon: Sparkles },
+  { key: "comparison", label: "Komparasi", icon: CheckSquare },
+  { key: "workflow", label: "Alur Kerja", icon: ArrowRight },
+  { key: "infrastructure", label: "Infrastruktur", icon: ShieldAlert },
+  { key: "testimonials", label: "Testimonial", icon: Quote },
+  { key: "cta", label: "Banner CTA", icon: ExternalLink },
+];
+
+/** Tab halaman dalam (kunci = kunci halaman di CMS_PAGES). */
+const INNER_PAGE_TABS: CmsMainTab[] = ["platform", "solutions", "modules", "nova_ai", "integration"];
 
 type HomepageSubTab =
   | "hero"
@@ -63,13 +79,86 @@ type HomepageSubTab =
 export default function AdminCmsUnifiedHubPage() {
   const [mainTab, setMainTab] = useState<CmsMainTab>("homepage");
   const [homepageTab, setHomepageTab] = useState<HomepageSubTab>("hero");
+  /** Section yang sedang diedit per halaman dalam. */
+  const [innerSections, setInnerSections] = useState<Record<string, string>>({});
+  /** Tab yang dropdown section-nya sedang terbuka. */
+  const [openTabMenu, setOpenTabMenu] = useState<string | null>(null);
+  /** Catatan bila section halaman dalam memakai konten bersama dari Homepage. */
+  const [sharedNotice, setSharedNotice] = useState<string | null>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
 
-  // Dukung deep-link ?tab=<tab> (mis. /admin/menus -> /admin/cms?tab=navigation)
+  /** Daftar section yang dapat dipilih dari panah dropdown sebuah tab. */
+  const pageSectionItems = (tab: CmsMainTab): { key: string; label: string; sharedWithHomepage?: HomepageSubTab }[] => {
+    if (tab === "homepage") return HOMEPAGE_SECTIONS.map((s) => ({ key: s.key, label: s.label }));
+    const def = CMS_PAGES.find((p) => p.key === tab);
+    if (!def) return [];
+    return def.sections.map((s) => {
+      // Section tanpa konten sendiri (CTA penutup, Alur Kerja di Platform) memakai konten Homepage.
+      const shared = !s.locked && !s.defaults && HOMEPAGE_SECTIONS.some((h) => h.key === s.key) ? (s.key as HomepageSubTab) : undefined;
+      return { key: s.key, label: s.key === "hero" ? `Gambaran ${def.label}` : s.label, ...(shared && { sharedWithHomepage: shared }) };
+    });
+  };
+  const currentSectionOf = (tab: CmsMainTab): string =>
+    tab === "homepage" ? homepageTab : innerSections[tab] || "hero";
+
+  const closeItemForms = () => {
+    setIsNavFormOpen(false);
+    setIsSlideFormOpen(false);
+    setIsPartnerFormOpen(false);
+    setIsTestimonialFormOpen(false);
+    setIsComparisonFormOpen(false);
+  };
+
+  /** Pindah ke tab + section (dari dropdown, pill section, atau deep-link ?tab=&section=). */
+  const goToSection = (tab: CmsMainTab, sectionKey: string | null) => {
+    closeItemForms();
+    setOpenTabMenu(null);
+    setSharedNotice(null);
+    if (tab === "navigation" || !sectionKey) {
+      setMainTab(tab);
+      return;
+    }
+    if (tab === "homepage") {
+      setMainTab("homepage");
+      setHomepageTab(sectionKey as HomepageSubTab);
+      return;
+    }
+    const item = pageSectionItems(tab).find((it) => it.key === sectionKey);
+    if (item?.sharedWithHomepage) {
+      const pageLabel = CMS_PAGES.find((p) => p.key === tab)?.label;
+      setMainTab("homepage");
+      setHomepageTab(item.sharedWithHomepage);
+      setSharedNotice(`Section "${item.label}" di halaman ${pageLabel} memakai konten yang sama dengan Homepage › ${HOMEPAGE_SECTIONS.find((h) => h.key === item.sharedWithHomepage)?.label}. Perubahan di sini tampil di kedua halaman.`);
+      return;
+    }
+    setMainTab(tab);
+    setInnerSections((m) => ({ ...m, [tab]: item ? sectionKey : "hero" }));
+  };
+
+  // Dukung deep-link ?tab=<tab>&section=<section> (mis. dari Halaman & Section).
   useEffect(() => {
-    const tab = new URLSearchParams(window.location.search).get("tab");
-    const validTabs: CmsMainTab[] = ["navigation", "homepage"] as CmsMainTab[];
-    if (tab && (validTabs as string[]).includes(tab)) setMainTab(tab as CmsMainTab);
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    const section = params.get("section");
+    const validTabs: CmsMainTab[] = ["navigation", "homepage", ...INNER_PAGE_TABS];
+    if (tab && (validTabs as string[]).includes(tab)) goToSection(tab as CmsMainTab, section);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Dropdown tab ditutup dengan klik di luar atau Escape.
+  useEffect(() => {
+    if (!openTabMenu) return;
+    const onDown = (e: MouseEvent) => {
+      if (tabBarRef.current && !tabBarRef.current.contains(e.target as Node)) setOpenTabMenu(null);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenTabMenu(null);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openTabMenu]);
   const [editorLang, setEditorLang] = useState<"ID" | "EN">("ID");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -806,18 +895,14 @@ export default function AdminCmsUnifiedHubPage() {
   const mainTabsList: { key: CmsMainTab; label: string; icon: any }[] = [
     { key: "navigation", label: "Navigasi Website", icon: Compass },
     { key: "homepage", label: "Homepage", icon: Globe },
+    { key: "platform", label: "Platform", icon: Cpu },
+    { key: "solutions", label: "Solusi", icon: Boxes },
+    { key: "modules", label: "Modul", icon: Layers },
+    { key: "nova_ai", label: "Nova AI", icon: BrainCircuit },
+    { key: "integration", label: "Integrasi", icon: Network },
   ];
 
-  const homepageSubTabsList: { key: HomepageSubTab; label: string; icon: any }[] = [
-    { key: "hero", label: "Hero Carousel", icon: Layers },
-    { key: "trusted_by", label: "Mitra / RS", icon: Globe },
-    { key: "about", label: "Tentang Diagnova", icon: Sparkles },
-    { key: "comparison", label: "Komparasi", icon: CheckSquare },
-    { key: "workflow", label: "Alur Kerja", icon: ArrowRight },
-    { key: "infrastructure", label: "Infrastruktur", icon: ShieldAlert },
-    { key: "testimonials", label: "Testimonial", icon: Quote },
-    { key: "cta", label: "Banner CTA", icon: ExternalLink },
-  ];
+  const homepageSubTabsList: { key: HomepageSubTab; label: string; icon: any }[] = HOMEPAGE_SECTIONS;
 
   if (isLoading) {
     return (
@@ -905,38 +990,70 @@ export default function AdminCmsUnifiedHubPage() {
         </div>
       </div>
 
-      {/* INTERNAL CMS NAVIGATION BAR */}
-      <div className="flex overflow-x-auto gap-1 border-b border-slate-200/80 pb-px scrollbar-none">
+      {/* INTERNAL CMS NAVIGATION BAR — tiap halaman punya panah dropdown berisi daftar section-nya */}
+      <div ref={tabBarRef} className="flex flex-wrap gap-1 border-b border-slate-200/80 pb-px" data-testid="cms-tab-bar">
         {mainTabsList.map((tab) => {
           const Icon = tab.icon;
           const isActive = mainTab === tab.key;
+          const items = tab.key === "navigation" ? null : pageSectionItems(tab.key);
+          const isOpen = openTabMenu === tab.key;
           return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => {
-                setMainTab(tab.key);
-                setIsNavFormOpen(false);
-                setIsSlideFormOpen(false);
-                setIsPartnerFormOpen(false);
-                setIsTestimonialFormOpen(false);
-                setIsComparisonFormOpen(false);
-              }}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all whitespace-nowrap border-b-2 ${
-                isActive
-                  ? "border-[#087BEE] text-[#087BEE] bg-blue-50/50 shadow-xs"
-                  : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              <Icon className={`h-4 w-4 ${isActive ? "text-[#087BEE]" : "text-slate-400"}`} />
-              <span>{tab.label}</span>
-            </button>
+            <div key={tab.key} className="relative">
+              <button
+                type="button"
+                data-testid={`cms-tab-${tab.key}`}
+                aria-haspopup={items ? "menu" : undefined}
+                aria-expanded={items ? isOpen : undefined}
+                onClick={() => {
+                  if (!items) {
+                    goToSection("navigation", null);
+                    return;
+                  }
+                  setOpenTabMenu(isOpen ? null : tab.key);
+                }}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl transition-all whitespace-nowrap border-b-2 ${
+                  isActive
+                    ? "border-[#087BEE] text-[#087BEE] bg-blue-50/50 shadow-xs"
+                    : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                }`}
+              >
+                <Icon className={`h-4 w-4 ${isActive ? "text-[#087BEE]" : "text-slate-400"}`} />
+                <span>{tab.label}</span>
+                {items && <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""} ${isActive ? "text-[#087BEE]" : "text-slate-400"}`} />}
+              </button>
+              {items && isOpen && (
+                <div
+                  role="menu"
+                  data-testid={`cms-tab-menu-${tab.key}`}
+                  className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-xl border border-slate-200/90 bg-white py-2 shadow-[0_14px_36px_-10px_rgba(15,23,42,0.18)]"
+                >
+                  {items.map((it) => {
+                    const current = currentSectionOf(tab.key) === it.key && mainTab === tab.key;
+                    return (
+                      <button
+                        key={it.key}
+                        type="button"
+                        role="menuitem"
+                        data-testid={`cms-tab-menu-${tab.key}-${it.key}`}
+                        onClick={() => goToSection(tab.key, it.key)}
+                        className={`flex w-full items-center justify-between gap-2 px-4 py-2 text-left text-[13px] transition-colors ${
+                          current ? "text-[#087BEE] font-semibold bg-blue-50/60" : "text-slate-600 hover:text-[#087BEE] hover:bg-slate-50"
+                        }`}
+                      >
+                        <span>{it.label}</span>
+                        {it.sharedWithHomepage && <span className="text-[10px] font-medium text-slate-400">di Homepage</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
       <p data-testid="cms-hub-scope-note" className="text-[11px] text-slate-500">
-        Menu ini mengelola Navigasi dan isi Homepage. Konten halaman Platform, Solusi, Modul, Nova AI, dan Integrasi (hero,
-        isi setiap section, urutan) dikelola di{" "}
+        Pusat Konten mengelola isi Navigasi, Homepage, dan setiap section halaman Platform, Solusi, Modul, Nova AI, dan
+        Integrasi (klik panah pada tab untuk memilih section). Urutan dan tampil/sembunyi section diatur di{" "}
         <a href="/admin/page-sections" className="font-semibold text-[#087BEE] hover:underline">
           Halaman &amp; Section
         </a>
@@ -946,6 +1063,38 @@ export default function AdminCmsUnifiedHubPage() {
         </a>
         .
       </p>
+      {sharedNotice && mainTab === "homepage" && (
+        <p data-testid="cms-shared-notice" className="rounded-xl border border-blue-200 bg-blue-50/60 px-3 py-2 text-[11px] text-blue-900">
+          {sharedNotice}
+        </p>
+      )}
+
+      {/* HALAMAN DALAM: pilihan section + editor isi section */}
+      {INNER_PAGE_TABS.includes(mainTab) && (
+        <div className="space-y-5">
+          <div className="flex overflow-x-auto gap-1 rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-semibold scrollbar-none">
+            {pageSectionItems(mainTab)
+              .filter((it) => !it.sharedWithHomepage)
+              .map((it) => {
+                const isSubActive = currentSectionOf(mainTab) === it.key;
+                return (
+                  <button
+                    key={it.key}
+                    type="button"
+                    data-testid={`cms-section-pill-${mainTab}-${it.key}`}
+                    onClick={() => goToSection(mainTab, it.key)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
+                      isSubActive ? "bg-white text-slate-900 shadow-xs font-bold" : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    <span>{it.label}</span>
+                  </button>
+                );
+              })}
+          </div>
+          <InnerPageContentManager key={`${mainTab}:${currentSectionOf(mainTab)}`} pageKey={mainTab} sectionKey={currentSectionOf(mainTab)} />
+        </div>
+      )}
 
       {/* ==================================================================== */}
       {/* 1. TAB: NAVIGASI WEBSITE */}
@@ -1389,13 +1538,8 @@ export default function AdminCmsUnifiedHubPage() {
                 <button
                   key={st.key}
                   type="button"
-                  onClick={() => {
-                    setHomepageTab(st.key);
-                    setIsSlideFormOpen(false);
-                    setIsPartnerFormOpen(false);
-                    setIsTestimonialFormOpen(false);
-                    setIsComparisonFormOpen(false);
-                  }}
+                  data-testid={`cms-section-pill-homepage-${st.key}`}
+                  onClick={() => goToSection("homepage", st.key)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                     isSubActive
                       ? "bg-white text-slate-900 shadow-xs font-bold"

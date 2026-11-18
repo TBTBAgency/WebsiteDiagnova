@@ -12,6 +12,15 @@ import {
   type SectionContent,
   type SectionContentDef,
 } from "@/lib/cms-page-content";
+import type { SectionDefaults, SectionTextContent } from "@/lib/cms-layout";
+
+const HEADER_FIELDS = [
+  { field: "badge", label: "Badge", multiline: false },
+  { field: "title", label: "Judul", multiline: true },
+  { field: "subtitle", label: "Deskripsi", multiline: true },
+] as const;
+
+const emptyContent: SectionContent = { fields: {}, lists: {} };
 
 const inputCls =
   "w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden";
@@ -116,13 +125,15 @@ function FieldInput({
 
 /**
  * Editor konten section bawaan halaman dalam: field tunggal + daftar item
- * (tambah, ubah, hapus, urutkan, tampilkan/sembunyikan). Disimpan per section.
+ * (tambah, ubah, hapus, urutkan, tampilkan/sembunyikan), ditambah judul section (badge / judul /
+ * deskripsi) bila tersedia. Judul dan isi disimpan bersama dengan satu tombol (aksi "section").
  */
 export function SectionContentEditor({
   page,
   sectionKey,
   def,
   value,
+  header,
   customized,
   baseUpdatedAt,
   disabledReason,
@@ -130,23 +141,27 @@ export function SectionContentEditor({
 }: {
   page: string;
   sectionKey: string;
-  def: SectionContentDef;
-  value: SectionContent;
+  def: SectionContentDef | null;
+  value: SectionContent | null;
+  /** Judul section: teks bawaan (placeholder) dan nilai tersimpan. */
+  header?: { defaults?: SectionDefaults; value?: SectionTextContent | null } | null;
   customized: boolean;
   baseUpdatedAt: string | null;
   disabledReason?: string;
   onSaved: (message: string) => Promise<void> | void;
 }) {
-  const [draft, setDraft] = useState<SectionContent>(() => clone(value));
+  const [draft, setDraft] = useState<SectionContent>(() => clone(value ?? emptyContent));
+  const [headerDraft, setHeaderDraft] = useState<SectionTextContent>(() => ({ ...(header?.value || {}) }));
   const [openItem, setOpenItem] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setDraft(clone(value));
+    setDraft(clone(value ?? emptyContent));
+    setHeaderDraft({ ...(header?.value || {}) });
     setDirty(false);
-  }, [value]);
+  }, [value, header?.value]);
 
   const setField = (key: string, v: string) => {
     setDraft((d) => ({ ...d, fields: { ...d.fields, [key]: v } }));
@@ -157,14 +172,21 @@ export function SectionContentEditor({
     setDirty(true);
   };
 
-  const submit = async (content: SectionContent | null) => {
+  const submit = async (content: SectionContent | null, headerValue: SectionTextContent) => {
     setSaving(true);
     setError("");
     try {
       const res = await fetch("/api/admin/cms/layout", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "content", page, sectionKey, content, baseUpdatedAt }),
+        body: JSON.stringify({
+          action: "section",
+          page,
+          sectionKey,
+          ...(header?.defaults && { header: headerValue }),
+          ...(def && { content }),
+          baseUpdatedAt,
+        }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json.message || "Gagal menyimpan konten.");
@@ -185,11 +207,12 @@ export function SectionContentEditor({
 
   return (
     <div className="rounded-xl border border-blue-100 bg-blue-50/30 p-3 space-y-4" data-testid={`content-editor-${sectionKey}`}>
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* Baris aksi menempel di bawah header admin agar tombol Simpan selalu terlihat pada form panjang. */}
+      <div className="sticky top-[88px] z-20 -mx-3 -mt-3 flex flex-wrap items-center justify-between gap-2 rounded-t-xl border-b border-blue-100 bg-white/95 px-3 py-2.5 backdrop-blur">
         <div>
           <p className="text-xs font-bold text-slate-900">Isi Section</p>
           <p className="text-[11px] text-slate-500">
-            {customized ? "Memakai konten dari CMS." : "Belum diubah — menampilkan konten bawaan."} {def.help}
+            {customized ? "Memakai konten dari CMS." : "Belum diubah — menampilkan konten bawaan."} {def?.help}
           </p>
         </div>
         <div className="flex gap-2">
@@ -197,7 +220,7 @@ export function SectionContentEditor({
             type="button"
             disabled={saving || !customized || !!disabledReason}
             data-testid={`content-reset-${sectionKey}`}
-            onClick={() => window.confirm("Kembalikan isi section ini ke konten bawaan? Perubahan CMS untuk section ini akan diganti.") && submit(null)}
+            onClick={() => window.confirm("Kembalikan judul dan isi section ini ke konten bawaan? Perubahan CMS untuk section ini akan diganti.") && submit(null, {})}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-white disabled:opacity-40"
           >
             <RotateCcw className="h-3.5 w-3.5" /> Kembalikan Bawaan
@@ -206,7 +229,7 @@ export function SectionContentEditor({
             type="button"
             disabled={saving || !dirty || !!disabledReason}
             data-testid={`content-save-${sectionKey}`}
-            onClick={() => submit(draft)}
+            onClick={() => submit(draft, headerDraft)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 disabled:opacity-50"
           >
             <Save className="h-3.5 w-3.5" /> {saving ? "Menyimpan…" : "Simpan Isi Section"}
@@ -221,11 +244,43 @@ export function SectionContentEditor({
         </p>
       )}
 
-      {(def.fields || []).map((f) => (
+      {header?.defaults && (
+        <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3" data-testid={`header-editor-${sectionKey}`}>
+          <p className="text-xs font-bold text-slate-800">Judul Section</p>
+          <p className="text-[11px] text-slate-500">Kosongkan kolom untuk memakai teks bawaan (ditampilkan sebagai placeholder). Baris baru menjadi pemisah baris.</p>
+          {HEADER_FIELDS.filter(({ field }) => header.defaults?.[field]).map(({ field, label, multiline }) => (
+            <div key={field} className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {(["Id", "En"] as const).map((lang, li) => {
+                const Tag = multiline ? "textarea" : "input";
+                const k = `${field}${lang}` as keyof SectionTextContent;
+                return (
+                  <label key={lang} className="space-y-1 text-xs">
+                    <span className="font-semibold text-slate-700">
+                      {label} ({lang === "Id" ? "ID" : "EN"})
+                    </span>
+                    <Tag
+                      data-testid={`header-field-${sectionKey}-${field}-${lang}`}
+                      className={inputCls + (multiline ? " min-h-[60px]" : "")}
+                      value={(headerDraft[k] as string) || ""}
+                      placeholder={header.defaults?.[field]?.[li] || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                        setHeaderDraft((h) => ({ ...h, [k]: e.target.value }));
+                        setDirty(true);
+                      }}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {(def?.fields || []).map((f) => (
         <FieldInput key={f.key} field={f} obj={draft.fields} onChange={setField} testId={`content-field-${sectionKey}-${f.key}`} />
       ))}
 
-      {(def.lists || []).map((list) => {
+      {(def?.lists || []).map((list) => {
         const items = draft.lists[list.key] || [];
         const canAdd = !list.fixedCount && items.length < list.maxItems;
         return (

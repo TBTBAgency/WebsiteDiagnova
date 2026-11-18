@@ -368,6 +368,117 @@ export async function savePageSectionContent(input: unknown, userId?: string) {
   };
 }
 
+const headerSchema = z
+  .object({
+    badgeId: text(120),
+    badgeEn: text(120),
+    titleId: text(300),
+    titleEn: text(300),
+    subtitleId: text(1500),
+    subtitleEn: text(1500),
+  })
+  .strict();
+
+/**
+ * Menyimpan SATU section bawaan halaman dalam dari Pusat Konten: judul section (badge / judul /
+ * deskripsi; kosong = teks bawaan) dan isinya (kartu, daftar, dst.) dalam satu penulisan atomik.
+ * header atau content yang tidak dikirim (undefined) tidak diubah; content = null → isi bawaan.
+ * Urutan & tampil/sembunyi tidak disentuh (dikelola di Halaman & Section).
+ */
+export async function savePageSection(input: unknown, userId?: string) {
+  const body = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
+  const page = body.page as InnerPageKey;
+  if (typeof page !== "string" || !(page in PAGE_CONTENT)) throw new CmsLayoutError("Halaman tidak dikenal.");
+  const def = getPageDefinition(page)!;
+  const sectionKey = typeof body.sectionKey === "string" ? body.sectionKey : "";
+  const sd = def.sections.find((s) => s.key === sectionKey);
+  const contentDef = PAGE_CONTENT[page].defs[sectionKey];
+  if (!sd || sd.locked || (!sd.defaults && !contentDef)) {
+    throw new CmsLayoutError("Section ini tidak memiliki konten yang dapat diedit dari sini.");
+  }
+
+  let header: Record<string, string> | undefined;
+  if (body.header !== undefined) {
+    if (!sd.defaults) throw new CmsLayoutError("Judul section ini tidak dapat diubah.");
+    const parsed = headerSchema.safeParse(body.header ?? {});
+    if (!parsed.success) {
+      const first = parsed.error.issues[0];
+      throw new CmsLayoutError(`Judul section tidak valid: ${first.path.join(".")} ${first.message}`);
+    }
+    header = (compact(parsed.data) as Record<string, string> | undefined) ?? {};
+  }
+
+  let content: unknown = undefined;
+  if (body.content !== undefined) {
+    if (!contentDef) throw new CmsLayoutError("Section ini tidak memiliki isi yang dapat diedit.");
+    if (body.content === null) content = null;
+    else {
+      const result = validateSectionContent(contentDef, PAGE_CONTENT[page].defaults[sectionKey], body.content);
+      if (!result.ok) throw new CmsLayoutError(`Konten tidak valid: ${result.errors.join(" ")}`);
+      content = result.value;
+    }
+  }
+  if (header === undefined && content === undefined) throw new CmsLayoutError("Tidak ada perubahan yang dikirim.");
+
+  const rowKey = layoutSectionKey(page);
+  const { existing, saved } = await writeLayoutRow(
+    rowKey,
+    body.baseUpdatedAt,
+    (prev) => {
+      const next: Record<string, unknown> = { ...prev };
+      if (header !== undefined) {
+        // Tata letak tersimpan (atau bawaan bila belum pernah disimpan) — hanya teks header section ini yang berubah.
+        const current: StoredSection[] = resolvePageLayout(page, prev).map(({ key, type, isActive, sortOrder, content: c }) => ({
+          key,
+          type,
+          isActive,
+          sortOrder,
+          ...(c && { content: c }),
+        }));
+        next.sections = current.map((s) => {
+          if (s.key !== sectionKey) return s;
+          const { content: _old, ...rest } = s;
+          return Object.keys(header!).length ? { ...rest, content: header } : rest;
+        });
+      }
+      if (content !== undefined) {
+        const prevContent = (prev.content && typeof prev.content === "object" && !Array.isArray(prev.content) ? prev.content : {}) as Record<string, unknown>;
+        const nextContent = { ...prevContent };
+        if (content === null) delete nextContent[sectionKey];
+        else nextContent[sectionKey] = content;
+        next.content = nextContent;
+      }
+      return next;
+    },
+    userId,
+    "Halaman ini telah diubah oleh admin lain. Muat ulang lalu ulangi perubahan."
+  );
+
+  const prevExtra = (existing?.extraContent ?? {}) as { content?: Record<string, unknown>; sections?: StoredSection[] };
+  await recordAuditLog({
+    userId,
+    action: "UPDATE_PAGE_SECTION",
+    entity: "cms_sections",
+    recordId: rowKey,
+    oldValue: {
+      sectionKey,
+      header: prevExtra.sections?.find((s) => s.key === sectionKey)?.content ?? null,
+      content: prevExtra.content?.[sectionKey] ?? null,
+    } as Record<string, unknown>,
+    newValue: { sectionKey, header: header ?? "(tidak diubah)", content: content === undefined ? "(tidak diubah)" : content } as Record<string, unknown>,
+  });
+
+  const savedExtra = saved.extraContent as { content?: unknown } | null;
+  return {
+    page,
+    path: def.path,
+    sectionKey,
+    updatedAt: saved.updatedAt,
+    header: resolvePageLayout(page, saved.extraContent).find((s) => s.key === sectionKey)?.content ?? null,
+    content: contentDef ? resolvePageContent(PAGE_CONTENT[page], savedExtra?.content ?? null, false)[sectionKey] : null,
+  };
+}
+
 const heroSchema = z.object({
   page: z.enum(CMS_PAGES.map((p) => p.key) as [CmsPageKey, ...CmsPageKey[]]),
   badgeId: text(120),
