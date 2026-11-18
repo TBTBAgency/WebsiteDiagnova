@@ -3,8 +3,8 @@ import { requireAdmin } from "@/lib/auth-guard";
 import { db } from "@/lib/db";
 import { ApiResponse } from "@/types";
 import path from "path";
-import fs from "fs/promises";
 import crypto from "crypto";
+import { saveCmsImage } from "@/lib/cms-image-storage";
 
 export const dynamic = "force-dynamic";
 
@@ -100,9 +100,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Direktori penyimpanan file publik
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "cms");
-    await fs.mkdir(uploadDir, { recursive: true });
+    // Penyimpanan: Vercel Blob di Vercel, public/uploads/cms di lokal (lihat lib/cms-image-storage.ts)
 
     const results: Array<{
       id: string;
@@ -138,8 +136,7 @@ export async function POST(request: NextRequest) {
       }
 
       const safeFileName = buildSafeFileName(file.name, detected.ext);
-      const filePath = path.join(uploadDir, safeFileName);
-      await fs.writeFile(filePath, buffer);
+      await saveCmsImage(safeFileName, buffer, mimeType);
 
       const publicUrl = `/uploads/cms/${safeFileName}`;
 

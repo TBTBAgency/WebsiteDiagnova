@@ -89,6 +89,21 @@ docker compose exec app npx prisma migrate deploy
 > - **JANGAN** menjalankan `npx prisma migrate reset` karena akan menghapus seluruh data tabel.  
 > - **JANGAN** menjalankan `npx prisma db push --force-reset`.
 
+### Baseline migration (sejak 2026-11-18)
+
+Riwayat migration dimulai dari satu baseline: `prisma/migrations/20261117000000_baseline`.
+Tiga migration lama diarsipkan (tidak diubah) di `prisma/migrations_legacy/` dan **tidak** dipakai lagi.
+Detail pengujian: `docs/PHASE_14_BASELINE_MIGRATION_TEST.md`.
+
+- **Database baru/kosong** (developer baru, production baru): cukup `npx prisma migrate deploy`.
+- **Database lama yang sudah berisi data** (dibuat dengan `db push`, misalnya DB dev lama):
+  1. backup dulu (`pg_dump -Fc`);
+  2. `npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --exit-code` harus exit 0 (bila tidak, berhenti dan analisis);
+  3. `npx prisma migrate resolve --applied 20261117000000_baseline` (tidak menjalankan SQL apa pun);
+  4. `npx prisma migrate status` harus "up to date".
+- Jangan menjalankan `migrate deploy` pada database berisi data sebelum langkah `resolve` di atas (Prisma akan menolak dengan P3005).
+- Perubahan schema berikutnya dibuat sebagai migration baru di atas baseline dan diuji di database sementara dulu.
+
 ---
 
 ## 5. Penjelasan Docker Volumes & Hot Reload

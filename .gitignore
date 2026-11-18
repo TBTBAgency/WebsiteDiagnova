@@ -41,3 +41,6 @@ prisma/migrations/dev.db
 *-backup.sql
 *full_backup*.sql
 *.sql.gz
+
+.vercel
+.env*

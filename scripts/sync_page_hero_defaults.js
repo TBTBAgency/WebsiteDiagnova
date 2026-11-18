@@ -37,6 +37,10 @@ async function main() {
       continue;
     }
 
+    if (Object.entries(hero).every(([field, value]) => existing[field] === value)) {
+      console.log(`[OK]     ${sectionKey} (sudah sesuai bawaan)`);
+      continue;
+    }
     console.log(`[UPDATE] ${sectionKey}: "${existing.titleId}" -> "${hero.titleId.replace(/\n/g, " ")}"`);
     if (!dryRun) {
       await prisma.cmsSection.update({ where: { sectionKey }, data: hero });
