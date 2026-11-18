@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { AdminTopbar } from "@/components/admin/AdminTopbar";
+import { AdminSessionContext, AdminTopNav } from "@/components/admin/AdminTopNav";
 import { AuthSessionPayload } from "@/types";
 
 export default function AdminDashboardLayout({
@@ -13,7 +12,6 @@ export default function AdminDashboardLayout({
 }) {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<AuthSessionPayload | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
@@ -41,30 +39,18 @@ export default function AdminDashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8] text-[#17191D] flex font-sans selection:bg-[#CAE2F1] selection:text-[#087BEE]">
-      {/* 1. Cohesive Apple-inspired Vertical Sidebar */}
-      <AdminSidebar
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        isLoggingOut={isLoggingOut}
-        mobileMenuOpen={mobileMenuOpen}
-        setMobileMenuOpen={setMobileMenuOpen}
-      />
-
-      {/* 2. Main Content Shell */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Topbar */}
-        <AdminTopbar
+    <AdminSessionContext.Provider value={currentUser}>
+      <div className="min-h-screen overflow-x-clip bg-[#E9ECF1] font-sans text-[#17191D] selection:bg-[#CAE2F1] selection:text-[#087BEE]">
+        <AdminTopNav
           currentUser={currentUser}
-          onOpenMobileMenu={() => setMobileMenuOpen(true)}
           onLogout={handleLogout}
+          isLoggingOut={isLoggingOut}
         />
 
-        {/* Content Viewport */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">{children}</div>
+        <main className="px-3 pb-10 pt-5 sm:px-5 sm:pt-6 lg:px-8 lg:pt-8">
+          <div className="mx-auto min-w-0 max-w-[1440px]">{children}</div>
         </main>
       </div>
-    </div>
+    </AdminSessionContext.Provider>
   );
 }

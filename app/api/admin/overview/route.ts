@@ -98,29 +98,31 @@ export async function GET() {
       count: g._count.institutionType,
     }));
 
-    // Data timeline harian permohonan demo & lab orders (14 hari terakhir)
-    const now = new Date();
+    // Data timeline harian permohonan demo & lab orders (14 hari terakhir, tanggal WIB).
+    // Dihitung dari SELURUH data dalam rentang (bukan hanya 5 data terbaru).
     const days = 14;
+    const tz = "Asia/Jakarta";
+    const dayKey = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(d); // YYYY-MM-DD
+    const now = new Date();
+    const from = new Date(now.getTime() - (days + 1) * 24 * 60 * 60 * 1000);
+    const [leadDates, orderDates] = await Promise.all([
+      db.lead.findMany({ where: { createdAt: { gte: from } }, select: { createdAt: true } }),
+      db.labOrder.findMany({ where: { orderedAt: { gte: from } }, select: { orderedAt: true } }),
+    ]);
+    const leadsPerDay = new Map<string, number>();
+    for (const l of leadDates) leadsPerDay.set(dayKey(l.createdAt), (leadsPerDay.get(dayKey(l.createdAt)) || 0) + 1);
+    const ordersPerDay = new Map<string, number>();
+    for (const o of orderDates) ordersPerDay.set(dayKey(o.orderedAt), (ordersPerDay.get(dayKey(o.orderedAt)) || 0) + 1);
+
     const timelineData: { date: string; label: string; leads: number; orders: number }[] = [];
-
     for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split("T")[0];
-      const label = d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
-
-      const leadsCount = recentLeads.filter(
-        (l) => l.createdAt.toISOString().split("T")[0] === dateStr
-      ).length;
-      const ordersCount = recentOrders.filter(
-        (o) => o.orderedAt.toISOString().split("T")[0] === dateStr
-      ).length;
-
+      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const dateStr = dayKey(d);
       timelineData.push({
         date: dateStr,
-        label,
-        leads: leadsCount,
-        orders: ordersCount,
+        label: d.toLocaleDateString("id-ID", { day: "numeric", month: "short", timeZone: tz }),
+        leads: leadsPerDay.get(dateStr) || 0,
+        orders: ordersPerDay.get(dateStr) || 0,
       });
     }
 
