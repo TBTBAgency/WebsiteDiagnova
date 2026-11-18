@@ -42,6 +42,7 @@ import ImageUploader, { UploadedFileItem } from "@/components/admin/ImageUploade
 import { CMS_PAGES } from "@/lib/cms-layout";
 import { PAGE_CONTENT, type InnerPageKey } from "@/lib/cms-content";
 import { InnerPageContentManager } from "@/components/admin/InnerPageContentManager";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 type CmsMainTab =
   | "navigation"
@@ -53,15 +54,15 @@ type CmsMainTab =
   | "integration";
 
 /** Section Homepage di Pusat Konten (urutan = urutan di website). */
-const HOMEPAGE_SECTIONS: { key: HomepageSubTab; label: string; icon: any }[] = [
-  { key: "hero", label: "Hero Carousel", icon: Layers },
-  { key: "trusted_by", label: "Mitra / RS", icon: Globe },
-  { key: "about", label: "Tentang Diagnova", icon: Sparkles },
-  { key: "comparison", label: "Komparasi", icon: CheckSquare },
-  { key: "workflow", label: "Alur Kerja", icon: ArrowRight },
-  { key: "infrastructure", label: "Infrastruktur", icon: ShieldAlert },
-  { key: "testimonials", label: "Testimonial", icon: Quote },
-  { key: "cta", label: "Banner CTA", icon: ExternalLink },
+const HOMEPAGE_SECTIONS: { key: HomepageSubTab; label: string; labelEn: string; icon: any }[] = [
+  { key: "hero", label: "Hero Carousel", labelEn: "Hero Carousel", icon: Layers },
+  { key: "trusted_by", label: "Mitra / RS", labelEn: "Partners / Hospitals", icon: Globe },
+  { key: "about", label: "Tentang Diagnova", labelEn: "About Diagnova", icon: Sparkles },
+  { key: "comparison", label: "Komparasi", labelEn: "Comparison", icon: CheckSquare },
+  { key: "workflow", label: "Alur Kerja", labelEn: "Workflow", icon: ArrowRight },
+  { key: "infrastructure", label: "Infrastruktur", labelEn: "Infrastructure", icon: ShieldAlert },
+  { key: "testimonials", label: "Testimonial", labelEn: "Testimonials", icon: Quote },
+  { key: "cta", label: "Banner CTA", labelEn: "CTA Banner", icon: ExternalLink },
 ];
 
 /** Tab halaman dalam (kunci = kunci halaman di CMS_PAGES). */
@@ -86,6 +87,7 @@ type HomepageSubTab =
   | "cta";
 
 export default function AdminCmsUnifiedHubPage() {
+  const { t } = useAdminLang();
   const [mainTab, setMainTab] = useState<CmsMainTab>("homepage");
   const [homepageTab, setHomepageTab] = useState<HomepageSubTab>("hero");
   /** Section yang sedang diedit per halaman dalam. */
@@ -100,13 +102,13 @@ export default function AdminCmsUnifiedHubPage() {
 
   /** Daftar section yang dapat dipilih dari panah dropdown sebuah tab. */
   const pageSectionItems = (tab: CmsMainTab): { key: string; label: string; sharedWithHomepage?: HomepageSubTab }[] => {
-    if (tab === "homepage") return HOMEPAGE_SECTIONS.map((s) => ({ key: s.key, label: s.label }));
+    if (tab === "homepage") return HOMEPAGE_SECTIONS.map((s) => ({ key: s.key, label: t(s.label, s.labelEn) }));
     const def = CMS_PAGES.find((p) => p.key === tab);
     if (!def) return [];
     return def.sections.map((s) => {
       // Section tanpa konten sendiri (CTA penutup, Alur Kerja di Platform) memakai konten Homepage.
       const shared = !s.locked && !s.defaults && HOMEPAGE_SECTIONS.some((h) => h.key === s.key) ? (s.key as HomepageSubTab) : undefined;
-      return { key: s.key, label: s.key === "hero" ? `Gambaran ${def.label}` : s.label, ...(shared && { sharedWithHomepage: shared }) };
+      return { key: s.key, label: s.key === "hero" ? t(`Gambaran ${def.label}`, `${def.label} Overview`) : s.label, ...(shared && { sharedWithHomepage: shared }) };
     });
   };
   const currentSectionOf = (tab: CmsMainTab): string =>
@@ -183,7 +185,14 @@ export default function AdminCmsUnifiedHubPage() {
       const pageLabel = CMS_PAGES.find((p) => p.key === tab)?.label;
       setMainTab("homepage");
       setHomepageTab(item.sharedWithHomepage);
-      setSharedNotice(`Section "${item.label}" di halaman ${pageLabel} memakai konten yang sama dengan Homepage › ${HOMEPAGE_SECTIONS.find((h) => h.key === item.sharedWithHomepage)?.label}. Perubahan di sini tampil di kedua halaman.`);
+      const homeSection = HOMEPAGE_SECTIONS.find((h) => h.key === item.sharedWithHomepage);
+      const homeLabel = homeSection && t(homeSection.label, homeSection.labelEn);
+      setSharedNotice(
+        t(
+          `Section "${item.label}" di halaman ${pageLabel} memakai konten yang sama dengan Homepage › ${homeLabel}. Perubahan di sini tampil di kedua halaman.`,
+          `The "${item.label}" section on the ${pageLabel} page uses the same content as Homepage › ${homeLabel}. Changes here appear on both pages.`
+        )
+      );
       return;
     }
     setMainTab(tab);
@@ -317,11 +326,11 @@ export default function AdminCmsUnifiedHubPage() {
 
         setSectionForms(forms);
       } else {
-        showToast(json.message || "Gagal memuat konten CMS.", "error");
+        showToast(json.message || t("Gagal memuat konten CMS.", "Failed to load CMS content."), "error");
       }
     } catch (err: any) {
       console.error("Load CMS Error:", err);
-      showToast("Terjadi kendala koneksi saat memuat CMS.", "error");
+      showToast(t("Terjadi kendala koneksi saat memuat CMS.", "Connection problem while loading the CMS."), "error");
     } finally {
       setIsLoading(false);
     }
@@ -372,13 +381,13 @@ export default function AdminCmsUnifiedHubPage() {
 
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast(`Section '${sectionKey}' berhasil disimpan dan dipublikasikan!`);
+        showToast(t(`Section '${sectionKey}' berhasil disimpan dan dipublikasikan!`, `Section '${sectionKey}' saved and published!`));
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menyimpan section.", "error");
+        showToast(json.message || t("Gagal menyimpan section.", "Failed to save section."), "error");
       }
     } catch (err) {
-      showToast("Terjadi kesalahan saat menyimpan section.", "error");
+      showToast(t("Terjadi kesalahan saat menyimpan section.", "An error occurred while saving the section."), "error");
     } finally {
       setIsSaving(false);
     }
@@ -426,9 +435,9 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) showToast(okMessage);
-      else showToast(json.message || "Gagal menyimpan menu.", "error");
+      else showToast(json.message || t("Gagal menyimpan menu.", "Failed to save menu."), "error");
     } catch {
-      showToast("Gagal menyimpan menu navigasi.", "error");
+      showToast(t("Gagal menyimpan menu navigasi.", "Failed to save navigation menu."), "error");
     } finally {
       setIsSaving(false);
       await loadCmsData();
@@ -441,7 +450,7 @@ export default function AdminCmsUnifiedHubPage() {
     const target = index + dir;
     if (target < 0 || target >= subs.length) return;
     [subs[index], subs[target]] = [subs[target], subs[index]];
-    sendNavAction("reorder", { parentId: rootMenu.id, orderedIds: subs.map((s) => s.id) }, "Urutan submenu disimpan.");
+    sendNavAction("reorder", { parentId: rootMenu.id, orderedIds: subs.map((s) => s.id) }, t("Urutan submenu disimpan.", "Submenu order saved."));
   };
 
   /** Tampilkan / sembunyikan submenu tanpa membuka form. */
@@ -449,7 +458,7 @@ export default function AdminCmsUnifiedHubPage() {
     sendNavAction(
       "save",
       { ...sub, parentId: rootMenu.id, isActive: !sub.isActive },
-      sub.isActive ? "Submenu disembunyikan dari navigasi." : "Submenu ditampilkan di navigasi."
+      sub.isActive ? t("Submenu disembunyikan dari navigasi.", "Submenu hidden from navigation.") : t("Submenu ditampilkan di navigasi.", "Submenu shown in navigation.")
     );
 
   /** Saran URL tujuan: halaman publik, section yang punya anchor, dan URL menu yang sudah ada. */
@@ -475,15 +484,15 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Menu navigasi berhasil disimpan ke CMS.");
+        showToast(t("Menu navigasi berhasil disimpan ke CMS.", "Navigation menu saved to the CMS."));
         setIsNavFormOpen(false);
         setEditingNavMenu(null);
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menyimpan menu.", "error");
+        showToast(json.message || t("Gagal menyimpan menu.", "Failed to save menu."), "error");
       }
     } catch (err) {
-      showToast("Gagal menyimpan menu navigasi.", "error");
+      showToast(t("Gagal menyimpan menu navigasi.", "Failed to save navigation menu."), "error");
     } finally {
       setIsSaving(false);
     }
@@ -493,8 +502,8 @@ export default function AdminCmsUnifiedHubPage() {
     if (
       !confirm(
         isSubmenu
-          ? "Hapus submenu ini secara permanen? Untuk sementara menyembunyikannya, gunakan tombol Sembunyikan."
-          : "Hapus menu ini beserta seluruh submenunya?"
+          ? t("Hapus submenu ini secara permanen? Untuk sementara menyembunyikannya, gunakan tombol Sembunyikan.", "Permanently delete this submenu? To hide it temporarily, use the Hide button instead.")
+          : t("Hapus menu ini beserta seluruh submenunya?", "Delete this menu and all of its submenus?")
       )
     )
       return;
@@ -510,13 +519,13 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Menu navigasi berhasil dihapus.");
+        showToast(t("Menu navigasi berhasil dihapus.", "Navigation menu deleted."));
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menghapus menu navigasi.", "error");
+        showToast(json.message || t("Gagal menghapus menu navigasi.", "Failed to delete navigation menu."), "error");
       }
     } catch (err) {
-      showToast("Gagal menghapus menu navigasi.", "error");
+      showToast(t("Gagal menghapus menu navigasi.", "Failed to delete navigation menu."), "error");
     }
   };
 
@@ -572,13 +581,13 @@ export default function AdminCmsUnifiedHubPage() {
     setSlideDraftQueue(drafts);
     setActiveSlideDraftIndex(0);
     setEditingSlide(drafts[0]);
-    showToast(`Dibuat ${drafts.length} draf slide dari gambar yang diunggah.`);
+    showToast(t(`Dibuat ${drafts.length} draf slide dari gambar yang diunggah.`, `Created ${drafts.length} slide drafts from the uploaded images.`));
   };
 
   const handleSaveSlide = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!editingSlide?.imageUrl) {
-      showToast("Harap unggah gambar background slide terlebih dahulu.", "error");
+      showToast(t("Harap unggah gambar background slide terlebih dahulu.", "Please upload a slide background image first."), "error");
       return;
     }
     setIsSaving(true);
@@ -594,7 +603,7 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Slide carousel berhasil disimpan!");
+        showToast(t("Slide carousel berhasil disimpan!", "Carousel slide saved!"));
         if (slideDraftQueue.length > activeSlideDraftIndex + 1) {
           const nextIdx = activeSlideDraftIndex + 1;
           setActiveSlideDraftIndex(nextIdx);
@@ -606,10 +615,10 @@ export default function AdminCmsUnifiedHubPage() {
         }
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menyimpan slide.", "error");
+        showToast(json.message || t("Gagal menyimpan slide.", "Failed to save slide."), "error");
       }
     } catch (err) {
-      showToast("Gagal menyimpan slide.", "error");
+      showToast(t("Gagal menyimpan slide.", "Failed to save slide."), "error");
     } finally {
       setIsSaving(false);
     }
@@ -632,20 +641,20 @@ export default function AdminCmsUnifiedHubPage() {
         });
         if (res.ok) savedCount++;
       }
-      showToast(`Berhasil menyimpan ${savedCount} slide carousel baru!`);
+      showToast(t(`Berhasil menyimpan ${savedCount} slide carousel baru!`, `Saved ${savedCount} new carousel slides!`));
       setIsSlideFormOpen(false);
       setEditingSlide(null);
       setSlideDraftQueue([]);
       await loadCmsData();
     } catch (err) {
-      showToast("Gagal menyimpan seluruh draf slide.", "error");
+      showToast(t("Gagal menyimpan seluruh draf slide.", "Failed to save all slide drafts."), "error");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeleteSlide = async (id: string) => {
-    if (!confirm("Hapus slide carousel ini?")) return;
+    if (!confirm(t("Hapus slide carousel ini?", "Delete this carousel slide?"))) return;
     try {
       const res = await fetch("/api/admin/cms/homepage", {
         method: "PUT",
@@ -658,11 +667,11 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Slide carousel berhasil dihapus.");
+        showToast(t("Slide carousel berhasil dihapus.", "Carousel slide deleted."));
         await loadCmsData();
       }
     } catch (err) {
-      showToast("Gagal menghapus slide.", "error");
+      showToast(t("Gagal menghapus slide.", "Failed to delete slide."), "error");
     }
   };
 
@@ -692,13 +701,13 @@ export default function AdminCmsUnifiedHubPage() {
     }));
     setPartnerDraftQueue(drafts);
     setEditingPartner(drafts[0]);
-    showToast(`Dibuat ${drafts.length} draf mitra dari logo yang diunggah.`);
+    showToast(t(`Dibuat ${drafts.length} draf mitra dari logo yang diunggah.`, `Created ${drafts.length} partner drafts from the uploaded logos.`));
   };
 
   const handleSavePartner = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!editingPartner?.logoUrl) {
-      showToast("Harap unggah logo mitra terlebih dahulu.", "error");
+      showToast(t("Harap unggah logo mitra terlebih dahulu.", "Please upload a partner logo first."), "error");
       return;
     }
     setIsSaving(true);
@@ -714,16 +723,16 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Mitra laboratorium berhasil disimpan.");
+        showToast(t("Mitra laboratorium berhasil disimpan.", "Laboratory partner saved."));
         setIsPartnerFormOpen(false);
         setEditingPartner(null);
         setPartnerDraftQueue([]);
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menyimpan mitra.", "error");
+        showToast(json.message || t("Gagal menyimpan mitra.", "Failed to save partner."), "error");
       }
     } catch (err) {
-      showToast("Gagal menyimpan mitra.", "error");
+      showToast(t("Gagal menyimpan mitra.", "Failed to save partner."), "error");
     } finally {
       setIsSaving(false);
     }
@@ -746,20 +755,20 @@ export default function AdminCmsUnifiedHubPage() {
         });
         if (res.ok) saved++;
       }
-      showToast(`Berhasil menyimpan ${saved} mitra baru!`);
+      showToast(t(`Berhasil menyimpan ${saved} mitra baru!`, `Saved ${saved} new partners!`));
       setIsPartnerFormOpen(false);
       setEditingPartner(null);
       setPartnerDraftQueue([]);
       await loadCmsData();
     } catch (err) {
-      showToast("Gagal menyimpan batch mitra.", "error");
+      showToast(t("Gagal menyimpan batch mitra.", "Failed to save partner batch."), "error");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeletePartner = async (id: string) => {
-    if (!confirm("Hapus logo mitra ini?")) return;
+    if (!confirm(t("Hapus logo mitra ini?", "Delete this partner logo?"))) return;
     try {
       const res = await fetch("/api/admin/cms/homepage", {
         method: "PUT",
@@ -772,11 +781,11 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Logo mitra berhasil dihapus.");
+        showToast(t("Logo mitra berhasil dihapus.", "Partner logo deleted."));
         await loadCmsData();
       }
     } catch (err) {
-      showToast("Gagal menghapus mitra.", "error");
+      showToast(t("Gagal menghapus mitra.", "Failed to delete partner."), "error");
     }
   };
 
@@ -818,7 +827,7 @@ export default function AdminCmsUnifiedHubPage() {
     }));
     setTestimonialDraftQueue(drafts);
     setEditingTestimonial(drafts[0]);
-    showToast(`Dibuat ${drafts.length} draf testimoni dari foto dokter yang diunggah.`);
+    showToast(t(`Dibuat ${drafts.length} draf testimoni dari foto dokter yang diunggah.`, `Created ${drafts.length} testimonial drafts from the uploaded doctor photos.`));
   };
 
   const handleSaveTestimonial = async (e?: React.FormEvent) => {
@@ -836,23 +845,23 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Testimonial berhasil disimpan.");
+        showToast(t("Testimonial berhasil disimpan.", "Testimonial saved."));
         setIsTestimonialFormOpen(false);
         setEditingTestimonial(null);
         setTestimonialDraftQueue([]);
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menyimpan testimonial.", "error");
+        showToast(json.message || t("Gagal menyimpan testimonial.", "Failed to save testimonial."), "error");
       }
     } catch (err) {
-      showToast("Gagal menyimpan testimonial.", "error");
+      showToast(t("Gagal menyimpan testimonial.", "Failed to save testimonial."), "error");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeleteTestimonial = async (id: string) => {
-    if (!confirm("Hapus ulasan testimonial ini?")) return;
+    if (!confirm(t("Hapus ulasan testimonial ini?", "Delete this testimonial?"))) return;
     try {
       const res = await fetch("/api/admin/cms/homepage", {
         method: "PUT",
@@ -865,11 +874,11 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Testimonial berhasil dihapus.");
+        showToast(t("Testimonial berhasil dihapus.", "Testimonial deleted."));
         await loadCmsData();
       }
     } catch (err) {
-      showToast("Gagal menghapus testimonial.", "error");
+      showToast(t("Gagal menghapus testimonial.", "Failed to delete testimonial."), "error");
     }
   };
 
@@ -910,22 +919,22 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Poin komparasi berhasil disimpan.");
+        showToast(t("Poin komparasi berhasil disimpan.", "Comparison point saved."));
         setIsComparisonFormOpen(false);
         setEditingComparison(null);
         await loadCmsData();
       } else {
-        showToast(json.message || "Gagal menyimpan komparasi.", "error");
+        showToast(json.message || t("Gagal menyimpan komparasi.", "Failed to save comparison."), "error");
       }
     } catch (err) {
-      showToast("Gagal menyimpan komparasi.", "error");
+      showToast(t("Gagal menyimpan komparasi.", "Failed to save comparison."), "error");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeleteComparison = async (id: string) => {
-    if (!confirm("Hapus poin perbandingan ini?")) return;
+    if (!confirm(t("Hapus poin perbandingan ini?", "Delete this comparison point?"))) return;
     try {
       const res = await fetch("/api/admin/cms/homepage", {
         method: "PUT",
@@ -938,32 +947,32 @@ export default function AdminCmsUnifiedHubPage() {
       });
       const json = await res.json();
       if (res.ok && json.success) {
-        showToast("Item komparasi berhasil dihapus.");
+        showToast(t("Item komparasi berhasil dihapus.", "Comparison item deleted."));
         await loadCmsData();
       }
     } catch (err) {
-      showToast("Gagal menghapus item komparasi.", "error");
+      showToast(t("Gagal menghapus item komparasi.", "Failed to delete comparison item."), "error");
     }
   };
 
   // Main Tabs Navigation Definitions
   const mainTabsList: { key: CmsMainTab; label: string; icon: any }[] = [
-    { key: "navigation", label: "Navigasi Website", icon: Compass },
+    { key: "navigation", label: t("Navigasi Website", "Website Navigation"), icon: Compass },
     { key: "homepage", label: "Homepage", icon: Globe },
     { key: "platform", label: "Platform", icon: Cpu },
-    { key: "solutions", label: "Solusi", icon: Boxes },
-    { key: "modules", label: "Modul", icon: Layers },
+    { key: "solutions", label: t("Solusi", "Solutions"), icon: Boxes },
+    { key: "modules", label: t("Modul", "Modules"), icon: Layers },
     { key: "nova_ai", label: "Nova AI", icon: BrainCircuit },
-    { key: "integration", label: "Integrasi", icon: Network },
+    { key: "integration", label: t("Integrasi", "Integrations"), icon: Network },
   ];
 
-  const homepageSubTabsList: { key: HomepageSubTab; label: string; icon: any }[] = HOMEPAGE_SECTIONS;
+  const homepageSubTabsList: { key: HomepageSubTab; label: string; labelEn: string; icon: any }[] = HOMEPAGE_SECTIONS;
 
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center space-y-3">
         <RefreshCw className="h-7 w-7 animate-spin text-[#087BEE]" />
-        <p className="text-xs font-semibold text-slate-500">Memuat Pusat CMS Diagnova...</p>
+        <p className="text-xs font-semibold text-slate-500">{t("Memuat Pusat CMS Diagnova...", "Loading Diagnova CMS Hub...")}</p>
       </div>
     );
   }
@@ -993,16 +1002,16 @@ export default function AdminCmsUnifiedHubPage() {
         <div>
           <div className="flex items-center gap-2">
             <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-[#087BEE] border border-blue-200/60">
-              Pusat CMS Diagnova
+              {t("Pusat CMS Diagnova", "Diagnova CMS Hub")}
             </span>
             <span className="text-xs text-slate-400">•</span>
-            <span className="text-xs text-slate-500 font-medium">Satu Pengelolaan Seluruh Halaman & Navigasi</span>
+            <span className="text-xs text-slate-500 font-medium">{t("Satu Pengelolaan Seluruh Halaman & Navigasi", "One place to manage all pages & navigation")}</span>
           </div>
           <h1 className="mt-1 text-xl font-bold tracking-tight text-slate-900">
-            Pusat Pengelolaan Konten (CMS)
+            {t("Pusat Pengelolaan Konten (CMS)", "Content Management Hub (CMS)")}
           </h1>
           <p className="mt-0.5 text-xs text-slate-500">
-            Kelola menu navigasi, beranda, modul, solusi, platform, Nova AI, dan integrasi dari satu tempat.
+            {t("Kelola menu navigasi, beranda, modul, solusi, platform, Nova AI, dan integrasi dari satu tempat.", "Manage navigation menus, homepage, modules, solutions, platform, Nova AI, and integrations in one place.")}
           </p>
         </div>
 
@@ -1018,7 +1027,7 @@ export default function AdminCmsUnifiedHubPage() {
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              🇮🇩 Bahasa ID
+              {t("🇮🇩 Bahasa ID", "🇮🇩 Indonesian (ID)")}
             </button>
             <button
               type="button"
@@ -1040,7 +1049,7 @@ export default function AdminCmsUnifiedHubPage() {
             className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
           >
             <Eye className="h-3.5 w-3.5 text-slate-500" />
-            <span>Lihat Website</span>
+            <span>{t("Lihat Website", "View Website")}</span>
           </a>
         </div>
       </div>
@@ -1087,7 +1096,7 @@ export default function AdminCmsUnifiedHubPage() {
                       `flex w-full items-center justify-between gap-2 px-4 py-2 text-left text-[13px] transition-colors ${
                         current ? "text-[#087BEE] font-semibold bg-blue-50/60" : "text-slate-600 hover:text-[#087BEE] hover:bg-slate-50"
                       }`;
-                    const sharedTag = <span className="text-[10px] font-medium text-slate-400">di Homepage</span>;
+                    const sharedTag = <span className="text-[10px] font-medium text-slate-400">{t("di Homepage", "on Homepage")}</span>;
                     if (tab.key === "homepage") {
                       return items.map((it) => (
                         <button
@@ -1118,7 +1127,7 @@ export default function AdminCmsUnifiedHubPage() {
                               type="button"
                               role="menuitem"
                               disabled={!n.sectionKey}
-                              title={n.sectionKey ? undefined : "URL submenu ini tidak menunjuk ke section halaman ini."}
+                              title={n.sectionKey ? undefined : t("URL submenu ini tidak menunjuk ke section halaman ini.", "This submenu URL does not point to a section on this page.")}
                               data-testid={`cms-tab-menu-${tab.key}-nav-${i}`}
                               onClick={() => n.sectionKey && goToSection(tab.key, n.sectionKey, n.itemId)}
                               className={`${itemCls(current)} disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-600`}
@@ -1132,7 +1141,7 @@ export default function AdminCmsUnifiedHubPage() {
                           <>
                             {navItems.length > 0 && (
                               <p className="mx-4 mt-2 border-t border-slate-100 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                Section lain di halaman ini
+                                {t("Section lain di halaman ini", "Other sections on this page")}
                               </p>
                             )}
                             {others.map((it) => (
@@ -1160,14 +1169,16 @@ export default function AdminCmsUnifiedHubPage() {
         })}
       </div>
       <p data-testid="cms-hub-scope-note" className="text-[11px] text-slate-500">
-        Pusat Konten mengelola isi Navigasi, Homepage, dan setiap section halaman Platform, Solusi, Modul, Nova AI, dan
-        Integrasi (klik panah pada tab untuk memilih section). Urutan dan tampil/sembunyi section diatur di{" "}
+        {t(
+          "Pusat Konten mengelola isi Navigasi, Homepage, dan setiap section halaman Platform, Solusi, Modul, Nova AI, dan Integrasi (klik panah pada tab untuk memilih section). Urutan dan tampil/sembunyi section diatur di",
+          "The Content Hub manages Navigation, the Homepage, and every section of the Platform, Solutions, Modules, Nova AI, and Integrations pages (click the arrow on a tab to choose a section). Section order and visibility are set in"
+        )}{" "}
         <a href="/admin/page-sections" className="font-semibold text-[#087BEE] hover:underline">
-          Halaman &amp; Section
+          {t("Halaman & Section", "Pages & Sections")}
         </a>
-        ; footer, FAQ, dan announcement di{" "}
+        {t("; footer, FAQ, dan announcement di", "; footer, FAQ, and announcements in")}{" "}
         <a href="/admin/site-content" className="font-semibold text-[#087BEE] hover:underline">
-          Konten Global
+          {t("Konten Global", "Global Content")}
         </a>
         .
       </p>
@@ -1217,9 +1228,9 @@ export default function AdminCmsUnifiedHubPage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Struktur Menu Navigasi Website</h3>
+                <h3 className="text-sm font-bold text-slate-900">{t("Struktur Menu Navigasi Website", "Website Navigation Menu Structure")}</h3>
                 <p className="text-xs text-slate-500">
-                  Kelola menu bar navbar publik, submenu dropdown, dan link target ke halaman atau section beranda.
+                  {t("Kelola menu bar navbar publik, submenu dropdown, dan link target ke halaman atau section beranda.", "Manage the public navbar, dropdown submenus, and target links to pages or homepage sections.")}
                 </p>
               </div>
               <button
@@ -1228,7 +1239,7 @@ export default function AdminCmsUnifiedHubPage() {
                 className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs shrink-0"
               >
                 <Plus className="h-3.5 w-3.5" />
-                <span>Tambah Menu Utama</span>
+                <span>{t("Tambah Menu Utama", "Add Main Menu")}</span>
               </button>
             </div>
 
@@ -1238,10 +1249,10 @@ export default function AdminCmsUnifiedHubPage() {
                 <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                   <h4 className="text-xs font-bold text-slate-900">
                     {editingNavMenu.id
-                      ? "Edit Menu Navigasi"
+                      ? t("Edit Menu Navigasi", "Edit Navigation Menu")
                       : editingNavMenu.parentId
-                      ? "Tambah Submenu Baru"
-                      : "Tambah Menu Utama Baru"}
+                      ? t("Tambah Submenu Baru", "Add New Submenu")
+                      : t("Tambah Menu Utama Baru", "Add New Main Menu")}
                   </h4>
                   <button
                     type="button"
@@ -1259,7 +1270,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Pilihan Induk Menu
+                        {t("Pilihan Induk Menu", "Parent Menu")}
                       </label>
                       <select
                         value={editingNavMenu.parentId || ""}
@@ -1271,10 +1282,10 @@ export default function AdminCmsUnifiedHubPage() {
                         }
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
                       >
-                        <option value="">(Menu Utama / Root Navigasi)</option>
+                        <option value="">{t("(Menu Utama / Root Navigasi)", "(Main Menu / Navigation Root)")}</option>
                         {navMenus.map((root) => (
                           <option key={root.id} value={root.id}>
-                            Submenu dari: {root.labelId}
+                            {`${t("Submenu dari:", "Submenu of:")} ${root.labelId}`}
                           </option>
                         ))}
                       </select>
@@ -1282,17 +1293,17 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Icon Nama (Lucide)
+                        {t("Icon Nama (Lucide)", "Icon Name (Lucide)")}
                       </label>
                       <input
                         type="text"
                         value={editingNavMenu.iconName || "Layers"}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, iconName: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
-                        placeholder="Contoh: Layers, Activity, Cpu, Sparkles, Compass"
+                        placeholder={t("Contoh: Layers, Activity, Cpu, Sparkles, Compass", "Example: Layers, Activity, Cpu, Sparkles, Compass")}
                       />
                       <p className="mt-1 text-[10px] text-slate-500">
-                        Ikon &amp; deskripsi disimpan, tetapi desain dropdown navigasi saat ini hanya menampilkan label.
+                        {t("Ikon & deskripsi disimpan, tetapi desain dropdown navigasi saat ini hanya menampilkan label.", "Icon & description are saved, but the current navigation dropdown design only shows the label.")}
                       </p>
                     </div>
                   </div>
@@ -1300,7 +1311,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Label Menu (Bahasa Indonesia) *
+                        {t("Label Menu (Bahasa Indonesia) *", "Menu Label (Indonesian) *")}
                       </label>
                       <input
                         type="text"
@@ -1313,7 +1324,7 @@ export default function AdminCmsUnifiedHubPage() {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Label Menu (English) *
+                        {t("Label Menu (English) *", "Menu Label (English) *")}
                       </label>
                       <input
                         type="text"
@@ -1329,7 +1340,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        URL Tujuan Halaman (Path)
+                        {t("URL Tujuan Halaman (Path)", "Target Page URL (Path)")}
                       </label>
                       <input
                         type="text"
@@ -1338,7 +1349,7 @@ export default function AdminCmsUnifiedHubPage() {
                         value={editingNavMenu.url || ""}
                         onChange={(e) => setEditingNavMenu({ ...editingNavMenu, url: e.target.value })}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white font-mono"
-                        placeholder="Contoh: /platform#automation atau /solutions"
+                        placeholder={t("Contoh: /platform#automation atau /solutions", "Example: /platform#automation or /solutions")}
                       />
                       <datalist id="nav-url-targets">
                         {navUrlSuggestions.map((u) => (
@@ -1346,13 +1357,15 @@ export default function AdminCmsUnifiedHubPage() {
                         ))}
                       </datalist>
                       <p className="mt-1 text-[10px] text-slate-500">
-                        Pilih dari saran (halaman &amp; section yang tersedia) atau ketik path sendiri. Format: /halaman,
-                        /halaman#section, atau https://…
+                        {t(
+                          "Pilih dari saran (halaman & section yang tersedia) atau ketik path sendiri. Format: /halaman, /halaman#section, atau https://…",
+                          "Choose from the suggestions (available pages & sections) or type your own path. Format: /page, /page#section, or https://…"
+                        )}
                       </p>
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Atau Target Anchor Section Beranda
+                        {t("Atau Target Anchor Section Beranda", "Or Homepage Section Anchor Target")}
                       </label>
                       <select
                         value={editingNavMenu.sectionKey || ""}
@@ -1364,14 +1377,14 @@ export default function AdminCmsUnifiedHubPage() {
                         }
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-800 bg-white"
                       >
-                        <option value="">(Tidak ditautkan ke section)</option>
+                        <option value="">{t("(Tidak ditautkan ke section)", "(Not linked to a section)")}</option>
                         <option value="hero">Hero Carousel (#hero)</option>
-                        <option value="workflow">Alur Kerja (#workflow)</option>
-                        <option value="infrastructure">Infrastruktur (#infrastructure)</option>
-                        <option value="about">Tentang Diagnova (#about)</option>
-                        <option value="comparison">Komparasi (#comparison)</option>
-                        <option value="testimonials">Testimonial (#testimonials)</option>
-                        <option value="cta">Banner CTA (#cta)</option>
+                        <option value="workflow">{t("Alur Kerja (#workflow)", "Workflow (#workflow)")}</option>
+                        <option value="infrastructure">{t("Infrastruktur (#infrastructure)", "Infrastructure (#infrastructure)")}</option>
+                        <option value="about">{t("Tentang Diagnova (#about)", "About Diagnova (#about)")}</option>
+                        <option value="comparison">{t("Komparasi (#comparison)", "Comparison (#comparison)")}</option>
+                        <option value="testimonials">{t("Testimonial (#testimonials)", "Testimonials (#testimonials)")}</option>
+                        <option value="cta">{t("Banner CTA (#cta)", "CTA Banner (#cta)")}</option>
                       </select>
                     </div>
                   </div>
@@ -1379,7 +1392,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Deskripsi Singkat Submenu (ID)
+                        {t("Deskripsi Singkat Submenu (ID)", "Short Submenu Description (ID)")}
                       </label>
                       <input
                         type="text"
@@ -1392,7 +1405,7 @@ export default function AdminCmsUnifiedHubPage() {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Deskripsi Singkat Submenu (EN)
+                        {t("Deskripsi Singkat Submenu (EN)", "Short Submenu Description (EN)")}
                       </label>
                       <input
                         type="text"
@@ -1408,7 +1421,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <div className="flex items-center justify-between border-t border-slate-200/80 pt-3">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">
-                        <label className="text-xs font-semibold text-slate-700">Urutan:</label>
+                        <label className="text-xs font-semibold text-slate-700">{t("Urutan:", "Order:")}</label>
                         <input
                           type="number"
                           data-testid="nav-form-order"
@@ -1432,7 +1445,7 @@ export default function AdminCmsUnifiedHubPage() {
                           }
                           className="rounded text-blue-600 focus:ring-blue-500"
                         />
-                        <span>Aktif di Navbar</span>
+                        <span>{t("Aktif di Navbar", "Active in Navbar")}</span>
                       </label>
                     </div>
 
@@ -1445,7 +1458,7 @@ export default function AdminCmsUnifiedHubPage() {
                         }}
                         className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                       >
-                        Batal
+                        {t("Batal", "Cancel")}
                       </button>
                       <button
                         type="submit"
@@ -1453,7 +1466,7 @@ export default function AdminCmsUnifiedHubPage() {
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 shadow-xs"
                       >
                         <Save className="h-3.5 w-3.5" />
-                        <span data-testid="nav-form-save">Simpan Menu</span>
+                        <span data-testid="nav-form-save">{t("Simpan Menu", "Save Menu")}</span>
                       </button>
                     </div>
                   </div>
@@ -1493,11 +1506,11 @@ export default function AdminCmsUnifiedHubPage() {
                             <h4 className="text-xs font-bold text-slate-900">{rootMenu.labelId}</h4>
                             <span className="text-[11px] text-slate-400 font-normal">({rootMenu.labelEn})</span>
                             <span className={rootMenu.isActive ? "text-[10px] text-emerald-600 font-bold" : "text-[10px] text-slate-400"}>
-                              {rootMenu.isActive ? "● Aktif" : "○ Non-aktif"}
+                              {rootMenu.isActive ? t("● Aktif", "● Active") : t("○ Non-aktif", "○ Inactive")}
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-                            {rootMenu.sectionKey ? `#${rootMenu.sectionKey}` : rootMenu.url || "(Menu Grup)"} •{" "}
+                            {rootMenu.sectionKey ? `#${rootMenu.sectionKey}` : rootMenu.url || t("(Menu Grup)", "(Menu Group)")} •{" "}
                             {rootMenu.submenus?.length || 0} Submenu
                           </p>
                         </div>
@@ -1528,7 +1541,7 @@ export default function AdminCmsUnifiedHubPage() {
                           type="button"
                           onClick={() => handleDeleteNavMenu(rootMenu.id)}
                           className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                          title="Hapus Menu"
+                          title={t("Hapus Menu", "Delete Menu")}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -1538,7 +1551,7 @@ export default function AdminCmsUnifiedHubPage() {
                     {/* Submenus Drawer */}
                     {isExpanded && !hasSubs && (
                       <div className="border-t border-slate-100 bg-slate-50/20 p-3 text-[11px] text-slate-500">
-                        Belum ada submenu. Gunakan tombol &quot;+ Submenu&quot; untuk menambah.
+                        {t("Belum ada submenu. Gunakan tombol \"+ Submenu\" untuk menambah.", "No submenus yet. Use the \"+ Submenu\" button to add one.")}
                       </div>
                     )}
                     {isExpanded && hasSubs && (
@@ -1575,7 +1588,7 @@ export default function AdminCmsUnifiedHubPage() {
                                 disabled={isSaving || subIndex === 0}
                                 onClick={() => handleMoveSubmenu(rootMenu, subIndex, -1)}
                                 className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30"
-                                title="Naikkan"
+                                title={t("Naikkan", "Move up")}
                               >
                                 <ArrowUp className="h-3 w-3" />
                               </button>
@@ -1585,7 +1598,7 @@ export default function AdminCmsUnifiedHubPage() {
                                 disabled={isSaving || subIndex === rootMenu.submenus.length - 1}
                                 onClick={() => handleMoveSubmenu(rootMenu, subIndex, 1)}
                                 className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30"
-                                title="Turunkan"
+                                title={t("Turunkan", "Move down")}
                               >
                                 <ArrowDown className="h-3 w-3" />
                               </button>
@@ -1598,10 +1611,10 @@ export default function AdminCmsUnifiedHubPage() {
                                   "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border " +
                                   (sub.isActive ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-300 text-slate-600 bg-white")
                                 }
-                                title={sub.isActive ? "Sembunyikan dari navigasi" : "Tampilkan di navigasi"}
+                                title={sub.isActive ? t("Sembunyikan dari navigasi", "Hide from navigation") : t("Tampilkan di navigasi", "Show in navigation")}
                               >
                                 {sub.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
-                                {sub.isActive ? "Tampil" : "Disembunyikan"}
+                                {sub.isActive ? t("Tampil", "Visible") : t("Disembunyikan", "Hidden")}
                               </button>
                               <button
                                 type="button"
@@ -1620,7 +1633,7 @@ export default function AdminCmsUnifiedHubPage() {
                                 data-testid={`nav-sub-delete-${rootMenu.id}-${subIndex}`}
                                 onClick={() => handleDeleteNavMenu(sub.id, true)}
                                 className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                                title="Hapus Submenu"
+                                title={t("Hapus Submenu", "Delete Submenu")}
                               >
                                 <Trash2 className="h-3 w-3" />
                               </button>
@@ -1660,7 +1673,7 @@ export default function AdminCmsUnifiedHubPage() {
                   }`}
                 >
                   <Icon className={`h-3.5 w-3.5 ${isSubActive ? "text-[#087BEE]" : "text-slate-400"}`} />
-                  <span>{st.label}</span>
+                  <span>{t(st.label, st.labelEn)}</span>
                 </button>
               );
             })}
@@ -1671,9 +1684,9 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Daftar Slide Carousel Hero</h3>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Daftar Slide Carousel Hero", "Hero Carousel Slides")}</h3>
                   <p className="text-xs text-slate-500">
-                    Kelola gambar banner 16:9, teks judul, tombol aksi (CTA), dan urutan slide utama beranda.
+                    {t("Kelola gambar banner 16:9, teks judul, tombol aksi (CTA), dan urutan slide utama beranda.", "Manage 16:9 banner images, headline text, call-to-action (CTA) buttons, and the order of the main homepage slides.")}
                   </p>
                 </div>
                 <button
@@ -1682,7 +1695,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs shrink-0"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  <span>Tambah Slide Baru</span>
+                  <span>{t("Tambah Slide Baru", "Add New Slide")}</span>
                 </button>
               </div>
 
@@ -1691,7 +1704,7 @@ export default function AdminCmsUnifiedHubPage() {
                 <div className="rounded-2xl border-2 border-blue-200 bg-blue-50/20 p-5 space-y-4 animate-in fade-in">
                   <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                     <h4 className="text-xs font-bold text-slate-900">
-                      {editingSlide.id ? "Edit Slide Carousel" : "Tambah Slide Baru"}
+                      {editingSlide.id ? t("Edit Slide Carousel", "Edit Carousel Slide") : t("Tambah Slide Baru", "Add New Slide")}
                     </h4>
                     <button
                       type="button"
@@ -1709,7 +1722,7 @@ export default function AdminCmsUnifiedHubPage() {
                   {slideDraftQueue.length > 1 && (
                     <div className="rounded-xl bg-blue-100/60 p-3 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="text-xs font-semibold text-blue-900">
-                        {slideDraftQueue.length} Draf Slide Dibuat:
+                        {slideDraftQueue.length} {t("Draf Slide Dibuat:", "Slide Drafts Created:")}
                         <div className="flex gap-1.5 mt-1.5">
                           {slideDraftQueue.map((draft, idx) => (
                             <button
@@ -1736,7 +1749,7 @@ export default function AdminCmsUnifiedHubPage() {
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold"
                       >
                         <Save className="h-3.5 w-3.5" />
-                        <span>Simpan Semua ({slideDraftQueue.length})</span>
+                        <span>{t("Simpan Semua", "Save All")} ({slideDraftQueue.length})</span>
                       </button>
                     </div>
                   )}
@@ -1745,8 +1758,8 @@ export default function AdminCmsUnifiedHubPage() {
                     <ImageUploader
                       value={editingSlide.imageUrl || ""}
                       onChange={(url: string) => setEditingSlide({ ...editingSlide, imageUrl: url })}
-                      label="Gambar Background Slide Banner *"
-                      hint="Seret 1 banner atau pilih banyak file untuk membuat draf slide otomatis"
+                      label={t("Gambar Background Slide Banner *", "Slide Banner Background Image *")}
+                      hint={t("Seret 1 banner atau pilih banyak file untuk membuat draf slide otomatis", "Drag 1 banner or select multiple files to create slide drafts automatically")}
                       aspectRatio="video"
                       allowMultiple={true}
                       onMultiUpload={handleSlideMultiUpload}
@@ -1755,7 +1768,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Judul (ID) *</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Judul (ID) *", "Title (ID) *")}</label>
                         <input
                           type="text"
                           required
@@ -1765,7 +1778,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Judul (EN) *</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Judul (EN) *", "Title (EN) *")}</label>
                         <input
                           type="text"
                           required
@@ -1778,7 +1791,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Deskripsi (ID)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Deskripsi (ID)", "Description (ID)")}</label>
                         <textarea
                           rows={2}
                           value={editingSlide.subtitleId || ""}
@@ -1787,7 +1800,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Deskripsi (EN)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Deskripsi (EN)", "Description (EN)")}</label>
                         <textarea
                           rows={2}
                           value={editingSlide.subtitleEn || ""}
@@ -1799,7 +1812,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Teks CTA (ID)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Teks CTA (ID)", "CTA Text (ID)")}</label>
                         <input
                           type="text"
                           value={editingSlide.ctaPrimaryTextId || ""}
@@ -1808,7 +1821,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Teks CTA (EN)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Teks CTA (EN)", "CTA Text (EN)")}</label>
                         <input
                           type="text"
                           value={editingSlide.ctaPrimaryTextEn || ""}
@@ -1817,7 +1830,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">URL CTA</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("URL CTA", "CTA URL")}</label>
                         <input
                           type="text"
                           value={editingSlide.ctaPrimaryUrl || "/request-demo"}
@@ -1830,7 +1843,7 @@ export default function AdminCmsUnifiedHubPage() {
                     <div className="flex items-center justify-between border-t border-slate-200/80 pt-3">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                          <label className="text-xs font-semibold text-slate-700">Urutan:</label>
+                          <label className="text-xs font-semibold text-slate-700">{t("Urutan:", "Order:")}</label>
                           <input
                             type="number"
                             value={editingSlide.sortOrder || 1}
@@ -1847,7 +1860,7 @@ export default function AdminCmsUnifiedHubPage() {
                             onChange={(e) => setEditingSlide({ ...editingSlide, isActive: e.target.checked })}
                             className="rounded text-blue-600 focus:ring-blue-500"
                           />
-                          <span>Aktif</span>
+                          <span>{t("Aktif", "Active")}</span>
                         </label>
                       </div>
 
@@ -1861,7 +1874,7 @@ export default function AdminCmsUnifiedHubPage() {
                           }}
                           className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                         >
-                          Batal
+                          {t("Batal", "Cancel")}
                         </button>
                         <button
                           type="submit"
@@ -1869,7 +1882,7 @@ export default function AdminCmsUnifiedHubPage() {
                           className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 shadow-xs"
                         >
                           <Save className="h-3.5 w-3.5" />
-                          <span>Simpan Slide</span>
+                          <span>{t("Simpan Slide", "Save Slide")}</span>
                         </button>
                       </div>
                     </div>
@@ -1890,7 +1903,7 @@ export default function AdminCmsUnifiedHubPage() {
                           Slide #{slide.sortOrder || index + 1}
                         </span>
                         <span className={slide.isActive ? "text-emerald-600 font-bold" : "text-slate-400"}>
-                          {slide.isActive ? "● Aktif" : "○ Non-aktif"}
+                          {slide.isActive ? t("● Aktif", "● Active") : t("○ Non-aktif", "○ Inactive")}
                         </span>
                       </div>
 
@@ -1927,7 +1940,7 @@ export default function AdminCmsUnifiedHubPage() {
                         type="button"
                         onClick={() => handleDeleteSlide(slide.id)}
                         className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                        title="Hapus"
+                        title={t("Hapus", "Delete")}
                       >
                         <Trash2 className="h-3 w-3" />
                       </button>
@@ -1943,8 +1956,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Daftar Mitra & Institusi Laboratorium</h3>
-                  <p className="text-xs text-slate-500">Logo rumah sakit dan laboratorium yang berputar pada running ticker.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Daftar Mitra & Institusi Laboratorium", "Partners & Laboratory Institutions")}</h3>
+                  <p className="text-xs text-slate-500">{t("Logo rumah sakit dan laboratorium yang berputar pada running ticker.", "Hospital and laboratory logos shown in the scrolling ticker.")}</p>
                 </div>
                 <button
                   type="button"
@@ -1952,7 +1965,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs shrink-0"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  <span>Tambah Mitra Baru</span>
+                  <span>{t("Tambah Mitra Baru", "Add New Partner")}</span>
                 </button>
               </div>
 
@@ -1960,7 +1973,7 @@ export default function AdminCmsUnifiedHubPage() {
                 <div className="rounded-2xl border-2 border-blue-200 bg-blue-50/20 p-5 space-y-4 animate-in fade-in">
                   <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                     <h4 className="text-xs font-bold text-slate-900">
-                      {editingPartner.id ? "Edit Mitra" : "Tambah Mitra Baru"}
+                      {editingPartner.id ? t("Edit Mitra", "Edit Partner") : t("Tambah Mitra Baru", "Add New Partner")}
                     </h4>
                     <button
                       type="button"
@@ -1978,7 +1991,10 @@ export default function AdminCmsUnifiedHubPage() {
                   {partnerDraftQueue.length > 1 && (
                     <div className="rounded-xl bg-blue-100/60 p-3 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <span className="text-xs font-semibold text-blue-900">
-                        Terpilih {partnerDraftQueue.length} logo mitra sekaligus. Simpan otomatis atau sesuaikan nama di bawah.
+                        {t(
+                          `Terpilih ${partnerDraftQueue.length} logo mitra sekaligus. Simpan otomatis atau sesuaikan nama di bawah.`,
+                          `${partnerDraftQueue.length} partner logos selected. Save them all at once or adjust the names below.`
+                        )}
                       </span>
                       <button
                         type="button"
@@ -1986,7 +2002,7 @@ export default function AdminCmsUnifiedHubPage() {
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold"
                       >
                         <Save className="h-3.5 w-3.5" />
-                        <span>Simpan Semua ({partnerDraftQueue.length})</span>
+                        <span>{t("Simpan Semua", "Save All")} ({partnerDraftQueue.length})</span>
                       </button>
                     </div>
                   )}
@@ -1996,8 +2012,8 @@ export default function AdminCmsUnifiedHubPage() {
                       <ImageUploader
                         value={editingPartner.logoUrl || ""}
                         onChange={(url: string) => setEditingPartner({ ...editingPartner, logoUrl: url })}
-                        label="Upload Logo Mitra (SVG / PNG Transparan) *"
-                        hint="Seret berkas logo atau pilih folder untuk impor massal"
+                        label={t("Upload Logo Mitra (SVG / PNG Transparan) *", "Upload Partner Logo (SVG / Transparent PNG) *")}
+                        hint={t("Seret berkas logo atau pilih folder untuk impor massal", "Drag logo files or choose a folder for bulk import")}
                         aspectRatio="square"
                         allowMultiple={true}
                         allowFolder={true}
@@ -2007,7 +2023,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Nama Mitra / RS *</label>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Nama Mitra / RS *", "Partner / Hospital Name *")}</label>
                           <input
                             type="text"
                             required
@@ -2019,7 +2035,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                         <div className="flex items-center gap-4 pt-1">
                           <div>
-                            <label className="block text-xs font-semibold text-slate-700 mb-1">Urutan</label>
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Urutan", "Order")}</label>
                             <input
                               type="number"
                               value={editingPartner.sortOrder || 1}
@@ -2040,7 +2056,7 @@ export default function AdminCmsUnifiedHubPage() {
                               onChange={(e) => setEditingPartner({ ...editingPartner, isActive: e.target.checked })}
                               className="rounded text-blue-600"
                             />
-                            <span>Aktif</span>
+                            <span>{t("Aktif", "Active")}</span>
                           </label>
                         </div>
 
@@ -2053,7 +2069,7 @@ export default function AdminCmsUnifiedHubPage() {
                             }}
                             className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600"
                           >
-                            Batal
+                            {t("Batal", "Cancel")}
                           </button>
                           <button
                             type="submit"
@@ -2061,7 +2077,7 @@ export default function AdminCmsUnifiedHubPage() {
                             className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
                           >
                             <Save className="h-3.5 w-3.5" />
-                            <span>Simpan Mitra</span>
+                            <span>{t("Simpan Mitra", "Save Partner")}</span>
                           </button>
                         </div>
                       </div>
@@ -2113,8 +2129,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Konten Narasi Tentang Diagnova</h3>
-                  <p className="text-xs text-slate-500">Badge pill, statement scroll-reveal, narasi, dan visual gambar DNA/Lab.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Konten Narasi Tentang Diagnova", "About Diagnova Narrative")}</h3>
+                  <p className="text-xs text-slate-500">{t("Badge pill, statement scroll-reveal, narasi, dan visual gambar DNA/Lab.", "Badge pill, scroll-reveal statement, narrative, and DNA/Lab visual.")}</p>
                 </div>
                 <button
                   type="button"
@@ -2123,7 +2139,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 shadow-xs"
                 >
                   <Save className="h-3.5 w-3.5" />
-                  <span>Simpan Konten About</span>
+                  <span>{t("Simpan Konten About", "Save About Content")}</span>
                 </button>
               </div>
 
@@ -2132,8 +2148,8 @@ export default function AdminCmsUnifiedHubPage() {
                   <ImageUploader
                     value={sectionForms["about"]?.extraContent?.imageUrl || ""}
                     onChange={(url: string) => handleExtraContentChange("about", "imageUrl", url)}
-                    label="Gambar Ilustrasi Struktur Lab / DNA"
-                    hint="Format Webp atau PNG transparan untuk visual samping narasi"
+                    label={t("Gambar Ilustrasi Struktur Lab / DNA", "Lab / DNA Structure Illustration")}
+                    hint={t("Format Webp atau PNG transparan untuk visual samping narasi", "WebP or transparent PNG for the visual beside the narrative")}
                     aspectRatio="square"
                   />
                 </div>
@@ -2155,7 +2171,7 @@ export default function AdminCmsUnifiedHubPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Statement Utama (Scroll-Reveal) ({editorLang})
+                      {t("Statement Utama (Scroll-Reveal)", "Main Statement (Scroll-Reveal)")} ({editorLang})
                     </label>
                     <textarea
                       rows={3}
@@ -2171,7 +2187,7 @@ export default function AdminCmsUnifiedHubPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Paragraf Penjelas ({editorLang})</label>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Paragraf Penjelas", "Supporting Paragraph")} ({editorLang})</label>
                     <textarea
                       rows={4}
                       value={
@@ -2195,8 +2211,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Daftar Poin Komparasi</h3>
-                  <p className="text-xs text-slate-500">Perbandingan sistem konvensional vs keunggulan Diagnova AI.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Daftar Poin Komparasi", "Comparison Points")}</h3>
+                  <p className="text-xs text-slate-500">{t("Perbandingan sistem konvensional vs keunggulan Diagnova AI.", "Conventional systems vs. the advantages of Diagnova AI.")}</p>
                 </div>
                 <button
                   type="button"
@@ -2204,7 +2220,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs shrink-0"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  <span>Tambah Poin Komparasi</span>
+                  <span>{t("Tambah Poin Komparasi", "Add Comparison Point")}</span>
                 </button>
               </div>
 
@@ -2212,7 +2228,7 @@ export default function AdminCmsUnifiedHubPage() {
                 <div className="rounded-2xl border-2 border-blue-200 bg-blue-50/20 p-5 space-y-4 animate-in fade-in">
                   <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                     <h4 className="text-xs font-bold text-slate-900">
-                      {editingComparison.id ? "Edit Poin Komparasi" : "Tambah Poin Baru"}
+                      {editingComparison.id ? t("Edit Poin Komparasi", "Edit Comparison Point") : t("Tambah Poin Baru", "Add New Point")}
                     </h4>
                     <button
                       type="button"
@@ -2229,7 +2245,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <form onSubmit={handleSaveComparison} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Nomor / Poin *</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Nomor / Poin *", "Number / Point *")}</label>
                         <input
                           type="text"
                           required
@@ -2239,7 +2255,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Metrik Dampak / Tag</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Metrik Dampak / Tag", "Impact Metric / Tag")}</label>
                         <input
                           type="text"
                           value={editingComparison.impactMetric || "70% Lebih Efisien"}
@@ -2250,7 +2266,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Urutan</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Urutan", "Order")}</label>
                         <input
                           type="number"
                           value={editingComparison.sortOrder || 1}
@@ -2267,9 +2283,9 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="rounded-xl border border-rose-200 bg-rose-50/30 p-3.5 space-y-3">
-                        <span className="text-[11px] font-bold text-rose-700 uppercase">Sistem Konvensional</span>
+                        <span className="text-[11px] font-bold text-rose-700 uppercase">{t("Sistem Konvensional", "Conventional System")}</span>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Judul ({editorLang})</label>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Judul", "Title")} ({editorLang})</label>
                           <input
                             type="text"
                             required
@@ -2288,7 +2304,7 @@ export default function AdminCmsUnifiedHubPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Deskripsi ({editorLang})</label>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Deskripsi", "Description")} ({editorLang})</label>
                           <textarea
                             rows={2}
                             value={
@@ -2308,9 +2324,9 @@ export default function AdminCmsUnifiedHubPage() {
                       </div>
 
                       <div className="rounded-xl border border-blue-200 bg-blue-50/30 p-3.5 space-y-3">
-                        <span className="text-[11px] font-bold text-[#087BEE] uppercase">Keunggulan Diagnova</span>
+                        <span className="text-[11px] font-bold text-[#087BEE] uppercase">{t("Keunggulan Diagnova", "Diagnova Advantage")}</span>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Judul ({editorLang})</label>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Judul", "Title")} ({editorLang})</label>
                           <input
                             type="text"
                             required
@@ -2329,7 +2345,7 @@ export default function AdminCmsUnifiedHubPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Deskripsi ({editorLang})</label>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Deskripsi", "Description")} ({editorLang})</label>
                           <textarea
                             rows={2}
                             value={
@@ -2358,7 +2374,7 @@ export default function AdminCmsUnifiedHubPage() {
                         }}
                         className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600"
                       >
-                        Batal
+                        {t("Batal", "Cancel")}
                       </button>
                       <button
                         type="submit"
@@ -2366,7 +2382,7 @@ export default function AdminCmsUnifiedHubPage() {
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
                       >
                         <Save className="h-3.5 w-3.5" />
-                        <span>Simpan Komparasi</span>
+                        <span>{t("Simpan Komparasi", "Save Comparison")}</span>
                       </button>
                     </div>
                   </form>
@@ -2381,7 +2397,7 @@ export default function AdminCmsUnifiedHubPage() {
                   >
                     <div>
                       <div className="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                        <span className="text-[#087BEE] font-mono">Poin #{item.number}</span>
+                        <span className="text-[#087BEE] font-mono">{t("Poin", "Point")} #{item.number}</span>
                         <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] text-blue-700 border border-blue-200/60 font-semibold">
                           {item.impactMetric}
                         </span>
@@ -2424,8 +2440,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Alur Kerja Laboratorium (4 Tahapan)</h3>
-                  <p className="text-xs text-slate-500">Penerimaan sampel, verifikasi otomatis, delta check, hingga rilis hasil.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Alur Kerja Laboratorium (4 Tahapan)", "Laboratory Workflow (4 Stages)")}</h3>
+                  <p className="text-xs text-slate-500">{t("Penerimaan sampel, verifikasi otomatis, delta check, hingga rilis hasil.", "Sample intake, automatic verification, delta check, through to result release.")}</p>
                 </div>
                 <button
                   type="button"
@@ -2434,7 +2450,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
                 >
                   <Save className="h-3.5 w-3.5" />
-                  <span>Simpan Alur Kerja</span>
+                  <span>{t("Simpan Alur Kerja", "Save Workflow")}</span>
                 </button>
               </div>
 
@@ -2455,7 +2471,7 @@ export default function AdminCmsUnifiedHubPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Judul Utama ({editorLang})</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Judul Utama", "Main Title")} ({editorLang})</label>
                   <input
                     type="text"
                     value={
@@ -2472,16 +2488,16 @@ export default function AdminCmsUnifiedHubPage() {
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <h4 className="text-xs font-bold text-slate-900 mb-3">Detail 4 Langkah Alur Kerja</h4>
+                <h4 className="text-xs font-bold text-slate-900 mb-3">{t("Detail 4 Langkah Alur Kerja", "4 Workflow Step Details")}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {sectionForms["workflow"]?.extraContent?.steps?.map((step: any, idx: number) => (
                     <div key={step.id || idx} className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
                       <div className="flex items-center justify-between text-xs font-bold text-[#087BEE]">
-                        <span>Langkah {step.number || idx + 1}</span>
+                        <span>{t("Langkah", "Step")} {step.number || idx + 1}</span>
                         <span className="text-slate-400 font-mono text-[10px]">{step.id}</span>
                       </div>
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Judul ({editorLang})</label>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t("Judul", "Title")} ({editorLang})</label>
                         <input
                           type="text"
                           value={editorLang === "ID" ? step.titleId : step.titleEn}
@@ -2497,7 +2513,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Deskripsi ({editorLang})</label>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t("Deskripsi", "Description")} ({editorLang})</label>
                         <textarea
                           rows={2}
                           value={editorLang === "ID" ? step.descriptionId : step.descriptionEn}
@@ -2524,8 +2540,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Infrastruktur & Fitur Utama</h3>
-                  <p className="text-xs text-slate-500">Pilar otomatisasi 100%, integrasi tanpa sekat, dan Nova AI Copilot.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Infrastruktur & Fitur Utama", "Infrastructure & Key Features")}</h3>
+                  <p className="text-xs text-slate-500">{t("Pilar otomatisasi 100%, integrasi tanpa sekat, dan Nova AI Copilot.", "Pillars: 100% automation, seamless integration, and Nova AI Copilot.")}</p>
                 </div>
                 <button
                   type="button"
@@ -2534,7 +2550,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
                 >
                   <Save className="h-3.5 w-3.5" />
-                  <span>Simpan Infrastruktur</span>
+                  <span>{t("Simpan Infrastruktur", "Save Infrastructure")}</span>
                 </button>
               </div>
 
@@ -2555,7 +2571,7 @@ export default function AdminCmsUnifiedHubPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Judul Utama ({editorLang})</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Judul Utama", "Main Title")} ({editorLang})</label>
                   <input
                     type="text"
                     value={
@@ -2572,15 +2588,15 @@ export default function AdminCmsUnifiedHubPage() {
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <h4 className="text-xs font-bold text-slate-900 mb-3">3 Kartu Fitur</h4>
+                <h4 className="text-xs font-bold text-slate-900 mb-3">{t("3 Kartu Fitur", "3 Feature Cards")}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {sectionForms["infrastructure"]?.extraContent?.cards?.map((card: any, idx: number) => (
                     <div key={card.id || idx} className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#087BEE]">
-                        Kartu #{idx + 1}: {card.id}
+                        {t("Kartu", "Card")} #{idx + 1}: {card.id}
                       </span>
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Judul ({editorLang})</label>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t("Judul", "Title")} ({editorLang})</label>
                         <input
                           type="text"
                           value={editorLang === "ID" ? card.titleId : card.titleEn}
@@ -2596,7 +2612,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">Deskripsi ({editorLang})</label>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t("Deskripsi", "Description")} ({editorLang})</label>
                         <textarea
                           rows={3}
                           value={editorLang === "ID" ? card.descriptionId : card.descriptionEn}
@@ -2623,8 +2639,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Daftar Testimonial Pengguna & Dokter</h3>
-                  <p className="text-xs text-slate-500">Ulasan dokter spesialis patologi klinik, kepala lab, dan direktur RS.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Daftar Testimonial Pengguna & Dokter", "User & Doctor Testimonials")}</h3>
+                  <p className="text-xs text-slate-500">{t("Ulasan dokter spesialis patologi klinik, kepala lab, dan direktur RS.", "Reviews from clinical pathologists, lab heads, and hospital directors.")}</p>
                 </div>
                 <button
                   type="button"
@@ -2632,7 +2648,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs shrink-0"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  <span>Tambah Testimonial Baru</span>
+                  <span>{t("Tambah Testimonial Baru", "Add New Testimonial")}</span>
                 </button>
               </div>
 
@@ -2640,7 +2656,7 @@ export default function AdminCmsUnifiedHubPage() {
                 <div className="rounded-2xl border-2 border-blue-200 bg-blue-50/20 p-5 space-y-4 animate-in fade-in">
                   <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                     <h4 className="text-xs font-bold text-slate-900">
-                      {editingTestimonial.id ? "Edit Testimonial" : "Tambah Testimonial Baru"}
+                      {editingTestimonial.id ? "Edit Testimonial" : t("Tambah Testimonial Baru", "Add New Testimonial")}
                     </h4>
                     <button
                       type="button"
@@ -2659,8 +2675,8 @@ export default function AdminCmsUnifiedHubPage() {
                     <ImageUploader
                       value={editingTestimonial.avatarUrl || ""}
                       onChange={(url: string) => setEditingTestimonial({ ...editingTestimonial, avatarUrl: url })}
-                      label="Unggah Foto Profil Dokter / Avatar Mitra"
-                      hint="Seret foto dokter (rasio 1:1) atau pilih beberapa foto sekaligus"
+                      label={t("Unggah Foto Profil Dokter / Avatar Mitra", "Upload Doctor Profile Photo / Partner Avatar")}
+                      hint={t("Seret foto dokter (rasio 1:1) atau pilih beberapa foto sekaligus", "Drag a doctor photo (1:1 ratio) or select several photos at once")}
                       aspectRatio="square"
                       allowMultiple={true}
                       allowFolder={true}
@@ -2669,7 +2685,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Dokter *</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Nama Lengkap Dokter *", "Doctor's Full Name *")}</label>
                         <input
                           type="text"
                           required
@@ -2679,7 +2695,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Instansi / Rumah Sakit *</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Instansi / Rumah Sakit *", "Institution / Hospital *")}</label>
                         <input
                           type="text"
                           required
@@ -2694,7 +2710,7 @@ export default function AdminCmsUnifiedHubPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Jabatan (ID)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Jabatan (ID)", "Position (ID)")}</label>
                         <input
                           type="text"
                           value={editingTestimonial.roleId || ""}
@@ -2703,7 +2719,7 @@ export default function AdminCmsUnifiedHubPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Jabatan (EN)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Jabatan (EN)", "Position (EN)")}</label>
                         <input
                           type="text"
                           value={editingTestimonial.roleEn || ""}
@@ -2714,7 +2730,7 @@ export default function AdminCmsUnifiedHubPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Kutipan Testimoni (ID) *</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Kutipan Testimoni (ID) *", "Testimonial Quote (ID) *")}</label>
                       <textarea
                         rows={2}
                         required
@@ -2725,12 +2741,12 @@ export default function AdminCmsUnifiedHubPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Kutipan Testimoni (EN)</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Kutipan Testimoni (EN)", "Testimonial Quote (EN)")}</label>
                       <textarea
                         rows={2}
                         value={editingTestimonial.quoteEn || ""}
                         onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quoteEn: e.target.value })}
-                        placeholder="Kosong = tampilan bahasa Inggris memakai kutipan ID"
+                        placeholder={t("Kosong = tampilan bahasa Inggris memakai kutipan ID", "Empty = the English view uses the ID quote")}
                         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs bg-white text-slate-800"
                       />
                     </div>
@@ -2746,7 +2762,7 @@ export default function AdminCmsUnifiedHubPage() {
                             }
                             className="rounded text-blue-600"
                           />
-                          <span>Aktif</span>
+                          <span>{t("Aktif", "Active")}</span>
                         </label>
                       </div>
 
@@ -2759,7 +2775,7 @@ export default function AdminCmsUnifiedHubPage() {
                           }}
                           className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-semibold text-slate-600"
                         >
-                          Batal
+                          {t("Batal", "Cancel")}
                         </button>
                         <button
                           type="submit"
@@ -2767,7 +2783,7 @@ export default function AdminCmsUnifiedHubPage() {
                           className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
                         >
                           <Save className="h-3.5 w-3.5" />
-                          <span>Simpan Testimonial</span>
+                          <span>{t("Simpan Testimonial", "Save Testimonial")}</span>
                         </button>
                       </div>
                     </div>
@@ -2836,8 +2852,8 @@ export default function AdminCmsUnifiedHubPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Banner Pendaftaran Demo (CTA)</h3>
-                  <p className="text-xs text-slate-500">Headline ajakan, subjudul, teks tombol, dan gambar mockup platform.</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t("Banner Pendaftaran Demo (CTA)", "Demo Sign-up Banner (CTA)")}</h3>
+                  <p className="text-xs text-slate-500">{t("Headline ajakan, subjudul, teks tombol, dan gambar mockup platform.", "Call-to-action headline, subtitle, button text, and platform mockup image.")}</p>
                 </div>
                 <button
                   type="button"
@@ -2846,7 +2862,7 @@ export default function AdminCmsUnifiedHubPage() {
                   className="inline-flex items-center gap-1.5 rounded-xl bg-[#087BEE] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600"
                 >
                   <Save className="h-3.5 w-3.5" />
-                  <span>Simpan Banner CTA</span>
+                  <span>{t("Simpan Banner CTA", "Save CTA Banner")}</span>
                 </button>
               </div>
 
@@ -2855,7 +2871,7 @@ export default function AdminCmsUnifiedHubPage() {
                   <ImageUploader
                     value={sectionForms["cta"]?.extraContent?.imageUrl || ""}
                     onChange={(url: string) => handleExtraContentChange("cta", "imageUrl", url)}
-                    label="Unggah Mockup Gambar Banner CTA"
+                    label={t("Unggah Mockup Gambar Banner CTA", "Upload CTA Banner Mockup Image")}
                     hint="Default: /images/CTA-image.webp"
                     aspectRatio="video"
                   />
@@ -2893,7 +2909,7 @@ export default function AdminCmsUnifiedHubPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Teks Tombol ({editorLang})</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">{t("Teks Tombol", "Button Text")} ({editorLang})</label>
                       <input
                         type="text"
                         value={
@@ -2908,7 +2924,7 @@ export default function AdminCmsUnifiedHubPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">URL Tombol</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">{t("URL Tombol", "Button URL")}</label>
                       <input
                         type="text"
                         value={sectionForms["cta"]?.extraContent?.buttonUrl || "/request-demo"}

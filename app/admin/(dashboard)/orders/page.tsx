@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   ClipboardList,
   Search,
@@ -26,6 +26,7 @@ import {
 import { OrderPriority, OrderStatus, SpecimenStatus, TubeColor, SpecimenType } from "@/types";
 import { MetricCard } from "@/components/admin/MetricCard";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 interface PatientOption {
   id: string;
@@ -106,9 +107,10 @@ interface OrderData {
 
 // Tube visual styling map
 // Tube visual styling map
-const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; border: string; cap: string }> = {
+const tubeStyles: Record<TubeColor, { name: string; nameEn: string; bg: string; text: string; border: string; cap: string }> = {
   lavender_edta: {
     name: "EDTA Ungu",
+    nameEn: "Lavender EDTA",
     bg: "bg-purple-50",
     text: "text-purple-700",
     border: "border-purple-200",
@@ -116,6 +118,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   red_plain: {
     name: "Merah Plain",
+    nameEn: "Red Plain",
     bg: "bg-red-50",
     text: "text-red-700",
     border: "border-red-200",
@@ -123,6 +126,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   yellow_sst: {
     name: "Kuning / SST",
+    nameEn: "Yellow / SST",
     bg: "bg-amber-50",
     text: "text-amber-800",
     border: "border-amber-200",
@@ -130,6 +134,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   light_blue_citrate: {
     name: "Biru Sitrat",
+    nameEn: "Light Blue Citrate",
     bg: "bg-sky-50",
     text: "text-sky-700",
     border: "border-sky-200",
@@ -137,6 +142,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   green_heparin: {
     name: "Hijau Heparin",
+    nameEn: "Green Heparin",
     bg: "bg-emerald-50",
     text: "text-emerald-700",
     border: "border-emerald-200",
@@ -144,6 +150,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   gray_fluoride: {
     name: "Abu-abu Fluoride",
+    nameEn: "Gray Fluoride",
     bg: "bg-slate-100",
     text: "text-slate-700",
     border: "border-slate-300",
@@ -151,6 +158,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   urine_container: {
     name: "Wadah Urin",
+    nameEn: "Urine Container",
     bg: "bg-yellow-50",
     text: "text-yellow-700",
     border: "border-yellow-200",
@@ -158,6 +166,7 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
   },
   other: {
     name: "Wadah Lainnya",
+    nameEn: "Other Container",
     bg: "bg-stone-100",
     text: "text-stone-700",
     border: "border-stone-300",
@@ -167,10 +176,11 @@ const tubeStyles: Record<TubeColor, { name: string; bg: string; text: string; bo
 
 const statusConfig: Record<
   OrderStatus,
-  { label: string; bg: string; text: string; border: string; icon: React.ElementType }
+  { label: string; labelEn: string; bg: string; text: string; border: string; icon: React.ElementType }
 > = {
   ordered: {
     label: "Menunggu Sampel",
+    labelEn: "Awaiting Specimen",
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-200",
@@ -178,6 +188,7 @@ const statusConfig: Record<
   },
   specimen_received: {
     label: "Diterima di Lab",
+    labelEn: "Received in Lab",
     bg: "bg-blue-50",
     text: "text-blue-700",
     border: "border-blue-200",
@@ -185,6 +196,7 @@ const statusConfig: Record<
   },
   processing: {
     label: "Sedang Diuji",
+    labelEn: "In Testing",
     bg: "bg-indigo-50",
     text: "text-indigo-700",
     border: "border-indigo-200",
@@ -192,6 +204,7 @@ const statusConfig: Record<
   },
   partially_validated: {
     label: "Validasi Parsial",
+    labelEn: "Partially Validated",
     bg: "bg-purple-50",
     text: "text-purple-700",
     border: "border-purple-200",
@@ -199,6 +212,7 @@ const statusConfig: Record<
   },
   completed: {
     label: "Selesai",
+    labelEn: "Completed",
     bg: "bg-emerald-50",
     text: "text-emerald-700",
     border: "border-emerald-200",
@@ -206,6 +220,7 @@ const statusConfig: Record<
   },
   cancelled: {
     label: "Dibatalkan",
+    labelEn: "Cancelled",
     bg: "bg-rose-50",
     text: "text-rose-700",
     border: "border-rose-200",
@@ -214,6 +229,12 @@ const statusConfig: Record<
 };
 
 export default function LabOrdersPage() {
+  const { t, locale } = useAdminLang();
+  // Ref agar fetchOrders tidak dibuat ulang (dan memicu fetch ulang) saat bahasa diganti
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
   const [orders, setOrders] = useState<OrderData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -278,10 +299,10 @@ export default function LabOrdersPage() {
       if (data.success && data.data) {
         setOrders(data.data.orders || []);
       } else {
-        setError(data.message || "Gagal memuat order lab.");
+        setError(data.message || tRef.current("Gagal memuat order lab.", "Failed to load lab orders."));
       }
     } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan jaringan.");
+      setError(err.message || tRef.current("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setLoading(false);
     }
@@ -353,7 +374,7 @@ export default function LabOrdersPage() {
       // Jika mendaftarkan pasien baru terlebih dahulu
       if (isNewPatient) {
         if (!newPatient.name || !newPatient.mrn || !newPatient.birthDate) {
-          alert("Nama, No. RM, dan Tanggal Lahir pasien wajib diisi.");
+          alert(t("Nama, No. RM, dan Tanggal Lahir pasien wajib diisi.", "Patient name, MRN, and date of birth are required."));
           setActionLoading(false);
           return;
         }
@@ -365,7 +386,7 @@ export default function LabOrdersPage() {
         });
         const patData = await createPatRes.json();
         if (!patData.success) {
-          alert(patData.message || "Gagal mendaftarkan pasien baru.");
+          alert(patData.message || t("Gagal mendaftarkan pasien baru.", "Failed to register the new patient."));
           setActionLoading(false);
           return;
         }
@@ -373,13 +394,13 @@ export default function LabOrdersPage() {
       }
 
       if (!finalPatientId) {
-        alert("Pilih pasien terlebih dahulu.");
+        alert(t("Pilih pasien terlebih dahulu.", "Please select a patient first."));
         setActionLoading(false);
         return;
       }
 
       if (selectedTestCodes.length === 0) {
-        alert("Pilih minimal satu pemeriksaan laboratorium.");
+        alert(t("Pilih minimal satu pemeriksaan laboratorium.", "Select at least one lab test."));
         setActionLoading(false);
         return;
       }
@@ -411,10 +432,10 @@ export default function LabOrdersPage() {
         setSelectedOrder(resData.data);
         setIsDetailOpen(true);
       } else {
-        alert(resData.message || "Gagal membuat order lab.");
+        alert(resData.message || t("Gagal membuat order lab.", "Failed to create the lab order."));
       }
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan saat memproses order.");
+      alert(err.message || t("Terjadi kesalahan saat memproses order.", "An error occurred while processing the order."));
     } finally {
       setActionLoading(false);
     }
@@ -445,10 +466,10 @@ export default function LabOrdersPage() {
           if (detailRes.success) setSelectedOrder(detailRes.data);
         }
       } else {
-        alert(data.message || "Gagal menerima spesimen.");
+        alert(data.message || t("Gagal menerima spesimen.", "Failed to receive the specimen."));
       }
     } catch (err: any) {
-      alert(err.message || "Gagal menerima spesimen.");
+      alert(err.message || t("Gagal menerima spesimen.", "Failed to receive the specimen."));
     } finally {
       setActionLoading(false);
     }
@@ -458,7 +479,7 @@ export default function LabOrdersPage() {
   const handleRejectSpecimen = async () => {
     if (!rejectBarcode) return;
     if (!rejectReason.trim()) {
-      alert("Alasan penolakan spesimen wajib diisi (ISO 15189).");
+      alert(t("Alasan penolakan spesimen wajib diisi (ISO 15189).", "A specimen rejection reason is required (ISO 15189)."));
       return;
     }
     setActionLoading(true);
@@ -482,10 +503,10 @@ export default function LabOrdersPage() {
           if (detailRes.success) setSelectedOrder(detailRes.data);
         }
       } else {
-        alert(data.message || "Gagal menolak spesimen.");
+        alert(data.message || t("Gagal menolak spesimen.", "Failed to reject the specimen."));
       }
     } catch (err: any) {
-      alert(err.message || "Gagal menolak spesimen.");
+      alert(err.message || t("Gagal menolak spesimen.", "Failed to reject the specimen."));
     } finally {
       setActionLoading(false);
     }
@@ -525,14 +546,17 @@ export default function LabOrdersPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-slate-900 font-display tracking-tight">
-              Lab Orders (Pre-Analitik)
+              {t("Lab Orders (Pre-Analitik)", "Lab Orders (Pre-Analytical)")}
             </h1>
             <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200">
-              LIS Fase 2
+              {t("LIS Fase 2", "LIS Phase 2")}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Manajemen pendaftaran pemeriksaan, barcode tracking tabung spesimen, dan penerimaan sampel meja laboratorium.
+            {t(
+              "Manajemen pendaftaran pemeriksaan, barcode tracking tabung spesimen, dan penerimaan sampel meja laboratorium.",
+              "Test registration management, specimen tube barcode tracking, and specimen reception at the lab bench."
+            )}
           </p>
         </div>
 
@@ -541,7 +565,7 @@ export default function LabOrdersPage() {
             onClick={fetchOrders}
             disabled={loading}
             className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors shadow-xs"
-            title="Muat ulang data"
+            title={t("Muat ulang data", "Reload data")}
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin text-blue-600" : ""}`} />
           </button>
@@ -550,7 +574,7 @@ export default function LabOrdersPage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm shadow-blue-500/20 transition-all hover:shadow-md"
           >
             <Plus className="h-4 w-4" />
-            <span>Registrasi Order Lab</span>
+            <span>{t("Registrasi Order Lab", "Register Lab Order")}</span>
           </button>
         </div>
       </div>
@@ -558,48 +582,48 @@ export default function LabOrdersPage() {
       {/* Metrics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
         <MetricCard
-          title="Total Order"
+          title={t("Total Order", "Total Orders")}
           value={metrics.total}
-          subtitle="Tercatat di sistem"
+          subtitle={t("Tercatat di sistem", "Recorded in system")}
           icon={ClipboardList}
           iconBg="bg-blue-50"
           iconColor="text-[#087BEE]"
         />
         <MetricCard
-          title="Menunggu Sampel"
+          title={t("Menunggu Sampel", "Awaiting Specimen")}
           value={metrics.waiting}
-          subtitle="Tahap Phlebotomy"
+          subtitle={t("Tahap Phlebotomy", "Phlebotomy stage")}
           icon={Clock}
           iconBg="bg-amber-50"
           iconColor="text-[#E5A23B]"
           badge={{ text: "Pending", variant: "warning" }}
         />
         <MetricCard
-          title="Diterima di Lab"
+          title={t("Diterima di Lab", "Received in Lab")}
           value={metrics.received}
-          subtitle="Siap analitik / mesin"
+          subtitle={t("Siap analitik / mesin", "Ready for analysis / analyzer")}
           icon={CheckCircle2}
           iconBg="bg-emerald-50"
           iconColor="text-[#16A374]"
-          badge={{ text: "Di Lab", variant: "success" }}
+          badge={{ text: t("Di Lab", "In Lab"), variant: "success" }}
         />
         <MetricCard
-          title="Sampel Ditolak"
+          title={t("Sampel Ditolak", "Rejected Specimens")}
           value={metrics.rejected}
-          subtitle="Perlu re-sampling"
+          subtitle={t("Perlu re-sampling", "Re-collection needed")}
           icon={XCircle}
           iconBg="bg-rose-50"
           iconColor="text-[#DC5A5A]"
-          badge={{ text: "Ditolak", variant: "danger" }}
+          badge={{ text: t("Ditolak", "Rejected"), variant: "danger" }}
         />
         <MetricCard
-          title="Prioritas CITO"
+          title={t("Prioritas CITO", "STAT Priority")}
           value={metrics.cito}
-          subtitle="Pasien Gawat Darurat"
+          subtitle={t("Pasien Gawat Darurat", "Emergency patients")}
           icon={AlertTriangle}
           iconBg="bg-rose-50"
           iconColor="text-[#DC5A5A]"
-          badge={{ text: "CITO", variant: "danger" }}
+          badge={{ text: t("CITO", "STAT"), variant: "danger" }}
           className="col-span-2 lg:col-span-1"
         />
       </div>
@@ -612,7 +636,7 @@ export default function LabOrdersPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari Nomor Order, Nama Pasien, No. RM, atau Barcode..."
+            placeholder={t("Cari Nomor Order, Nama Pasien, No. RM, atau Barcode...", "Search order number, patient name, MRN, or barcode...")}
             className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-blue-500 focus:bg-white transition-all"
           />
         </div>
@@ -625,7 +649,7 @@ export default function LabOrdersPage() {
                 statusFilter === "all" ? "bg-white text-slate-900 shadow-xs font-semibold" : "hover:text-slate-900"
               }`}
             >
-              Semua
+              {t("Semua", "All")}
             </button>
             <button
               onClick={() => setStatusFilter("ordered")}
@@ -633,7 +657,7 @@ export default function LabOrdersPage() {
                 statusFilter === "ordered" ? "bg-white text-amber-700 shadow-xs font-semibold" : "hover:text-slate-900"
               }`}
             >
-              Menunggu
+              {t("Menunggu", "Awaiting")}
             </button>
             <button
               onClick={() => setStatusFilter("in_progress")}
@@ -641,7 +665,7 @@ export default function LabOrdersPage() {
                 statusFilter === "in_progress" ? "bg-white text-blue-700 shadow-xs font-semibold" : "hover:text-slate-900"
               }`}
             >
-              Diterima Lab
+              {t("Diterima Lab", "Received in Lab")}
             </button>
             <button
               onClick={() => setStatusFilter("completed")}
@@ -649,7 +673,7 @@ export default function LabOrdersPage() {
                 statusFilter === "completed" ? "bg-white text-emerald-700 shadow-xs font-semibold" : "hover:text-slate-900"
               }`}
             >
-              Selesai
+              {t("Selesai", "Completed")}
             </button>
           </div>
 
@@ -662,7 +686,7 @@ export default function LabOrdersPage() {
             }`}
           >
             <AlertTriangle className="h-3.5 w-3.5 text-rose-600" />
-            <span>CITO Saja</span>
+            <span>{t("CITO Saja", "STAT Only")}</span>
           </button>
         </div>
       </div>
@@ -672,7 +696,7 @@ export default function LabOrdersPage() {
         {loading ? (
           <div className="py-20 text-center">
             <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">Memuat daftar order laboratorium...</p>
+            <p className="text-xs text-slate-500">{t("Memuat daftar order laboratorium...", "Loading lab orders...")}</p>
           </div>
         ) : error ? (
           <div className="py-16 text-center text-rose-600">
@@ -682,21 +706,24 @@ export default function LabOrdersPage() {
               onClick={fetchOrders}
               className="mt-3 px-3 py-1.5 bg-rose-50 border border-rose-200 rounded-lg text-xs font-medium hover:bg-rose-100"
             >
-              Coba Lagi
+              {t("Coba Lagi", "Try Again")}
             </button>
           </div>
         ) : orders.length === 0 ? (
           <div className="py-20 text-center text-slate-500">
             <ClipboardList className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-sm font-semibold text-slate-800">Belum Ada Order Laboratorium</h3>
+            <h3 className="text-sm font-semibold text-slate-800">{t("Belum Ada Order Laboratorium", "No Lab Orders Yet")}</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              Tidak ditemukan data order lab sesuai filter. Silakan klik tombol &quot;Registrasi Order Lab&quot; untuk membuat order baru.
+              {t(
+                "Tidak ditemukan data order lab sesuai filter. Silakan klik tombol \"Registrasi Order Lab\" untuk membuat order baru.",
+                "No lab orders match the current filters. Click \"Register Lab Order\" to create a new order."
+              )}
             </p>
             <button
               onClick={openCreateModal}
               className="mt-4 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700"
             >
-              + Buat Order Baru
+              {t("+ Buat Order Baru", "+ Create New Order")}
             </button>
           </div>
         ) : (
@@ -704,12 +731,12 @@ export default function LabOrdersPage() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-4">No. Order & Prioritas</th>
-                  <th className="py-3 px-4">Pasien & No. RM</th>
-                  <th className="py-3 px-4">Dokter & Unit</th>
-                  <th className="py-3 px-4">Tabung & Barcode</th>
+                  <th className="py-3 px-4">{t("No. Order & Prioritas", "Order No. & Priority")}</th>
+                  <th className="py-3 px-4">{t("Pasien & No. RM", "Patient & MRN")}</th>
+                  <th className="py-3 px-4">{t("Dokter & Unit", "Physician & Unit")}</th>
+                  <th className="py-3 px-4">{t("Tabung & Barcode", "Tubes & Barcodes")}</th>
                   <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Aksi</th>
+                  <th className="py-3 px-4 text-right">{t("Aksi", "Actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -736,13 +763,13 @@ export default function LabOrdersPage() {
                           {isCito && (
                             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-200 animate-pulse">
                               <AlertTriangle className="h-3 w-3" />
-                              <span>CITO</span>
+                              <span>{t("CITO", "STAT")}</span>
                             </span>
                           )}
                         </div>
                         <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          <span>{new Date(order.orderedAt).toLocaleString("id-ID")}</span>
+                          <span>{new Date(order.orderedAt).toLocaleString(locale)}</span>
                         </div>
                       </td>
 
@@ -761,7 +788,7 @@ export default function LabOrdersPage() {
                       {/* Dokter & Unit */}
                       <td className="py-3 px-4">
                         <div className="font-medium text-slate-800">
-                          {order.physician?.name || "Dokter Umum"}
+                          {order.physician?.name || t("Dokter Umum", "General Practitioner")}
                         </div>
                         <div className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
                           <Building2 className="h-3 w-3 text-slate-400" />
@@ -798,7 +825,8 @@ export default function LabOrdersPage() {
                           })}
                         </div>
                         <div className="text-[10px] text-slate-400 mt-1">
-                          {order.items.length} item tes diminta
+                          {order.items.length}{" "}
+                          {t("item tes diminta", order.items.length === 1 ? "test requested" : "tests requested")}
                         </div>
                       </td>
 
@@ -808,7 +836,7 @@ export default function LabOrdersPage() {
                           className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${statusInfo.bg} ${statusInfo.text} ${statusInfo.border}`}
                         >
                           <StatusIcon className="h-3 w-3" />
-                          <span>{statusInfo.label}</span>
+                          <span>{t(statusInfo.label, statusInfo.labelEn)}</span>
                         </span>
                       </td>
 
@@ -822,7 +850,7 @@ export default function LabOrdersPage() {
                           }}
                           className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-[11px] inline-flex items-center gap-1 shadow-2xs group-hover:border-blue-300 group-hover:text-blue-600 transition-colors"
                         >
-                          <span>Kelola Tabung</span>
+                          <span>{t("Kelola Tabung", "Manage Tubes")}</span>
                           <ChevronRight className="h-3.5 w-3.5" />
                         </button>
                       </td>
@@ -852,12 +880,13 @@ export default function LabOrdersPage() {
                     </h3>
                     {selectedOrder.priority === "cito" && (
                       <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-300">
-                        CITO EMERGENCY
+                        {t("CITO EMERGENCY", "STAT EMERGENCY")}
                       </span>
                     )}
                   </div>
                   <p className="text-xs text-slate-500">
-                    Registrasi: {new Date(selectedOrder.orderedAt).toLocaleString("id-ID")} • Asal: {selectedOrder.sourceLocation}
+                    {t("Registrasi:", "Registered:")} {new Date(selectedOrder.orderedAt).toLocaleString(locale)} •{" "}
+                    {t("Asal:", "Source:")} {selectedOrder.sourceLocation}
                   </p>
                 </div>
               </div>
@@ -876,27 +905,27 @@ export default function LabOrdersPage() {
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 mb-2">
                     <User className="h-4 w-4 text-blue-600" />
-                    <span>Identitas Pasien</span>
+                    <span>{t("Identitas Pasien", "Patient Identity")}</span>
                   </div>
                   <div className="text-sm font-bold text-slate-900">{selectedOrder.patient.name}</div>
                   <div className="text-xs text-slate-500 mt-1 space-y-0.5">
-                    <div>No. RM: <span className="font-mono font-semibold text-slate-800">{selectedOrder.patient.mrn}</span></div>
-                    <div>Jenis Kelamin: <span className="capitalize">{selectedOrder.patient.sex}</span></div>
-                    {selectedOrder.patient.phone && <div>No. Kontak: {selectedOrder.patient.phone}</div>}
+                    <div>{t("No. RM:", "MRN:")} <span className="font-mono font-semibold text-slate-800">{selectedOrder.patient.mrn}</span></div>
+                    <div>{t("Jenis Kelamin:", "Sex:")} <span className="capitalize">{selectedOrder.patient.sex}</span></div>
+                    {selectedOrder.patient.phone && <div>{t("No. Kontak:", "Contact No.:")} {selectedOrder.patient.phone}</div>}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 mb-2">
                     <Stethoscope className="h-4 w-4 text-blue-600" />
-                    <span>Dokter & Catatan Medis</span>
+                    <span>{t("Dokter & Catatan Medis", "Physician & Medical Notes")}</span>
                   </div>
                   <div className="text-sm font-bold text-slate-900">
-                    {selectedOrder.physician?.name || "Dokter Umum"}
+                    {selectedOrder.physician?.name || t("Dokter Umum", "General Practitioner")}
                   </div>
                   <div className="text-xs text-slate-500 mt-1 space-y-0.5">
-                    <div>Spesialisasi: {selectedOrder.physician?.specialization || "-"}</div>
-                    <div>Catatan Klinis: <span className="italic text-slate-700">{selectedOrder.clinicalNotes || "Tidak ada catatan klinis."}</span></div>
+                    <div>{t("Spesialisasi:", "Specialization:")} {selectedOrder.physician?.specialization || "-"}</div>
+                    <div>{t("Catatan Klinis:", "Clinical Notes:")} <span className="italic text-slate-700">{selectedOrder.clinicalNotes || t("Tidak ada catatan klinis.", "No clinical notes.")}</span></div>
                   </div>
                 </div>
               </div>
@@ -904,7 +933,7 @@ export default function LabOrdersPage() {
               {/* Items Pemeriksaan */}
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">
-                  Daftar Pemeriksaan yang Diminta ({selectedOrder.items.length})
+                  {t("Daftar Pemeriksaan yang Diminta", "Requested Tests")} ({selectedOrder.items.length})
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {selectedOrder.items.map((item) => (
@@ -925,10 +954,10 @@ export default function LabOrdersPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Spesimen Tabung Darah & Barcode ({selectedOrder.specimens.length})
+                    {t("Spesimen Tabung Darah & Barcode", "Blood Tube Specimens & Barcodes")} ({selectedOrder.specimens.length})
                   </h4>
                   <span className="text-[11px] text-slate-400">
-                    Standar ISO 15189 Pre-Analitik
+                    {t("Standar ISO 15189 Pre-Analitik", "ISO 15189 Pre-Analytical Standard")}
                   </span>
                 </div>
 
@@ -963,7 +992,7 @@ export default function LabOrdersPage() {
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${tStyle.bg} ${tStyle.text} ${tStyle.border}`}>
-                                  {tStyle.name}
+                                  {t(tStyle.name, tStyle.nameEn)}
                                 </span>
                                 <span className="text-xs text-slate-500 capitalize">
                                   {sp.specimenType.replace("_", " ")}
@@ -979,7 +1008,7 @@ export default function LabOrdersPage() {
                                   type="button"
                                   onClick={() => copyToClipboard(sp.barcode)}
                                   className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
-                                  title="Salin Barcode"
+                                  title={t("Salin Barcode", "Copy Barcode")}
                                 >
                                   {copiedBarcode === sp.barcode ? (
                                     <Check className="h-3.5 w-3.5 text-emerald-600" />
@@ -991,14 +1020,14 @@ export default function LabOrdersPage() {
 
                               {sp.storageLocation && (
                                 <div className="text-[11px] text-slate-500 mt-0.5">
-                                  Lokasi Rak: <span className="font-semibold text-slate-700">{sp.storageLocation}</span>
+                                  {t("Lokasi Rak:", "Rack Location:")} <span className="font-semibold text-slate-700">{sp.storageLocation}</span>
                                 </div>
                               )}
 
                               {isRejected && (
                                 <div className="text-[11px] text-rose-700 font-semibold mt-1 flex items-center gap-1">
                                   <ShieldAlert className="h-3.5 w-3.5" />
-                                  <span>Ditolak: {sp.rejectionReason}</span>
+                                  <span>{t("Ditolak:", "Rejected:")} {sp.rejectionReason}</span>
                                 </div>
                               )}
                             </div>
@@ -1016,7 +1045,7 @@ export default function LabOrdersPage() {
                                   className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-colors flex items-center gap-1"
                                 >
                                   <CheckCircle2 className="h-3.5 w-3.5" />
-                                  <span>Terima di Lab</span>
+                                  <span>{t("Terima di Lab", "Receive in Lab")}</span>
                                 </button>
                                 <button
                                   onClick={() => {
@@ -1026,7 +1055,7 @@ export default function LabOrdersPage() {
                                   className="px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs transition-colors flex items-center gap-1"
                                 >
                                   <XCircle className="h-3.5 w-3.5" />
-                                  <span>Tolak Sampel</span>
+                                  <span>{t("Tolak Sampel", "Reject Specimen")}</span>
                                 </button>
                               </>
                             )}
@@ -1034,14 +1063,14 @@ export default function LabOrdersPage() {
                             {isReceived && (
                               <span className="px-3 py-1 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 border border-emerald-200">
                                 <Check className="h-3.5 w-3.5" />
-                                <span>Diterima di Meja Lab</span>
+                                <span>{t("Diterima di Meja Lab", "Received at Lab Bench")}</span>
                               </span>
                             )}
 
                             {isRejected && (
                               <span className="px-3 py-1 rounded-xl bg-rose-100 text-rose-800 text-xs font-semibold flex items-center gap-1.5 border border-rose-200">
                                 <X className="h-3.5 w-3.5" />
-                                <span>Sampel Ditolak</span>
+                                <span>{t("Sampel Ditolak", "Specimen Rejected")}</span>
                               </span>
                             )}
                           </div>
@@ -1062,7 +1091,7 @@ export default function LabOrdersPage() {
                 onClick={() => setIsDetailOpen(false)}
                 className="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold hover:bg-slate-900 transition-colors"
               >
-                Tutup
+                {t("Tutup", "Close")}
               </button>
             </div>
           </div>
@@ -1081,10 +1110,10 @@ export default function LabOrdersPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-slate-900 font-display text-base">
-                    Registrasi Lab Order Baru
+                    {t("Registrasi Lab Order Baru", "Register New Lab Order")}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Otomatis kalkulasi tabung spesimen & pembuatan barcode
+                    {t("Otomatis kalkulasi tabung spesimen & pembuatan barcode", "Automatic specimen tube calculation & barcode generation")}
                   </p>
                 </div>
               </div>
@@ -1101,7 +1130,7 @@ export default function LabOrdersPage() {
               {/* Prioritas Toggle */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Tingkat Prioritas
+                  {t("Tingkat Prioritas", "Priority Level")}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -1113,7 +1142,7 @@ export default function LabOrdersPage() {
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
-                    Rutin (Standard TAT)
+                    {t("Rutin (Standard TAT)", "Routine (Standard TAT)")}
                   </button>
                   <button
                     type="button"
@@ -1125,7 +1154,7 @@ export default function LabOrdersPage() {
                     }`}
                   >
                     <AlertTriangle className="h-4 w-4 text-rose-600" />
-                    <span>CITO (Gawat Darurat / Segera)</span>
+                    <span>{t("CITO (Gawat Darurat / Segera)", "STAT (Emergency / Immediate)")}</span>
                   </button>
                 </div>
               </div>
@@ -1134,14 +1163,16 @@ export default function LabOrdersPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    Data Pasien
+                    {t("Data Pasien", "Patient Data")}
                   </label>
                   <button
                     type="button"
                     onClick={() => setIsNewPatient(!isNewPatient)}
                     className="text-xs font-semibold text-blue-600 hover:underline"
                   >
-                    {isNewPatient ? "← Pilih dari Pasien Terdaftar" : "+ Daftarkan Pasien Baru"}
+                    {isNewPatient
+                      ? t("← Pilih dari Pasien Terdaftar", "← Select from Registered Patients")
+                      : t("+ Daftarkan Pasien Baru", "+ Register New Patient")}
                   </button>
                 </div>
 
@@ -1152,10 +1183,10 @@ export default function LabOrdersPage() {
                     className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-hidden focus:border-blue-500"
                     required
                   >
-                    <option value="">-- Pilih Pasien --</option>
+                    <option value="">{t("-- Pilih Pasien --", "-- Select Patient --")}</option>
                     {patients.map((p) => (
                       <option key={p.id} value={p.id}>
-                        {p.name} ({p.mrn}) - {p.sex === "male" ? "Laki-laki" : "Perempuan"}
+                        {p.name} ({p.mrn}) - {p.sex === "male" ? t("Laki-laki", "Male") : t("Perempuan", "Female")}
                       </option>
                     ))}
                   </select>
@@ -1163,31 +1194,31 @@ export default function LabOrdersPage() {
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-600 uppercase">Nama Lengkap *</label>
+                        <label className="block text-[10px] font-bold text-slate-600 uppercase">{t("Nama Lengkap *", "Full Name *")}</label>
                         <input
                           type="text"
                           required
                           value={newPatient.name}
                           onChange={(e) => setNewPatient({ ...newPatient, name: e.target.value })}
-                          placeholder="misal: Bpk. Ahmad Dahlan"
+                          placeholder={t("misal: Bpk. Ahmad Dahlan", "e.g. Mr. Ahmad Dahlan")}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs bg-white"
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-600 uppercase">No. RM (Rekam Medis) *</label>
+                        <label className="block text-[10px] font-bold text-slate-600 uppercase">{t("No. RM (Rekam Medis) *", "MRN (Medical Record No.) *")}</label>
                         <input
                           type="text"
                           required
                           value={newPatient.mrn}
                           onChange={(e) => setNewPatient({ ...newPatient, mrn: e.target.value })}
-                          placeholder="misal: RM-2026-00999"
+                          placeholder={t("misal: RM-2026-00999", "e.g. RM-2026-00999")}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs bg-white font-mono"
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2.5">
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-600 uppercase">Tgl Lahir *</label>
+                        <label className="block text-[10px] font-bold text-slate-600 uppercase">{t("Tgl Lahir *", "Date of Birth *")}</label>
                         <input
                           type="date"
                           required
@@ -1197,18 +1228,18 @@ export default function LabOrdersPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-600 uppercase">Jenis Kelamin</label>
+                        <label className="block text-[10px] font-bold text-slate-600 uppercase">{t("Jenis Kelamin", "Sex")}</label>
                         <select
                           value={newPatient.sex}
                           onChange={(e) => setNewPatient({ ...newPatient, sex: e.target.value })}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs bg-white"
                         >
-                          <option value="male">Laki-laki</option>
-                          <option value="female">Perempuan</option>
+                          <option value="male">{t("Laki-laki", "Male")}</option>
+                          <option value="female">{t("Perempuan", "Female")}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-600 uppercase">No. Telepon</label>
+                        <label className="block text-[10px] font-bold text-slate-600 uppercase">{t("No. Telepon", "Phone No.")}</label>
                         <input
                           type="text"
                           value={newPatient.phone}
@@ -1226,14 +1257,14 @@ export default function LabOrdersPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Dokter Pengirim
+                    {t("Dokter Pengirim", "Referring Physician")}
                   </label>
                   <select
                     value={selectedPhysicianId}
                     onChange={(e) => setSelectedPhysicianId(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-hidden focus:border-blue-500"
                   >
-                    <option value="">-- Tanpa Dokter Spesifik --</option>
+                    <option value="">{t("-- Tanpa Dokter Spesifik --", "-- No Specific Physician --")}</option>
                     {physicians.map((d) => (
                       <option key={d.id} value={d.id}>
                         {d.name} ({d.specialization})
@@ -1244,16 +1275,16 @@ export default function LabOrdersPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Unit / Ruang Asal
+                    {t("Unit / Ruang Asal", "Source Unit / Ward")}
                   </label>
                   <select
                     value={sourceLocation}
                     onChange={(e) => setSourceLocation(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-hidden focus:border-blue-500"
                   >
-                    <option value="Poliklinik Rawat Jalan">Poliklinik Rawat Jalan</option>
-                    <option value="Instalasi Gawat Darurat (IGD)">Instalasi Gawat Darurat (IGD)</option>
-                    <option value="Rawat Inap Lt. 3">Rawat Inap Lt. 3</option>
+                    <option value="Poliklinik Rawat Jalan">{t("Poliklinik Rawat Jalan", "Outpatient Clinic")}</option>
+                    <option value="Instalasi Gawat Darurat (IGD)">{t("Instalasi Gawat Darurat (IGD)", "Emergency Department (ER)")}</option>
+                    <option value="Rawat Inap Lt. 3">{t("Rawat Inap Lt. 3", "Inpatient Ward, 3rd Floor")}</option>
                     <option value="Intensive Care Unit (ICU)">Intensive Care Unit (ICU)</option>
                     <option value="Medical Check Up (MCU)">Medical Check Up (MCU)</option>
                   </select>
@@ -1263,13 +1294,13 @@ export default function LabOrdersPage() {
               {/* Catatan Klinis */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Catatan Klinis / Diagnosis Awal
+                  {t("Catatan Klinis / Diagnosis Awal", "Clinical Notes / Initial Diagnosis")}
                 </label>
                 <input
                   type="text"
                   value={clinicalNotes}
                   onChange={(e) => setClinicalNotes(e.target.value)}
-                  placeholder="misal: Demam berdarah hari ke-3, curiga trombositopenia"
+                  placeholder={t("misal: Demam berdarah hari ke-3, curiga trombositopenia", "e.g. Dengue fever day 3, suspected thrombocytopenia")}
                   className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-hidden focus:border-blue-500"
                 />
               </div>
@@ -1277,7 +1308,7 @@ export default function LabOrdersPage() {
               {/* Test Catalog Multi-Selection */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Pilih Pemeriksaan Laboratorium ({selectedTestCodes.length} dipilih)
+                  {t("Pilih Pemeriksaan Laboratorium", "Select Lab Tests")} ({selectedTestCodes.length} {t("dipilih", "selected")})
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 rounded-2xl border border-slate-200 bg-slate-50/50">
                   {testCatalogs.map((test) => {
@@ -1313,7 +1344,7 @@ export default function LabOrdersPage() {
                         </div>
 
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${tStyle.bg} ${tStyle.text} ${tStyle.border}`}>
-                          {tStyle.name}
+                          {t(tStyle.name, tStyle.nameEn)}
                         </span>
                       </label>
                     );
@@ -1326,11 +1357,18 @@ export default function LabOrdersPage() {
                 <div className="p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200">
                   <div className="text-xs font-bold text-cyan-900 flex items-center gap-1.5 mb-1.5">
                     <Sparkles className="h-4 w-4 text-cyan-700" />
-                    <span>Kalkulasi Otomatis Wadah Spesimen (Diagnova Engine)</span>
+                    <span>{t("Kalkulasi Otomatis Wadah Spesimen (Diagnova Engine)", "Automatic Specimen Container Calculation (Diagnova Engine)")}</span>
                   </div>
                   <div className="text-xs text-cyan-800">
-                    Sistem akan men-generate{" "}
-                    <strong>{liveSpecimenRequirements.length} barcode tabung spesimen</strong>:
+                    {t("Sistem akan men-generate", "The system will generate")}{" "}
+                    <strong>
+                      {liveSpecimenRequirements.length}{" "}
+                      {t(
+                        "barcode tabung spesimen",
+                        liveSpecimenRequirements.length === 1 ? "specimen tube barcode" : "specimen tube barcodes"
+                      )}
+                    </strong>
+                    :
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {liveSpecimenRequirements.map((req, idx) => {
@@ -1342,7 +1380,7 @@ export default function LabOrdersPage() {
                         >
                           <span className={`h-2.5 w-2.5 rounded-full ${tStyle.cap}`} />
                           <span>
-                            <strong>1x {tStyle.name}</strong> ({req.tests.join(", ")})
+                            <strong>1x {t(tStyle.name, tStyle.nameEn)}</strong> ({req.tests.join(", ")})
                           </span>
                         </div>
                       );
@@ -1358,7 +1396,7 @@ export default function LabOrdersPage() {
                   onClick={() => setIsCreateOpen(false)}
                   className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
                 >
-                  Batal
+                  {t("Batal", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -1368,12 +1406,12 @@ export default function LabOrdersPage() {
                   {actionLoading ? (
                     <>
                       <RefreshCw className="h-4 w-4 animate-spin" />
-                      <span>Memproses...</span>
+                      <span>{t("Memproses...", "Processing...")}</span>
                     </>
                   ) : (
                     <>
                       <Check className="h-4 w-4" />
-                      <span>Buat Order & Generate Barcode</span>
+                      <span>{t("Buat Order & Generate Barcode", "Create Order & Generate Barcodes")}</span>
                     </>
                   )}
                 </button>
@@ -1392,25 +1430,30 @@ export default function LabOrdersPage() {
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Terima Tabung di Meja Lab</h3>
+                <h3 className="font-bold text-slate-900 text-base">{t("Terima Tabung di Meja Lab", "Receive Tube at Lab Bench")}</h3>
                 <p className="text-xs text-slate-500 font-mono">{receiveBarcode}</p>
               </div>
             </div>
 
             <div className="space-y-3 mb-5">
               <p className="text-xs text-slate-600 leading-relaxed">
-                Konfirmasi penerimaan fisik spesimen di meja laboratorium. Status spesimen akan berubah menjadi <strong>RECEIVED_IN_LAB</strong> dan siap dialirkan ke mesin analiser.
+                {t(
+                  "Konfirmasi penerimaan fisik spesimen di meja laboratorium. Status spesimen akan berubah menjadi",
+                  "Confirm physical receipt of the specimen at the lab bench. The specimen status will change to"
+                )}{" "}
+                <strong>RECEIVED_IN_LAB</strong>{" "}
+                {t("dan siap dialirkan ke mesin analiser.", "and it will be ready to be routed to the analyzer.")}
               </p>
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
-                  Nomor Rak / Lokasi Penyimpanan
+                  {t("Nomor Rak / Lokasi Penyimpanan", "Rack Number / Storage Location")}
                 </label>
                 <input
                   type="text"
                   value={storageLocationInput}
                   onChange={(e) => setStorageLocationInput(e.target.value)}
-                  placeholder="misal: Rak Hematologi A-01"
+                  placeholder={t("misal: Rak Hematologi A-01", "e.g. Hematology Rack A-01")}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50 focus:bg-white focus:border-blue-500 focus:outline-hidden"
                 />
               </div>
@@ -1422,7 +1465,7 @@ export default function LabOrdersPage() {
                 onClick={() => setIsReceiveOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
               >
-                Batal
+                {t("Batal", "Cancel")}
               </button>
               <button
                 type="button"
@@ -1430,7 +1473,7 @@ export default function LabOrdersPage() {
                 onClick={handleReceiveSpecimen}
                 className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-xs"
               >
-                {actionLoading ? "Menyimpan..." : "Konfirmasi Penerimaan"}
+                {actionLoading ? t("Menyimpan...", "Saving...") : t("Konfirmasi Penerimaan", "Confirm Receipt")}
               </button>
             </div>
           </div>
@@ -1446,28 +1489,31 @@ export default function LabOrdersPage() {
                 <XCircle className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Tolak Sampel Spesimen</h3>
+                <h3 className="font-bold text-slate-900 text-base">{t("Tolak Sampel Spesimen", "Reject Specimen")}</h3>
                 <p className="text-xs text-slate-500 font-mono">{rejectBarcode}</p>
               </div>
             </div>
 
             <div className="space-y-3 mb-5">
               <p className="text-xs text-slate-600 leading-relaxed">
-                Berdasarkan standar ISO 15189, penolakan spesimen wajib menyertakan alasan klinis untuk memicu pengambilan ulang (*re-draw*).
+                {t(
+                  "Berdasarkan standar ISO 15189, penolakan spesimen wajib menyertakan alasan klinis untuk memicu pengambilan ulang (*re-draw*).",
+                  "Under ISO 15189, a specimen rejection must include a clinical reason to trigger a re-collection (*re-draw*)."
+                )}
               </p>
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
-                  Pilih Alasan Penolakan Standar
+                  {t("Pilih Alasan Penolakan Standar", "Select a Standard Rejection Reason")}
                 </label>
                 <div className="space-y-1.5 mb-2">
                   {[
-                    "Sampel Hemolisis / Lysis",
-                    "Sampel Beku / Clotted (Darah EDTA membeku)",
-                    "Volume Darah Kurang / Insufficient Quantity",
-                    "Salah Wadah / Tabung Antikoagulan Tertukar",
-                    "Label Barcode Rusak / Tidak Terbaca",
-                  ].map((r) => (
+                    { r: "Sampel Hemolisis / Lysis", en: "Hemolyzed Specimen" },
+                    { r: "Sampel Beku / Clotted (Darah EDTA membeku)", en: "Clotted Specimen (EDTA blood clotted)" },
+                    { r: "Volume Darah Kurang / Insufficient Quantity", en: "Insufficient Quantity (QNS)" },
+                    { r: "Salah Wadah / Tabung Antikoagulan Tertukar", en: "Wrong Container / Incorrect Anticoagulant Tube" },
+                    { r: "Label Barcode Rusak / Tidak Terbaca", en: "Damaged / Unreadable Barcode Label" },
+                  ].map(({ r, en }) => (
                     <button
                       key={r}
                       type="button"
@@ -1478,7 +1524,7 @@ export default function LabOrdersPage() {
                           : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
                       }`}
                     >
-                      {r}
+                      {t(r, en)}
                     </button>
                   ))}
                 </div>
@@ -1487,7 +1533,7 @@ export default function LabOrdersPage() {
                   type="text"
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
-                  placeholder="Atau ketik alasan lain secara spesifik..."
+                  placeholder={t("Atau ketik alasan lain secara spesifik...", "Or type another specific reason...")}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50 focus:bg-white focus:border-rose-500 focus:outline-hidden"
                 />
               </div>
@@ -1499,7 +1545,7 @@ export default function LabOrdersPage() {
                 onClick={() => setIsRejectOpen(false)}
                 className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
               >
-                Batal
+                {t("Batal", "Cancel")}
               </button>
               <button
                 type="button"
@@ -1507,7 +1553,7 @@ export default function LabOrdersPage() {
                 onClick={handleRejectSpecimen}
                 className="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700 shadow-xs disabled:opacity-50"
               >
-                {actionLoading ? "Menyimpan..." : "Tolak Spesimen Ini"}
+                {actionLoading ? t("Menyimpan...", "Saving...") : t("Tolak Spesimen Ini", "Reject This Specimen")}
               </button>
             </div>
           </div>

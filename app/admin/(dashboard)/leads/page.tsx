@@ -35,6 +35,7 @@ import {
 import { DemoRequestRecord, InstitutionType, LeadApprovalStatus } from "@/types";
 import { MetricCard } from "@/components/admin/MetricCard";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 interface LeadHistory {
   magicLinks: Array<{
@@ -54,22 +55,22 @@ interface LeadHistory {
   }>;
 }
 
-const historyActionLabels: Record<string, string> = {
-  LEAD_CREATED: "Permohonan diterima dari formulir",
-  LEAD_APPROVED: "Permohonan disetujui & Magic Link dibuat",
-  MAGIC_LINK_REISSUED: "Magic Link baru diterbitkan",
-  LEAD_REJECTED: "Permohonan ditolak",
-  MAGIC_LINK_CONSUMED: "Klien masuk melalui Magic Link",
-  MAGIC_LINK_FAILED: "Percobaan Magic Link gagal",
-  DEMO_ACCESS_ACTIVATED: "Akses demo diaktifkan",
-  DEMO_ACCESS_EXTENDED: "Akses demo diperpanjang",
-  LEAD_STATUS_CHANGED: "Status pipeline berubah",
-  LEAD_COMPLETED: "Demo dikonfirmasi selesai",
+const historyActionLabels: Record<string, { id: string; en: string }> = {
+  LEAD_CREATED: { id: "Permohonan diterima dari formulir", en: "Request received from form" },
+  LEAD_APPROVED: { id: "Permohonan disetujui & Magic Link dibuat", en: "Request approved & Magic Link created" },
+  MAGIC_LINK_REISSUED: { id: "Magic Link baru diterbitkan", en: "New Magic Link issued" },
+  LEAD_REJECTED: { id: "Permohonan ditolak", en: "Request rejected" },
+  MAGIC_LINK_CONSUMED: { id: "Klien masuk melalui Magic Link", en: "Client signed in via Magic Link" },
+  MAGIC_LINK_FAILED: { id: "Percobaan Magic Link gagal", en: "Magic Link attempt failed" },
+  DEMO_ACCESS_ACTIVATED: { id: "Akses demo diaktifkan", en: "Demo access activated" },
+  DEMO_ACCESS_EXTENDED: { id: "Akses demo diperpanjang", en: "Demo access extended" },
+  LEAD_STATUS_CHANGED: { id: "Status pipeline berubah", en: "Pipeline status changed" },
+  LEAD_COMPLETED: { id: "Demo dikonfirmasi selesai", en: "Demo confirmed completed" },
 };
 
-const formatDateTime = (value?: string | null) =>
+const formatDateTime = (value: string | null | undefined, locale: string) =>
   value
-    ? new Date(value).toLocaleString("id-ID", {
+    ? new Date(value).toLocaleString(locale, {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -102,31 +103,31 @@ interface LeadMetrics {
 
 const statusBadgeStyles: Record<
   number,
-  { label: string; bg: string; text: string; border: string; dot: string }
+  { label: { id: string; en: string }; bg: string; text: string; border: string; dot: string }
 > = {
   1: {
-    label: "Baru",
+    label: { id: "Baru", en: "New" },
     bg: "bg-blue-50",
     text: "text-blue-700",
     border: "border-blue-200",
     dot: "bg-blue-500",
   },
   2: {
-    label: "Dihubungi",
+    label: { id: "Dihubungi", en: "Contacted" },
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-200",
     dot: "bg-amber-500",
   },
   3: {
-    label: "Jadwal Demo",
+    label: { id: "Jadwal Demo", en: "Demo Scheduled" },
     bg: "bg-purple-50",
     text: "text-purple-700",
     border: "border-purple-200",
     dot: "bg-purple-500",
   },
   4: {
-    label: "Selesai",
+    label: { id: "Selesai", en: "Completed" },
     bg: "bg-emerald-50",
     text: "text-emerald-700",
     border: "border-emerald-200",
@@ -136,24 +137,24 @@ const statusBadgeStyles: Record<
 
 const approvalBadgeStyles: Record<
   LeadApprovalStatus,
-  { label: string; bg: string; text: string; border: string; icon: any }
+  { label: { id: string; en: string }; bg: string; text: string; border: string; icon: any }
 > = {
   PENDING: {
-    label: "Menunggu Review",
+    label: { id: "Menunggu Review", en: "Pending Review" },
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-200",
     icon: Clock,
   },
   APPROVED: {
-    label: "Disetujui",
+    label: { id: "Disetujui", en: "Approved" },
     bg: "bg-emerald-50",
     text: "text-emerald-700",
     border: "border-emerald-200",
     icon: ShieldCheck,
   },
   REJECTED: {
-    label: "Ditolak",
+    label: { id: "Ditolak", en: "Rejected" },
     bg: "bg-rose-50",
     text: "text-rose-700",
     border: "border-rose-200",
@@ -161,16 +162,30 @@ const approvalBadgeStyles: Record<
   },
 };
 
-const institutionLabels: Record<string, string> = {
-  hospital: "Rumah Sakit",
-  "clinical-lab": "Laboratorium Klinis",
-  "pathology-center": "Pusat Patologi",
-  "microbiology-center": "Pusat Mikrobiologi",
-  "blood-bank": "Bank Darah",
-  other: "Lainnya",
+const institutionLabels: Record<string, { id: string; en: string }> = {
+  hospital: { id: "Rumah Sakit", en: "Hospital" },
+  "clinical-lab": { id: "Laboratorium Klinis", en: "Clinical Laboratory" },
+  "pathology-center": { id: "Pusat Patologi", en: "Pathology Center" },
+  "microbiology-center": { id: "Pusat Mikrobiologi", en: "Microbiology Center" },
+  "blood-bank": { id: "Bank Darah", en: "Blood Bank" },
+  other: { id: "Lainnya", en: "Other" },
 };
 
 export default function AdminLeadsPage() {
+  const { t, locale } = useAdminLang();
+  const fmtDateTime = (value?: string | null) => formatDateTime(value, locale);
+  const institutionLabel = (type: string) => {
+    const l = institutionLabels[type];
+    return l ? t(l.id, l.en) : type;
+  };
+  const approvalLabel = (status: LeadApprovalStatus) => {
+    const l = approvalBadgeStyles[status]?.label;
+    return l ? t(l.id, l.en) : status;
+  };
+  const statusLabel = (st: number) => {
+    const l = statusBadgeStyles[st].label;
+    return t(l.id, l.en);
+  };
   const [leads, setLeads] = useState<DemoRequestRecord[]>([]);
   const [metrics, setMetrics] = useState<LeadMetrics>({
     total: 0,
@@ -289,7 +304,10 @@ export default function AdminLeadsPage() {
         if (fresh.magicLinkUsedAt) {
           setSelectedLead((cur) => (cur && cur.id === fresh.id ? fresh : cur));
           setActionSuccessMessage(
-            `${fresh.name} sudah masuk melalui Magic Link pada ${formatDateTime(fresh.magicLinkUsedAt)}. Status otomatis menjadi Jadwal Demo dan masa aktif demo mulai berjalan.`
+            t(
+              `${fresh.name} sudah masuk melalui Magic Link pada ${formatDateTime(fresh.magicLinkUsedAt, locale)}. Status otomatis menjadi Jadwal Demo dan masa aktif demo mulai berjalan.`,
+              `${fresh.name} signed in via Magic Link on ${formatDateTime(fresh.magicLinkUsedAt, locale)}. Status automatically changed to Demo Scheduled and the demo access period has started.`
+            )
           );
           fetchLeads({ silent: true });
           fetchHistory(fresh.id);
@@ -304,7 +322,7 @@ export default function AdminLeadsPage() {
       cancelled = true;
       clearInterval(timer);
     };
-  }, [selectedLeadId, waitingSelected, fetchLeads, fetchHistory]);
+  }, [selectedLeadId, waitingSelected, fetchLeads, fetchHistory, t, locale]);
 
   // Tabel ikut diperbarui selama masih ada tautan yang menunggu dipakai.
   const anyWaitingInList = leads.some((l) => magicLinkState(l) === "waiting");
@@ -381,15 +399,15 @@ export default function AdminLeadsPage() {
       if (res.ok && json.success && json.data) {
         setSelectedLead(json.data.lead);
         setGeneratedMagicLink(json.data.magicLinkUrl);
-        setActionSuccessMessage(json.message || "Permohonan demo disetujui. Magic Link harus dibuka pertama kali dalam 24 jam.");
+        setActionSuccessMessage(json.message || t("Permohonan demo disetujui. Magic Link harus dibuka pertama kali dalam 24 jam.", "Demo request approved. The Magic Link must be opened for the first time within 24 hours."));
         fetchLeads();
         fetchHistory(selectedLead.id);
       } else {
-        alert(json.message || "Gagal menyetujui permohonan");
+        alert(json.message || t("Gagal menyetujui permohonan", "Failed to approve request"));
       }
     } catch (err) {
       console.error("Error approving lead:", err);
-      alert("Terjadi kesalahan jaringan.");
+      alert(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsApproving(false);
     }
@@ -413,15 +431,15 @@ export default function AdminLeadsPage() {
       if (res.ok && json.success && json.data) {
         setSelectedLead(json.data);
         setShowRejectForm(false);
-        setActionSuccessMessage(json.message || "Permohonan demo telah DITOLAK.");
+        setActionSuccessMessage(json.message || t("Permohonan demo telah DITOLAK.", "Demo request has been REJECTED."));
         fetchLeads();
         fetchHistory(selectedLead.id);
       } else {
-        alert(json.message || "Gagal menolak permohonan");
+        alert(json.message || t("Gagal menolak permohonan", "Failed to reject request"));
       }
     } catch (err) {
       console.error("Error rejecting lead:", err);
-      alert("Terjadi kesalahan jaringan.");
+      alert(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsRejecting(false);
     }
@@ -445,11 +463,11 @@ export default function AdminLeadsPage() {
         fetchLeads();
         fetchHistory(selectedLead.id);
       } else {
-        alert(data.message || "Gagal mengubah status");
+        alert(data.message || t("Gagal mengubah status", "Failed to change status"));
       }
     } catch (err) {
       console.error("Error updating status:", err);
-      alert("Terjadi kesalahan jaringan.");
+      alert(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsUpdatingStatus(false);
     }
@@ -458,7 +476,7 @@ export default function AdminLeadsPage() {
   /** Admin mengonfirmasi demo benar-benar selesai: Jadwal Demo -> Selesai. */
   const handleCompleteDemo = async () => {
     if (!selectedLead) return;
-    if (!window.confirm("Konfirmasi bahwa sesi demo untuk permohonan ini benar-benar telah selesai?")) return;
+    if (!window.confirm(t("Konfirmasi bahwa sesi demo untuk permohonan ini benar-benar telah selesai?", "Confirm that the demo session for this request has actually been completed?"))) return;
     setIsUpdatingStatus(true);
     setActionSuccessMessage("");
     try {
@@ -470,11 +488,11 @@ export default function AdminLeadsPage() {
         fetchLeads();
         fetchHistory(selectedLead.id);
       } else {
-        alert(data.message || "Gagal mengonfirmasi demo selesai");
+        alert(data.message || t("Gagal mengonfirmasi demo selesai", "Failed to confirm demo completion"));
       }
     } catch (err) {
       console.error("Error completing demo:", err);
-      alert("Terjadi kesalahan jaringan.");
+      alert(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsUpdatingStatus(false);
     }
@@ -494,15 +512,17 @@ export default function AdminLeadsPage() {
       const data = await res.json();
       if (res.ok && data.success && data.data) {
         setSelectedLead(data.data.lead);
-        setActionSuccessMessage(`${data.message} Berlaku hingga ${formatDateTime(data.data.newExpiresAt)}.`);
+        setActionSuccessMessage(
+          `${data.message} ${t("Berlaku hingga", "Valid until")} ${fmtDateTime(data.data.newExpiresAt)}.`
+        );
         fetchLeads();
         fetchHistory(selectedLead.id);
       } else {
-        alert(data.message || "Gagal memperpanjang akses demo");
+        alert(data.message || t("Gagal memperpanjang akses demo", "Failed to extend demo access"));
       }
     } catch (err) {
       console.error("Error extending access:", err);
-      alert("Terjadi kesalahan jaringan.");
+      alert(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsExtending(false);
     }
@@ -549,7 +569,7 @@ export default function AdminLeadsPage() {
       message += `🎉 *KABAR BAIK: Permohonan Akses Demo Anda Telah Disetujui!*\n\n`;
       message += `📋 *Rincian Jadwal & Akses Demo:*\n`;
       message += `📅 *Waktu Demo Resmi:* ${waktuText}\n`;
-      message += `🏢 *Institusi:* ${lead.institution} (${institutionLabels[lead.institutionType] || lead.institutionType})\n`;
+      message += `🏢 *Institusi:* ${lead.institution} (${institutionLabels[lead.institutionType]?.id || lead.institutionType})\n`;
       message += `👤 *Nama Pemohon:* ${lead.name} (${lead.jobTitle})\n`;
       message += `⏳ *Masa Aktif Akun:* ${lead.demoDurationDays || 7} Hari (sejak tautan pertama dibuka)\n\n`;
 
@@ -563,7 +583,7 @@ export default function AdminLeadsPage() {
       message += `Saya dari tim spesialis Diagnova ingin mengonfirmasi jadwal presentasi demo teknis Anda.\n\n`;
       message += `📋 *Rincian Jadwal Pengajuan:*\n`;
       message += `📅 *Waktu yang Diajukan:* ${waktuText}\n`;
-      message += `🏢 *Institusi:* ${lead.institution} (${institutionLabels[lead.institutionType] || lead.institutionType})\n`;
+      message += `🏢 *Institusi:* ${lead.institution} (${institutionLabels[lead.institutionType]?.id || lead.institutionType})\n`;
       message += `👤 *Nama Pemohon:* ${lead.name} (${lead.jobTitle})\n`;
       message += `📞 *Kontak:* ${lead.phone}\n\n`;
     }
@@ -596,14 +616,17 @@ export default function AdminLeadsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-display">
-              Permohonan Demo (Leads CRM)
+              {t("Permohonan Demo (Leads CRM)", "Demo Requests (Leads CRM)")}
             </h1>
             <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700">
-              LIS Pipeline
+              {t("LIS Pipeline", "LIS Pipeline")}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Kelola calon klien laboratorium, review & persetujuan akses demo, dan terbitkan Magic Link login.
+            {t(
+              "Kelola calon klien laboratorium, review & persetujuan akses demo, dan terbitkan Magic Link login.",
+              "Manage laboratory prospects, review & approve demo access, and issue Magic Link logins."
+            )}
           </p>
         </div>
 
@@ -612,10 +635,10 @@ export default function AdminLeadsPage() {
             onClick={() => fetchLeads()}
             disabled={isLoading}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors shadow-xs disabled:opacity-50"
-            title="Muat ulang data"
+            title={t("Muat ulang data", "Reload data")}
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-blue-600" : ""}`} />
-            <span>Refresh</span>
+            <span>{t("Refresh", "Refresh")}</span>
           </button>
 
           <a
@@ -624,7 +647,7 @@ export default function AdminLeadsPage() {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white transition-colors shadow-xs"
           >
             <Download className="h-3.5 w-3.5 text-white" />
-            <span>Ekspor CSV</span>
+            <span>{t("Ekspor CSV", "Export CSV")}</span>
           </a>
         </div>
       </div>
@@ -632,48 +655,48 @@ export default function AdminLeadsPage() {
       {/* KPI Cards Row (Baru, Dihubungi, Jadwal Demo, Selesai) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         <MetricCard
-          title="Total Masuk"
+          title={t("Total Masuk", "Total Received")}
           value={metrics.total}
-          subtitle="Seluruh lead tercatat"
+          subtitle={t("Seluruh lead tercatat", "All recorded leads")}
           icon={Users}
           iconBg="bg-slate-100"
           iconColor="text-slate-700"
         />
         <MetricCard
-          title="Baru"
+          title={t("Baru", "New")}
           value={metrics.new}
-          subtitle="Perlu segera dihubungi"
+          subtitle={t("Perlu segera dihubungi", "Needs follow-up soon")}
           icon={AlertCircle}
           iconBg="bg-blue-50"
           iconColor="text-[#087BEE]"
-          badge={{ text: "Tahap 1", variant: "default" }}
+          badge={{ text: t("Tahap 1", "Stage 1"), variant: "default" }}
         />
         <MetricCard
-          title="Dihubungi"
+          title={t("Dihubungi", "Contacted")}
           value={metrics.contacted}
-          subtitle="Sedang komunikasi"
+          subtitle={t("Sedang komunikasi", "In communication")}
           icon={PhoneCall}
           iconBg="bg-amber-50"
           iconColor="text-[#E5A23B]"
-          badge={{ text: "Tahap 2", variant: "warning" }}
+          badge={{ text: t("Tahap 2", "Stage 2"), variant: "warning" }}
         />
         <MetricCard
-          title="Jadwal Demo"
+          title={t("Jadwal Demo", "Demo Scheduled")}
           value={metrics.scheduled}
-          subtitle="Voucher demo aktif"
+          subtitle={t("Voucher demo aktif", "Active demo voucher")}
           icon={CalendarCheck}
           iconBg="bg-purple-50"
           iconColor="text-purple-600"
-          badge={{ text: "Tahap 3", variant: "purple" }}
+          badge={{ text: t("Tahap 3", "Stage 3"), variant: "purple" }}
         />
         <MetricCard
-          title="Selesai"
+          title={t("Selesai", "Completed")}
           value={metrics.completed}
-          subtitle="Telah didemokan"
+          subtitle={t("Telah didemokan", "Demo delivered")}
           icon={CheckCircle2}
           iconBg="bg-emerald-50"
           iconColor="text-[#16A374]"
-          badge={{ text: "Tahap 4", variant: "success" }}
+          badge={{ text: t("Tahap 4", "Stage 4"), variant: "success" }}
           className="col-span-2 sm:col-span-1"
         />
       </div>
@@ -691,14 +714,14 @@ export default function AdminLeadsPage() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="Cari nama, rumah sakit, email, atau no. telepon..."
+              placeholder={t("Cari nama, rumah sakit, email, atau no. telepon...", "Search name, hospital, email, or phone number...")}
               className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden transition-colors"
             />
           </div>
 
           {/* Status Approval Filter */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-            <span className="text-[11px] font-semibold text-slate-500 whitespace-nowrap mr-1">Approval:</span>
+            <span className="text-[11px] font-semibold text-slate-500 whitespace-nowrap mr-1">{t("Approval:", "Approval:")}</span>
             <button
               onClick={() => {
                 setApprovalFilter("all");
@@ -710,7 +733,7 @@ export default function AdminLeadsPage() {
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
-              Semua
+              {t("Semua", "All")}
             </button>
             {(["PENDING", "APPROVED", "REJECTED"] as const).map((ap) => (
               <button
@@ -725,7 +748,7 @@ export default function AdminLeadsPage() {
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
-                <span>{approvalBadgeStyles[ap].label}</span>
+                <span>{approvalLabel(ap)}</span>
               </button>
             ))}
           </div>
@@ -735,7 +758,7 @@ export default function AdminLeadsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
           {/* Status CRM Buttons */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            <span className="text-[11px] font-semibold text-slate-500 whitespace-nowrap mr-1">Status CRM:</span>
+            <span className="text-[11px] font-semibold text-slate-500 whitespace-nowrap mr-1">{t("Status CRM:", "CRM Status:")}</span>
             <button
               onClick={() => {
                 setStatusFilter("all");
@@ -747,7 +770,7 @@ export default function AdminLeadsPage() {
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
-              Semua
+              {t("Semua", "All")}
             </button>
             {([1, 2, 3, 4] as const).map((st) => (
               <button
@@ -762,7 +785,7 @@ export default function AdminLeadsPage() {
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
-                {statusBadgeStyles[st].label}
+                {statusLabel(st)}
               </button>
             ))}
           </div>
@@ -798,7 +821,7 @@ export default function AdminLeadsPage() {
                 onClick={handleResetFilters}
                 className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] font-medium transition-colors"
               >
-                Reset Filter
+                {t("Reset Filter", "Reset Filters")}
               </button>
             )}
           </div>
@@ -811,14 +834,14 @@ export default function AdminLeadsPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3 px-4">Tanggal Masuk</th>
-                <th className="py-3 px-4">Calon Klien</th>
-                <th className="py-3 px-4">Institusi / Lab</th>
-                <th className="py-3 px-4">Kontak</th>
-                <th className="py-3 px-4">Jadwal Demo</th>
-                <th className="py-3 px-4">Status CRM</th>
-                <th className="py-3 px-4">Approval Demo</th>
-                <th className="py-3 px-4 text-right">Aksi</th>
+                <th className="py-3 px-4">{t("Tanggal Masuk", "Date Received")}</th>
+                <th className="py-3 px-4">{t("Calon Klien", "Prospect")}</th>
+                <th className="py-3 px-4">{t("Institusi / Lab", "Institution / Lab")}</th>
+                <th className="py-3 px-4">{t("Kontak", "Contact")}</th>
+                <th className="py-3 px-4">{t("Jadwal Demo", "Demo Schedule")}</th>
+                <th className="py-3 px-4">{t("Status CRM", "CRM Status")}</th>
+                <th className="py-3 px-4">{t("Approval Demo", "Demo Approval")}</th>
+                <th className="py-3 px-4 text-right">{t("Aksi", "Actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -826,16 +849,19 @@ export default function AdminLeadsPage() {
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-slate-400">
                     <RefreshCw className="h-6 w-6 animate-spin mx-auto text-blue-600 mb-2" />
-                    <span>Memuat data leads...</span>
+                    <span>{t("Memuat data leads...", "Loading leads...")}</span>
                   </td>
                 </tr>
               ) : leads.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-slate-400">
                     <Users className="h-8 w-8 mx-auto text-slate-400 mb-2" />
-                    <p className="font-semibold text-slate-800">Belum ada permohonan demo ditemukan</p>
+                    <p className="font-semibold text-slate-800">{t("Belum ada permohonan demo ditemukan", "No demo requests found")}</p>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Coba sesuaikan filter status, approval, atau kata kunci pencarian.
+                      {t(
+                        "Coba sesuaikan filter status, approval, atau kata kunci pencarian.",
+                        "Try adjusting the status or approval filters, or the search keywords."
+                      )}
                     </p>
                   </td>
                 </tr>
@@ -853,13 +879,13 @@ export default function AdminLeadsPage() {
                       onClick={() => handleOpenDetail(lead)}
                     >
                       <td className="py-3.5 px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]">
-                        {new Date(lead.createdAt).toLocaleDateString("id-ID", {
+                        {new Date(lead.createdAt).toLocaleDateString(locale, {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                         })}
                         <span className="block text-[10px] text-slate-400">
-                          {new Date(lead.createdAt).toLocaleTimeString("id-ID", {
+                          {new Date(lead.createdAt).toLocaleTimeString(locale, {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -876,7 +902,7 @@ export default function AdminLeadsPage() {
                       <td className="py-3.5 px-4 font-medium text-slate-800">
                         {lead.institution}
                         <span className="block text-[10px] text-slate-400">
-                          {institutionLabels[lead.institutionType] || lead.institutionType}
+                          {institutionLabel(lead.institutionType)}
                         </span>
                       </td>
 
@@ -902,19 +928,19 @@ export default function AdminLeadsPage() {
                           >
                             <Calendar className="h-3 w-3" />
                             <span>
-                              {new Date(targetSchedule).toLocaleDateString("id-ID", {
+                              {new Date(targetSchedule).toLocaleDateString(locale, {
                                 day: "numeric",
                                 month: "short",
                               })}{" "}
                               •{" "}
-                              {new Date(targetSchedule).toLocaleTimeString("id-ID", {
+                              {new Date(targetSchedule).toLocaleTimeString(locale, {
                                 hour: "2-digit",
                                 minute: "2-digit",
                               })}
                             </span>
                             {isConfirmed && (
                               <span className="text-[9px] uppercase font-bold bg-emerald-200 text-emerald-900 px-1 rounded">
-                                Fix
+                                {t("Fix", "Fixed")}
                               </span>
                             )}
                           </div>
@@ -932,18 +958,18 @@ export default function AdminLeadsPage() {
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${apStyle.bg} ${apStyle.text} ${apStyle.border}`}
                         >
                           <ApIcon className="h-3 w-3" />
-                          <span>{apStyle.label}</span>
+                          <span>{t(apStyle.label.id, apStyle.label.en)}</span>
                         </span>
                         {magicLinkState(lead) === "waiting" && (
                           <span data-testid={`lead-link-${lead.id}`} data-state="waiting" className="mt-1 flex items-center gap-1 text-[10px] font-medium text-amber-700">
                             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-                            Link belum dipakai
+                            {t("Link belum dipakai", "Link not used yet")}
                           </span>
                         )}
                         {magicLinkState(lead) === "used" && (
                           <span data-testid={`lead-link-${lead.id}`} data-state="used" className="mt-1 flex items-center gap-1 text-[10px] font-medium text-emerald-700">
                             <Check className="h-3 w-3" />
-                            Sudah masuk {formatDateTime(lead.magicLinkUsedAt)}
+                            {t("Sudah masuk", "Signed in")} {fmtDateTime(lead.magicLinkUsedAt)}
                           </span>
                         )}
                       </td>
@@ -958,7 +984,7 @@ export default function AdminLeadsPage() {
                           className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700 transition-colors shadow-2xs group-hover:border-blue-300 group-hover:text-blue-600"
                         >
                           <Eye className="h-3.5 w-3.5" />
-                          <span>Detail</span>
+                          <span>{t("Detail", "Details")}</span>
                         </button>
                       </td>
                     </tr>
@@ -972,7 +998,7 @@ export default function AdminLeadsPage() {
         {totalPages > 1 && (
           <div className="p-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
             <div>
-              Halaman <span className="font-semibold text-slate-900">{currentPage}</span> dari{" "}
+              {t("Halaman", "Page")} <span className="font-semibold text-slate-900">{currentPage}</span> {t("dari", "of")}{" "}
               <span className="font-semibold text-slate-900">{totalPages}</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -1022,11 +1048,13 @@ export default function AdminLeadsPage() {
                     approvalBadgeStyles[selectedLead.approvalStatus]?.border || "border-slate-200"
                   }`}
                 >
-                  <span>{approvalBadgeStyles[selectedLead.approvalStatus]?.label || selectedLead.approvalStatus}</span>
+                  <span>{approvalLabel(selectedLead.approvalStatus)}</span>
                 </span>
                 <button
                   onClick={() => setSelectedLead(null)}
                   className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  title={t("Tutup", "Close")}
+                  aria-label={t("Tutup", "Close")}
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1047,7 +1075,7 @@ export default function AdminLeadsPage() {
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                     <FileText className="h-3.5 w-3.5 text-blue-600" />
-                    <span>Seluruh Informasi Formulir Pemohon</span>
+                    <span>{t("Seluruh Informasi Formulir Pemohon", "Full Applicant Form Details")}</span>
                   </h4>
                   <StatusBadge type={selectedLead.status} />
                 </div>
@@ -1057,7 +1085,7 @@ export default function AdminLeadsPage() {
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
                       <User className="h-3 w-3" />
-                      <span>Nama Lengkap</span>
+                      <span>{t("Nama Lengkap", "Full Name")}</span>
                     </span>
                     <p className="font-semibold text-slate-900 text-sm">{selectedLead.name}</p>
                   </div>
@@ -1066,7 +1094,7 @@ export default function AdminLeadsPage() {
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
                       <Building2 className="h-3 w-3" />
-                      <span>Nama Institusi / RS</span>
+                      <span>{t("Nama Institusi / RS", "Institution / Hospital Name")}</span>
                     </span>
                     <p className="font-semibold text-slate-900 text-sm">{selectedLead.institution}</p>
                   </div>
@@ -1075,16 +1103,16 @@ export default function AdminLeadsPage() {
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
                       <Briefcase className="h-3 w-3" />
-                      <span>Jabatan</span>
+                      <span>{t("Jabatan", "Job Title")}</span>
                     </span>
                     <p className="font-semibold text-slate-900">{selectedLead.jobTitle}</p>
                   </div>
 
                   {/* Jenis Institusi */}
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                    <span className="text-[10px] uppercase font-bold text-slate-400">Jenis Institusi</span>
+                    <span className="text-[10px] uppercase font-bold text-slate-400">{t("Jenis Institusi", "Institution Type")}</span>
                     <p className="font-semibold text-slate-900">
-                      {institutionLabels[selectedLead.institutionType] || selectedLead.institutionType}
+                      {institutionLabel(selectedLead.institutionType)}
                     </p>
                   </div>
 
@@ -1092,7 +1120,7 @@ export default function AdminLeadsPage() {
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
                       <Mail className="h-3 w-3" />
-                      <span>Alamat Email</span>
+                      <span>{t("Alamat Email", "Email Address")}</span>
                     </span>
                     <a
                       href={`mailto:${selectedLead.email}`}
@@ -1106,7 +1134,7 @@ export default function AdminLeadsPage() {
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
                       <Phone className="h-3 w-3" />
-                      <span>No. Telepon / WhatsApp</span>
+                      <span>{t("No. Telepon / WhatsApp", "Phone / WhatsApp")}</span>
                     </span>
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-slate-900 font-mono">{selectedLead.phone}</span>
@@ -1126,12 +1154,12 @@ export default function AdminLeadsPage() {
                   <div className="p-3 rounded-xl bg-blue-50/60 border border-blue-200 space-y-1 sm:col-span-2">
                     <span className="text-[10px] uppercase font-bold text-blue-600 flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      <span>Jadwal yang Diajukan Calon Klien</span>
+                      <span>{t("Jadwal yang Diajukan Calon Klien", "Schedule Requested by Prospect")}</span>
                     </span>
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-slate-900 text-sm">
                         {selectedLead.requestedDemoDate || selectedLead.demoDate ? (
-                          new Date(selectedLead.requestedDemoDate || selectedLead.demoDate!).toLocaleString("id-ID", {
+                          new Date(selectedLead.requestedDemoDate || selectedLead.demoDate!).toLocaleString(locale, {
                             weekday: "long",
                             day: "numeric",
                             month: "long",
@@ -1141,12 +1169,12 @@ export default function AdminLeadsPage() {
                           }) + " WIB"
                         ) : (
                           <span className="text-slate-400 italic font-normal text-xs">
-                            Tidak menentukan tanggal khusus saat mengisi form
+                            {t("Tidak menentukan tanggal khusus saat mengisi form", "No specific date chosen when filling in the form")}
                           </span>
                         )}
                       </p>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 border border-blue-300">
-                        Preferensi Pemohon
+                        {t("Preferensi Pemohon", "Applicant Preference")}
                       </span>
                     </div>
                   </div>
@@ -1155,10 +1183,12 @@ export default function AdminLeadsPage() {
                 {/* Kebutuhan Khusus / Notes */}
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                    Kebutuhan Khusus & Model Mesin Analyzer (Notes):
+                    {t("Kebutuhan Khusus & Model Mesin Analyzer (Notes):", "Special Requirements & Analyzer Models (Notes):")}
                   </span>
                   <p className="text-slate-800 whitespace-pre-wrap leading-relaxed">
-                    {selectedLead.notes ? selectedLead.notes : "Tidak ada catatan khusus yang disertakan pada formulir."}
+                    {selectedLead.notes
+                      ? selectedLead.notes
+                      : t("Tidak ada catatan khusus yang disertakan pada formulir.", "No special notes were included in the form.")}
                   </p>
                 </div>
               </div>
@@ -1169,7 +1199,7 @@ export default function AdminLeadsPage() {
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-blue-600" />
                     <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      Status & Manajemen Approval Akses Demo
+                      {t("Status & Manajemen Approval Akses Demo", "Demo Access Approval Status & Management")}
                     </span>
                   </div>
                   <span
@@ -1179,7 +1209,7 @@ export default function AdminLeadsPage() {
                       approvalBadgeStyles[selectedLead.approvalStatus]?.border
                     }`}
                   >
-                    {approvalBadgeStyles[selectedLead.approvalStatus]?.label}
+                    {approvalLabel(selectedLead.approvalStatus)}
                   </span>
                 </div>
 
@@ -1187,14 +1217,22 @@ export default function AdminLeadsPage() {
                 {selectedLead.approvalStatus === "PENDING" && (
                   <div className="space-y-3 pt-1">
                     <p className="text-xs text-slate-600 leading-relaxed bg-amber-50/70 p-3 rounded-xl border border-amber-200/80">
-                      Permohonan ini menunggu verifikasi admin. Menyetujui permohonan akan mengaktifkan akun demo dan menghasilkan <strong>Magic Link (passwordless login)</strong> untuk calon klien (dibuka pertama kali dalam 24 jam, lalu dapat dipakai masuk kembali selama masa aktif).
+                      {t(
+                        "Permohonan ini menunggu verifikasi admin. Menyetujui permohonan akan mengaktifkan akun demo dan menghasilkan ",
+                        "This request is awaiting admin verification. Approving it activates the demo account and generates a "
+                      )}
+                      <strong>Magic Link (passwordless login)</strong>
+                      {t(
+                        " untuk calon klien (dibuka pertama kali dalam 24 jam, lalu dapat dipakai masuk kembali selama masa aktif).",
+                        " for the prospect (must be opened for the first time within 24 hours, then can be used to sign in again during the active period)."
+                      )}
                     </p>
 
                     {/* Konfirmasi Jadwal Resmi */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
                         <Calendar className="h-3.5 w-3.5 text-blue-600" />
-                        <span>Konfirmasi Tanggal & Jam Demo Resmi:</span>
+                        <span>{t("Konfirmasi Tanggal & Jam Demo Resmi:", "Confirm Official Demo Date & Time:")}</span>
                       </label>
                       <input
                         type="datetime-local"
@@ -1208,14 +1246,14 @@ export default function AdminLeadsPage() {
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-blue-600" />
-                        <span>Batas Masa Aktif Demo (sejak akun pertama dibuka):</span>
+                        <span>{t("Batas Masa Aktif Demo (sejak akun pertama dibuka):", "Demo Access Period (from first sign-in):")}</span>
                       </label>
                       <div className="grid grid-cols-4 gap-2">
                         {[
-                          { days: 3, label: "3 Hari" },
-                          { days: 7, label: "7 Hari (Standard)" },
-                          { days: 14, label: "14 Hari" },
-                          { days: 30, label: "1 Bulan" },
+                          { days: 3, label: t("3 Hari", "3 Days") },
+                          { days: 7, label: t("7 Hari (Standard)", "7 Days (Standard)") },
+                          { days: 14, label: t("14 Hari", "14 Days") },
+                          { days: 30, label: t("1 Bulan", "1 Month") },
                         ].map((opt) => (
                           <button
                             key={opt.days}
@@ -1244,25 +1282,32 @@ export default function AdminLeadsPage() {
                           className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
                         >
                           <ShieldCheck className="h-4 w-4" />
-                          <span>{isApproving ? "Memproses Approval..." : "Setujui Permohonan & Buat Magic Link"}</span>
+                          <span>
+                            {isApproving
+                              ? t("Memproses Approval...", "Processing Approval...")
+                              : t("Setujui Permohonan & Buat Magic Link", "Approve Request & Create Magic Link")}
+                          </span>
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowRejectForm(true)}
                           className="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-600 text-xs font-semibold border border-slate-200 transition-colors"
                         >
-                          Tolak Permohonan
+                          {t("Tolak Permohonan", "Reject Request")}
                         </button>
                       </div>
                     ) : (
                       /* Form Alasan Penolakan */
                       <form onSubmit={handleReject} className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 space-y-2.5">
-                        <span className="text-xs font-bold text-rose-800 block">Alasan Penolakan Permohonan:</span>
+                        <span className="text-xs font-bold text-rose-800 block">{t("Alasan Penolakan Permohonan:", "Reason for Rejection:")}</span>
                         <input
                           type="text"
                           value={rejectionReason}
                           onChange={(e) => setRejectionReason(e.target.value)}
-                          placeholder="Contoh: Bukan staf rumah sakit/lab resmi, atau kuota demo penuh..."
+                          placeholder={t(
+                            "Contoh: Bukan staf rumah sakit/lab resmi, atau kuota demo penuh...",
+                            "Example: Not official hospital/lab staff, or demo quota is full..."
+                          )}
                           required
                           className="w-full px-3 py-2 rounded-xl bg-white border border-rose-200 text-xs text-slate-900 focus:outline-hidden focus:border-rose-500"
                         />
@@ -1272,14 +1317,14 @@ export default function AdminLeadsPage() {
                             onClick={() => setShowRejectForm(false)}
                             className="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 text-xs font-semibold"
                           >
-                            Batal
+                            {t("Batal", "Cancel")}
                           </button>
                           <button
                             type="submit"
                             disabled={isRejecting || !rejectionReason.trim()}
                             className="px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold disabled:opacity-50"
                           >
-                            {isRejecting ? "Menolak..." : "Konfirmasi Tolak"}
+                            {isRejecting ? t("Menolak...", "Rejecting...") : t("Konfirmasi Tolak", "Confirm Rejection")}
                           </button>
                         </div>
                       </form>
@@ -1294,19 +1339,20 @@ export default function AdminLeadsPage() {
                       <div className="flex items-center justify-between font-semibold text-emerald-900">
                         <span className="flex items-center gap-1.5">
                           <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                          <span>Permohonan Telah Disetujui</span>
+                          <span>{t("Permohonan Telah Disetujui", "Request Approved")}</span>
                         </span>
                         {selectedLead.approvedAt && (
                           <span className="text-[10px] text-emerald-700 font-normal">
-                            Disetujui: {new Date(selectedLead.approvedAt).toLocaleDateString("id-ID")} oleh {selectedLead.approvedBy}
+                            {t("Disetujui:", "Approved:")} {new Date(selectedLead.approvedAt).toLocaleDateString(locale)}{" "}
+                            {t("oleh", "by")} {selectedLead.approvedBy}
                           </span>
                         )}
                       </div>
                       <p className="text-[11px] text-emerald-800">
-                        Jadwal resmi:{" "}
+                        {t("Jadwal resmi:", "Official schedule:")}{" "}
                         <strong className="font-semibold">
                           {selectedLead.confirmedDemoDate
-                            ? new Date(selectedLead.confirmedDemoDate).toLocaleString("id-ID", {
+                            ? new Date(selectedLead.confirmedDemoDate).toLocaleString(locale, {
                                 weekday: "long",
                                 day: "numeric",
                                 month: "long",
@@ -1314,9 +1360,12 @@ export default function AdminLeadsPage() {
                                 hour: "2-digit",
                                 minute: "2-digit",
                               }) + " WIB"
-                            : "Menunggu konfirmasi"}
+                            : t("Menunggu konfirmasi", "Awaiting confirmation")}
                         </strong>{" "}
-                        • Durasi akses demo: <strong>{selectedLead.demoDurationDays || 7} Hari</strong>
+                        • {t("Durasi akses demo:", "Demo access duration:")}{" "}
+                        <strong>
+                          {selectedLead.demoDurationDays || 7} {t("Hari", "Days")}
+                        </strong>
                       </p>
                     </div>
 
@@ -1326,10 +1375,10 @@ export default function AdminLeadsPage() {
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                             <LinkIcon className="h-3.5 w-3.5 text-blue-600" />
-                            <span>Tautan Akses Langsung (Magic Link)</span>
+                            <span>{t("Tautan Akses Langsung (Magic Link)", "Direct Access Link (Magic Link)")}</span>
                           </span>
                           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300">
-                            Buka pertama ≤ 24 jam
+                            {t("Buka pertama ≤ 24 jam", "First open ≤ 24 hours")}
                           </span>
                         </div>
 
@@ -1342,9 +1391,12 @@ export default function AdminLeadsPage() {
                           >
                             <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                             <span>
-                              <strong className="font-semibold">Klien sudah masuk</strong> melalui tautan pada{" "}
-                              {formatDateTime(selectedLead.magicLinkUsedAt)}. Tautan yang sama tetap bisa dipakai klien untuk
-                              masuk kembali selama masa aktif demo.
+                              <strong className="font-semibold">{t("Klien sudah masuk", "Client has signed in")}</strong>{" "}
+                              {t("melalui tautan pada", "via the link on")} {fmtDateTime(selectedLead.magicLinkUsedAt)}
+                              {t(
+                                ". Tautan yang sama tetap bisa dipakai klien untuk masuk kembali selama masa aktif demo.",
+                                ". The client can keep using the same link to sign in again during the demo period."
+                              )}
                             </span>
                           </div>
                         ) : magicLinkState(selectedLead) === "waiting" ? (
@@ -1358,11 +1410,14 @@ export default function AdminLeadsPage() {
                               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-500" />
                             </span>
                             <span>
-                              <strong className="font-semibold">Menunggu klien masuk</strong> — tautan belum dipakai dan
-                              berlaku hingga {formatDateTime(selectedLead.magicLinkExpiry)}. Halaman ini memeriksa otomatis
-                              setiap {MAGIC_LINK_POLL_MS / 1000} detik dan langsung berubah saat klien masuk
+                              <strong className="font-semibold">{t("Menunggu klien masuk", "Waiting for client to sign in")}</strong>{" "}
+                              {t("— tautan belum dipakai dan berlaku hingga", "— the link has not been used yet and is valid until")}{" "}
+                              {fmtDateTime(selectedLead.magicLinkExpiry)}
+                              {t(". Halaman ini memeriksa otomatis setiap", ". This page checks automatically every")}{" "}
+                              {MAGIC_LINK_POLL_MS / 1000}{" "}
+                              {t("detik dan langsung berubah saat klien masuk", "seconds and updates as soon as the client signs in")}
                               {lastLinkCheck
-                                ? ` (dicek ${lastLinkCheck.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" })})`
+                                ? ` (${t("dicek", "checked")} ${lastLinkCheck.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })})`
                                 : ""}
                               .
                             </span>
@@ -1373,13 +1428,18 @@ export default function AdminLeadsPage() {
                             data-state="none"
                             className="rounded-xl border border-slate-200 bg-white p-2.5 text-[11px] text-slate-600"
                           >
-                            Tidak ada tautan aktif. Buat tautan baru untuk dikirim ke klien.
+                            {t(
+                              "Tidak ada tautan aktif. Buat tautan baru untuk dikirim ke klien.",
+                              "No active link. Create a new link to send to the client."
+                            )}
                           </div>
                         )}
                         {!generatedMagicLink && magicLinkState(selectedLead) === "waiting" && (
                           <p className="text-[11px] text-blue-900/80 leading-relaxed">
-                            Demi keamanan, tautan hanya ditampilkan sekali saat dibuat — buat tautan baru bila perlu dikirim
-                            ulang.
+                            {t(
+                              "Demi keamanan, tautan hanya ditampilkan sekali saat dibuat — buat tautan baru bila perlu dikirim ulang.",
+                              "For security, the link is only shown once when created — create a new link if it needs to be resent."
+                            )}
                           </p>
                         )}
 
@@ -1397,7 +1457,7 @@ export default function AdminLeadsPage() {
                             className="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors flex items-center gap-1 shrink-0 shadow-xs"
                           >
                             {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                            <span>{copiedLink ? "Disalin!" : "Salin Link"}</span>
+                            <span>{copiedLink ? t("Disalin!", "Copied!") : t("Salin Link", "Copy Link")}</span>
                           </button>
                         </div>
                         )}
@@ -1411,7 +1471,7 @@ export default function AdminLeadsPage() {
                             className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs"
                           >
                             <MessageSquare className="h-3.5 w-3.5" />
-                            <span>Kirim Magic Link & Rincian via WhatsApp</span>
+                            <span>{t("Kirim Magic Link & Rincian via WhatsApp", "Send Magic Link & Details via WhatsApp")}</span>
                           </a>
                           )}
                           <button
@@ -1419,9 +1479,12 @@ export default function AdminLeadsPage() {
                             onClick={handleApprove}
                             disabled={isApproving}
                             className="py-2 px-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors"
-                            title="Buat tautan baru. Tautan lama yang belum terpakai otomatis dinonaktifkan."
+                            title={t(
+                              "Buat tautan baru. Tautan lama yang belum terpakai otomatis dinonaktifkan.",
+                              "Create a new link. Older unused links are automatically deactivated."
+                            )}
                           >
-                            <span>{isApproving ? "Membuat Tautan..." : "Buat Tautan Baru"}</span>
+                            <span>{isApproving ? t("Membuat Tautan...", "Creating Link...") : t("Buat Tautan Baru", "Create New Link")}</span>
                           </button>
                         </div>
                       </div>
@@ -1432,7 +1495,7 @@ export default function AdminLeadsPage() {
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-bold text-slate-800 flex items-center gap-1.5">
                           <Clock className="h-3.5 w-3.5 text-blue-600" />
-                          <span>Masa Aktif Akses Demo</span>
+                          <span>{t("Masa Aktif Akses Demo", "Demo Access Period")}</span>
                         </span>
                         {selectedLead.user?.demoExpiresAt && (
                           <span
@@ -1442,26 +1505,26 @@ export default function AdminLeadsPage() {
                                 : "bg-rose-50 text-rose-700 border-rose-200"
                             }`}
                           >
-                            {new Date(selectedLead.user.demoExpiresAt) > new Date() ? "Aktif" : "Kedaluwarsa"}
+                            {new Date(selectedLead.user.demoExpiresAt) > new Date() ? t("Aktif", "Active") : t("Kedaluwarsa", "Expired")}
                           </span>
                         )}
                       </div>
                       {selectedLead.user?.demoActivatedAt && selectedLead.user?.demoExpiresAt ? (
                         <>
                           <p className="text-[11px] text-slate-600">
-                            Diaktifkan {formatDateTime(selectedLead.user.demoActivatedAt)} • Berlaku hingga{" "}
-                            <strong>{formatDateTime(selectedLead.user.demoExpiresAt)}</strong>
+                            {t("Diaktifkan", "Activated")} {fmtDateTime(selectedLead.user.demoActivatedAt)} •{" "}
+                            {t("Berlaku hingga", "Valid until")} <strong>{fmtDateTime(selectedLead.user.demoExpiresAt)}</strong>
                           </p>
                           <div className="flex flex-col sm:flex-row gap-2">
                             <select
                               value={extendDays}
                               onChange={(e) => setExtendDays(parseInt(e.target.value, 10))}
                               className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800"
-                              aria-label="Durasi perpanjangan"
+                              aria-label={t("Durasi perpanjangan", "Extension duration")}
                             >
                               {[3, 7, 14, 30].map((d) => (
                                 <option key={d} value={d}>
-                                  Perpanjang {d} hari
+                                  {t(`Perpanjang ${d} hari`, `Extend by ${d} days`)}
                                 </option>
                               ))}
                             </select>
@@ -1471,17 +1534,22 @@ export default function AdminLeadsPage() {
                               disabled={isExtending}
                               className="py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors disabled:opacity-50"
                             >
-                              {isExtending ? "Memproses..." : "Perpanjang Akses"}
+                              {isExtending ? t("Memproses...", "Processing...") : t("Perpanjang Akses", "Extend Access")}
                             </button>
                           </div>
                           <p className="text-[10px] text-slate-400">
-                            Kedaluwarsa akses tidak mengubah status pipeline. Setiap perpanjangan tercatat di riwayat.
+                            {t(
+                              "Kedaluwarsa akses tidak mengubah status pipeline. Setiap perpanjangan tercatat di riwayat.",
+                              "Access expiry does not change the pipeline status. Every extension is recorded in the history."
+                            )}
                           </p>
                         </>
                       ) : (
                         <p className="text-[11px] text-slate-500">
-                          Belum aktif — masa aktif {selectedLead.demoDurationDays || 7} hari dihitung sejak klien pertama
-                          kali masuk melalui Magic Link.
+                          {t(
+                            `Belum aktif — masa aktif ${selectedLead.demoDurationDays || 7} hari dihitung sejak klien pertama kali masuk melalui Magic Link.`,
+                            `Not active yet — the ${selectedLead.demoDurationDays || 7}-day access period starts when the client first signs in via the Magic Link.`
+                          )}
                         </p>
                       )}
                     </div>
@@ -1493,10 +1561,16 @@ export default function AdminLeadsPage() {
                   <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl space-y-2 text-xs">
                     <div className="flex items-center gap-1.5 font-bold text-rose-800">
                       <ShieldAlert className="h-4 w-4 text-rose-600" />
-                      <span>Permohonan Akses Telah Ditolak</span>
+                      <span>{t("Permohonan Akses Telah Ditolak", "Access Request Rejected")}</span>
                     </div>
                     <p className="text-rose-700">
-                      Alasan: <em>&ldquo;{selectedLead.rejectionReason || "Tidak memenuhi syarat akses demo."}&rdquo;</em>
+                      {t("Alasan:", "Reason:")}{" "}
+                      <em>
+                        &ldquo;
+                        {selectedLead.rejectionReason ||
+                          t("Tidak memenuhi syarat akses demo.", "Does not meet demo access requirements.")}
+                        &rdquo;
+                      </em>
                     </p>
                     <button
                       type="button"
@@ -1506,7 +1580,7 @@ export default function AdminLeadsPage() {
                       }}
                       className="px-3 py-1.5 rounded-lg bg-white border border-rose-200 text-rose-800 hover:bg-rose-100 text-[11px] font-semibold transition-colors"
                     >
-                      Buka Kembali & Tinjau Ulang Permohonan
+                      {t("Buka Kembali & Tinjau Ulang Permohonan", "Reopen & Review Request Again")}
                     </button>
                   </div>
                 )}
@@ -1516,7 +1590,7 @@ export default function AdminLeadsPage() {
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-                  <span>Status Pipeline</span>
+                  <span>{t("Status Pipeline", "Pipeline Status")}</span>
                 </h4>
 
                 <ol className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1531,7 +1605,7 @@ export default function AdminLeadsPage() {
                           : "bg-white border-slate-200 text-slate-500"
                       }`}
                     >
-                      {statusBadgeStyles[st].label}
+                      {statusLabel(st)}
                     </li>
                   ))}
                 </ol>
@@ -1543,13 +1617,17 @@ export default function AdminLeadsPage() {
                     disabled={isUpdatingStatus}
                     className="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-white transition-colors disabled:opacity-50"
                   >
-                    {isUpdatingStatus ? "Menyimpan..." : "Tandai Dihubungi (data lama)"}
+                    {isUpdatingStatus ? t("Menyimpan...", "Saving...") : t("Tandai Dihubungi (data lama)", "Mark as Contacted (legacy data)")}
                   </button>
                 )}
                 {selectedLead.status === 2 && (
                   <p className="text-[11px] text-slate-600 leading-relaxed">
-                    Status akan berubah otomatis menjadi <strong>Jadwal Demo</strong> setelah klien berhasil masuk
-                    pertama kali melalui Magic Link.
+                    {t("Status akan berubah otomatis menjadi", "Status will automatically change to")}{" "}
+                    <strong>{t("Jadwal Demo", "Demo Scheduled")}</strong>{" "}
+                    {t(
+                      "setelah klien berhasil masuk pertama kali melalui Magic Link.",
+                      "once the client signs in for the first time via the Magic Link."
+                    )}
                   </p>
                 )}
                 {selectedLead.status === 3 && (
@@ -1560,11 +1638,11 @@ export default function AdminLeadsPage() {
                     className="w-full py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-semibold text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     <CheckCircle2 className="h-4 w-4" />
-                    <span>{isUpdatingStatus ? "Menyimpan..." : "Konfirmasi Demo Selesai"}</span>
+                    <span>{isUpdatingStatus ? t("Menyimpan...", "Saving...") : t("Konfirmasi Demo Selesai", "Confirm Demo Completed")}</span>
                   </button>
                 )}
                 {selectedLead.status === 4 && (
-                  <p className="text-[11px] text-emerald-700 font-semibold">Demo telah dikonfirmasi selesai.</p>
+                  <p className="text-[11px] text-emerald-700 font-semibold">{t("Demo telah dikonfirmasi selesai.", "Demo has been confirmed as completed.")}</p>
                 )}
               </div>
 
@@ -1572,12 +1650,12 @@ export default function AdminLeadsPage() {
               <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
                 <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                   <FileText className="h-3.5 w-3.5 text-blue-600" />
-                  <span>Riwayat Akses & Aktivitas</span>
+                  <span>{t("Riwayat Akses & Aktivitas", "Access & Activity History")}</span>
                 </h4>
                 {isHistoryLoading && !leadHistory ? (
-                  <p className="text-[11px] text-slate-400">Memuat riwayat...</p>
+                  <p className="text-[11px] text-slate-400">{t("Memuat riwayat...", "Loading history...")}</p>
                 ) : !leadHistory || (leadHistory.events.length === 0 && leadHistory.magicLinks.length === 0) ? (
-                  <p className="text-[11px] text-slate-400">Belum ada riwayat tercatat.</p>
+                  <p className="text-[11px] text-slate-400">{t("Belum ada riwayat tercatat.", "No history recorded yet.")}</p>
                 ) : (
                   <div className="space-y-3">
                     {leadHistory.magicLinks.length > 0 && (
@@ -1588,17 +1666,17 @@ export default function AdminLeadsPage() {
                         <ul className="space-y-1">
                           {leadHistory.magicLinks.map((m) => (
                             <li key={m.id} className="text-[11px] text-slate-600 flex flex-wrap gap-x-2">
-                              <span>Dibuat {formatDateTime(m.createdAt)}</span>
+                              <span>{t("Dibuat", "Created")} {fmtDateTime(m.createdAt)}</span>
                               <span>•</span>
                               {m.usedAt ? (
                                 <span className="text-emerald-700">
-                                  Digunakan {formatDateTime(m.usedAt)}
+                                  {t("Digunakan", "Used")} {fmtDateTime(m.usedAt)}
                                   {m.ipAddress ? ` (IP ${m.ipAddress})` : ""}
                                 </span>
                               ) : new Date(m.expiresAt) > new Date() ? (
-                                <span className="text-blue-700">Aktif s/d {formatDateTime(m.expiresAt)}</span>
+                                <span className="text-blue-700">{t("Aktif s/d", "Active until")} {fmtDateTime(m.expiresAt)}</span>
                               ) : (
-                                <span className="text-slate-400">Tidak berlaku sejak {formatDateTime(m.expiresAt)}</span>
+                                <span className="text-slate-400">{t("Tidak berlaku sejak", "Expired since")} {fmtDateTime(m.expiresAt)}</span>
                               )}
                             </li>
                           ))}
@@ -1608,22 +1686,24 @@ export default function AdminLeadsPage() {
                     {leadHistory.events.length > 0 && (
                       <div className="space-y-1.5">
                         <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                          Aktivitas
+                          {t("Aktivitas", "Activity")}
                         </span>
                         <ul className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
                           {leadHistory.events.map((ev) => (
                             <li key={ev.id} className="text-[11px] text-slate-600 border-l-2 border-slate-200 pl-2">
                               <div className="font-semibold text-slate-800">
-                                {historyActionLabels[ev.action] || ev.action}
+                                {historyActionLabels[ev.action]
+                                  ? t(historyActionLabels[ev.action].id, historyActionLabels[ev.action].en)
+                                  : ev.action}
                                 {ev.newValue?.status && statusBadgeStyles[ev.newValue.status]
-                                  ? ` → ${statusBadgeStyles[ev.newValue.status].label}`
+                                  ? ` → ${statusLabel(ev.newValue.status)}`
                                   : ""}
                                 {ev.action === "DEMO_ACCESS_EXTENDED" && ev.newValue?.extendedByDays
-                                  ? ` (+${ev.newValue.extendedByDays} hari)`
+                                  ? ` (+${ev.newValue.extendedByDays} ${t("hari", "days")})`
                                   : ""}
                               </div>
                               <div className="text-slate-400">
-                                {formatDateTime(ev.createdAt)} • {ev.actor}
+                                {fmtDateTime(ev.createdAt)} • {ev.actor}
                               </div>
                             </li>
                           ))}
@@ -1642,7 +1722,7 @@ export default function AdminLeadsPage() {
                 onClick={() => setSelectedLead(null)}
                 className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-white transition-colors"
               >
-                Tutup
+                {t("Tutup", "Close")}
               </button>
             </div>
           </div>

@@ -11,8 +11,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 export default function NovaAiPage() {
+  const { t } = useAdminLang();
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-4">
       {/* Main Feature Announcement Card */}
@@ -23,7 +25,7 @@ export default function NovaAiPage() {
 
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-200 text-xs font-semibold text-purple-700">
           <Bot className="h-3.5 w-3.5" />
-          <span>Roadmap Fase 4: Nova AI Clinical Decision Support</span>
+          <span>{t("Roadmap Fase 4: Nova AI Clinical Decision Support", "Roadmap Phase 4: Nova AI Clinical Decision Support")}</span>
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-bold text-[#17191D] font-display tracking-tight">
@@ -31,14 +33,21 @@ export default function NovaAiPage() {
         </h2>
 
         <p className="text-xs sm:text-sm text-[#747B86] max-w-2xl mx-auto leading-relaxed">
-          Copilot klinis terintegrasi yang membantu merangkum pola abnormalitas diagnostik, korelasi antar-parameter laboratorium, dan rekomendasi konfirmasi spesimen berbasis bukti ilmiah terkini.
+          {t(
+            "Copilot klinis terintegrasi yang membantu merangkum pola abnormalitas diagnostik, korelasi antar-parameter laboratorium, dan rekomendasi konfirmasi spesimen berbasis bukti ilmiah terkini.",
+            "An integrated clinical copilot that helps summarize diagnostic abnormality patterns, correlations across lab parameters, and evidence-based specimen confirmation recommendations."
+          )}
         </p>
 
         {/* Clinical Disclaimer Callout */}
         <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 max-w-xl mx-auto text-left flex gap-3 text-xs text-amber-800">
           <ShieldAlert className="h-4.5 w-4.5 text-amber-600 shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold">Prinsip Keselamatan Pasien:</span> Nova AI bertindak sebagai asisten pembantu rangkuman. Keputusan klinis dan diagnosis akhir tetap sepenuhnya menjadi wewenang dan tanggung jawab dokter spesialis.
+            <span className="font-semibold">{t("Prinsip Keselamatan Pasien:", "Patient Safety Principle:")}</span>{" "}
+            {t(
+              "Nova AI bertindak sebagai asisten pembantu rangkuman. Keputusan klinis dan diagnosis akhir tetap sepenuhnya menjadi wewenang dan tanggung jawab dokter spesialis.",
+              "Nova AI acts as a summarization assistant. Clinical decisions and the final diagnosis remain entirely the authority and responsibility of the specialist physician."
+            )}
           </div>
         </div>
 
@@ -47,14 +56,14 @@ export default function NovaAiPage() {
             href="/admin/orders"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#087BEE] hover:bg-[#0667C7] text-xs font-semibold text-white transition-all shadow-xs"
           >
-            <span>Buka Lab Orders</span>
+            <span>{t("Buka Lab Orders", "Open Lab Orders")}</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/admin/dashboard"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F5F6F8] hover:bg-slate-200/80 text-xs font-semibold text-[#17191D] transition-colors"
           >
-            <span>Kembali ke Dashboard</span>
+            <span>{t("Kembali ke Dashboard", "Back to Dashboard")}</span>
           </Link>
         </div>
       </div>
@@ -65,9 +74,12 @@ export default function NovaAiPage() {
           <div className="h-8 w-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
             <Brain className="h-4 w-4" />
           </div>
-          <h4 className="text-xs font-bold text-[#17191D]">Rangkuman Pola Anomali</h4>
+          <h4 className="text-xs font-bold text-[#17191D]">{t("Rangkuman Pola Anomali", "Anomaly Pattern Summary")}</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
-            Menghubungkan hasil hematologi, kimia darah, dan urin lengkap untuk menyajikan narasi klinis komprehensif.
+            {t(
+              "Menghubungkan hasil hematologi, kimia darah, dan urin lengkap untuk menyajikan narasi klinis komprehensif.",
+              "Correlates hematology, blood chemistry, and complete urinalysis results into a comprehensive clinical narrative."
+            )}
           </p>
         </div>
 
@@ -75,9 +87,12 @@ export default function NovaAiPage() {
           <div className="h-8 w-8 rounded-xl bg-blue-50 text-[#087BEE] flex items-center justify-center">
             <Lightbulb className="h-4 w-4" />
           </div>
-          <h4 className="text-xs font-bold text-[#17191D]">Rekomendasi Uji Lanjutan</h4>
+          <h4 className="text-xs font-bold text-[#17191D]">{t("Rekomendasi Uji Lanjutan", "Follow-up Test Recommendations")}</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
-            Saran pemeriksaan konfirmasi (Reflex Testing) sesuai pedoman klinis standar perhimpunan patologi.
+            {t(
+              "Saran pemeriksaan konfirmasi (Reflex Testing) sesuai pedoman klinis standar perhimpunan patologi.",
+              "Confirmatory test suggestions (Reflex Testing) based on standard pathology society clinical guidelines."
+            )}
           </p>
         </div>
 
@@ -87,7 +102,10 @@ export default function NovaAiPage() {
           </div>
           <h4 className="text-xs font-bold text-[#17191D]">Human-in-the-Loop</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
-            Dokter memiliki kendali penuh untuk menyetujui (Accept), mengedit, atau menolak interpretasi AI dengan log jejak model.
+            {t(
+              "Dokter memiliki kendali penuh untuk menyetujui (Accept), mengedit, atau menolak interpretasi AI dengan log jejak model.",
+              "Physicians have full control to accept, edit, or reject AI interpretations, with a model audit log."
+            )}
           </p>
         </div>
       </div>

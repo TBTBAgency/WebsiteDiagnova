@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 type BadgeType =
   | "lead_new"
@@ -28,88 +31,88 @@ interface StatusBadgeProps {
 
 const BADGE_MAP: Record<
   string,
-  { label: string; bg: string; text: string; border: string; dot: string }
+  { label: { id: string; en: string }; bg: string; text: string; border: string; dot: string }
 > = {
   // Leads (Integer Status: 1 = Baru, 2 = Dihubungi, 3 = Jadwal Demo, 4 = Selesai)
   "1": {
-    label: "Baru",
+    label: { id: "Baru", en: "New" },
     bg: "bg-blue-50/80",
     text: "text-blue-700",
     border: "border-blue-200/60",
     dot: "bg-blue-600",
   },
   "2": {
-    label: "Dihubungi",
+    label: { id: "Dihubungi", en: "Contacted" },
     bg: "bg-amber-50/80",
     text: "text-amber-700",
     border: "border-amber-200/60",
     dot: "bg-amber-500",
   },
   "3": {
-    label: "Jadwal Demo",
+    label: { id: "Jadwal Demo", en: "Demo Scheduled" },
     bg: "bg-purple-50/80",
     text: "text-purple-700",
     border: "border-purple-200/60",
     dot: "bg-purple-500",
   },
   "4": {
-    label: "Selesai",
+    label: { id: "Selesai", en: "Completed" },
     bg: "bg-emerald-50/80",
     text: "text-emerald-700",
     border: "border-emerald-200/60",
     dot: "bg-emerald-500",
   },
   lead_new: {
-    label: "Baru",
+    label: { id: "Baru", en: "New" },
     bg: "bg-blue-50/80",
     text: "text-blue-700",
     border: "border-blue-200/60",
     dot: "bg-blue-600",
   },
   new: {
-    label: "Baru",
+    label: { id: "Baru", en: "New" },
     bg: "bg-blue-50/80",
     text: "text-blue-700",
     border: "border-blue-200/60",
     dot: "bg-blue-600",
   },
   lead_contacted: {
-    label: "Dihubungi",
+    label: { id: "Dihubungi", en: "Contacted" },
     bg: "bg-amber-50/80",
     text: "text-amber-700",
     border: "border-amber-200/60",
     dot: "bg-amber-500",
   },
   contacted: {
-    label: "Dihubungi",
+    label: { id: "Dihubungi", en: "Contacted" },
     bg: "bg-amber-50/80",
     text: "text-amber-700",
     border: "border-amber-200/60",
     dot: "bg-amber-500",
   },
   lead_scheduled: {
-    label: "Jadwal Demo",
+    label: { id: "Jadwal Demo", en: "Demo Scheduled" },
     bg: "bg-purple-50/80",
     text: "text-purple-700",
     border: "border-purple-200/60",
     dot: "bg-purple-500",
   },
   scheduled: {
-    label: "Jadwal Demo",
+    label: { id: "Jadwal Demo", en: "Demo Scheduled" },
     bg: "bg-purple-50/80",
     text: "text-purple-700",
     border: "border-purple-200/60",
     dot: "bg-purple-500",
   },
   lead_completed: {
-    label: "Selesai",
+    label: { id: "Selesai", en: "Completed" },
     bg: "bg-emerald-50/80",
     text: "text-emerald-700",
     border: "border-emerald-200/60",
     dot: "bg-emerald-500",
   },
   completed: {
-    label: "Selesai",
+    label: { id: "Selesai", en: "Completed" },
     bg: "bg-emerald-50/80",
     text: "text-emerald-700",
     border: "border-emerald-200/60",
@@ -118,42 +121,42 @@ const BADGE_MAP: Record<
 
   // Priority
   priority_cito: {
-    label: "CITO (Urgent)",
+    label: { id: "CITO (Urgent)", en: "CITO (Urgent)" },
     bg: "bg-red-50",
     text: "text-red-700",
     border: "border-red-200",
     dot: "bg-red-500 animate-pulse",
   },
   cito: {
-    label: "CITO",
+    label: { id: "CITO", en: "CITO" },
     bg: "bg-red-50",
     text: "text-red-700",
     border: "border-red-200",
     dot: "bg-red-500 animate-pulse",
   },
   priority_urgent: {
-    label: "Mendesak",
+    label: { id: "Mendesak", en: "Urgent" },
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-200",
     dot: "bg-amber-500",
   },
   urgent: {
-    label: "Mendesak",
+    label: { id: "Mendesak", en: "Urgent" },
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-200",
     dot: "bg-amber-500",
   },
   priority_routine: {
-    label: "Rutin",
+    label: { id: "Rutin", en: "Routine" },
     bg: "bg-slate-100/80",
     text: "text-slate-700",
     border: "border-slate-200/80",
     dot: "bg-slate-400",
   },
   routine: {
-    label: "Rutin",
+    label: { id: "Rutin", en: "Routine" },
     bg: "bg-slate-100/80",
     text: "text-slate-700",
     border: "border-slate-200/80",
@@ -162,42 +165,42 @@ const BADGE_MAP: Record<
 
   // Lab Order Status
   order_ordered: {
-    label: "Menunggu Pengambilan",
+    label: { id: "Menunggu Pengambilan", en: "Awaiting Collection" },
     bg: "bg-sky-50",
     text: "text-sky-700",
     border: "border-sky-200",
     dot: "bg-sky-500",
   },
   ordered: {
-    label: "Order Masuk",
+    label: { id: "Order Masuk", en: "Order Received" },
     bg: "bg-sky-50",
     text: "text-sky-700",
     border: "border-sky-200",
     dot: "bg-sky-500",
   },
   order_specimen_received: {
-    label: "Spesimen Diterima di Lab",
+    label: { id: "Spesimen Diterima di Lab", en: "Specimen Received at Lab" },
     bg: "bg-blue-50",
     text: "text-blue-700",
     border: "border-blue-200",
     dot: "bg-blue-600",
   },
   specimen_received: {
-    label: "Spesimen Diterima",
+    label: { id: "Spesimen Diterima", en: "Specimen Received" },
     bg: "bg-blue-50",
     text: "text-blue-700",
     border: "border-blue-200",
     dot: "bg-blue-600",
   },
   order_processing: {
-    label: "Sedang Dianalisis",
+    label: { id: "Sedang Dianalisis", en: "Under Analysis" },
     bg: "bg-indigo-50",
     text: "text-indigo-700",
     border: "border-indigo-200",
     dot: "bg-indigo-500",
   },
   processing: {
-    label: "Dianalisis",
+    label: { id: "Dianalisis", en: "Analyzing" },
     bg: "bg-indigo-50",
     text: "text-indigo-700",
     border: "border-indigo-200",
@@ -206,21 +209,21 @@ const BADGE_MAP: Record<
 
   // Specimen Status
   collected: {
-    label: "Diambil",
+    label: { id: "Diambil", en: "Collected" },
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-200",
     dot: "bg-amber-500",
   },
   received: {
-    label: "Diterima Lab",
+    label: { id: "Diterima Lab", en: "Received by Lab" },
     bg: "bg-emerald-50",
     text: "text-emerald-700",
     border: "border-emerald-200",
     dot: "bg-emerald-500",
   },
   rejected: {
-    label: "Ditolak",
+    label: { id: "Ditolak", en: "Rejected" },
     bg: "bg-rose-50",
     text: "text-rose-700",
     border: "border-rose-200",
@@ -234,16 +237,18 @@ export function StatusBadge({
   className,
   showDot = true,
 }: StatusBadgeProps) {
+  const { t } = useAdminLang();
   const key = String(type).toLowerCase();
+  const fallbackLabel = label || String(type);
   const config = BADGE_MAP[key] || BADGE_MAP[String(type)] || {
-    label: label || String(type),
+    label: { id: fallbackLabel, en: fallbackLabel },
     bg: "bg-slate-100",
     text: "text-slate-700",
     border: "border-slate-200",
     dot: "bg-slate-400",
   };
 
-  const displayLabel = label || config.label;
+  const displayLabel = label || t(config.label.id, config.label.en);
 
   return (
     <span

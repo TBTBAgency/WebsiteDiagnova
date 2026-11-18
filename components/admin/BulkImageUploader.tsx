@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   Check,
 } from "lucide-react";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 export interface UploadedFileItem {
   id: string;
@@ -30,9 +31,18 @@ interface BulkImageUploaderProps {
 
 export function BulkImageUploader({
   onUploadSuccess,
-  title = "Unggah Banyak Gambar Sekaligus",
-  description = "Pilih beberapa file sekaligus atau pilih satu folder dari komputer Anda.",
+  title: titleProp,
+  description: descriptionProp,
 }: BulkImageUploaderProps) {
+  const { t } = useAdminLang();
+  const title = titleProp === undefined ? t("Unggah Banyak Gambar Sekaligus", "Upload Multiple Images at Once") : titleProp;
+  const description =
+    descriptionProp === undefined
+      ? t(
+          "Pilih beberapa file sekaligus atau pilih satu folder dari komputer Anda.",
+          "Choose several files at once or pick a folder from your computer."
+        )
+      : descriptionProp;
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -56,7 +66,7 @@ export function BulkImageUploader({
     }
 
     if (validFiles.length === 0) {
-      setErrorMessage("Tidak ada file gambar valid (JPG, PNG, WEBP, SVG) yang ditemukan.");
+      setErrorMessage(t("Tidak ada file gambar valid (JPG, PNG, WEBP, SVG) yang ditemukan.", "No valid image files (JPG, PNG, WEBP, SVG) were found."));
       return;
     }
 
@@ -101,11 +111,11 @@ export function BulkImageUploader({
         setSelectedFiles([]);
         onUploadSuccess(json.data.files);
       } else {
-        setErrorMessage(json.message || "Gagal mengunggah file.");
+        setErrorMessage(json.message || t("Gagal mengunggah file.", "Failed to upload files."));
       }
     } catch (err) {
       console.error("Bulk upload error:", err);
-      setErrorMessage("Terjadi kesalahan jaringan saat mengunggah banyak file.");
+      setErrorMessage(t("Terjadi kesalahan jaringan saat mengunggah banyak file.", "A network error occurred while uploading the files."));
     } finally {
       setIsUploading(false);
     }
@@ -141,7 +151,7 @@ export function BulkImageUploader({
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors disabled:opacity-50"
           >
             <Upload className="h-3.5 w-3.5" />
-            <span>Pilih Banyak File</span>
+            <span>{t("Pilih Banyak File", "Choose Multiple Files")}</span>
           </button>
 
           {/* Input Folder Directory Upload */}
@@ -162,7 +172,7 @@ export function BulkImageUploader({
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-xs font-semibold text-blue-700 transition-colors disabled:opacity-50"
           >
             <FolderUp className="h-3.5 w-3.5" />
-            <span>Pilih Satu Folder</span>
+            <span>{t("Pilih Satu Folder", "Choose a Folder")}</span>
           </button>
         </div>
       </div>
@@ -186,7 +196,7 @@ export function BulkImageUploader({
         }`}
       >
         <p className="text-xs font-medium text-slate-600">
-          Atau seret dan lepaskan banyak file gambar langsung ke kotak ini.
+          {t("Atau seret dan lepaskan banyak file gambar langsung ke kotak ini.", "Or drag and drop multiple image files straight into this box.")}
         </p>
       </div>
 
@@ -194,7 +204,12 @@ export function BulkImageUploader({
       {successCount !== null && (
         <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-          <span>Berhasil mengunggah dan menambahkan {successCount} item gambar baru!</span>
+          <span>
+            {t(
+              `Berhasil mengunggah dan menambahkan ${successCount} item gambar baru!`,
+              `Successfully uploaded and added ${successCount} new image ${successCount === 1 ? "item" : "items"}!`
+            )}
+          </span>
         </div>
       )}
 
@@ -210,14 +225,17 @@ export function BulkImageUploader({
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-slate-700">
-              Antrean Unggah: {selectedFiles.length} file gambar
+              {t(
+                `Antrean Unggah: ${selectedFiles.length} file gambar`,
+                `Upload Queue: ${selectedFiles.length} image ${selectedFiles.length === 1 ? "file" : "files"}`
+              )}
             </span>
             <button
               type="button"
               onClick={() => setSelectedFiles([])}
               className="text-slate-400 hover:text-slate-700 text-[11px]"
             >
-              Bersihkan Antrean
+              {t("Bersihkan Antrean", "Clear Queue")}
             </button>
           </div>
 
@@ -246,7 +264,7 @@ export function BulkImageUploader({
           {isUploading && (
             <div className="space-y-1">
               <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                <span>Mengunggah file ke server...</span>
+                <span>{t("Mengunggah file ke server...", "Uploading files to the server...")}</span>
                 <span>{uploadProgress}%</span>
               </div>
               <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -267,7 +285,11 @@ export function BulkImageUploader({
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white transition-colors shadow-xs disabled:opacity-50"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isUploading ? "animate-spin" : ""}`} />
-              <span>{isUploading ? "Memproses Unggahan..." : `Mulai Unggah ${selectedFiles.length} File`}</span>
+              <span>
+                {isUploading
+                  ? t("Memproses Unggahan...", "Processing Upload...")
+                  : t(`Mulai Unggah ${selectedFiles.length} File`, `Start Uploading ${selectedFiles.length} ${selectedFiles.length === 1 ? "File" : "Files"}`)}
+              </span>
             </button>
           </div>
         </div>

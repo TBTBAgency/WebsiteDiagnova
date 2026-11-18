@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Eye, EyeOff, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 import {
   isBilingual,
   pickText,
@@ -15,9 +16,9 @@ import {
 import type { SectionDefaults, SectionTextContent } from "@/lib/cms-layout";
 
 const HEADER_FIELDS = [
-  { field: "badge", label: "Badge", multiline: false },
-  { field: "title", label: "Judul", multiline: true },
-  { field: "subtitle", label: "Deskripsi", multiline: true },
+  { field: "badge", label: "Badge", labelEn: "Badge", multiline: false },
+  { field: "title", label: "Judul", labelEn: "Title", multiline: true },
+  { field: "subtitle", label: "Deskripsi", labelEn: "Description", multiline: true },
 ] as const;
 
 const emptyContent: SectionContent = { fields: {}, lists: {} };
@@ -60,6 +61,7 @@ function FieldInput({
   onChange: (key: string, value: string) => void;
   testId: string;
 }) {
+  const { t } = useAdminLang();
   const label = `${field.label}${field.required ? " *" : ""}`;
   if (isBilingual(field)) {
     const Tag = field.type === "textarea" ? "textarea" : "input";
@@ -115,7 +117,7 @@ function FieldInput({
         className={inputCls}
         value={(obj[field.key] as string) ?? ""}
         maxLength={field.max}
-        placeholder={field.type === "url" ? "/request-demo, #anchor, atau https://…" : ""}
+        placeholder={field.type === "url" ? t("/request-demo, #anchor, atau https://…", "/request-demo, #anchor, or https://…") : ""}
         onChange={(e) => onChange(field.key, e.target.value)}
       />
       {field.help && <span className="block text-[11px] text-slate-500">{field.help}</span>}
@@ -153,6 +155,7 @@ export function SectionContentEditor({
   focusItem?: { itemId: string; n: number } | null;
   onSaved: (message: string) => Promise<void> | void;
 }) {
+  const { t } = useAdminLang();
   const [draft, setDraft] = useState<SectionContent>(() => clone(value ?? emptyContent));
   const [headerDraft, setHeaderDraft] = useState<SectionTextContent>(() => ({ ...(header?.value || {}) }));
   const [openItem, setOpenItem] = useState<string | null>(null);
@@ -172,12 +175,12 @@ export function SectionContentEditor({
     const listKey = Object.keys(draft.lists).find((k) => draft.lists[k]?.some((it) => it.id === focusItem.itemId));
     if (!listKey) return;
     setOpenItem(`${listKey}:${focusItem.itemId}`);
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       document
         .querySelector(`[data-item-id="${CSS.escape(`${sectionKey}:${listKey}:${focusItem.itemId}`)}"]`)
         ?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 60);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
     // Hanya saat target berubah (klik submenu), bukan saat draft diketik.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusItem?.itemId, focusItem?.n, sectionKey]);
@@ -208,11 +211,15 @@ export function SectionContentEditor({
         }),
       });
       const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json.message || "Gagal menyimpan konten.");
+      if (!res.ok || !json.success) throw new Error(json.message || t("Gagal menyimpan konten.", "Failed to save content."));
       setDirty(false);
-      await onSaved(content === null ? "Konten section dikembalikan ke bawaan." : "Konten section disimpan. Website diperbarui.");
+      await onSaved(
+        content === null
+          ? t("Konten section dikembalikan ke bawaan.", "Section content reset to default.")
+          : t("Konten section disimpan. Website diperbarui.", "Section content saved. Website updated.")
+      );
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Gagal menyimpan konten.");
+      setError(e instanceof Error ? e.message : t("Gagal menyimpan konten.", "Failed to save content."));
     } finally {
       setSaving(false);
     }
@@ -221,7 +228,7 @@ export function SectionContentEditor({
   const summary = (list: ContentListDef, item: ContentItem, i: number) => {
     const f = list.fields.find((x) => x.key === list.summaryField) ?? list.fields[0];
     const text = f ? (isBilingual(f) ? pickText(item, f.key, "ID") : String(item[f.key] ?? "")) : "";
-    return text.trim() || `${list.itemLabel} ${i + 1} (kosong)`;
+    return text.trim() || `${list.itemLabel} ${i + 1} ${t("(kosong)", "(empty)")}`;
   };
 
   return (
@@ -229,9 +236,12 @@ export function SectionContentEditor({
       {/* Baris aksi menempel di bawah header admin agar tombol Simpan selalu terlihat pada form panjang. */}
       <div className="sticky top-[76px] z-20 -mx-3 -mt-3 flex flex-wrap items-center justify-between gap-2 rounded-t-xl border-b border-blue-100 bg-white/95 px-3 py-2.5 backdrop-blur">
         <div>
-          <p className="text-xs font-bold text-slate-900">Isi Section</p>
+          <p className="text-xs font-bold text-slate-900">{t("Isi Section", "Section Content")}</p>
           <p className="text-[11px] text-slate-500">
-            {customized ? "Memakai konten dari CMS." : "Belum diubah — menampilkan konten bawaan."} {def?.help}
+            {customized
+              ? t("Memakai konten dari CMS.", "Using content from the CMS.")
+              : t("Belum diubah — menampilkan konten bawaan.", "Not changed yet — showing default content.")}{" "}
+            {def?.help}
           </p>
         </div>
         <div className="flex gap-2">
@@ -239,10 +249,17 @@ export function SectionContentEditor({
             type="button"
             disabled={saving || !customized || !!disabledReason}
             data-testid={`content-reset-${sectionKey}`}
-            onClick={() => window.confirm("Kembalikan judul dan isi section ini ke konten bawaan? Perubahan CMS untuk section ini akan diganti.") && submit(null, {})}
+            onClick={() =>
+              window.confirm(
+                t(
+                  "Kembalikan judul dan isi section ini ke konten bawaan? Perubahan CMS untuk section ini akan diganti.",
+                  "Reset this section's heading and content to the default? CMS changes for this section will be replaced."
+                )
+              ) && submit(null, {})
+            }
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-white disabled:opacity-40"
           >
-            <RotateCcw className="h-3.5 w-3.5" /> Kembalikan Bawaan
+            <RotateCcw className="h-3.5 w-3.5" /> {t("Kembalikan Bawaan", "Reset to Default")}
           </button>
           <button
             type="button"
@@ -251,12 +268,12 @@ export function SectionContentEditor({
             onClick={() => submit(draft, headerDraft)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 disabled:opacity-50"
           >
-            <Save className="h-3.5 w-3.5" /> {saving ? "Menyimpan…" : "Simpan Isi Section"}
+            <Save className="h-3.5 w-3.5" /> {saving ? t("Menyimpan…", "Saving…") : t("Simpan Isi Section", "Save Section Content")}
           </button>
         </div>
       </div>
       {disabledReason && <p className="text-[11px] text-amber-700">{disabledReason}</p>}
-      {dirty && !disabledReason && <p className="text-[11px] text-amber-700">Isi section belum disimpan.</p>}
+      {dirty && !disabledReason && <p className="text-[11px] text-amber-700">{t("Isi section belum disimpan.", "Section content has unsaved changes.")}</p>}
       {error && (
         <p className="text-[11px] text-red-700 bg-red-50 border border-red-200 rounded-lg p-2" data-testid={`content-error-${sectionKey}`}>
           {error}
@@ -265,9 +282,14 @@ export function SectionContentEditor({
 
       {header?.defaults && (
         <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3" data-testid={`header-editor-${sectionKey}`}>
-          <p className="text-xs font-bold text-slate-800">Judul Section</p>
-          <p className="text-[11px] text-slate-500">Kosongkan kolom untuk memakai teks bawaan (ditampilkan sebagai placeholder). Baris baru menjadi pemisah baris.</p>
-          {HEADER_FIELDS.filter(({ field }) => header.defaults?.[field]).map(({ field, label, multiline }) => (
+          <p className="text-xs font-bold text-slate-800">{t("Judul Section", "Section Heading")}</p>
+          <p className="text-[11px] text-slate-500">
+            {t(
+              "Kosongkan kolom untuk memakai teks bawaan (ditampilkan sebagai placeholder). Baris baru menjadi pemisah baris.",
+              "Leave a field empty to use the default text (shown as the placeholder). A new line becomes a line break."
+            )}
+          </p>
+          {HEADER_FIELDS.filter(({ field }) => header.defaults?.[field]).map(({ field, label, labelEn, multiline }) => (
             <div key={field} className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {(["Id", "En"] as const).map((lang, li) => {
                 const Tag = multiline ? "textarea" : "input";
@@ -275,7 +297,7 @@ export function SectionContentEditor({
                 return (
                   <label key={lang} className="space-y-1 text-xs">
                     <span className="font-semibold text-slate-700">
-                      {label} ({lang === "Id" ? "ID" : "EN"})
+                      {t(label, labelEn)} ({lang === "Id" ? "ID" : "EN"})
                     </span>
                     <Tag
                       data-testid={`header-field-${sectionKey}-${field}-${lang}`}
@@ -310,13 +332,17 @@ export function SectionContentEditor({
                   {list.label}{" "}
                   <span className="font-normal text-slate-500">
                     ({items.length}
-                    {list.fixedCount ? ", jumlah tetap" : ` / maks. ${list.maxItems}`})
+                    {list.fixedCount ? t(", jumlah tetap", ", fixed count") : ` / ${t("maks.", "max.")} ${list.maxItems}`})
                   </span>
                 </p>
                 {(list.help || list.fixedCount) && (
                   <p className="text-[11px] text-slate-500">
                     {list.help}
-                    {list.fixedCount && " Jumlah item terikat desain diagram; item dapat diubah atau disembunyikan."}
+                    {list.fixedCount &&
+                      t(
+                        " Jumlah item terikat desain diagram; item dapat diubah atau disembunyikan.",
+                        " The number of items is tied to the diagram design; items can be edited or hidden."
+                      )}
                   </p>
                 )}
               </div>
@@ -332,7 +358,7 @@ export function SectionContentEditor({
                   }}
                   className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-blue-200 text-blue-700 text-[11px] font-semibold hover:bg-blue-50 disabled:opacity-40"
                 >
-                  <Plus className="h-3.5 w-3.5" /> Tambah {list.itemLabel}
+                  <Plus className="h-3.5 w-3.5" /> {t("Tambah", "Add")} {list.itemLabel}
                 </button>
               )}
             </div>
@@ -359,11 +385,11 @@ export function SectionContentEditor({
                       </button>
                       {!list.fixedCount && (
                         <>
-                          <button type="button" aria-label="Naikkan" disabled={i === 0} onClick={() => setList(list.key, (xs) => { const n = [...xs]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; return n; })}
+                          <button type="button" aria-label={t("Naikkan", "Move up")} disabled={i === 0} onClick={() => setList(list.key, (xs) => { const n = [...xs]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; return n; })}
                             className="p-1 rounded-md border border-slate-200 disabled:opacity-30 hover:bg-slate-50" data-testid={`content-up-${sectionKey}-${list.key}-${i}`}>
                             <ArrowUp className="h-3 w-3" />
                           </button>
-                          <button type="button" aria-label="Turunkan" disabled={i === items.length - 1} onClick={() => setList(list.key, (xs) => { const n = [...xs]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; return n; })}
+                          <button type="button" aria-label={t("Turunkan", "Move down")} disabled={i === items.length - 1} onClick={() => setList(list.key, (xs) => { const n = [...xs]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; return n; })}
                             className="p-1 rounded-md border border-slate-200 disabled:opacity-30 hover:bg-slate-50" data-testid={`content-down-${sectionKey}-${list.key}-${i}`}>
                             <ArrowDown className="h-3 w-3" />
                           </button>
@@ -376,14 +402,21 @@ export function SectionContentEditor({
                         className={"inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold border " + (item.isActive ? "border-emerald-200 text-emerald-700 bg-emerald-50" : "border-slate-300 text-slate-600 bg-white")}
                       >
                         {item.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
-                        {item.isActive ? "Tampil" : "Disembunyikan"}
+                        {item.isActive ? t("Tampil", "Visible") : t("Disembunyikan", "Hidden")}
                       </button>
                       {!list.fixedCount && (
                         <button
                           type="button"
-                          aria-label="Hapus item"
+                          aria-label={t("Hapus item", "Delete item")}
                           data-testid={`content-delete-${sectionKey}-${list.key}-${i}`}
-                          onClick={() => window.confirm(`Hapus ${list.itemLabel.toLowerCase()} ini? Perubahan berlaku setelah Simpan Isi Section.`) && setList(list.key, (xs) => xs.filter((_, j) => j !== i))}
+                          onClick={() =>
+                            window.confirm(
+                              t(
+                                `Hapus ${list.itemLabel.toLowerCase()} ini? Perubahan berlaku setelah Simpan Isi Section.`,
+                                `Delete this ${list.itemLabel.toLowerCase()}? The change takes effect after Save Section Content.`
+                              )
+                            ) && setList(list.key, (xs) => xs.filter((_, j) => j !== i))
+                          }
                           className="p-1 rounded-md border border-red-200 text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="h-3 w-3" />
