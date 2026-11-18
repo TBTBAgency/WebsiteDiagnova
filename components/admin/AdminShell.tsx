@@ -255,7 +255,7 @@ function SidebarContent({
           >
             <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
             <span className="relative z-10">{t("Buka website", "Open website")}</span>
-            <span className="relative z-10 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+            <span className="relative z-10 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:rotate-45">
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
           </a>
