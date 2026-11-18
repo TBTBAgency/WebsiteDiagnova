@@ -356,7 +356,7 @@ export default function PageSectionsAdminPage() {
                           ? s.content?.titleId || s.content?.titleEn || t("Section Kustom (baru)", "Custom Section (new)")
                           : s.label}
                         {s.type === "custom" && (
-                          <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold">
+                          <span className="px-1.5 py-0.5 rounded bg-[#EEF4FF] text-[#0E56D8] text-[10px] font-bold">
                             {t("KUSTOM", "CUSTOM")}
                           </span>
                         )}

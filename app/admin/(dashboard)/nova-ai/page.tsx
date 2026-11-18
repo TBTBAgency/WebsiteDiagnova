@@ -18,17 +18,17 @@ export default function NovaAiPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-4">
       {/* Main Feature Announcement Card */}
-      <div className="bg-white rounded-2xl border border-[#E8EBEF] p-6 sm:p-10 shadow-[0_4px_20px_rgba(15,23,42,0.03)] text-center space-y-4">
-        <div className="h-14 w-14 rounded-2xl bg-purple-50 border border-purple-200/80 flex items-center justify-center mx-auto text-purple-600 shadow-2xs">
+      <div className="bg-white rounded-2xl border border-[#DCE6F5] p-6 sm:p-10 shadow-[0_6px_24px_-12px_rgba(14,35,75,0.06)] text-center space-y-4">
+        <div className="h-14 w-14 rounded-2xl bg-[#EEF4FF] border border-[#BFDBFE]/80 flex items-center justify-center mx-auto text-[#1B6FF2] shadow-2xs">
           <Sparkles className="h-7 w-7" />
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-200 text-xs font-semibold text-purple-700">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF4FF] border border-[#BFDBFE] text-xs font-semibold text-[#0E56D8]">
           <Bot className="h-3.5 w-3.5" />
           <span>{t("Roadmap Fase 4: Nova AI Clinical Decision Support", "Roadmap Phase 4: Nova AI Clinical Decision Support")}</span>
         </div>
 
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#17191D] font-display tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#0E234B] font-display tracking-tight">
           Nova AI — Intelligent Laboratory Copilot
         </h2>
 
@@ -70,11 +70,11 @@ export default function NovaAiPage() {
 
       {/* Feature Capabilities Preview Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-[#E8EBEF] shadow-2xs space-y-2">
-          <div className="h-8 w-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+        <div className="p-5 rounded-2xl bg-white border border-[#DCE6F5] shadow-2xs space-y-2">
+          <div className="h-8 w-8 rounded-xl bg-[#EEF4FF] text-[#1B6FF2] flex items-center justify-center">
             <Brain className="h-4 w-4" />
           </div>
-          <h4 className="text-xs font-bold text-[#17191D]">{t("Rangkuman Pola Anomali", "Anomaly Pattern Summary")}</h4>
+          <h4 className="text-xs font-bold text-[#0E234B]">{t("Rangkuman Pola Anomali", "Anomaly Pattern Summary")}</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
             {t(
               "Menghubungkan hasil hematologi, kimia darah, dan urin lengkap untuk menyajikan narasi klinis komprehensif.",

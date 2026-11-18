@@ -37,7 +37,7 @@ export function MetricCard({
       case "danger":
         return "bg-rose-50 text-rose-700 border-rose-200/60";
       case "purple":
-        return "bg-purple-50 text-purple-700 border-purple-200/60";
+        return "bg-[#EEF4FF] text-[#0E56D8] border-[#BFDBFE]/70";
       default:
         return "bg-slate-100 text-slate-700 border-slate-200/60";
     }

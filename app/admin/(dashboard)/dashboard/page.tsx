@@ -779,44 +779,48 @@ export default function AdminOverviewDashboard() {
             {todayStr && <span className="ml-1 hidden sm:inline">· {todayStr}</span>}
           </nav>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {updatedAt && (
-            <span className="mr-1 inline-flex items-center gap-1.5 text-[12px] text-[#8A8F98]" aria-live="polite">
+            <span className="inline-flex h-10 items-center gap-2 rounded-full border border-[#DCE6F5] bg-white px-3.5 text-[12px] font-medium text-slate-600 shadow-2xs" aria-live="polite">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-60 motion-safe:animate-ping" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 motion-safe:animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
               {t("Diperbarui", "Updated")} {updatedAt.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
             </span>
           )}
-          <div role="group" aria-label={t("Periode aktivitas", "Activity period")} className="inline-flex h-11 items-center rounded-full bg-white p-1">
+          <div role="group" aria-label={t("Periode aktivitas", "Activity period")} className="inline-flex h-10 items-center rounded-full border border-[#DCE6F5] bg-white p-1 shadow-2xs">
             {([7, 14] as const).map((p) => (
               <button
                 key={p}
                 type="button"
                 onClick={() => setPeriod(p)}
                 aria-pressed={period === p}
-                className={cn("h-9 rounded-full px-4 text-[13px] font-medium transition-colors", focusRing, period === p ? "bg-[#111318] text-white" : "text-[#5B616B] hover:text-[#111318]")}
+                className={cn(
+                  "h-8 rounded-full px-4 text-[13px] font-medium transition-all",
+                  focusRing,
+                  period === p
+                    ? "bg-[#1B6FF2] text-white shadow-[0_4px_12px_-2px_rgba(27,111,242,0.35)]"
+                    : "text-slate-600 hover:text-[#0E234B]"
+                )}
               >
                 {p} {t("Hari", "Days")}
               </button>
             ))}
           </div>
-          <a href="/api/admin/leads/export" download className={toolbarBtn}>
-            {t("Ekspor", "Export")}
-          </a>
           <a
             href="/api/admin/leads/export"
             download
             aria-label={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
             title={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
-            className={toolbarIcon}
+            className={cn(toolbarBtn, "h-10 px-4")}
           >
-            <Download className="h-4 w-4" aria-hidden="true" />
+            <Download className="h-4 w-4 text-[#1B6FF2]" aria-hidden="true" />
+            <span>{t("Ekspor", "Export")}</span>
           </a>
-          <button type="button" onClick={() => fetchOverview()} disabled={isLoading} className={toolbarBtn}>
-            {isLoading ? t("Memuat...", "Loading...") : t("Muat Ulang", "Refresh")}
-            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin text-[#1F6BFF]")} aria-hidden="true" />
+          <button type="button" onClick={() => fetchOverview()} disabled={isLoading} className={cn(toolbarBtn, "h-10 px-4")}>
+            <span>{isLoading ? t("Memuat...", "Loading...") : t("Muat Ulang", "Refresh")}</span>
+            <RefreshCw className={cn("h-4 w-4 text-[#1B6FF2]", isLoading && "animate-spin")} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -1075,14 +1079,14 @@ export default function AdminOverviewDashboard() {
                     <li key={lead.id}>
                       <Link
                         href={`/admin/leads?lead=${encodeURIComponent(lead.id)}`}
-                        className={cn("group flex items-center gap-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5 transition-colors hover:bg-[#EEF0F3]", focusRing)}
+                        className={cn("group flex items-center gap-3 rounded-2xl bg-[#F4F8FD] px-3 py-2.5 transition-all duration-200 hover:bg-[#E8F1FC]", focusRing)}
                       >
-                        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#111318] text-[12px] font-bold text-white">
+                        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0E234B] text-[12px] font-bold text-white">
                           {getInitials(lead.name)}
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[13px] font-semibold text-[#111318]">{lead.name}</span>
-                          <span className="block truncate text-[11px] text-[#8A8F98]">{lead.institution || institutionName(lead.institutionType, t) || "-"}</span>
+                          <span className="block truncate text-[13px] font-semibold text-[#0E234B]">{lead.name}</span>
+                          <span className="block truncate text-[11px] text-slate-500">{lead.institution || institutionName(lead.institutionType, t) || "-"}</span>
                         </span>
                         <span className="flex shrink-0 flex-col items-end gap-1">
                           <StatusBadge type={lead.status} className="px-2 text-[10px]" />
@@ -1111,14 +1115,14 @@ export default function AdminOverviewDashboard() {
                     const done = order.specimensCount > 0 && order.receivedSpecimensCount >= order.specimensCount;
                     const progress = order.specimensCount > 0 ? (order.receivedSpecimensCount / order.specimensCount) * 100 : 0;
                     return (
-                      <li key={order.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
-                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1F6BFF] text-white">
+                      <li key={order.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl bg-[#F4F8FD] px-3 py-2.5 transition-colors hover:bg-[#E8F1FC]">
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1B6FF2] text-white shadow-xs">
                           <FlaskConical className="h-4 w-4" aria-hidden="true" />
                         </span>
                         <div className="min-w-0">
                           <div className="flex min-w-0 flex-wrap items-center gap-x-2">
-                            <span className="truncate text-[13px] font-semibold text-[#111318]">{order.patientName}</span>
-                            <span className="font-mono text-[11px] text-[#1F6BFF]">{order.orderNumber}</span>
+                            <span className="truncate text-[13px] font-semibold text-[#0E234B]">{order.patientName}</span>
+                            <span className="font-mono text-[11px] text-[#1B6FF2]">{order.orderNumber}</span>
                           </div>
                           <div className="truncate text-[11px] text-[#8A8F98]">
                             {order.physicianName} · {formatDateTime(order.orderedAt, locale)}
@@ -1162,11 +1166,11 @@ export default function AdminOverviewDashboard() {
                   return (
                     <div
                       key={row.label}
-                      className={cn("rounded-2xl px-3.5 py-3 transition-transform hover:-translate-y-0.5", row.tone === "dark" ? "bg-[#111318]" : row.tone === "blue" ? "" : "bg-[#F7F8FA]")}
+                      className={cn("rounded-2xl px-3.5 py-3 transition-transform hover:-translate-y-0.5", row.tone === "dark" ? "bg-[#0E234B]" : row.tone === "blue" ? "" : "bg-[#F4F8FD]")}
                       style={row.tone === "blue" ? STYLE_BLUE : undefined}
                     >
-                      <dt className={cn("text-[11px]", strong ? "text-white/75" : "text-[#8A8F98]")}>{row.label}</dt>
-                      <dd className={cn("mt-1 font-display text-[22px] font-medium leading-none", strong ? "text-white" : "text-[#111318]")}>
+                      <dt className={cn("text-[11px]", strong ? "text-white/80" : "text-slate-500")}>{row.label}</dt>
+                      <dd className={cn("mt-1 font-display text-[22px] font-bold leading-none", strong ? "text-white" : "text-[#0E234B]")}>
                         <CountUp value={row.value} />
                       </dd>
                     </div>

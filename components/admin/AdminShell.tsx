@@ -372,12 +372,12 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                   {userOpen && (
                     <div
                       id={userPanelId}
-                      className="absolute right-0 top-full z-50 mt-2 w-64 max-w-[calc(100vw-1.5rem)] rounded-[20px] bg-white p-2 text-sm shadow-[0_18px_50px_rgba(17,19,24,0.16)] ring-1 ring-[#E4E6EA]"
+                      className="absolute right-0 top-full z-50 mt-2 w-64 max-w-[calc(100vw-1.5rem)] rounded-[20px] bg-white p-2 text-sm shadow-[0_18px_50px_rgba(14,35,75,0.16)] ring-1 ring-[#DCE6F5]"
                     >
-                      <div className="rounded-2xl bg-[#F5F6F8] p-3">
-                        <div className="truncate font-semibold text-[#111318]">{displayName}</div>
-                        {currentUser?.email && <div className="truncate text-xs text-[#8A8F98]">{currentUser.email}</div>}
-                        <div className="mt-1.5 inline-flex rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#1F6BFF] ring-1 ring-[#D6E4FF]">
+                      <div className="rounded-2xl bg-[#F4F8FD] p-3">
+                        <div className="truncate font-semibold text-[#0E234B]">{displayName}</div>
+                        {currentUser?.email && <div className="truncate text-xs text-slate-500">{currentUser.email}</div>}
+                        <div className="mt-1.5 inline-flex rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#1B6FF2] ring-1 ring-[#D6E4FF]">
                           {formatRole(t, currentUser?.role)}
                         </div>
                       </div>
@@ -388,7 +388,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                           setUserOpen(false);
                           setPasswordOpen(true);
                         }}
-                        className={cn("mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left font-medium text-[#111318] transition-colors hover:bg-[#F2F3F5]", focusRing)}
+                        className={cn("mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left font-medium text-[#0E234B] transition-colors hover:bg-[#F4F8FD]", focusRing)}
                       >
                         <KeyRound className="h-4 w-4" aria-hidden="true" />
                         <span>{t("Ganti kata sandi", "Change password")}</span>
@@ -420,7 +420,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
                   aria-expanded={mobileOpen}
                   aria-controls={drawerId}
                   aria-label={mobileOpen ? t("Tutup menu navigasi", "Close navigation menu") : t("Buka menu navigasi", "Open navigation menu")}
-                  className={cn("inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#111318] text-white transition-colors hover:bg-[#2A2D33] lg:hidden", focusRing)}
+                  className={cn("inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0E234B] text-white transition-colors hover:bg-[#153670] lg:hidden", focusRing)}
                 >
                   {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
                 </button>
@@ -444,7 +444,7 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
       {/* Laci menu (< lg) */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <button type="button" aria-label={t("Tutup menu navigasi", "Close navigation menu")} tabIndex={-1} onClick={closeMobile} className="absolute inset-0 bg-[#111318]/40 backdrop-blur-[2px]" />
+          <button type="button" aria-label={t("Tutup menu navigasi", "Close navigation menu")} tabIndex={-1} onClick={closeMobile} className="absolute inset-0 bg-[#0E234B]/40 backdrop-blur-[2px]" />
           <div
             ref={drawerRef}
             id={drawerId}

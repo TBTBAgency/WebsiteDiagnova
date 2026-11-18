@@ -121,10 +121,10 @@ const statusBadgeStyles: Record<
   },
   3: {
     label: { id: "Jadwal Demo", en: "Demo Scheduled" },
-    bg: "bg-purple-50",
-    text: "text-purple-700",
-    border: "border-purple-200",
-    dot: "bg-purple-500",
+    bg: "bg-sky-50",
+    text: "text-sky-700",
+    border: "border-sky-200",
+    dot: "bg-sky-500",
   },
   4: {
     label: { id: "Selesai", en: "Completed" },
@@ -685,8 +685,8 @@ export default function AdminLeadsPage() {
           value={metrics.scheduled}
           subtitle={t("Voucher demo aktif", "Active demo voucher")}
           icon={CalendarCheck}
-          iconBg="bg-purple-50"
-          iconColor="text-purple-600"
+          iconBg="bg-[#EEF4FF]"
+          iconColor="text-[#1B6FF2]"
           badge={{ text: t("Tahap 3", "Stage 3"), variant: "purple" }}
         />
         <MetricCard

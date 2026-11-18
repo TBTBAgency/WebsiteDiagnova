@@ -100,7 +100,7 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
         aria-invalid={invalid || undefined}
         className={cn(
           "w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-4",
-          invalid ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100" : "border-slate-200 focus:border-[#1F6BFF] focus:ring-[#1F6BFF]/10"
+          invalid ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100" : "border-slate-200 focus:border-[#1B6FF2] focus:ring-[#1B6FF2]/10"
         )}
       />
       {hint}
@@ -109,20 +109,20 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <button type="button" aria-label={t("Tutup", "Close")} tabIndex={-1} onClick={onClose} className="absolute inset-0 bg-[#111318]/40 backdrop-blur-[2px]" />
+      <button type="button" aria-label={t("Tutup", "Close")} tabIndex={-1} onClick={onClose} className="absolute inset-0 bg-[#0E234B]/40 backdrop-blur-[2px]" />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         data-testid="change-password-dialog"
-        className="relative w-full max-w-md rounded-[24px] bg-white p-6 shadow-[0_24px_60px_rgba(17,19,24,0.25)]"
+        className="relative w-full max-w-md rounded-[24px] border border-[#DCE6F5] bg-white p-6 shadow-[0_24px_60px_rgba(14,35,75,0.25)]"
       >
         <div className="mb-5 flex items-start gap-3">
-          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#EAF1FF] text-[#1F6BFF]">
+          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#EEF4FF] text-[#1B6FF2]">
             <KeyRound className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id={titleId} className="text-lg font-bold text-[#111318]">
+            <h2 id={titleId} className="font-display text-lg font-bold text-[#0E234B]">
               {t("Ganti kata sandi", "Change password")}
             </h2>
             <p className="mt-0.5 text-xs text-slate-500">
@@ -143,7 +143,7 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
                 "Password changed. Use the new password the next time you sign in."
               )}
             </p>
-            <button type="button" onClick={onClose} className="w-full rounded-xl bg-[#111318] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2A2D33]">
+            <button type="button" onClick={onClose} className="w-full rounded-xl bg-[#0E234B] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#153670]">
               {t("Selesai", "Done")}
             </button>
           </div>
@@ -177,7 +177,7 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
               mismatch
             )}
             <label className="inline-flex cursor-pointer select-none items-center gap-2 text-xs text-slate-600">
-              <input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} className="h-4 w-4 accent-[#1F6BFF]" />
+              <input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} className="h-4 w-4 accent-[#1B6FF2]" />
               {show ? <EyeOff className="h-3.5 w-3.5" aria-hidden="true" /> : <Eye className="h-3.5 w-3.5" aria-hidden="true" />}
               {t("Tampilkan kata sandi", "Show passwords")}
             </label>
@@ -189,7 +189,7 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
                 type="submit"
                 disabled={!canSubmit}
                 data-testid="change-password-submit"
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#1F6BFF] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 hover:bg-[#165DD0] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#1B6FF2] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 hover:bg-[#1459D0] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
                 {t("Simpan", "Save")}
