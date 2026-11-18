@@ -228,20 +228,15 @@ function SidebarContent({
       </nav>
 
       {/* Kartu biru di bawah sidebar: pratinjau website publik */}
-      <a
-        href="/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn("group relative mt-8 block overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E56D8] via-[#1B6FF2] to-[#07348C] p-5 text-white shadow-[0_14px_30px_-10px_rgba(14,86,216,0.38)] lg:mt-auto", focusRing)}
-      >
+      <div className="relative mt-8 block overflow-hidden rounded-[24px] bg-gradient-to-br from-[#0E56D8] via-[#1B6FF2] to-[#07348C] p-5 text-white shadow-[0_14px_30px_-10px_rgba(14,86,216,0.38)] lg:mt-auto">
         <Image
           src="/images/hero-scientist.jpg"
           alt=""
           fill
           sizes="240px"
-          className="object-cover object-[78%_50%] opacity-85"
+          className="pointer-events-none object-cover object-[78%_50%] opacity-85"
         />
-        <span className="absolute inset-0 bg-gradient-to-r from-[#0E56D8] via-[#1B6FF2]/85 to-transparent" aria-hidden="true" />
+        <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0E56D8] via-[#1B6FF2]/85 to-transparent" aria-hidden="true" />
         <span className="relative block">
           <span className="block font-display text-[20px] font-bold leading-tight">
             {t("Lihat", "View")}
@@ -249,14 +244,22 @@ function SidebarContent({
             website
           </span>
           <span className="mt-1 block text-[11px] text-blue-100/90">{t("Cek perubahan konten", "Check your content changes")}</span>
-          <span className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#0E234B] py-1.5 pl-4 pr-1.5 text-[11px] font-semibold shadow-sm transition-colors group-hover:bg-[#091836]">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "group mt-9 inline-flex items-center gap-2 rounded-full bg-[#0E234B] py-1.5 pl-4 pr-1.5 text-[11px] font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#153670] hover:shadow-md",
+              focusRing
+            )}
+          >
             {t("Buka website", "Open website")}
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
-          </span>
+          </a>
         </span>
-      </a>
+      </div>
     </div>
   );
 }
