@@ -19,20 +19,27 @@ import {
   Share2,
   Sparkles,
 } from "lucide-react";
+import { AdminLanguageToggle, useAdminLang } from "@/components/admin/AdminLanguage";
 
 /** Pesan panel kanan (berganti otomatis). */
 const SLIDES = [
   {
     title: "Laboratorium Lebih Cerdas untuk Keputusan Lebih Baik",
+    titleEn: "Smarter Laboratory for Better Decisions",
     text: "Menghubungkan orang, spesimen, instrumen, dan informasi dalam satu ekosistem yang cerdas.",
+    textEn: "Connecting people, specimens, instruments, and information in one intelligent ecosystem.",
   },
   {
     title: "Satu Portal untuk Konten & Permohonan Demo",
+    titleEn: "One Portal for Content & Demo Requests",
     text: "Kelola website, permohonan demo, dan akses klien Diagnova dari satu tempat yang aman.",
+    textEn: "Manage the Diagnova website, demo requests, and client access from one secure place.",
   },
   {
     title: "Setiap Perubahan Tercatat",
+    titleEn: "Every Change Is Recorded",
     text: "Audit log merekam setiap aksi admin sehingga pengelolaan tetap transparan dan dapat ditelusuri.",
+    textEn: "The audit log records every admin action, keeping management transparent and traceable.",
   },
 ];
 
@@ -133,6 +140,7 @@ function PanelIllustration() {
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useAdminLang();
   const from = searchParams.get("from") || "/admin/dashboard";
 
   const [email, setEmail] = useState("");
@@ -161,15 +169,15 @@ function AdminLoginForm() {
     } else {
       emailRef.current?.focus();
     }
-    const t = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 6000);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 6000);
+    return () => clearInterval(timer);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
     if (!email || !password) {
-      setErrorMessage("Mohon masukkan email dan kata sandi.");
+      setErrorMessage(t("Mohon masukkan email dan kata sandi.", "Please enter your email and password."));
       return;
     }
     setIsLoading(true);
@@ -181,7 +189,7 @@ function AdminLoginForm() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setErrorMessage(data.message || "Gagal masuk. Periksa kembali email dan kata sandi Anda.");
+        setErrorMessage(data.message || t("Gagal masuk. Periksa kembali email dan kata sandi Anda.", "Sign-in failed. Please check your email and password."));
         setIsLoading(false);
         return;
       }
@@ -195,7 +203,7 @@ function AdminLoginForm() {
       router.refresh();
     } catch (err) {
       console.error("Login fetch error:", err);
-      setErrorMessage("Terjadi gangguan jaringan. Silakan coba kembali.");
+      setErrorMessage(t("Terjadi gangguan jaringan. Silakan coba kembali.", "A network error occurred. Please try again."));
       setIsLoading(false);
     }
   };
@@ -210,14 +218,20 @@ function AdminLoginForm() {
       <div className="mx-auto grid w-full max-w-[1280px] overflow-hidden rounded-[28px] bg-white shadow-xl shadow-slate-300/40 lg:grid-cols-2">
         {/* KIRI: form */}
         <div className="flex flex-col px-6 py-8 sm:px-12 lg:px-16 xl:px-20">
-          <Link href="/" className={`inline-flex w-fit rounded-lg transition-opacity hover:opacity-90 ${focusRing}`} aria-label="Diagnova — ke website">
-            <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-9 w-auto object-contain sm:h-10" />
-          </Link>
+          <div className="flex items-center justify-between gap-3">
+            <Link href="/" className={`inline-flex w-fit rounded-lg transition-opacity hover:opacity-90 ${focusRing}`} aria-label={t("Diagnova — ke website", "Diagnova — go to website")}>
+              <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-9 w-auto object-contain sm:h-10" />
+            </Link>
+            <AdminLanguageToggle />
+          </div>
 
           <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center py-10 lg:mx-0">
-            <h1 className="font-display text-3xl font-bold tracking-tight text-[#0F1B3D] sm:text-[36px]">Selamat datang kembali!</h1>
+            <h1 className="font-display text-3xl font-bold tracking-tight text-[#0F1B3D] sm:text-[36px]">{t("Selamat datang kembali!", "Welcome back!")}</h1>
             <p className="mt-2 text-sm leading-relaxed text-slate-500">
-              Masuk ke akun administrator untuk mengelola konten website, permohonan demo, dan pengguna Diagnova.
+              {t(
+                "Masuk ke akun administrator untuk mengelola konten website, permohonan demo, dan pengguna Diagnova.",
+                "Sign in to your administrator account to manage Diagnova's website content, demo requests, and users."
+              )}
             </p>
 
             {errorMessage && (
@@ -230,7 +244,7 @@ function AdminLoginForm() {
             <form onSubmit={handleSubmit} className="mt-7 space-y-4" noValidate>
               <div>
                 <label htmlFor="email" className="mb-1.5 block text-xs font-semibold text-slate-700">
-                  Alamat email
+                  {t("Alamat email", "Email address")}
                 </label>
                 <div className="relative">
                   <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -241,7 +255,7 @@ function AdminLoginForm() {
                     autoComplete="username"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@diagnova.id"
+                    placeholder={t("nama@diagnova.id", "name@diagnova.id")}
                     required
                     className={fieldCls}
                   />
@@ -250,7 +264,7 @@ function AdminLoginForm() {
 
               <div>
                 <label htmlFor="password" className="mb-1.5 block text-xs font-semibold text-slate-700">
-                  Kata sandi
+                  {t("Kata sandi", "Password")}
                 </label>
                 <div className="relative">
                   <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -264,7 +278,7 @@ function AdminLoginForm() {
                     onKeyUp={onPasswordKey}
                     onKeyDown={onPasswordKey}
                     onBlur={() => setCapsLock(false)}
-                    placeholder="Masukkan kata sandi"
+                    placeholder={t("Masukkan kata sandi", "Enter your password")}
                     required
                     aria-describedby={capsLock ? "caps-hint" : undefined}
                     className={fieldCls + " pr-12"}
@@ -273,14 +287,14 @@ function AdminLoginForm() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className={`absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 ${focusRing}`}
-                    aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                    aria-label={showPassword ? t("Sembunyikan kata sandi", "Hide password") : t("Tampilkan kata sandi", "Show password")}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {capsLock && (
                   <p id="caps-hint" className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium text-amber-700">
-                    <Info className="h-3.5 w-3.5" /> Caps Lock sedang aktif
+                    <Info className="h-3.5 w-3.5" /> {t("Caps Lock sedang aktif", "Caps Lock is on")}
                   </p>
                 )}
               </div>
@@ -295,7 +309,7 @@ function AdminLoginForm() {
                     data-testid="remember-me"
                     className="h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#1D6FF2]"
                   />
-                  Ingat saya
+                  {t("Ingat saya", "Remember me")}
                 </label>
                 <button
                   type="button"
@@ -304,14 +318,16 @@ function AdminLoginForm() {
                   aria-controls="forgot-help"
                   className={`rounded font-semibold text-[#1D6FF2] hover:underline ${focusRing}`}
                 >
-                  Lupa kata sandi?
+                  {t("Lupa kata sandi?", "Forgot password?")}
                 </button>
               </div>
               {showForgot && (
                 <p id="forgot-help" className="flex items-start gap-2 rounded-xl border border-blue-100 bg-blue-50/70 p-3 text-xs leading-relaxed text-slate-600">
                   <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1D6FF2]" />
-                  Kata sandi admin diatur ulang oleh administrator sistem Diagnova. Hubungi administrator untuk meminta
-                  kata sandi baru.
+                  {t(
+                    "Kata sandi admin diatur ulang oleh administrator sistem Diagnova. Hubungi administrator untuk meminta kata sandi baru.",
+                    "Admin passwords are reset by the Diagnova system administrator. Contact the administrator to request a new password."
+                  )}
                 </p>
               )}
 
@@ -322,23 +338,24 @@ function AdminLoginForm() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Memverifikasi…
+                    <Loader2 className="h-4 w-4 animate-spin" /> {t("Memverifikasi…", "Verifying…")}
                   </>
                 ) : (
                   <>
-                    Masuk <ArrowRight className="h-4 w-4" />
+                    {t("Masuk", "Sign in")} <ArrowRight className="h-4 w-4" />
                   </>
                 )}
               </button>
             </form>
 
             <p className="mt-6 text-center text-xs text-slate-500">
-              Belum punya akun admin? <span className="font-semibold text-slate-700">Hubungi administrator sistem.</span>
+              {t("Belum punya akun admin?", "Don't have an admin account?")}{" "}
+              <span className="font-semibold text-slate-700">{t("Hubungi administrator sistem.", "Contact the system administrator.")}</span>
             </p>
           </div>
 
           <Link href="/" className={`inline-flex w-fit items-center gap-1.5 rounded text-xs font-medium text-slate-500 transition-colors hover:text-slate-900 ${focusRing}`}>
-            <ArrowLeft className="h-3.5 w-3.5" /> Kembali ke website Diagnova
+            <ArrowLeft className="h-3.5 w-3.5" /> {t("Kembali ke website Diagnova", "Back to the Diagnova website")}
           </Link>
         </div>
 
@@ -356,17 +373,17 @@ function AdminLoginForm() {
 
           <div className="relative">
             <h2 key={slide} className="max-w-md font-display text-2xl font-bold leading-tight text-white motion-safe:animate-[fadeSlideUp_0.45s_ease-out] xl:text-[28px]" aria-live="polite">
-              {SLIDES[slide].title}
+              {t(SLIDES[slide].title, SLIDES[slide].titleEn)}
             </h2>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-blue-100/90">{SLIDES[slide].text}</p>
-            <div className="mt-6 flex gap-2" role="tablist" aria-label="Pesan">
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-blue-100/90">{t(SLIDES[slide].text, SLIDES[slide].textEn)}</p>
+            <div className="mt-6 flex gap-2" role="tablist" aria-label={t("Pesan", "Messages")}>
               {SLIDES.map((_, i) => (
                 <button
                   key={i}
                   type="button"
                   role="tab"
                   aria-selected={i === slide}
-                  aria-label={`Pesan ${i + 1}`}
+                  aria-label={t(`Pesan ${i + 1}`, `Message ${i + 1}`)}
                   onClick={() => setSlide(i)}
                   className={`h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${i === slide ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`}
                 />

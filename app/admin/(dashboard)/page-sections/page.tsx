@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertCircle,
   ArrowDown,
@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import type { CustomSectionContent, ResolvedSection } from "@/lib/cms-layout";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 /**
  * Halaman & Section: STRUKTUR halaman publik — urutan section, tampil/sembunyi, dan section kustom.
@@ -40,10 +41,10 @@ interface PageData {
 const inputCls =
   "w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden";
 
-const CUSTOM_TEXT_FIELDS: { field: "badge" | "title" | "subtitle"; label: string; multiline: boolean }[] = [
-  { field: "badge", label: "Badge", multiline: false },
-  { field: "title", label: "Judul", multiline: true },
-  { field: "subtitle", label: "Deskripsi", multiline: true },
+const CUSTOM_TEXT_FIELDS: { field: "badge" | "title" | "subtitle"; label: { id: string; en: string }; multiline: boolean }[] = [
+  { field: "badge", label: { id: "Badge", en: "Badge" }, multiline: false },
+  { field: "title", label: { id: "Judul", en: "Title" }, multiline: true },
+  { field: "subtitle", label: { id: "Deskripsi", en: "Description" }, multiline: true },
 ];
 
 function newCustomKey() {
@@ -93,6 +94,10 @@ function BilingualField({
 }
 
 export default function PageSectionsAdminPage() {
+  const { t } = useAdminLang();
+  // Ref agar `load` tetap stabil (tidak memuat ulang & membuang draf saat bahasa diganti).
+  const tRef = useRef(t);
+  tRef.current = t;
   const [pages, setPages] = useState<PageData[]>([]);
   const [activePage, setActivePage] = useState<string>("home");
   const [draft, setDraft] = useState<ResolvedSection[]>([]);
@@ -111,10 +116,10 @@ export default function PageSectionsAdminPage() {
     try {
       const res = await fetch("/api/admin/cms/layout", { cache: "no-store" });
       const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json.message || "Gagal memuat data.");
+      if (!res.ok || !json.success) throw new Error(json.message || tRef.current("Gagal memuat data.", "Failed to load data."));
       setPages(json.data);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Gagal memuat data.");
+      setError(e instanceof Error ? e.message : tRef.current("Gagal memuat data.", "Failed to load data."));
     } finally {
       setLoading(false);
     }
@@ -174,7 +179,15 @@ export default function PageSectionsAdminPage() {
   };
 
   const removeCustom = (key: string) => {
-    if (!window.confirm("Hapus section kustom ini dari halaman? Perubahan berlaku setelah Simpan Tata Letak.")) return;
+    if (
+      !window.confirm(
+        t(
+          "Hapus section kustom ini dari halaman? Perubahan berlaku setelah Simpan Tata Letak.",
+          "Remove this custom section from the page? The change takes effect after Save Layout."
+        )
+      )
+    )
+      return;
     setDraft((list) => list.filter((s) => s.key !== key));
     setDirty(true);
   };
@@ -195,11 +208,16 @@ export default function PageSectionsAdminPage() {
         }),
       });
       const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json.message || "Gagal menyimpan.");
+      if (!res.ok || !json.success) throw new Error(json.message || t("Gagal menyimpan.", "Failed to save."));
       await load();
-      flash(`Tata letak halaman ${page.label} disimpan. Website diperbarui.`);
+      flash(
+        t(
+          `Tata letak halaman ${page.label} disimpan. Website diperbarui.`,
+          `Layout for page ${page.label} saved. Website updated.`
+        )
+      );
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Gagal menyimpan.");
+      setError(e instanceof Error ? e.message : t("Gagal menyimpan.", "Failed to save."));
     } finally {
       setSaving(false);
     }
@@ -210,13 +228,15 @@ export default function PageSectionsAdminPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-display flex items-center gap-2">
-            <Layers className="h-6 w-6 text-blue-600" /> Halaman &amp; Section
+            <Layers className="h-6 w-6 text-blue-600" /> {t("Halaman & Section", "Pages & Sections")}
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Atur urutan section dan tampilkan/sembunyikan section pada setiap halaman publik. Isi section (teks, gambar,
-            kartu) diedit di{" "}
+            {t(
+              "Atur urutan section dan tampilkan/sembunyikan section pada setiap halaman publik. Isi section (teks, gambar, kartu) diedit di",
+              "Set the section order and show/hide sections on each public page. Section content (text, images, cards) is edited in"
+            )}{" "}
             <a href="/admin/cms" className="font-semibold text-blue-600 hover:underline">
-              Pusat Konten
+              {t("Pusat Konten", "Content Hub")}
             </a>
             .
           </p>
@@ -226,7 +246,7 @@ export default function PageSectionsAdminPage() {
           onClick={load}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
         >
-          <RefreshCw className="h-3.5 w-3.5" /> Muat Ulang
+          <RefreshCw className="h-3.5 w-3.5" /> {t("Muat Ulang", "Reload")}
         </button>
       </div>
 
@@ -250,7 +270,16 @@ export default function PageSectionsAdminPage() {
             data-testid={`page-tab-${p.key}`}
             aria-selected={p.key === activePage}
             onClick={() => {
-              if (dirty && !window.confirm("Ada perubahan yang belum disimpan. Pindah halaman dan buang perubahan?")) return;
+              if (
+                dirty &&
+                !window.confirm(
+                  t(
+                    "Ada perubahan yang belum disimpan. Pindah halaman dan buang perubahan?",
+                    "You have unsaved changes. Switch page and discard them?"
+                  )
+                )
+              )
+                return;
               setActivePage(p.key);
             }}
             className={
@@ -263,17 +292,23 @@ export default function PageSectionsAdminPage() {
         ))}
       </div>
 
-      {loading && !page && <p className="text-xs text-slate-500">Memuat…</p>}
+      {loading && !page && <p className="text-xs text-slate-500">{t("Memuat…", "Loading…")}</p>}
 
       {page && (
         <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Section Halaman {page.label}</h2>
+              <h2 className="text-sm font-bold text-slate-900">
+                {t(`Section Halaman ${page.label}`, `${page.label} Page Sections`)}
+              </h2>
               <p className="text-[11px] text-slate-500 flex flex-wrap items-center gap-2">
-                <span>{page.layoutSaved ? "Tata letak tersimpan di CMS." : "Memakai tata letak bawaan (belum pernah disimpan)."}</span>
+                <span>
+                  {page.layoutSaved
+                    ? t("Tata letak tersimpan di CMS.", "Layout saved in the CMS.")
+                    : t("Memakai tata letak bawaan (belum pernah disimpan).", "Using the default layout (never saved).")}
+                </span>
                 <a href={page.path} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-600 font-semibold hover:underline">
-                  Lihat halaman <ExternalLink className="h-3 w-3" />
+                  {t("Lihat halaman", "View page")} <ExternalLink className="h-3 w-3" />
                 </a>
               </p>
             </div>
@@ -284,7 +319,7 @@ export default function PageSectionsAdminPage() {
                 data-testid="add-custom-section"
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-blue-200 text-blue-700 text-xs font-semibold hover:bg-blue-50"
               >
-                <Plus className="h-3.5 w-3.5" /> Tambah Section Kustom
+                <Plus className="h-3.5 w-3.5" /> {t("Tambah Section Kustom", "Add Custom Section")}
               </button>
               <button
                 type="button"
@@ -293,11 +328,15 @@ export default function PageSectionsAdminPage() {
                 data-testid="save-layout"
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 disabled:opacity-50"
               >
-                <Save className="h-3.5 w-3.5" /> {saving ? "Menyimpan…" : "Simpan Tata Letak"}
+                <Save className="h-3.5 w-3.5" /> {saving ? t("Menyimpan…", "Saving…") : t("Simpan Tata Letak", "Save Layout")}
               </button>
             </div>
           </div>
-          {dirty && <p className="text-[11px] text-amber-700">Perubahan urutan / tampilan belum disimpan.</p>}
+          {dirty && (
+            <p className="text-[11px] text-amber-700">
+              {t("Perubahan urutan / tampilan belum disimpan.", "Order / visibility changes have not been saved.")}
+            </p>
+          )}
 
           <ol className="space-y-2">
             {draft.map((s, index) => {
@@ -313,8 +352,14 @@ export default function PageSectionsAdminPage() {
                     <div className="flex-1 min-w-[160px]">
                       <p className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
                         {s.locked && <Lock className="h-3 w-3 text-slate-400" />}
-                        {s.type === "custom" ? s.content?.titleId || s.content?.titleEn || "Section Kustom (baru)" : s.label}
-                        {s.type === "custom" && <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold">KUSTOM</span>}
+                        {s.type === "custom"
+                          ? s.content?.titleId || s.content?.titleEn || t("Section Kustom (baru)", "Custom Section (new)")
+                          : s.label}
+                        {s.type === "custom" && (
+                          <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold">
+                            {t("KUSTOM", "CUSTOM")}
+                          </span>
+                        )}
                       </p>
                       <p className="text-[11px] text-slate-500">
                         {s.key}
@@ -322,16 +367,20 @@ export default function PageSectionsAdminPage() {
                       </p>
                       {!s.isActive && s.anchor && (
                         <p className="text-[11px] text-amber-700 flex items-center gap-1">
-                          <Info className="h-3 w-3" /> Menu navigasi yang menuju #{s.anchor} akan membuka bagian atas halaman.
+                          <Info className="h-3 w-3" />{" "}
+                          {t(
+                            `Menu navigasi yang menuju #${s.anchor} akan membuka bagian atas halaman.`,
+                            `Navigation links pointing to #${s.anchor} will open the top of the page.`
+                          )}
                         </p>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
-                      <button type="button" aria-label="Naikkan" onClick={() => move(index, -1)} disabled={s.locked || index === 0 || draft[index - 1]?.locked}
+                      <button type="button" aria-label={t("Naikkan", "Move up")} onClick={() => move(index, -1)} disabled={s.locked || index === 0 || draft[index - 1]?.locked}
                         className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-30 hover:bg-slate-50" data-testid={`move-up-${s.key}`}>
                         <ArrowUp className="h-3.5 w-3.5" />
                       </button>
-                      <button type="button" aria-label="Turunkan" onClick={() => move(index, 1)} disabled={s.locked || index === draft.length - 1}
+                      <button type="button" aria-label={t("Turunkan", "Move down")} onClick={() => move(index, 1)} disabled={s.locked || index === draft.length - 1}
                         className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-30 hover:bg-slate-50" data-testid={`move-down-${s.key}`}>
                         <ArrowDown className="h-3.5 w-3.5" />
                       </button>
@@ -346,7 +395,7 @@ export default function PageSectionsAdminPage() {
                         }
                       >
                         {s.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-                        {s.isActive ? "Tampil" : "Disembunyikan"}
+                        {s.isActive ? t("Tampil", "Visible") : t("Disembunyikan", "Hidden")}
                       </button>
                       {s.type === "custom" ? (
                         <>
@@ -356,9 +405,10 @@ export default function PageSectionsAdminPage() {
                             data-testid={`edit-${s.key}`}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-slate-200 hover:bg-slate-50"
                           >
-                            {isOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />} Edit Section Kustom
+                            {isOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}{" "}
+                            {t("Edit Section Kustom", "Edit Custom Section")}
                           </button>
-                          <button type="button" aria-label="Hapus section" onClick={() => removeCustom(s.key)}
+                          <button type="button" aria-label={t("Hapus section", "Delete section")} onClick={() => removeCustom(s.key)}
                             className="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50" data-testid={`delete-${s.key}`}>
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -368,9 +418,9 @@ export default function PageSectionsAdminPage() {
                           href={contentEditorHref(page.key, s.key)}
                           data-testid={`edit-content-${s.key}`}
                           className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-slate-200 text-slate-700 hover:bg-slate-50"
-                          title="Edit isi section di Pusat Konten"
+                          title={t("Edit isi section di Pusat Konten", "Edit section content in the Content Hub")}
                         >
-                          <PencilLine className="h-3.5 w-3.5" /> Edit Isi
+                          <PencilLine className="h-3.5 w-3.5" /> {t("Edit Isi", "Edit Content")}
                         </a>
                       )}
                     </div>
@@ -381,7 +431,7 @@ export default function PageSectionsAdminPage() {
                       {CUSTOM_TEXT_FIELDS.map(({ field, label, multiline }) => (
                         <BilingualField
                           key={field}
-                          label={label}
+                          label={t(label.id, label.en)}
                           multiline={multiline}
                           testId={`field-${s.key}-${field}`}
                           valueId={(s.content?.[`${field}Id` as keyof CustomSectionContent] as string) || ""}
@@ -389,13 +439,13 @@ export default function PageSectionsAdminPage() {
                           onChange={(lang, v) => setContent(s.key, `${field}${lang}` as keyof CustomSectionContent, v)}
                         />
                       ))}
-                      <ImageUploader value={s.content?.imageUrl || ""} onChange={(url) => setContent(s.key, "imageUrl", url)} label="Gambar Section (opsional)" />
+                      <ImageUploader value={s.content?.imageUrl || ""} onChange={(url) => setContent(s.key, "imageUrl", url)} label={t("Gambar Section (opsional)", "Section Image (optional)")} />
                       <label className="block space-y-1 text-xs">
-                        <span className="font-semibold text-slate-700">Teks alternatif gambar</span>
+                        <span className="font-semibold text-slate-700">{t("Teks alternatif gambar", "Image alt text")}</span>
                         <input className={inputCls} value={s.content?.imageAlt || ""} onChange={(e) => setContent(s.key, "imageAlt", e.target.value)} />
                       </label>
                       <BilingualField
-                        label="Teks Tombol CTA"
+                        label={t("Teks Tombol CTA", "CTA Button Text")}
                         multiline={false}
                         testId={`field-${s.key}-cta`}
                         valueId={s.content?.ctaTextId || ""}
@@ -403,16 +453,21 @@ export default function PageSectionsAdminPage() {
                         onChange={(lang, v) => setContent(s.key, `ctaText${lang}` as keyof CustomSectionContent, v)}
                       />
                       <label className="block space-y-1 text-xs">
-                        <span className="font-semibold text-slate-700">URL Tombol CTA</span>
+                        <span className="font-semibold text-slate-700">{t("URL Tombol CTA", "CTA Button URL")}</span>
                         <input
                           className={inputCls}
                           data-testid={`field-${s.key}-ctaUrl`}
-                          placeholder="/request-demo atau https://…"
+                          placeholder={t("/request-demo atau https://…", "/request-demo or https://…")}
                           value={s.content?.ctaUrl || ""}
                           onChange={(e) => setContent(s.key, "ctaUrl", e.target.value)}
                         />
                       </label>
-                      <p className="text-[11px] text-slate-500">Section kustom disimpan dengan tombol Simpan Tata Letak.</p>
+                      <p className="text-[11px] text-slate-500">
+                        {t(
+                          "Section kustom disimpan dengan tombol Simpan Tata Letak.",
+                          "Custom sections are saved with the Save Layout button."
+                        )}
+                      </p>
                     </div>
                   )}
                 </li>

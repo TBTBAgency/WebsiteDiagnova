@@ -27,8 +27,10 @@ import {
   Copy,
 } from "lucide-react";
 import { SafeUser } from "@/lib/models/user.model";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 export default function AdminUsersPage() {
+  const { t, locale, lang } = useAdminLang();
   const [users, setUsers] = useState<SafeUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -68,7 +70,15 @@ export default function AdminUsersPage() {
   const [linkCopied, setLinkCopied] = useState(false);
 
   const handleIssueMagicLink = async (u: SafeUser) => {
-    if (!window.confirm(`Terbitkan Magic Link baru untuk ${u.name}? Tautan lama yang belum dipakai akan tidak berlaku.`)) return;
+    if (
+      !window.confirm(
+        t(
+          `Terbitkan Magic Link baru untuk ${u.name}? Tautan lama yang belum dipakai akan tidak berlaku.`,
+          `Issue a new Magic Link for ${u.name}? Any unused previous link will be invalidated.`
+        )
+      )
+    )
+      return;
     setIssuingFor(u.id);
     setErrorMessage("");
     setSuccessMessage("");
@@ -79,10 +89,10 @@ export default function AdminUsersPage() {
         setLinkCopied(false);
         setMagicLinkResult({ url: json.data.magicLinkUrl, expiresAt: json.data.expiresAt, user: u });
       } else {
-        setErrorMessage(json.message || "Magic Link tidak dapat diterbitkan.");
+        setErrorMessage(json.message || t("Magic Link tidak dapat diterbitkan.", "The Magic Link could not be issued."));
       }
     } catch {
-      setErrorMessage("Terjadi kesalahan jaringan.");
+      setErrorMessage(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIssuingFor(null);
       fetchUsers();
@@ -108,18 +118,20 @@ export default function AdminUsersPage() {
       if (res.ok && json.success && json.data) {
         setUsers(json.data);
       } else {
-        setErrorMessage(json.message || "Gagal memuat data pengguna.");
+        setErrorMessage(json.message || t("Gagal memuat data pengguna.", "Failed to load users."));
       }
     } catch (err) {
       console.error("Gagal mengambil data user:", err);
-      setErrorMessage("Terjadi kesalahan jaringan saat memuat pengguna.");
+      setErrorMessage(t("Terjadi kesalahan jaringan saat memuat pengguna.", "A network error occurred while loading users."));
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Muat sekali saat halaman dibuka; ganti bahasa tidak perlu memuat ulang data.
   useEffect(() => {
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddSubmit = async (e: React.FormEvent) => {
@@ -138,7 +150,7 @@ export default function AdminUsersPage() {
       const json = await res.json();
 
       if (res.ok && json.success) {
-        setSuccessMessage("Pengguna (USER) baru berhasil ditambahkan!");
+        setSuccessMessage(t("Pengguna (USER) baru berhasil ditambahkan!", "New user (USER) added successfully!"));
         setAddFormData({
           name: "",
           email: "",
@@ -151,11 +163,11 @@ export default function AdminUsersPage() {
         setIsAddModalOpen(false);
         fetchUsers();
       } else {
-        setErrorMessage(json.message || "Gagal menambahkan pengguna.");
+        setErrorMessage(json.message || t("Gagal menambahkan pengguna.", "Failed to add user."));
       }
     } catch (err) {
       console.error("Error creating user:", err);
-      setErrorMessage("Terjadi kesalahan jaringan.");
+      setErrorMessage(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsSubmitting(false);
     }
@@ -192,16 +204,21 @@ export default function AdminUsersPage() {
       const json = await res.json();
 
       if (res.ok && json.success) {
-        setSuccessMessage(`Data pengguna ${editingUser.name} berhasil diperbarui!`);
+        setSuccessMessage(
+          t(
+            `Data pengguna ${editingUser.name} berhasil diperbarui!`,
+            `User ${editingUser.name} updated successfully!`
+          )
+        );
         setIsEditModalOpen(false);
         setEditingUser(null);
         fetchUsers();
       } else {
-        setErrorMessage(json.message || "Gagal memperbarui data pengguna.");
+        setErrorMessage(json.message || t("Gagal memperbarui data pengguna.", "Failed to update user."));
       }
     } catch (err) {
       console.error("Error updating user:", err);
-      setErrorMessage("Terjadi kesalahan jaringan.");
+      setErrorMessage(t("Terjadi kesalahan jaringan.", "A network error occurred."));
     } finally {
       setIsSubmitting(false);
     }
@@ -222,17 +239,22 @@ export default function AdminUsersPage() {
 
       if (res.ok && json.success) {
         setSuccessMessage(
-          `Status akun ${user.name} berhasil diubah menjadi ${
-            newStatus === 1 ? "Aktif" : "Nonaktif"
-          }.`
+          t(
+            `Status akun ${user.name} berhasil diubah menjadi ${
+              newStatus === 1 ? "Aktif" : "Nonaktif"
+            }.`,
+            `Account status for ${user.name} changed to ${newStatus === 1 ? "Active" : "Inactive"}.`
+          )
         );
         fetchUsers();
       } else {
-        setErrorMessage(json.message || "Gagal mengubah status akun.");
+        setErrorMessage(json.message || t("Gagal mengubah status akun.", "Failed to change account status."));
       }
     } catch (err) {
       console.error("Error toggling status:", err);
-      setErrorMessage("Terjadi kesalahan jaringan saat mengubah status akun.");
+      setErrorMessage(
+        t("Terjadi kesalahan jaringan saat mengubah status akun.", "A network error occurred while changing account status.")
+      );
     }
   };
 
@@ -251,15 +273,17 @@ export default function AdminUsersPage() {
       const json = await res.json();
 
       if (res.ok && json.success) {
-        setSuccessMessage(`Pengguna ${userToDelete.name} berhasil dihapus.`);
+        setSuccessMessage(
+          t(`Pengguna ${userToDelete.name} berhasil dihapus.`, `User ${userToDelete.name} deleted successfully.`)
+        );
         setUserToDelete(null);
         fetchUsers();
       } else {
-        setErrorMessage(json.message || "Gagal menghapus pengguna.");
+        setErrorMessage(json.message || t("Gagal menghapus pengguna.", "Failed to delete user."));
       }
     } catch (err) {
       console.error("Error deleting user:", err);
-      setErrorMessage("Terjadi kesalahan jaringan saat menghapus pengguna.");
+      setErrorMessage(t("Terjadi kesalahan jaringan saat menghapus pengguna.", "A network error occurred while deleting the user."));
     } finally {
       setIsDeleting(false);
     }
@@ -269,10 +293,13 @@ export default function AdminUsersPage() {
   const getDemoAccessInfo = (u: SafeUser) => {
     if (!u.demoExpiresAt) {
       return {
-        label: "Belum Diaktifkan",
+        label: t("Belum Diaktifkan", "Not Activated"),
         subtext: u.demoDurationDays
-          ? `Alokasi voucher: ${u.demoDurationDays} hari`
-          : "Belum ada alokasi",
+          ? t(
+              `Alokasi voucher: ${u.demoDurationDays} hari`,
+              `Voucher allocation: ${u.demoDurationDays} ${u.demoDurationDays === 1 ? "day" : "days"}`
+            )
+          : t("Belum ada alokasi", "No allocation yet"),
         badgeClass: "bg-slate-100 border-slate-200 text-slate-700",
         dotClass: "bg-slate-400",
       };
@@ -285,8 +312,8 @@ export default function AdminUsersPage() {
 
     if (diffMs <= 0) {
       return {
-        label: "Kedaluwarsa",
-        subtext: `Berakhir ${expiresAt.toLocaleDateString("id-ID", {
+        label: t("Kedaluwarsa", "Expired"),
+        subtext: `${t("Berakhir", "Ended")} ${expiresAt.toLocaleDateString(locale, {
           day: "2-digit",
           month: "short",
           year: "numeric",
@@ -297,8 +324,11 @@ export default function AdminUsersPage() {
     }
 
     return {
-      label: `Aktif (${diffDays} hari tersisa)`,
-      subtext: `Hingga ${expiresAt.toLocaleDateString("id-ID", {
+      label: t(
+        `Aktif (${diffDays} hari tersisa)`,
+        `Active (${diffDays} ${diffDays === 1 ? "day" : "days"} left)`
+      ),
+      subtext: `${t("Hingga", "Until")} ${expiresAt.toLocaleDateString(locale, {
         day: "2-digit",
         month: "short",
         year: "numeric",
@@ -327,14 +357,17 @@ export default function AdminUsersPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-display">
-              Manajemen Pengguna (User Management)
+              {t("Manajemen Pengguna (User Management)", "User Management")}
             </h1>
             <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700">
               Role: USER
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Kelola akun pengguna website dan pemohon akses demo sistem Diagnova. Akun Administrator dilindungi secara terpisah di luar antarmuka ini.
+            {t(
+              "Kelola akun pengguna website dan pemohon akses demo sistem Diagnova. Akun Administrator dilindungi secara terpisah di luar antarmuka ini.",
+              "Manage website user accounts and Diagnova demo access applicants. Administrator accounts are protected separately, outside this interface."
+            )}
           </p>
         </div>
 
@@ -361,7 +394,7 @@ export default function AdminUsersPage() {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white transition-colors shadow-xs"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Tambah User</span>
+            <span>{t("Tambah User", "Add User")}</span>
           </button>
         </div>
       </div>
@@ -407,7 +440,10 @@ export default function AdminUsersPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Cari nama pengguna, email, institusi, atau nomor telepon..."
+            placeholder={t(
+              "Cari nama pengguna, email, institusi, atau nomor telepon...",
+              "Search by name, email, institution, or phone number..."
+            )}
             className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden transition-colors"
           />
         </div>
@@ -419,12 +455,12 @@ export default function AdminUsersPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3 px-4">Pengguna</th>
-                <th className="py-3 px-4">Kontak & Institusi</th>
-                <th className="py-3 px-4">Status Akun</th>
-                <th className="py-3 px-4">Akses Demo</th>
-                <th className="py-3 px-4">Terdaftar</th>
-                <th className="py-3 px-4 text-right">Aksi</th>
+                <th className="py-3 px-4">{t("Pengguna", "User")}</th>
+                <th className="py-3 px-4">{t("Kontak & Institusi", "Contact & Institution")}</th>
+                <th className="py-3 px-4">{t("Status Akun", "Account Status")}</th>
+                <th className="py-3 px-4">{t("Akses Demo", "Demo Access")}</th>
+                <th className="py-3 px-4">{t("Terdaftar", "Registered")}</th>
+                <th className="py-3 px-4 text-right">{t("Aksi", "Actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -432,18 +468,21 @@ export default function AdminUsersPage() {
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-slate-400">
                     <RefreshCw className="h-6 w-6 animate-spin mx-auto text-blue-600 mb-2" />
-                    <span>Memuat data pengguna...</span>
+                    <span>{t("Memuat data pengguna...", "Loading users...")}</span>
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-slate-400">
                     <Users className="h-8 w-8 mx-auto text-slate-400 mb-2" />
-                    <p className="font-semibold text-slate-800">Tidak ada pengguna ditemukan</p>
+                    <p className="font-semibold text-slate-800">{t("Tidak ada pengguna ditemukan", "No users found")}</p>
                     <p className="text-[11px] text-slate-500 mt-1">
                       {searchTerm
-                        ? "Coba ubah kata kunci pencarian Anda."
-                        : "Tambahkan pengguna baru dengan mengklik tombol Tambah User."}
+                        ? t("Coba ubah kata kunci pencarian Anda.", "Try a different search term.")
+                        : t(
+                            "Tambahkan pengguna baru dengan mengklik tombol Tambah User.",
+                            "Add a new user by clicking the Add User button."
+                          )}
                     </p>
                   </td>
                 </tr>
@@ -471,11 +510,11 @@ export default function AdminUsersPage() {
                       <td className="py-3.5 px-4">
                         <div className="font-medium text-slate-800 flex items-center gap-1.5">
                           <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                          <span>{u.institution || "Belum ditentukan"}</span>
+                          <span>{u.institution || t("Belum ditentukan", "Not specified")}</span>
                         </div>
                         <div className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
                           <Briefcase className="h-3 w-3 text-slate-400 shrink-0" />
-                          <span>{u.jobTitle || "Pemohon Demo"}</span>
+                          <span>{u.jobTitle || t("Pemohon Demo", "Demo Applicant")}</span>
                         </div>
                         {u.phone && (
                           <div className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5 font-mono">
@@ -491,19 +530,23 @@ export default function AdminUsersPage() {
                           {u.status === 1 ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold">
                               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                              <span>Aktif</span>
+                              <span>{t("Aktif", "Active")}</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-semibold">
                               <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                              <span>Nonaktif</span>
+                              <span>{t("Nonaktif", "Inactive")}</span>
                             </span>
                           )}
 
                           <button
                             type="button"
                             onClick={() => handleToggleStatus(u)}
-                            title={u.status === 1 ? "Klik untuk menonaktifkan" : "Klik untuk mengaktifkan"}
+                            title={
+                              u.status === 1
+                                ? t("Klik untuk menonaktifkan", "Click to deactivate")
+                                : t("Klik untuk mengaktifkan", "Click to activate")
+                            }
                             className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                           >
                             {u.status === 1 ? (
@@ -538,7 +581,7 @@ export default function AdminUsersPage() {
 
                       {/* Kolom 5: Terdaftar */}
                       <td className="py-3.5 px-4 whitespace-nowrap text-slate-500 text-[11px] font-mono">
-                        {new Date(u.createdAt).toLocaleDateString("id-ID", {
+                        {new Date(u.createdAt).toLocaleDateString(locale, {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
@@ -553,11 +596,11 @@ export default function AdminUsersPage() {
                             data-testid={`magic-link-${u.id}`}
                             onClick={() => handleIssueMagicLink(u)}
                             disabled={!u.magicLink?.eligible || issuingFor === u.id}
-                            title={u.magicLink?.reason || "Status Magic Link tidak diketahui"}
+                            title={u.magicLink?.reason || t("Status Magic Link tidak diketahui", "Magic Link status unknown")}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             <Link2 className="h-3 w-3" />
-                            <span>{issuingFor === u.id ? "Memproses…" : "Magic Link"}</span>
+                            <span>{issuingFor === u.id ? t("Memproses…", "Processing…") : "Magic Link"}</span>
                           </button>
                           <button
                             type="button"
@@ -572,7 +615,7 @@ export default function AdminUsersPage() {
                             type="button"
                             onClick={() => setUserToDelete(u)}
                             className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors"
-                            title="Hapus Pengguna"
+                            title={t("Hapus Pengguna", "Delete User")}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -593,12 +636,18 @@ export default function AdminUsersPage() {
           <div className="w-full max-w-lg rounded-3xl bg-white shadow-xl p-5 space-y-4" data-testid="magic-link-modal">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Magic Link untuk {magicLinkResult.user.name}</h3>
+                <h3 className="text-base font-bold text-slate-900">
+                  {t("Magic Link untuk", "Magic Link for")} {magicLinkResult.user.name}
+                </h3>
                 <p className="text-xs text-slate-500">
-                  Berlaku hingga {new Date(magicLinkResult.expiresAt).toLocaleString("id-ID")} · dapat dipakai masuk kembali selama masa demo. Tautan hanya ditampilkan sekali.
+                  {t("Berlaku hingga", "Valid until")} {new Date(magicLinkResult.expiresAt).toLocaleString(locale)} ·{" "}
+                  {t(
+                    "dapat dipakai masuk kembali selama masa demo. Tautan hanya ditampilkan sekali.",
+                    "can be reused to sign in again during the demo period. The link is shown only once."
+                  )}
                 </p>
               </div>
-              <button type="button" aria-label="Tutup" onClick={() => setMagicLinkResult(null)} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100">
+              <button type="button" aria-label={t("Tutup", "Close")} onClick={() => setMagicLinkResult(null)} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -616,7 +665,7 @@ export default function AdminUsersPage() {
                 }}
                 className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold"
               >
-                <Copy className="h-3.5 w-3.5" /> {linkCopied ? "Tersalin" : "Salin"}
+                <Copy className="h-3.5 w-3.5" /> {linkCopied ? t("Tersalin", "Copied") : t("Salin", "Copy")}
               </button>
             </div>
             {waLinkFor(magicLinkResult.user, magicLinkResult.url) ? (
@@ -626,10 +675,15 @@ export default function AdminUsersPage() {
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5"
               >
-                Kirim via WhatsApp ({magicLinkResult.user.phone})
+                {t("Kirim via WhatsApp", "Send via WhatsApp")} ({magicLinkResult.user.phone})
               </a>
             ) : (
-              <p className="text-[11px] text-slate-500">Nomor WhatsApp tidak tersedia — salin tautan dan kirim secara manual.</p>
+              <p className="text-[11px] text-slate-500">
+                {t(
+                  "Nomor WhatsApp tidak tersedia — salin tautan dan kirim secara manual.",
+                  "No WhatsApp number available — copy the link and send it manually."
+                )}
+              </p>
             )}
           </div>
         </div>
@@ -647,10 +701,13 @@ export default function AdminUsersPage() {
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 font-display">
-                    Tambah Pengguna (USER)
+                    {t("Tambah Pengguna (USER)", "Add User (USER)")}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Akun baru otomatis ditetapkan dengan role USER (Pengguna Demo).
+                    {t(
+                      "Akun baru otomatis ditetapkan dengan role USER (Pengguna Demo).",
+                      "New accounts are automatically assigned the USER role (Demo User)."
+                    )}
                   </p>
                 </div>
               </div>
@@ -669,14 +726,22 @@ export default function AdminUsersPage() {
               <div className="p-3 rounded-2xl bg-blue-50/60 border border-blue-200 text-xs text-blue-800 flex items-start gap-2">
                 <Shield className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
                 <span>
-                  Sesuai kebijakan sistem Diagnova, penambahan akun dari modul ini hanya membuat akun ber-role <strong>USER</strong>. Akun Administrator dilindungi dan tidak dapat dibuat dari antarmuka ini.
+                  {t(
+                    "Sesuai kebijakan sistem Diagnova, penambahan akun dari modul ini hanya membuat akun ber-role ",
+                    "Per Diagnova system policy, accounts added from this module only get the "
+                  )}
+                  <strong>USER</strong>
+                  {t(
+                    ". Akun Administrator dilindungi dan tidak dapat dibuat dari antarmuka ini.",
+                    " role. Administrator accounts are protected and cannot be created from this interface."
+                  )}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 {/* Nama Lengkap */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">Nama Lengkap *</label>
+                  <label className="font-semibold text-slate-700">{t("Nama Lengkap *", "Full Name *")}</label>
                   <input
                     type="text"
                     required
@@ -684,14 +749,14 @@ export default function AdminUsersPage() {
                     onChange={(e) =>
                       setAddFormData((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    placeholder="Contoh: dr. Budi Santoso"
+                    placeholder={t("Contoh: dr. Budi Santoso", "Example: Dr. Budi Santoso")}
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden"
                   />
                 </div>
 
                 {/* Email */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">Alamat Email *</label>
+                  <label className="font-semibold text-slate-700">{t("Alamat Email *", "Email Address *")}</label>
                   <input
                     type="email"
                     required
@@ -699,7 +764,7 @@ export default function AdminUsersPage() {
                     onChange={(e) =>
                       setAddFormData((prev) => ({ ...prev, email: e.target.value }))
                     }
-                    placeholder="dokter@rumahsakit.id"
+                    placeholder={t("dokter@rumahsakit.id", "doctor@hospital.com")}
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden"
                   />
                 </div>
@@ -710,17 +775,26 @@ export default function AdminUsersPage() {
                   className="sm:col-span-2 p-3 rounded-2xl bg-amber-50/70 border border-amber-200 text-amber-900 flex items-start gap-2"
                 >
                   <Lock className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
-                  <span>
-                    Akun klien <strong>tidak memakai password</strong>. Klien masuk melalui{" "}
-                    <strong>Magic Link</strong> yang dibuat ketika permohonan demo dengan email yang sama
-                    disetujui di menu <strong>Permohonan Demo</strong>. Login email + password hanya
-                    berlaku untuk Administrator.
-                  </span>
+                  {lang === "EN" ? (
+                    <span>
+                      Client accounts <strong>do not use a password</strong>. Clients sign in via a{" "}
+                      <strong>Magic Link</strong> that is created when a demo request with the same email is
+                      approved in the <strong>Demo Requests</strong> menu. Email + password login applies
+                      only to Administrators.
+                    </span>
+                  ) : (
+                    <span>
+                      Akun klien <strong>tidak memakai password</strong>. Klien masuk melalui{" "}
+                      <strong>Magic Link</strong> yang dibuat ketika permohonan demo dengan email yang sama
+                      disetujui di menu <strong>Permohonan Demo</strong>. Login email + password hanya
+                      berlaku untuk Administrator.
+                    </span>
+                  )}
                 </div>
 
                 {/* Institusi / RS */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">Institusi / Rumah Sakit</label>
+                  <label className="font-semibold text-slate-700">{t("Institusi / Rumah Sakit", "Institution / Hospital")}</label>
                   <input
                     type="text"
                     value={addFormData.institution}
@@ -734,21 +808,21 @@ export default function AdminUsersPage() {
 
                 {/* Jabatan */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">Jabatan</label>
+                  <label className="font-semibold text-slate-700">{t("Jabatan", "Job Title")}</label>
                   <input
                     type="text"
                     value={addFormData.jobTitle}
                     onChange={(e) =>
                       setAddFormData((prev) => ({ ...prev, jobTitle: e.target.value }))
                     }
-                    placeholder="Kepala Lab / Spesialis Patologi"
+                    placeholder={t("Kepala Lab / Spesialis Patologi", "Head of Lab / Pathologist")}
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden"
                   />
                 </div>
 
                 {/* No Telepon */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">No. Telepon / WhatsApp</label>
+                  <label className="font-semibold text-slate-700">{t("No. Telepon / WhatsApp", "Phone / WhatsApp")}</label>
                   <input
                     type="text"
                     value={addFormData.phone}
@@ -764,7 +838,7 @@ export default function AdminUsersPage() {
                 <div className="space-y-1">
                   <label className="font-semibold text-slate-700 flex items-center gap-1">
                     <Ticket className="h-3 w-3 text-blue-600" />
-                    <span>Alokasi Voucher Demo</span>
+                    <span>{t("Alokasi Voucher Demo", "Demo Voucher Allocation")}</span>
                   </label>
                   <select
                     value={addFormData.demoDurationDays}
@@ -776,19 +850,22 @@ export default function AdminUsersPage() {
                     }
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden font-medium"
                   >
-                    <option value={3}>3 Hari (Demo Ringkas)</option>
-                    <option value={7}>7 Hari (Standar Evaluasi)</option>
-                    <option value={14}>14 Hari (Dua Pekan)</option>
-                    <option value={30}>30 Hari (Satu Bulan Penuh)</option>
+                    <option value={3}>{t("3 Hari (Demo Ringkas)", "3 Days (Quick Demo)")}</option>
+                    <option value={7}>{t("7 Hari (Standar Evaluasi)", "7 Days (Standard Evaluation)")}</option>
+                    <option value={14}>{t("14 Hari (Dua Pekan)", "14 Days (Two Weeks)")}</option>
+                    <option value={30}>{t("30 Hari (Satu Bulan Penuh)", "30 Days (Full Month)")}</option>
                   </select>
                   <p className="text-[11px] text-slate-500">
-                    Hanya catatan. Masa akses demo ditentukan oleh durasi yang dipilih saat permohonan demo disetujui.
+                    {t(
+                      "Hanya catatan. Masa akses demo ditentukan oleh durasi yang dipilih saat permohonan demo disetujui.",
+                      "For reference only. The demo access period is set by the duration chosen when the demo request is approved."
+                    )}
                   </p>
                 </div>
 
                 {/* Status User */}
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="font-semibold text-slate-700">Status Akun *</label>
+                  <label className="font-semibold text-slate-700">{t("Status Akun *", "Account Status *")}</label>
                   <select
                     value={addFormData.status}
                     onChange={(e) =>
@@ -799,8 +876,8 @@ export default function AdminUsersPage() {
                     }
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden font-medium"
                   >
-                    <option value={1}>1 - Aktif (Dapat mengakses akun)</option>
-                    <option value={0}>0 - Nonaktif (Akses ditangguhkan)</option>
+                    <option value={1}>{t("1 - Aktif (Dapat mengakses akun)", "1 - Active (Can access the account)")}</option>
+                    <option value={0}>{t("0 - Nonaktif (Akses ditangguhkan)", "0 - Inactive (Access suspended)")}</option>
                   </select>
                 </div>
               </div>
@@ -812,14 +889,14 @@ export default function AdminUsersPage() {
                   onClick={() => setIsAddModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors"
                 >
-                  Batal
+                  {t("Batal", "Cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white transition-colors disabled:opacity-50 shadow-xs"
                 >
-                  {isSubmitting ? "Menyimpan..." : "Simpan Pengguna"}
+                  {isSubmitting ? t("Menyimpan...", "Saving...") : t("Simpan Pengguna", "Save User")}
                 </button>
               </div>
             </form>
@@ -839,10 +916,10 @@ export default function AdminUsersPage() {
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 font-display">
-                    Edit Pengguna: {editingUser.name}
+                    {t("Edit Pengguna:", "Edit User:")} {editingUser.name}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Email: {editingUser.email} &bull; Role: USER (Tetap)
+                    Email: {editingUser.email} &bull; {t("Role: USER (Tetap)", "Role: USER (Fixed)")}
                   </p>
                 </div>
               </div>
@@ -863,7 +940,7 @@ export default function AdminUsersPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 {/* Nama Lengkap */}
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="font-semibold text-slate-700">Nama Lengkap *</label>
+                  <label className="font-semibold text-slate-700">{t("Nama Lengkap *", "Full Name *")}</label>
                   <input
                     type="text"
                     required
@@ -877,7 +954,7 @@ export default function AdminUsersPage() {
 
                 {/* Institusi / RS */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">Institusi / Rumah Sakit</label>
+                  <label className="font-semibold text-slate-700">{t("Institusi / Rumah Sakit", "Institution / Hospital")}</label>
                   <input
                     type="text"
                     value={editFormData.institution}
@@ -890,7 +967,7 @@ export default function AdminUsersPage() {
 
                 {/* Jabatan */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">Jabatan</label>
+                  <label className="font-semibold text-slate-700">{t("Jabatan", "Job Title")}</label>
                   <input
                     type="text"
                     value={editFormData.jobTitle}
@@ -903,7 +980,7 @@ export default function AdminUsersPage() {
 
                 {/* No Telepon */}
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700">No. Telepon / WhatsApp</label>
+                  <label className="font-semibold text-slate-700">{t("No. Telepon / WhatsApp", "Phone / WhatsApp")}</label>
                   <input
                     type="text"
                     value={editFormData.phone}
@@ -918,7 +995,7 @@ export default function AdminUsersPage() {
                 <div className="space-y-1">
                   <label className="font-semibold text-slate-700 flex items-center gap-1">
                     <Ticket className="h-3 w-3 text-blue-600" />
-                    <span>Alokasi Voucher Demo</span>
+                    <span>{t("Alokasi Voucher Demo", "Demo Voucher Allocation")}</span>
                   </label>
                   <select
                     value={editFormData.demoDurationDays}
@@ -930,16 +1007,16 @@ export default function AdminUsersPage() {
                     }
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden font-medium"
                   >
-                    <option value={3}>3 Hari (Demo Ringkas)</option>
-                    <option value={7}>7 Hari (Standar Evaluasi)</option>
-                    <option value={14}>14 Hari (Dua Pekan)</option>
-                    <option value={30}>30 Hari (Satu Bulan Penuh)</option>
+                    <option value={3}>{t("3 Hari (Demo Ringkas)", "3 Days (Quick Demo)")}</option>
+                    <option value={7}>{t("7 Hari (Standar Evaluasi)", "7 Days (Standard Evaluation)")}</option>
+                    <option value={14}>{t("14 Hari (Dua Pekan)", "14 Days (Two Weeks)")}</option>
+                    <option value={30}>{t("30 Hari (Satu Bulan Penuh)", "30 Days (Full Month)")}</option>
                   </select>
                 </div>
 
                 {/* Status Akun */}
                 <div className="space-y-1 sm:col-span-2">
-                  <label className="font-semibold text-slate-700">Status Akun *</label>
+                  <label className="font-semibold text-slate-700">{t("Status Akun *", "Account Status *")}</label>
                   <select
                     value={editFormData.status}
                     onChange={(e) =>
@@ -950,8 +1027,8 @@ export default function AdminUsersPage() {
                     }
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-hidden font-medium"
                   >
-                    <option value={1}>1 - Aktif (Dapat mengakses akun)</option>
-                    <option value={0}>0 - Nonaktif (Akses ditangguhkan)</option>
+                    <option value={1}>{t("1 - Aktif (Dapat mengakses akun)", "1 - Active (Can access the account)")}</option>
+                    <option value={0}>{t("0 - Nonaktif (Akses ditangguhkan)", "0 - Inactive (Access suspended)")}</option>
                   </select>
                 </div>
               </div>
@@ -966,14 +1043,14 @@ export default function AdminUsersPage() {
                   }}
                   className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors"
                 >
-                  Batal
+                  {t("Batal", "Cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white transition-colors disabled:opacity-50 shadow-xs"
                 >
-                  {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
+                  {isSubmitting ? t("Menyimpan...", "Saving...") : t("Simpan Perubahan", "Save Changes")}
                 </button>
               </div>
             </form>
@@ -988,9 +1065,11 @@ export default function AdminUsersPage() {
             <div className="h-12 w-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600 mb-3">
               <AlertTriangle className="h-6 w-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-900">Hapus Pengguna</h3>
+            <h3 className="text-base font-bold text-slate-900">{t("Hapus Pengguna", "Delete User")}</h3>
             <p className="text-xs text-slate-500 mt-1">
-              Apakah Anda yakin ingin menghapus akun <strong>{userToDelete.name}</strong> ({userToDelete.email})? Tindakan ini tidak dapat dibatalkan.
+              {t("Apakah Anda yakin ingin menghapus akun", "Are you sure you want to delete the account")}{" "}
+              <strong>{userToDelete.name}</strong> ({userToDelete.email})?{" "}
+              {t("Tindakan ini tidak dapat dibatalkan.", "This action cannot be undone.")}
             </p>
 
             <div className="mt-5 flex items-center justify-center gap-2.5">
@@ -999,7 +1078,7 @@ export default function AdminUsersPage() {
                 onClick={() => setUserToDelete(null)}
                 className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors"
               >
-                Batal
+                {t("Batal", "Cancel")}
               </button>
               <button
                 type="button"
@@ -1007,7 +1086,7 @@ export default function AdminUsersPage() {
                 disabled={isDeleting}
                 className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-xs font-semibold text-white transition-colors disabled:opacity-50 shadow-xs"
               >
-                {isDeleting ? "Menghapus..." : "Ya, Hapus Pengguna"}
+                {isDeleting ? t("Menghapus...", "Deleting...") : t("Ya, Hapus Pengguna", "Yes, Delete User")}
               </button>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { Upload, X, RefreshCw, FolderUp, CheckCircle2, AlertCircle } from "lucide-react";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 export interface UploadedFileItem {
   url: string;
@@ -24,14 +25,17 @@ export interface ImageUploaderProps {
 export function ImageUploader({
   value,
   onChange,
-  label = "Unggah Gambar",
-  hint = "Format: WEBP, PNG, JPG, SVG (Maks. 10MB)",
+  label: labelProp,
+  hint: hintProp,
   aspectRatio = "video",
   required = false,
   allowMultiple = false,
   allowFolder = false,
   onMultiUpload,
 }: ImageUploaderProps) {
+  const { t } = useAdminLang();
+  const label = labelProp === undefined ? t("Unggah Gambar", "Upload Image") : labelProp;
+  const hint = hintProp === undefined ? t("Format: WEBP, PNG, JPG, SVG (Maks. 10MB)", "Format: WEBP, PNG, JPG, SVG (Max. 10MB)") : hintProp;
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgressText, setUploadProgressText] = useState("");
@@ -57,14 +61,19 @@ export function ImageUploader({
     );
 
     if (files.length === 0) {
-      setErrorMessage("Format berkas tidak didukung. Harap pilih gambar (JPG, PNG, WEBP, SVG).");
+      setErrorMessage(
+        t(
+          "Format berkas tidak didukung. Harap pilih gambar (JPG, PNG, WEBP, SVG).",
+          "Unsupported file format. Please choose an image (JPG, PNG, WEBP, SVG)."
+        )
+      );
       return;
     }
 
     // Cek batas ukuran
     for (const f of files) {
       if (f.size > 10 * 1024 * 1024) {
-        setErrorMessage(`Berkas '${f.name}' melebihi batas 10MB.`);
+        setErrorMessage(t(`Berkas '${f.name}' melebihi batas 10MB.`, `File '${f.name}' exceeds the 10MB limit.`));
         return;
       }
     }
@@ -75,10 +84,10 @@ export function ImageUploader({
     try {
       const formData = new FormData();
       if (files.length === 1) {
-        setUploadProgressText("Mengunggah gambar...");
+        setUploadProgressText(t("Mengunggah gambar...", "Uploading image..."));
         formData.append("file", files[0]);
       } else {
-        setUploadProgressText(`Mengunggah ${files.length} gambar...`);
+        setUploadProgressText(t(`Mengunggah ${files.length} gambar...`, `Uploading ${files.length} images...`));
         files.forEach((f) => formData.append("files", f));
       }
 
@@ -102,11 +111,11 @@ export function ImageUploader({
           onChange(json.data.file.url);
         }
       } else {
-        setErrorMessage(json.message || "Gagal mengunggah gambar.");
+        setErrorMessage(json.message || t("Gagal mengunggah gambar.", "Failed to upload image."));
       }
     } catch (err) {
       console.error("Upload error:", err);
-      setErrorMessage("Terjadi kendala jaringan saat mengunggah gambar.");
+      setErrorMessage(t("Terjadi kendala jaringan saat mengunggah gambar.", "A network problem occurred while uploading the image."));
     } finally {
       setIsUploading(false);
       setUploadProgressText("");
@@ -196,14 +205,14 @@ export function ImageUploader({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-slate-800 text-xs font-semibold shadow-md hover:bg-slate-100 transition-colors"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${isUploading ? "animate-spin" : ""}`} />
-                <span>Ganti Gambar</span>
+                <span>{t("Ganti Gambar", "Change Image")}</span>
               </button>
               <button
                 type="button"
                 onClick={() => onChange("")}
                 disabled={isUploading}
                 className="p-1.5 rounded-xl bg-rose-600 text-white shadow-md hover:bg-rose-700 transition-colors"
-                title="Hapus Gambar"
+                title={t("Hapus Gambar", "Remove Image")}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -214,7 +223,7 @@ export function ImageUploader({
             <span className="truncate max-w-[80%]">{value}</span>
             <span className="text-emerald-600 font-semibold flex items-center gap-1 font-sans shrink-0">
               <CheckCircle2 className="h-3 w-3" />
-              <span>Terpilih</span>
+              <span>{t("Terpilih", "Selected")}</span>
             </span>
           </div>
         </div>
@@ -241,13 +250,13 @@ export function ImageUploader({
             <div>
               <p className="font-semibold text-slate-800 text-xs">
                 {isUploading
-                  ? uploadProgressText || "Mengunggah gambar..."
-                  : "Seret gambar ke sini atau gunakan tombol di bawah"}
+                  ? uploadProgressText || t("Mengunggah gambar...", "Uploading image...")
+                  : t("Seret gambar ke sini atau gunakan tombol di bawah", "Drag an image here or use the buttons below")}
               </p>
               <p className="text-[11px] text-slate-400 mt-0.5">
                 {allowMultiple
-                  ? "Dapat memilih 1 file atau banyak file sekaligus dari perangkat"
-                  : "Mendukung file langsung dari komputer/laptop Anda"}
+                  ? t("Dapat memilih 1 file atau banyak file sekaligus dari perangkat", "Choose one file or many files at once from your device")
+                  : t("Mendukung file langsung dari komputer/laptop Anda", "Supports files straight from your computer/laptop")}
               </p>
             </div>
 
@@ -259,7 +268,7 @@ export function ImageUploader({
                 className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs border border-slate-200 hover:bg-slate-50 transition-colors"
               >
                 <Upload className="h-3.5 w-3.5 text-blue-600" />
-                <span>{allowMultiple ? "Pilih Berkas Gambar" : "Pilih Gambar"}</span>
+                <span>{allowMultiple ? t("Pilih Berkas Gambar", "Choose Image Files") : t("Pilih Gambar", "Choose Image")}</span>
               </button>
 
               {allowFolder && (
@@ -270,7 +279,7 @@ export function ImageUploader({
                   className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs border border-slate-200 hover:bg-slate-50 transition-colors"
                 >
                   <FolderUp className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>Pilih Folder</span>
+                  <span>{t("Pilih Folder", "Choose Folder")}</span>
                 </button>
               )}
             </div>

@@ -12,8 +12,10 @@ import {
   Sliders,
 } from "lucide-react";
 import Link from "next/link";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 export default function AnalyticsQcPage() {
+  const { t } = useAdminLang();
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-4">
       {/* Main Feature Announcement Card */}
@@ -24,15 +26,21 @@ export default function AnalyticsQcPage() {
 
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-semibold text-[#E5A23B]">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Roadmap Fase 3: Analitik, Delta Check & Nilai Kritis</span>
+          <span>{t("Roadmap Fase 3: Analitik, Delta Check & Nilai Kritis", "Roadmap Phase 3: Analytics, Delta Check & Critical Values")}</span>
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-bold text-[#17191D] font-display tracking-tight">
-          Worklist Analisis & Validasi Klinis
+          {t(
+            "Worklist Analisis & Validasi Klinis",
+            "Analysis Worklist & Clinical Validation"
+          )}
         </h2>
 
         <p className="text-xs sm:text-sm text-[#747B86] max-w-2xl mx-auto leading-relaxed">
-          Modul ini akan menyediakan antarmuka kerja terpadu bagi analis laboratorium (ATLM) dan dokter spesialis patologi klinik (Sp.PK), dilengkapi otomatisasi Delta Check, verifikasi rentang rujukan, dan notifikasi nilai panik (Panic Value).
+          {t(
+            "Modul ini akan menyediakan antarmuka kerja terpadu bagi analis laboratorium (ATLM) dan dokter spesialis patologi klinik (Sp.PK), dilengkapi otomatisasi Delta Check, verifikasi rentang rujukan, dan notifikasi nilai panik (Panic Value).",
+            "This module will provide a unified workspace for medical laboratory technologists (ATLM) and clinical pathologists (Sp.PK), with automated Delta Check, reference range verification, and panic value notifications."
+          )}
         </p>
 
         <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
@@ -40,14 +48,14 @@ export default function AnalyticsQcPage() {
             href="/admin/orders"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#087BEE] hover:bg-[#0667C7] text-xs font-semibold text-white transition-all shadow-xs"
           >
-            <span>Buka Lab Orders Pre-Analitik</span>
+            <span>{t("Buka Lab Orders Pre-Analitik", "Open Pre-Analytical Lab Orders")}</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/admin/dashboard"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F5F6F8] hover:bg-slate-200/80 text-xs font-semibold text-[#17191D] transition-colors"
           >
-            <span>Kembali ke Dashboard</span>
+            <span>{t("Kembali ke Dashboard", "Back to Dashboard")}</span>
           </Link>
         </div>
       </div>
@@ -60,7 +68,10 @@ export default function AnalyticsQcPage() {
           </div>
           <h4 className="text-xs font-bold text-[#17191D]">Delta Check Engine</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
-            Mendeteksi lonjakan ekstrim hasil tes laboratorium pasien dibandingkan riwayat tes sebelumnya.
+            {t(
+              "Mendeteksi lonjakan ekstrim hasil tes laboratorium pasien dibandingkan riwayat tes sebelumnya.",
+              "Detects extreme shifts in a patient's lab results compared with their previous test history."
+            )}
           </p>
         </div>
 
@@ -70,7 +81,10 @@ export default function AnalyticsQcPage() {
           </div>
           <h4 className="text-xs font-bold text-[#17191D]">Critical Values Alert</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
-            Sistem peringatan nilai kritis otomatis dengan alur read-back wajib dokter dan rekaman waktu respon.
+            {t(
+              "Sistem peringatan nilai kritis otomatis dengan alur read-back wajib dokter dan rekaman waktu respon.",
+              "Automated critical value alerts with a mandatory physician read-back workflow and response time logging."
+            )}
           </p>
         </div>
 
@@ -78,9 +92,12 @@ export default function AnalyticsQcPage() {
           <div className="h-8 w-8 rounded-xl bg-emerald-50 text-[#16A374] flex items-center justify-center">
             <FileCheck2 className="h-4 w-4" />
           </div>
-          <h4 className="text-xs font-bold text-[#17191D]">Validasi Berjenjang Sp.PK</h4>
+          <h4 className="text-xs font-bold text-[#17191D]">{t("Validasi Berjenjang Sp.PK", "Tiered Sp.PK Validation")}</h4>
           <p className="text-[11px] text-[#747B86] leading-relaxed">
-            Otorisasi hasil digital dengan jejak audit tidak dapat diubah sesuai standar akreditasi ISO 15189.
+            {t(
+              "Otorisasi hasil digital dengan jejak audit tidak dapat diubah sesuai standar akreditasi ISO 15189.",
+              "Digital result authorization with an immutable audit trail, in line with ISO 15189 accreditation standards."
+            )}
           </p>
         </div>
       </div>

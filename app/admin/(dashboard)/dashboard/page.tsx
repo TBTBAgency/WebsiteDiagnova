@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { getInitials } from "@/components/admin/AdminShell";
+import { useAdminLang, type AdminT } from "@/components/admin/AdminLanguage";
 import { cn } from "@/lib/utils";
 
 /* ================================================================== */
@@ -63,14 +64,19 @@ interface OverviewData {
   }[];
 }
 
-const INSTITUTION_NAMES: Record<string, string> = {
-  hospital: "Rumah Sakit",
-  "clinical-lab": "Laboratorium Klinis",
-  "pathology-center": "Pusat Patologi",
-  "microbiology-center": "Pusat Mikrobiologi",
-  "blood-bank": "Bank Darah",
-  other: "Lainnya",
+const INSTITUTION_NAMES: Record<string, { id: string; en: string }> = {
+  hospital: { id: "Rumah Sakit", en: "Hospital" },
+  "clinical-lab": { id: "Laboratorium Klinis", en: "Clinical Laboratory" },
+  "pathology-center": { id: "Pusat Patologi", en: "Pathology Center" },
+  "microbiology-center": { id: "Pusat Mikrobiologi", en: "Microbiology Center" },
+  "blood-bank": { id: "Bank Darah", en: "Blood Bank" },
+  other: { id: "Lainnya", en: "Other" },
 };
+
+function institutionName(type: string, t: AdminT): string | undefined {
+  const n = INSTITUTION_NAMES[type];
+  return n ? t(n.id, n.en) : undefined;
+}
 
 /** Dashboard diperbarui otomatis selama tab terbuka. */
 const AUTO_REFRESH_MS = 60_000;
@@ -96,25 +102,45 @@ const STYLE_BLUE = striped(BLUE);
 const STYLE_NAVY = striped(NAVY);
 const STYLE_SKY = striped(SKY, "rgba(255,255,255,0.45)");
 
-const fmt = (n: number) => n.toLocaleString("id-ID");
+const fmtNum = (n: number, locale: string) => n.toLocaleString(locale);
 const sum = (points: TimelinePoint[], key: "leads" | "orders") => points.reduce((acc, p) => acc + (p[key] || 0), 0);
 const pct = (part: number, total: number) => (total > 0 ? Math.round((part / total) * 100) : 0);
 
-function formatShortDate(iso: string) {
+function formatShortDate(iso: string, locale: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  return d.toLocaleDateString(locale, { day: "numeric", month: "short" });
 }
 
-function formatDateTime(iso: string) {
+function formatDateTime(iso: string, locale: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleString(locale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
 const DAY_SHORT = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 const DAY_LONG = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const DAY_SHORT_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAY_LONG_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const dayOf = (date: string) => new Date(`${date}T12:00:00`).getDay();
+const dayShort = (date: string, t: AdminT) => t(DAY_SHORT[dayOf(date)], DAY_SHORT_EN[dayOf(date)]);
+const dayLong = (date: string, t: AdminT) => t(DAY_LONG[dayOf(date)], DAY_LONG_EN[dayOf(date)]);
+
+/**
+ * Label tanggal titik timeline. Label dari API sudah berformat id-ID ("18 Nov");
+ * untuk bahasa lain diformat ulang dari `date` (YYYY-MM-DD) sesuai locale.
+ */
+function pointLabel(p: TimelinePoint, t: AdminT, locale: string) {
+  const d = new Date(`${p.date}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return p.label;
+  return t(p.label, d.toLocaleDateString(locale, { day: "numeric", month: "short" }));
+}
+
+/** Label sumbu ringkas (hanya tanggal) untuk periode panjang. */
+function pointDayNumber(p: TimelinePoint, t: AdminT) {
+  const d = new Date(`${p.date}T12:00:00`);
+  return t(p.label.split(" ")[0], Number.isNaN(d.getTime()) ? p.label : String(d.getDate()));
+}
 
 /* ================================================================== */
 /* Hook animasi (menghormati prefers-reduced-motion)                   */
@@ -144,6 +170,7 @@ function useMounted() {
 
 /** Angka yang menghitung naik ke nilai baru. */
 function CountUp({ value, className }: { value: number; className?: string }) {
+  const { locale } = useAdminLang();
   const reduced = usePrefersReducedMotion();
   const [shown, setShown] = useState(value);
   const from = useRef(0);
@@ -166,7 +193,7 @@ function CountUp({ value, className }: { value: number; className?: string }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [value, reduced]);
-  return <span className={cn("tabular-nums", className)}>{fmt(shown)}</span>;
+  return <span className={cn("tabular-nums", className)}>{fmtNum(shown, locale)}</span>;
 }
 
 /* ================================================================== */
@@ -292,20 +319,22 @@ function DeltaChip({ text, tone, className }: { text: string; tone: "up" | "down
 /* Aktivitas harian: matriks titik (hari × jenis aktivitas)            */
 /* ================================================================== */
 
-const DOT_LEVELS: { label: string; style: React.CSSProperties }[] = [
-  { label: "Tidak ada", style: { backgroundColor: EMPTY } },
-  { label: "Rendah", style: STYLE_SKY },
-  { label: "Sedang", style: STYLE_BLUE },
-  { label: "Tertinggi", style: STYLE_INK },
+const DOT_LEVELS: { label: { id: string; en: string }; style: React.CSSProperties }[] = [
+  { label: { id: "Tidak ada", en: "None" }, style: { backgroundColor: EMPTY } },
+  { label: { id: "Rendah", en: "Low" }, style: STYLE_SKY },
+  { label: { id: "Sedang", en: "Medium" }, style: STYLE_BLUE },
+  { label: { id: "Tertinggi", en: "Highest" }, style: STYLE_INK },
 ];
 
 function ActivityDots({ data }: { data: TimelinePoint[] }) {
+  const { t, locale } = useAdminLang();
+  const fmt = (n: number) => fmtNum(n, locale);
   const mounted = useMounted();
   const max = Math.max(1, ...data.flatMap((d) => [d.leads, d.orders]));
   const level = (v: number) => (v <= 0 ? 0 : Math.min(3, Math.ceil((v / max) * 3)));
   const rows: { key: "leads" | "orders"; label: string; unit: string }[] = [
-    { key: "leads", label: "Permohonan", unit: "permohonan" },
-    { key: "orders", label: "Order lab", unit: "order lab" },
+    { key: "leads", label: t("Permohonan", "Requests"), unit: t("permohonan", "requests") },
+    { key: "orders", label: t("Order lab", "Lab orders"), unit: t("order lab", "lab orders") },
   ];
   const compact = data.length > 7;
   const today = data.length - 1;
@@ -334,7 +363,7 @@ function ActivityDots({ data }: { data: TimelinePoint[] }) {
                     style={{ ...DOT_LEVELS[level(v)].style, transitionDelay: `${(r * data.length + i) * 25}ms` }}
                   />
                   <HoverTip>
-                    {DAY_LONG[dayOf(d.date)]}, {d.label} · <strong className="font-semibold">{fmt(v)}</strong> {row.unit}
+                    {dayLong(d.date, t)}, {pointLabel(d, t, locale)} · <strong className="font-semibold">{fmt(v)}</strong> {row.unit}
                   </HoverTip>
                 </span>
               );
@@ -345,30 +374,30 @@ function ActivityDots({ data }: { data: TimelinePoint[] }) {
         {data.map((d, i) => (
           <span
             key={d.date}
-            title={i === today ? "Hari ini" : undefined}
+            title={i === today ? t("Hari ini", "Today") : undefined}
             className={cn("truncate text-center text-[11px]", i === today ? "font-semibold text-[#1F6BFF]" : "text-[#A3A8B1]")}
           >
-            {compact ? d.label.split(" ")[0] : DAY_SHORT[dayOf(d.date)]}
+            {compact ? pointDayNumber(d, t) : dayShort(d.date, t)}
           </span>
         ))}
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-[#8A8F98]">
         {DOT_LEVELS.map((l, i) => (
-          <span key={l.label} className="inline-flex items-center gap-1.5">
+          <span key={l.label.id} className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full" style={l.style} aria-hidden="true" />
-            {l.label}
-            {i === 3 && ` (${fmt(max)}/hari)`}
+            {t(l.label.id, l.label.en)}
+            {i === 3 && ` (${fmt(max)}/${t("hari", "day")})`}
           </span>
         ))}
         <span className="inline-flex items-center gap-1.5 font-medium text-[#1F6BFF]">
           <span className="h-2.5 w-2.5 rounded-full ring-2 ring-[#1F6BFF]/40" aria-hidden="true" />
-          Hari ini
+          {t("Hari ini", "Today")}
         </span>
       </div>
       <SrTable
-        caption="Aktivitas harian permohonan demo dan order lab"
-        headers={["Tanggal", "Permohonan demo", "Order lab"]}
-        rows={data.map((d) => [d.label, d.leads, d.orders])}
+        caption={t("Aktivitas harian permohonan demo dan order lab", "Daily activity of demo requests and lab orders")}
+        headers={[t("Tanggal", "Date"), t("Permohonan demo", "Demo requests"), t("Order lab", "Lab orders")]}
+        rows={data.map((d) => [pointLabel(d, t, locale), d.leads, d.orders])}
       />
     </div>
   );
@@ -387,6 +416,8 @@ interface StageDatum {
 }
 
 function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
+  const { t, locale } = useAdminLang();
+  const fmt = (n: number) => fmtNum(n, locale);
   const mounted = useMounted();
   const max = Math.max(1, ...stages.map((s) => s.value));
   return (
@@ -415,7 +446,7 @@ function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
                   {fmt(s.value)}
                 </span>
                 <HoverTip className="mb-9">
-                  {s.label} · {fmt(s.value)} permohonan ({pct(s.value, total)}%)
+                  {s.label} · {fmt(s.value)} {t("permohonan", "requests")} ({pct(s.value, total)}%)
                 </HoverTip>
               </div>
               <span className="mt-2 w-full truncate text-center text-[11px] text-[#8A8F98]">{s.label}</span>
@@ -424,8 +455,8 @@ function StageBars({ stages, total }: { stages: StageDatum[]; total: number }) {
         })}
       </div>
       <SrTable
-        caption="Jumlah permohonan demo per tahap"
-        headers={["Tahap", "Jumlah", "Persentase"]}
+        caption={t("Jumlah permohonan demo per tahap", "Number of demo requests per stage")}
+        headers={[t("Tahap", "Stage"), t("Jumlah", "Count"), t("Persentase", "Percentage")]}
         rows={stages.map((s) => [s.label, s.value, `${pct(s.value, total)}%`])}
       />
     </div>
@@ -487,6 +518,8 @@ interface Highlight {
 }
 
 function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads: number | null }) {
+  const { t, locale } = useAdminLang();
+  const fmt = (n: number) => fmtNum(n, locale);
   const reduced = usePrefersReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -501,7 +534,7 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Sorotan hari ini"
+      aria-label={t("Sorotan hari ini", "Today's highlights")}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -518,7 +551,7 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
 
       <div className="relative flex items-start justify-between gap-4">
         <div key={index} className="min-w-0 motion-safe:animate-[fadeSlideUp_0.45s_ease-out]" aria-live="polite">
-          <h2 className="text-[13px] font-medium text-white/60">Sorotan Hari Ini · {slide.kicker}</h2>
+          <h2 className="text-[13px] font-medium text-white/60">{t("Sorotan Hari Ini", "Today's Highlights")} · {slide.kicker}</h2>
           <p className="mt-1.5 max-w-[440px] text-[21px] font-medium leading-snug text-white">
             {slide.value > 0 ? (
               <>
@@ -535,7 +568,7 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
               key={s.kicker}
               type="button"
               onClick={() => setIndex(i)}
-              aria-label={`Tampilkan info ${i + 1} dari ${slides.length}: ${s.kicker}`}
+              aria-label={t(`Tampilkan info ${i + 1} dari ${slides.length}: ${s.kicker}`, `Show item ${i + 1} of ${slides.length}: ${s.kicker}`)}
               aria-current={i === index ? "true" : undefined}
               className={cn("h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white", i === index ? "w-6 bg-white" : "w-2 bg-white/30 hover:bg-white/50")}
             />
@@ -547,7 +580,7 @@ function HighlightCard({ slides, todayLeads }: { slides: Highlight[]; todayLeads
         {todayLeads !== null && (
           <span className="inline-flex items-center gap-2 text-[12px] text-white/75">
             <span className="rounded-full bg-[#22C55E]/20 px-2 py-0.5 text-[11px] font-semibold text-[#4ADE80]">+{fmt(todayLeads)}</span>
-            permohonan masuk hari ini
+            {t("permohonan masuk hari ini", "requests received today")}
           </span>
         )}
         <Link
@@ -591,16 +624,26 @@ function DashboardSkeleton() {
 /* ================================================================== */
 
 export default function AdminOverviewDashboard() {
+  const { t, locale } = useAdminLang();
+  const fmt = (n: number) => fmtNum(n, locale);
   const [data, setData] = useState<OverviewData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Pesan server disimpan apa adanya; fallback klien disimpan sebagai jenis agar ikut bahasa aktif.
+  const [errorState, setErrorState] = useState<{ kind: "load" | "network"; message?: string } | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [period, setPeriod] = useState<7 | 14>(7);
   const [todayStr, setTodayStr] = useState("");
 
+  const error = errorState
+    ? errorState.message ||
+      (errorState.kind === "network"
+        ? t("Tidak dapat terhubung ke server. Periksa koneksi Anda.", "Cannot connect to the server. Check your connection.")
+        : t("Gagal memuat data dashboard.", "Failed to load dashboard data."))
+    : null;
+
   const fetchOverview = useCallback(async (opts?: { silent?: boolean }) => {
     if (!opts?.silent) setIsLoading(true);
-    setError(null);
+    setErrorState(null);
     try {
       const res = await fetch("/api/admin/overview", { cache: "no-store" });
       const json = await res.json().catch(() => null);
@@ -608,11 +651,11 @@ export default function AdminOverviewDashboard() {
         setData(json.data as OverviewData);
         setUpdatedAt(new Date());
       } else {
-        setError(json?.message || "Gagal memuat data dashboard.");
+        setErrorState({ kind: "load", message: json?.message || undefined });
       }
     } catch (err) {
       console.error("Failed to load overview data:", err);
-      setError("Tidak dapat terhubung ke server. Periksa koneksi Anda.");
+      setErrorState({ kind: "network" });
     } finally {
       setIsLoading(false);
     }
@@ -620,9 +663,12 @@ export default function AdminOverviewDashboard() {
 
   useEffect(() => {
     fetchOverview();
-    // Tanggal lokal hanya dihitung di browser (menghindari hydration mismatch).
-    setTodayStr(new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date()));
   }, [fetchOverview]);
+
+  useEffect(() => {
+    // Tanggal lokal hanya dihitung di browser (menghindari hydration mismatch).
+    setTodayStr(new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date()));
+  }, [locale]);
 
   // Refresh otomatis di latar selama tab terlihat.
   useEffect(() => {
@@ -660,20 +706,20 @@ export default function AdminOverviewDashboard() {
   const leadTotal = leads?.total ?? 0;
   const stages: StageDatum[] = leads
     ? [
-        { key: "new", label: "Baru", value: leads.new, style: STYLE_INK, dot: INK },
-        { key: "contacted", label: "Dihubungi", value: leads.contacted, style: STYLE_NAVY, dot: NAVY },
-        { key: "scheduled", label: "Jadwal Demo", value: leads.scheduled, style: STYLE_BLUE, dot: BLUE },
-        { key: "completed", label: "Selesai", value: leads.completed, style: STYLE_SKY, dot: SKY },
+        { key: "new", label: t("Baru", "New"), value: leads.new, style: STYLE_INK, dot: INK },
+        { key: "contacted", label: t("Dihubungi", "Contacted"), value: leads.contacted, style: STYLE_NAVY, dot: NAVY },
+        { key: "scheduled", label: t("Jadwal Demo", "Demo Scheduled"), value: leads.scheduled, style: STYLE_BLUE, dot: BLUE },
+        { key: "completed", label: t("Selesai", "Completed"), value: leads.completed, style: STYLE_SKY, dot: SKY },
       ]
     : [];
 
   const followedUp = leads ? leads.contacted + leads.scheduled + leads.completed : 0;
   const conversions = leads
     ? [
-        { label: "Sudah dihubungi", value: followedUp, color: BLUE },
-        { label: "Mencapai jadwal demo", value: leads.scheduled + leads.completed, color: "#5B95FF" },
-        { label: "Demo selesai", value: leads.completed, color: SKY },
-        { label: "Menunggu respon", value: leads.new, color: EMPTY },
+        { label: t("Sudah dihubungi", "Contacted"), value: followedUp, color: BLUE },
+        { label: t("Mencapai jadwal demo", "Reached demo scheduling"), value: leads.scheduled + leads.completed, color: "#5B95FF" },
+        { label: t("Demo selesai", "Demo completed"), value: leads.completed, color: SKY },
+        { label: t("Menunggu respon", "Awaiting response"), value: leads.new, color: EMPTY },
       ]
     : [];
 
@@ -688,28 +734,28 @@ export default function AdminOverviewDashboard() {
   const highlights: Highlight[] = data
     ? [
         {
-          kicker: "Menunggu respon",
+          kicker: t("Menunggu respon", "Awaiting response"),
           value: data.summary.leads.new,
-          text: "permohonan demo belum dihubungi tim.",
-          emptyText: "Semua permohonan demo sudah ditindaklanjuti.",
+          text: t("permohonan demo belum dihubungi tim.", "demo requests not yet contacted by the team."),
+          emptyText: t("Semua permohonan demo sudah ditindaklanjuti.", "All demo requests have been followed up."),
           href: "/admin/leads",
-          cta: "Tinjau permohonan",
+          cta: t("Tinjau permohonan", "Review requests"),
         },
         {
-          kicker: "Jadwal demo",
+          kicker: t("Jadwal demo", "Demo schedule"),
           value: data.summary.leads.scheduled,
-          text: "permohonan sudah memiliki jadwal demo.",
-          emptyText: "Belum ada permohonan dengan jadwal demo.",
+          text: t("permohonan sudah memiliki jadwal demo.", "requests already have a demo scheduled."),
+          emptyText: t("Belum ada permohonan dengan jadwal demo.", "No requests with a demo scheduled yet."),
           href: "/admin/leads",
-          cta: "Lihat permohonan",
+          cta: t("Lihat permohonan", "View requests"),
         },
         {
-          kicker: "Order CITO",
+          kicker: t("Order CITO", "CITO Orders"),
           value: data.summary.orders.cito,
-          text: "order laboratorium berprioritas CITO di LIS.",
-          emptyText: "Tidak ada order laboratorium berprioritas CITO.",
+          text: t("order laboratorium berprioritas CITO di LIS.", "CITO-priority lab orders in the LIS."),
+          emptyText: t("Tidak ada order laboratorium berprioritas CITO.", "No CITO-priority lab orders."),
           href: "/admin/orders",
-          cta: "Buka order lab",
+          cta: t("Buka order lab", "Open lab orders"),
         },
       ]
     : [];
@@ -725,11 +771,11 @@ export default function AdminOverviewDashboard() {
       {/* ---------------------------- Judul + toolbar ---------------------------- */}
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <h1 className="font-display text-[28px] font-medium leading-tight tracking-tight text-[#111318] sm:text-[32px]">Ringkasan Dashboard</h1>
+          <h1 className="font-display text-[28px] font-medium leading-tight tracking-tight text-[#111318] sm:text-[32px]">{t("Ringkasan Dashboard", "Dashboard Overview")}</h1>
           <nav aria-label="Breadcrumb" className="mt-1 flex flex-wrap items-center gap-x-1 text-[12px] text-[#8A8F98]">
             <span>Dashboard</span>
             <ChevronRight className="h-3 w-3" aria-hidden="true" />
-            <span className="text-[#5B616B]">Semua Laporan</span>
+            <span className="text-[#5B616B]">{t("Semua Laporan", "All Reports")}</span>
             {todayStr && <span className="ml-1 hidden sm:inline">· {todayStr}</span>}
           </nav>
         </div>
@@ -740,10 +786,10 @@ export default function AdminOverviewDashboard() {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-60 motion-safe:animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
               </span>
-              Diperbarui {updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+              {t("Diperbarui", "Updated")} {updatedAt.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
             </span>
           )}
-          <div role="group" aria-label="Periode aktivitas" className="inline-flex h-11 items-center rounded-full bg-white p-1">
+          <div role="group" aria-label={t("Periode aktivitas", "Activity period")} className="inline-flex h-11 items-center rounded-full bg-white p-1">
             {([7, 14] as const).map((p) => (
               <button
                 key={p}
@@ -752,18 +798,24 @@ export default function AdminOverviewDashboard() {
                 aria-pressed={period === p}
                 className={cn("h-9 rounded-full px-4 text-[13px] font-medium transition-colors", focusRing, period === p ? "bg-[#111318] text-white" : "text-[#5B616B] hover:text-[#111318]")}
               >
-                {p} Hari
+                {p} {t("Hari", "Days")}
               </button>
             ))}
           </div>
           <a href="/api/admin/leads/export" download className={toolbarBtn}>
-            Ekspor
+            {t("Ekspor", "Export")}
           </a>
-          <a href="/api/admin/leads/export" download aria-label="Unduh data permohonan (CSV)" title="Unduh data permohonan (CSV)" className={toolbarIcon}>
+          <a
+            href="/api/admin/leads/export"
+            download
+            aria-label={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
+            title={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
+            className={toolbarIcon}
+          >
             <Download className="h-4 w-4" aria-hidden="true" />
           </a>
           <button type="button" onClick={() => fetchOverview()} disabled={isLoading} className={toolbarBtn}>
-            {isLoading ? "Memuat..." : "Muat Ulang"}
+            {isLoading ? t("Memuat...", "Loading...") : t("Muat Ulang", "Refresh")}
             <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin text-[#1F6BFF]")} aria-hidden="true" />
           </button>
         </div>
@@ -773,7 +825,7 @@ export default function AdminOverviewDashboard() {
       {isLoading && !data ? (
         <>
           <span className="sr-only" role="status">
-            Memuat data dashboard...
+            {t("Memuat data dashboard...", "Loading dashboard data...")}
           </span>
           <DashboardSkeleton />
         </>
@@ -783,12 +835,12 @@ export default function AdminOverviewDashboard() {
             <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>
-            <p className="font-semibold text-[#111318]">Data dashboard gagal dimuat</p>
-            <p className="mt-1 text-sm text-[#8A8F98]">{error || "Terjadi kesalahan yang tidak diketahui."}</p>
+            <p className="font-semibold text-[#111318]">{t("Data dashboard gagal dimuat", "Dashboard data failed to load")}</p>
+            <p className="mt-1 text-sm text-[#8A8F98]">{error || t("Terjadi kesalahan yang tidak diketahui.", "An unknown error occurred.")}</p>
           </div>
           <button type="button" onClick={() => fetchOverview()} className={cn("inline-flex items-center gap-2 rounded-full bg-[#1F6BFF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1858D6]", focusRing)}>
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
-            Coba Lagi
+            {t("Coba Lagi", "Try Again")}
           </button>
         </div>
       ) : (
@@ -797,33 +849,40 @@ export default function AdminOverviewDashboard() {
             <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200">
               <span className="inline-flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                Gagal memuat ulang ({error}). Menampilkan data terakhir.
+                {t(`Gagal memuat ulang (${error}). Menampilkan data terakhir.`, `Refresh failed (${error}). Showing the last loaded data.`)}
               </span>
               <button type="button" onClick={() => fetchOverview()} className={cn("rounded-full bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-rose-200", focusRing)}>
-                Coba Lagi
+                {t("Coba Lagi", "Try Again")}
               </button>
             </div>
           )}
 
           <div className={cn("grid grid-cols-1 gap-4 transition-opacity md:grid-cols-2 xl:grid-cols-12", isLoading && "opacity-60")} aria-busy={isLoading}>
             {/* 1. Aktivitas harian (matriks titik) */}
-            <Card className="md:col-span-2 xl:col-span-5" title="Aktivitas Harian" subtitle={`${period} hari terakhir`} action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
+            <Card
+              className="md:col-span-2 xl:col-span-5"
+              title={t("Aktivitas Harian", "Daily Activity")}
+              subtitle={t(`${period} hari terakhir`, `Last ${period} days`)}
+              action={<CircleLink href="/admin/leads" label={t("Buka permohonan demo", "Open demo requests")} />}
+            >
               <div className="mb-5">
                 <div className="font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
                   <CountUp value={periodLeads} />
                 </div>
-                <div className="mt-1.5 text-[12px] text-[#8A8F98]">permohonan demo masuk dalam {period} hari</div>
+                <div className="mt-1.5 text-[12px] text-[#8A8F98]">
+                  {t(`permohonan demo masuk dalam ${period} hari`, `demo requests received in ${period} days`)}
+                </div>
               </div>
               {periodData.length === 0 ? (
-                <EmptyState icon={Users} text="Belum ada data aktivitas untuk ditampilkan." />
+                <EmptyState icon={Users} text={t("Belum ada data aktivitas untuk ditampilkan.", "No activity data to display yet.")} />
               ) : (
                 <ActivityDots data={periodData} />
               )}
               <dl className="mt-auto grid grid-cols-3 gap-2 pt-5">
                 {[
-                  { label: "Order lab", value: fmt(periodOrders) },
-                  { label: "Rata-rata/hari", value: avgPerDay.toLocaleString("id-ID", { maximumFractionDigits: 1 }) },
-                  { label: "Hari tersibuk", value: busiest ? `${DAY_SHORT[dayOf(busiest.date)]}, ${busiest.label}` : "-" },
+                  { label: t("Order lab", "Lab orders"), value: fmt(periodOrders) },
+                  { label: t("Rata-rata/hari", "Avg/day"), value: avgPerDay.toLocaleString(locale, { maximumFractionDigits: 1 }) },
+                  { label: t("Hari tersibuk", "Busiest day"), value: busiest ? `${dayShort(busiest.date, t)}, ${pointLabel(busiest, t, locale)}` : "-" },
                 ].map((s) => (
                   <div key={s.label} className="min-w-0 rounded-2xl bg-[#F7F8FA] px-3 py-2.5">
                     <dt className="truncate text-[11px] text-[#8A8F98]">{s.label}</dt>
@@ -844,9 +903,9 @@ export default function AdminOverviewDashboard() {
                       <Users className="h-[18px] w-[18px]" aria-hidden="true" />
                     </span>
                     <h2 className="text-[13px] font-medium leading-tight text-[#3B4049]">
-                      Permohonan
+                      {t("Permohonan", "Requests")}
                       <br />
-                      Hari Ini
+                      {t("Hari Ini", "Today")}
                     </h2>
                   </div>
                   <DeltaChip text={deltaText} tone={deltaTone} />
@@ -867,14 +926,15 @@ export default function AdminOverviewDashboard() {
                           }}
                         />
                         <HoverTip>
-                          {p.label} · {fmt(p.leads)}
+                          {pointLabel(p, t, locale)} · {fmt(p.leads)}
                         </HoverTip>
                       </span>
                     ))}
                   </div>
                 </div>
                 <div className="mt-4 border-t border-[#EEF0F3] pt-3 text-[12px] text-[#8A8F98]">
-                  Kemarin <span className="font-semibold text-[#111318]">{fmt(yesterdayPoint?.leads ?? 0)}</span> · 7 hari{" "}
+                  {t("Kemarin", "Yesterday")} <span className="font-semibold text-[#111318]">{fmt(yesterdayPoint?.leads ?? 0)}</span> ·{" "}
+                  {t("7 hari", "7 days")}{" "}
                   <span className="font-semibold text-[#111318]">{fmt(last7Leads)}</span>
                 </div>
               </section>
@@ -890,18 +950,20 @@ export default function AdminOverviewDashboard() {
                     <a
                       href="/api/admin/leads/export"
                       download
-                      aria-label="Unduh data permohonan (CSV)"
-                      title="Unduh data permohonan (CSV)"
+                      aria-label={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
+                      title={t("Unduh data permohonan (CSV)", "Download request data (CSV)")}
                       className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111318] transition-all hover:-translate-y-0.5 hover:bg-[#E9ECF1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       <Download className="h-4 w-4" aria-hidden="true" />
                     </a>
-                    <CircleLink href="/admin/leads" label="Buka permohonan demo" dark />
+                    <CircleLink href="/admin/leads" label={t("Buka permohonan demo", "Open demo requests")} dark />
                   </div>
                 </div>
                 <div className="relative mt-6">
-                  <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[10px] text-white/75">{fmt(leadTotal)} permohonan · CSV</span>
-                  <h2 className="mt-2 text-[21px] font-medium leading-tight text-white">Laporan Permohonan</h2>
+                  <span className="inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[10px] text-white/75">
+                    {fmt(leadTotal)} {t("permohonan", leadTotal === 1 ? "request" : "requests")} · CSV
+                  </span>
+                  <h2 className="mt-2 text-[21px] font-medium leading-tight text-white">{t("Laporan Permohonan", "Requests Report")}</h2>
                 </div>
               </section>
             </div>
@@ -909,17 +971,19 @@ export default function AdminOverviewDashboard() {
             {/* 5. Permohonan per tahap (batang bergaris) */}
             <Card
               className="md:col-span-2 xl:col-span-8"
-              title="Permohonan per Tahap"
-              subtitle="Berdasarkan status pipeline saat ini"
+              title={t("Permohonan per Tahap", "Requests by Stage")}
+              subtitle={t("Berdasarkan status pipeline saat ini", "Based on current pipeline status")}
               action={
                 <>
-                  <span className="hidden rounded-full border border-[#E4E6EA] px-3 py-2 text-[12px] font-medium text-[#3B4049] sm:inline-flex">Semua waktu</span>
-                  <CircleLink href="/admin/leads" label="Lihat detail permohonan" />
+                  <span className="hidden rounded-full border border-[#E4E6EA] px-3 py-2 text-[12px] font-medium text-[#3B4049] sm:inline-flex">
+                    {t("Semua waktu", "All time")}
+                  </span>
+                  <CircleLink href="/admin/leads" label={t("Lihat detail permohonan", "View request details")} />
                 </>
               }
             >
               {leadTotal === 0 ? (
-                <EmptyState icon={Users} text="Belum ada permohonan demo yang tercatat." />
+                <EmptyState icon={Users} text={t("Belum ada permohonan demo yang tercatat.", "No demo requests recorded yet.")} />
               ) : (
                 <div className="grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)]">
                   <div className="flex flex-col">
@@ -927,10 +991,12 @@ export default function AdminOverviewDashboard() {
                     <div className="mt-3 font-display text-[38px] font-medium leading-none tracking-tight text-[#111318]">
                       <CountUp value={leadTotal} />
                     </div>
-                    <p className="mt-2 text-[12px] leading-relaxed text-[#8A8F98]">permohonan demo sejak awal</p>
+                    <p className="mt-2 text-[12px] leading-relaxed text-[#8A8F98]">{t("permohonan demo sejak awal", "demo requests since the start")}</p>
                     <div className="mt-5">
                       <div className={cn("font-display text-[30px] font-medium leading-none", deltaTone === "down" ? "text-[#B42318]" : "text-[#1F6BFF]")}>{deltaText}</div>
-                      <p className="mt-1 text-[12px] text-[#8A8F98]">permohonan 7 hari terakhir dibanding 7 hari sebelumnya</p>
+                      <p className="mt-1 text-[12px] text-[#8A8F98]">
+                        {t("permohonan 7 hari terakhir dibanding 7 hari sebelumnya", "requests in the last 7 days vs. the previous 7 days")}
+                      </p>
                     </div>
                     <ul className="mt-auto flex flex-wrap gap-x-4 gap-y-1.5 pt-5 text-[11px] text-[#8A8F98]">
                       {stages.map((s) => (
@@ -947,9 +1013,14 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 6. Konversi pipeline (gauge) */}
-            <Card className="md:col-span-2 xl:col-span-4" title="Konversi Pipeline" subtitle="Dari seluruh permohonan" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
+            <Card
+              className="md:col-span-2 xl:col-span-4"
+              title={t("Konversi Pipeline", "Pipeline Conversion")}
+              subtitle={t("Dari seluruh permohonan", "Across all requests")}
+              action={<CircleLink href="/admin/leads" label={t("Buka permohonan demo", "Open demo requests")} />}
+            >
               {leadTotal === 0 ? (
-                <EmptyState icon={Users} text="Konversi akan tampil setelah ada permohonan demo." />
+                <EmptyState icon={Users} text={t("Konversi akan tampil setelah ada permohonan demo.", "Conversion will appear once there are demo requests.")} />
               ) : (
                 <>
                   <ul className="mb-2 space-y-1.5 text-[11px] text-[#8A8F98]">
@@ -968,23 +1039,36 @@ export default function AdminOverviewDashboard() {
                   <div className="relative mt-auto">
                     <SegmentGauge percent={pct(followedUp, leadTotal)} />
                     <div className="absolute inset-x-0 bottom-1 text-center">
-                      <div className="font-display text-[34px] font-medium leading-none text-[#111318]" role="img" aria-label={`${pct(followedUp, leadTotal)}% permohonan sudah ditindaklanjuti`}>
+                      <div className="font-display text-[34px] font-medium leading-none text-[#111318]" role="img"
+                        aria-label={t(
+                          `${pct(followedUp, leadTotal)}% permohonan sudah ditindaklanjuti`,
+                          `${pct(followedUp, leadTotal)}% of requests followed up`
+                        )}
+                      >
                         <CountUp value={pct(followedUp, leadTotal)} />%
                       </div>
-                      <div className="mt-1 text-[11px] text-[#8A8F98]">sudah ditindaklanjuti</div>
+                      <div className="mt-1 text-[11px] text-[#8A8F98]">{t("sudah ditindaklanjuti", "followed up")}</div>
                     </div>
                   </div>
                   <p className="mx-auto mt-3 w-fit rounded-full bg-[#F2F3F5] px-3 py-1.5 text-[11px] text-[#5B616B]">
-                    {fmt(followedUp)} dari {fmt(leadTotal)} permohonan sudah dihubungi
+                    {t(
+                      `${fmt(followedUp)} dari ${fmt(leadTotal)} permohonan sudah dihubungi`,
+                      `${fmt(followedUp)} of ${fmt(leadTotal)} requests contacted`
+                    )}
                   </p>
                 </>
               )}
             </Card>
 
             {/* 7. Permohonan terbaru — klik untuk membuka detailnya */}
-            <Card className="xl:col-span-5" title="Permohonan Terbaru" subtitle="Klik untuk membuka detail" action={<CircleLink href="/admin/leads" label="Lihat semua permohonan" />}>
+            <Card
+              className="xl:col-span-5"
+              title={t("Permohonan Terbaru", "Latest Requests")}
+              subtitle={t("Klik untuk membuka detail", "Click to open details")}
+              action={<CircleLink href="/admin/leads" label={t("Lihat semua permohonan", "View all requests")} />}
+            >
               {data.recentLeads.length === 0 ? (
-                <EmptyState icon={Users} text="Belum ada permohonan demo yang masuk." />
+                <EmptyState icon={Users} text={t("Belum ada permohonan demo yang masuk.", "No demo requests received yet.")} />
               ) : (
                 <ul className="space-y-2">
                   {data.recentLeads.map((lead) => (
@@ -998,11 +1082,11 @@ export default function AdminOverviewDashboard() {
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[13px] font-semibold text-[#111318]">{lead.name}</span>
-                          <span className="block truncate text-[11px] text-[#8A8F98]">{lead.institution || INSTITUTION_NAMES[lead.institutionType] || "-"}</span>
+                          <span className="block truncate text-[11px] text-[#8A8F98]">{lead.institution || institutionName(lead.institutionType, t) || "-"}</span>
                         </span>
                         <span className="flex shrink-0 flex-col items-end gap-1">
                           <StatusBadge type={lead.status} className="px-2 text-[10px]" />
-                          <span className="text-[10px] text-[#8A8F98]">{formatShortDate(lead.createdAt)}</span>
+                          <span className="text-[10px] text-[#8A8F98]">{formatShortDate(lead.createdAt, locale)}</span>
                         </span>
                         <ChevronRight className="h-4 w-4 shrink-0 text-[#A3A8B1] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                       </Link>
@@ -1013,9 +1097,14 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 8. Order lab terbaru */}
-            <Card className="xl:col-span-7" title="Order Lab Terbaru" subtitle="Diurutkan berdasarkan prioritas, lalu waktu order" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
+            <Card
+              className="xl:col-span-7"
+              title={t("Order Lab Terbaru", "Latest Lab Orders")}
+              subtitle={t("Diurutkan berdasarkan prioritas, lalu waktu order", "Sorted by priority, then order time")}
+              action={<CircleLink href="/admin/orders" label={t("Buka order lab", "Open lab orders")} />}
+            >
               {data.recentOrders.length === 0 ? (
-                <EmptyState icon={FlaskConical} text="Belum ada order laboratorium yang terdaftar." />
+                <EmptyState icon={FlaskConical} text={t("Belum ada order laboratorium yang terdaftar.", "No lab orders registered yet.")} />
               ) : (
                 <ul className="space-y-2">
                   {data.recentOrders.map((order) => {
@@ -1032,7 +1121,7 @@ export default function AdminOverviewDashboard() {
                             <span className="font-mono text-[11px] text-[#1F6BFF]">{order.orderNumber}</span>
                           </div>
                           <div className="truncate text-[11px] text-[#8A8F98]">
-                            {order.physicianName} · {formatDateTime(order.orderedAt)}
+                            {order.physicianName} · {formatDateTime(order.orderedAt, locale)}
                           </div>
                         </div>
                         <div className="flex w-[132px] flex-col items-end gap-1">
@@ -1041,7 +1130,7 @@ export default function AdminOverviewDashboard() {
                             <span className="block h-full rounded-full" style={{ width: `${progress}%`, ...(done ? { backgroundColor: "#16A34A" } : STYLE_BLUE) }} />
                           </span>
                           <span className={cn("text-[10px] font-medium", done ? "text-emerald-700" : "text-[#8A8F98]")}>
-                            {order.receivedSpecimensCount}/{order.specimensCount} spesimen diterima
+                            {order.receivedSpecimensCount}/{order.specimensCount} {t("spesimen diterima", "specimens received")}
                           </span>
                         </div>
                       </li>
@@ -1052,17 +1141,22 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 9. Ringkasan LIS */}
-            <Card className="md:col-span-2 xl:col-span-7" title="Ringkasan LIS" subtitle="Total seluruh order & spesimen" action={<CircleLink href="/admin/orders" label="Buka order lab" />}>
+            <Card
+              className="md:col-span-2 xl:col-span-7"
+              title={t("Ringkasan LIS", "LIS Summary")}
+              subtitle={t("Total seluruh order & spesimen", "Totals for all orders & specimens")}
+              action={<CircleLink href="/admin/orders" label={t("Buka order lab", "Open lab orders")} />}
+            >
               <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
-                  { label: "Total order", value: data.summary.orders.total, tone: "dark" },
-                  { label: "Prioritas CITO", value: data.summary.orders.cito, tone: "blue" },
-                  { label: "Prioritas mendesak", value: data.summary.orders.urgent },
-                  { label: "Prioritas rutin", value: data.summary.orders.routine },
-                  { label: "Order selesai", value: data.summary.orders.completed },
-                  { label: "Spesimen diterima", value: data.summary.specimens.received },
-                  { label: "Spesimen ditolak", value: data.summary.specimens.rejected },
-                  { label: "Pengguna aktif", value: data.summary.activeUsers },
+                  { label: t("Total order", "Total orders"), value: data.summary.orders.total, tone: "dark" },
+                  { label: t("Prioritas CITO", "CITO priority"), value: data.summary.orders.cito, tone: "blue" },
+                  { label: t("Prioritas mendesak", "Urgent priority"), value: data.summary.orders.urgent },
+                  { label: t("Prioritas rutin", "Routine priority"), value: data.summary.orders.routine },
+                  { label: t("Order selesai", "Completed orders"), value: data.summary.orders.completed },
+                  { label: t("Spesimen diterima", "Specimens received"), value: data.summary.specimens.received },
+                  { label: t("Spesimen ditolak", "Specimens rejected"), value: data.summary.specimens.rejected },
+                  { label: t("Pengguna aktif", "Active users"), value: data.summary.activeUsers },
                 ].map((row) => {
                   const strong = row.tone === "dark" || row.tone === "blue";
                   return (
@@ -1082,14 +1176,19 @@ export default function AdminOverviewDashboard() {
             </Card>
 
             {/* 10. Profil institusi */}
-            <Card className="md:col-span-2 xl:col-span-5" title="Profil Institusi" subtitle="Jenis institusi seluruh pemohon demo" action={<CircleLink href="/admin/leads" label="Buka permohonan demo" />}>
+            <Card
+              className="md:col-span-2 xl:col-span-5"
+              title={t("Profil Institusi", "Institution Profile")}
+              subtitle={t("Jenis institusi seluruh pemohon demo", "Institution types of all demo applicants")}
+              action={<CircleLink href="/admin/leads" label={t("Buka permohonan demo", "Open demo requests")} />}
+            >
               {institutions.length === 0 ? (
-                <EmptyState icon={Building2} text="Belum ada data institusi pemohon." />
+                <EmptyState icon={Building2} text={t("Belum ada data institusi pemohon.", "No applicant institution data yet.")} />
               ) : (
                 <ul className="space-y-3">
                   {institutions.map((inst, i) => (
                     <li key={inst.type} className="group grid grid-cols-[minmax(100px,140px)_minmax(0,1fr)_auto] items-center gap-3">
-                      <span className="truncate text-[12px] font-medium text-[#3B4049]">{INSTITUTION_NAMES[inst.type] || inst.type}</span>
+                      <span className="truncate text-[12px] font-medium text-[#3B4049]">{institutionName(inst.type, t) || inst.type}</span>
                       <span className="h-7 w-full overflow-hidden rounded-full bg-[#F2F3F5]" aria-hidden="true">
                         <span
                           className="block h-full rounded-full transition-[filter] group-hover:brightness-110"

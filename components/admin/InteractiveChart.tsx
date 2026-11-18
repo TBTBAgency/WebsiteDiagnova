@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/components/admin/AdminLanguage";
 
 interface DataPoint {
   date: string;
@@ -16,6 +17,13 @@ interface InteractiveChartProps {
 }
 
 export function InteractiveChart({ data, className }: InteractiveChartProps) {
+  const { t, locale } = useAdminLang();
+  // Label dari API berformat id-ID; untuk bahasa lain diformat ulang dari `date` sesuai locale.
+  const pointLabel = (p: DataPoint) => {
+    const d = new Date(`${p.date}T12:00:00`);
+    if (Number.isNaN(d.getTime())) return p.label;
+    return t(p.label, d.toLocaleDateString(locale, { day: "numeric", month: "short" }));
+  };
   const [activeSeries, setActiveSeries] = useState<"all" | "leads" | "orders">("all");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -111,7 +119,7 @@ export function InteractiveChart({ data, className }: InteractiveChartProps) {
                   : "text-[#747B86] hover:text-[#17191D]"
               )}
             >
-              Semua
+              {t("Semua", "All")}
             </button>
             <button
               type="button"
@@ -123,7 +131,7 @@ export function InteractiveChart({ data, className }: InteractiveChartProps) {
                   : "text-[#747B86] hover:text-[#17191D]"
               )}
             >
-              Permohonan Demo
+              {t("Permohonan Demo", "Demo Requests")}
             </button>
             <button
               type="button"
@@ -307,7 +315,7 @@ export function InteractiveChart({ data, className }: InteractiveChartProps) {
                     fill="#747B86"
                     fontWeight="500"
                   >
-                    {p.label}
+                    {pointLabel(p)}
                   </text>
                 )}
               </g>
@@ -325,11 +333,11 @@ export function InteractiveChart({ data, className }: InteractiveChartProps) {
             }}
           >
             <div className="font-semibold text-[#17191D] pb-1 border-b border-[#E8EBEF] mb-1">
-              {activePoint.label}
+              {pointLabel(activePoint)}
             </div>
             {(activeSeries === "all" || activeSeries === "leads") && (
               <div className="flex items-center justify-between gap-3 text-[11px] text-[#087BEE]">
-                <span>Leads Masuk:</span>
+                <span>{t("Leads Masuk:", "Incoming Leads:")}</span>
                 <span className="font-bold">{activePoint.leads}</span>
               </div>
             )}
