@@ -249,12 +249,13 @@ function SidebarContent({
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "group mt-9 inline-flex items-center gap-2 rounded-full bg-[#0E234B] py-1.5 pl-4 pr-1.5 text-[11px] font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#153670] hover:shadow-md",
+              "group relative mt-9 inline-flex items-center gap-2 overflow-hidden rounded-full bg-[#0E234B] py-1.5 pl-4 pr-1.5 text-[11px] font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#153670] hover:shadow-lg hover:shadow-[#0E234B]/30 active:scale-[0.98]",
               focusRing
             )}
           >
-            {t("Buka website", "Open website")}
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+            <span className="relative z-10">{t("Buka website", "Open website")}</span>
+            <span className="relative z-10 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
           </a>
