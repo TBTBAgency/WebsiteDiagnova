@@ -78,6 +78,20 @@ const formatDateTime = (value?: string | null) =>
       })
     : "-";
 
+/** Interval pengecekan status Magic Link (detail terbuka / tabel). */
+const MAGIC_LINK_POLL_MS = 5000;
+const MAGIC_LINK_LIST_POLL_MS = 15000;
+
+type MagicLinkState = "waiting" | "used" | "none";
+
+/** Status tautan terakhir lead yang sudah disetujui (null bila belum/tidak disetujui). */
+function magicLinkState(lead: DemoRequestRecord): MagicLinkState | null {
+  if (lead.approvalStatus !== "APPROVED") return null;
+  if (lead.magicLinkUsedAt) return "used";
+  if (lead.magicLinkExpiry && new Date(lead.magicLinkExpiry) > new Date()) return "waiting";
+  return "none";
+}
+
 interface LeadMetrics {
   total: number;
   new: number;
@@ -197,8 +211,9 @@ export default function AdminLeadsPage() {
   const [leadHistory, setLeadHistory] = useState<LeadHistory | null>(null);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
 
-  const fetchLeads = useCallback(async () => {
-    setIsLoading(true);
+  const fetchLeads = useCallback(async (opts?: { silent?: boolean }) => {
+    // Refresh latar (pemantauan Magic Link) tidak menampilkan spinner tabel.
+    if (!opts?.silent) setIsLoading(true);
     try {
       const params = new URLSearchParams();
       if (statusFilter !== "all") params.set("status", String(statusFilter));
@@ -250,7 +265,59 @@ export default function AdminLeadsPage() {
     }
   }, []);
 
+  /* ---------------------------------------------------------------- */
+  /* Pemantauan Magic Link: admin langsung tahu saat klien masuk.      */
+  /* Yang dicatat adalah saat klien menekan tombol masuk di halaman    */
+  /* tautan (usedAt), bukan sekadar membuka URL — pratinjau tautan     */
+  /* WhatsApp juga "membuka" URL dan akan memberi sinyal palsu.        */
+  /* ---------------------------------------------------------------- */
+  const waitingSelected = !!selectedLead && magicLinkState(selectedLead) === "waiting";
+  const selectedLeadId = selectedLead?.id ?? null;
+  const [lastLinkCheck, setLastLinkCheck] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (!selectedLeadId || !waitingSelected) return;
+    let cancelled = false;
+    const check = async () => {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const res = await fetch(`/api/admin/leads/${selectedLeadId}`, { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (cancelled || !res.ok || !json?.success || !json.data) return;
+        const fresh = json.data as DemoRequestRecord;
+        setLastLinkCheck(new Date());
+        if (fresh.magicLinkUsedAt) {
+          setSelectedLead((cur) => (cur && cur.id === fresh.id ? fresh : cur));
+          setActionSuccessMessage(
+            `${fresh.name} sudah masuk melalui Magic Link pada ${formatDateTime(fresh.magicLinkUsedAt)}. Status otomatis menjadi Jadwal Demo dan masa aktif demo mulai berjalan.`
+          );
+          fetchLeads({ silent: true });
+          fetchHistory(fresh.id);
+        }
+      } catch {
+        // Gagal sementara (jaringan): dicoba lagi pada interval berikutnya.
+      }
+    };
+    check();
+    const timer = setInterval(check, MAGIC_LINK_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [selectedLeadId, waitingSelected, fetchLeads, fetchHistory]);
+
+  // Tabel ikut diperbarui selama masih ada tautan yang menunggu dipakai.
+  const anyWaitingInList = leads.some((l) => magicLinkState(l) === "waiting");
+  useEffect(() => {
+    if (!anyWaitingInList) return;
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") fetchLeads({ silent: true });
+    }, MAGIC_LINK_LIST_POLL_MS);
+    return () => clearInterval(timer);
+  }, [anyWaitingInList, fetchLeads]);
+
   const handleOpenDetail = (lead: DemoRequestRecord) => {
+    setLastLinkCheck(null);
     setSelectedLead(lead);
     setLeadHistory(null);
     fetchHistory(lead.id);
@@ -847,6 +914,18 @@ export default function AdminLeadsPage() {
                           <ApIcon className="h-3 w-3" />
                           <span>{apStyle.label}</span>
                         </span>
+                        {magicLinkState(lead) === "waiting" && (
+                          <span data-testid={`lead-link-${lead.id}`} data-state="waiting" className="mt-1 flex items-center gap-1 text-[10px] font-medium text-amber-700">
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+                            Link belum dipakai
+                          </span>
+                        )}
+                        {magicLinkState(lead) === "used" && (
+                          <span data-testid={`lead-link-${lead.id}`} data-state="used" className="mt-1 flex items-center gap-1 text-[10px] font-medium text-emerald-700">
+                            <Check className="h-3 w-3" />
+                            Sudah masuk {formatDateTime(lead.magicLinkUsedAt)}
+                          </span>
+                        )}
                       </td>
 
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
@@ -1230,17 +1309,57 @@ export default function AdminLeadsPage() {
                             <span>Tautan Akses Langsung (Magic Link)</span>
                           </span>
                           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300">
-                            Sekali Pakai (24 Jam)
+                            Buka pertama ≤ 24 jam
                           </span>
                         </div>
 
-                        {!generatedMagicLink && (
+                        {/* Status tautan, diperbarui otomatis saat klien masuk */}
+                        {magicLinkState(selectedLead) === "used" ? (
+                          <div
+                            data-testid="magic-link-status"
+                            data-state="used"
+                            className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-[11px] text-emerald-900"
+                          >
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                            <span>
+                              <strong className="font-semibold">Klien sudah masuk</strong> melalui tautan pada{" "}
+                              {formatDateTime(selectedLead.magicLinkUsedAt)}. Tautan yang sama tetap bisa dipakai klien untuk
+                              masuk kembali selama masa aktif demo.
+                            </span>
+                          </div>
+                        ) : magicLinkState(selectedLead) === "waiting" ? (
+                          <div
+                            data-testid="magic-link-status"
+                            data-state="waiting"
+                            className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-[11px] text-amber-900"
+                          >
+                            <span className="relative mt-1 flex h-2.5 w-2.5 shrink-0">
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+                              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-500" />
+                            </span>
+                            <span>
+                              <strong className="font-semibold">Menunggu klien masuk</strong> — tautan belum dipakai dan
+                              berlaku hingga {formatDateTime(selectedLead.magicLinkExpiry)}. Halaman ini memeriksa otomatis
+                              setiap {MAGIC_LINK_POLL_MS / 1000} detik dan langsung berubah saat klien masuk
+                              {lastLinkCheck
+                                ? ` (dicek ${lastLinkCheck.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" })})`
+                                : ""}
+                              .
+                            </span>
+                          </div>
+                        ) : (
+                          <div
+                            data-testid="magic-link-status"
+                            data-state="none"
+                            className="rounded-xl border border-slate-200 bg-white p-2.5 text-[11px] text-slate-600"
+                          >
+                            Tidak ada tautan aktif. Buat tautan baru untuk dikirim ke klien.
+                          </div>
+                        )}
+                        {!generatedMagicLink && magicLinkState(selectedLead) === "waiting" && (
                           <p className="text-[11px] text-blue-900/80 leading-relaxed">
-                            {selectedLead.magicLinkUsedAt
-                              ? `Tautan terakhir sudah digunakan klien pada ${formatDateTime(selectedLead.magicLinkUsedAt)}.`
-                              : selectedLead.magicLinkExpiry && new Date(selectedLead.magicLinkExpiry) > new Date()
-                              ? `Tautan terakhir masih aktif hingga ${formatDateTime(selectedLead.magicLinkExpiry)}. Demi keamanan, tautan hanya ditampilkan sekali saat dibuat — buat tautan baru bila perlu dikirim ulang.`
-                              : "Tidak ada tautan aktif. Buat tautan baru untuk dikirim ke klien."}
+                            Demi keamanan, tautan hanya ditampilkan sekali saat dibuat — buat tautan baru bila perlu dikirim
+                            ulang.
                           </p>
                         )}
 

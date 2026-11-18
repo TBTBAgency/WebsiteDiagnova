@@ -283,10 +283,11 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
   const initials = getInitials(currentUser?.name);
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[#DCDFE4] font-sans text-[#111318] selection:bg-[#CFE0FF] selection:text-[#1F6BFF] lg:p-4 2xl:p-6">
-      <div className="mx-auto min-h-screen max-w-[1680px] bg-white lg:min-h-[calc(100vh-2rem)] lg:rounded-[32px] lg:shadow-[0_20px_60px_rgba(17,19,24,0.08)] 2xl:min-h-[calc(100vh-3rem)]">
+    <div className="min-h-screen overflow-x-clip bg-white font-sans text-[#111318] selection:bg-[#CFE0FF] selection:text-[#1F6BFF]">
+      {/* Lebar penuh: tanpa bingkai/margin luar */}
+      <div className="min-h-screen bg-white">
         {/* ------------------------------ Header ------------------------------ */}
-        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur lg:rounded-t-[32px]">
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur">
           <div className="flex h-[76px] items-center gap-3 px-4 sm:px-6 lg:grid lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-0 lg:px-6">
             <Link href="/admin/dashboard" className={cn("flex shrink-0 items-center gap-2 rounded-full pr-1", focusRing)} aria-label="Diagnova Admin - ke Dashboard">
               <Image src="/images/logo-nav.png" alt="Diagnova" width={240} height={66} priority className="h-8 w-auto object-contain" />
@@ -398,12 +399,12 @@ export function AdminShell({ currentUser, onLogout, isLoggingOut = false, childr
 
         {/* ------------------------- Sidebar + konten ------------------------- */}
         <div className="lg:grid lg:grid-cols-[248px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:pb-6">
-          <aside className="hidden lg:sticky lg:top-[76px] lg:block lg:h-[calc(100vh-76px-2.5rem)] lg:self-start lg:overflow-y-auto lg:pb-2 lg:pt-4 scrollbar-none">
+          <aside className="hidden lg:sticky lg:top-[76px] lg:block lg:h-[calc(100vh-76px-1.5rem)] lg:self-start lg:overflow-y-auto lg:pb-2 lg:pt-4 scrollbar-none">
             <SidebarContent pathname={pathname} firstName={firstName} />
           </aside>
 
           <main className="min-w-0 bg-[#EEF0F3] px-3 pb-10 pt-5 sm:px-5 lg:rounded-[28px] lg:px-7 lg:pt-7">
-            <div className="mx-auto min-w-0 max-w-[1400px]">{children}</div>
+            <div className="min-w-0">{children}</div>
           </main>
         </div>
       </div>
