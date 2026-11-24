@@ -156,7 +156,8 @@ test("token valid -> login pertama: sesi dibuat, masa demo aktif, status Jadwal 
   assert.equal((await fetch(`${BASE}/demo`, { headers: session, redirect: "manual" })).status, 200);
   assert.equal((await fetch(`${BASE}/api/admin/leads`, { headers: session })).status, 403);
   assert.equal((await fetch(`${BASE}/api/lis/patients`, { headers: session })).status, 403);
-  assert.equal((await fetch(`${BASE}/admin/dashboard`, { headers: session, redirect: "manual" })).status, 307);
+  // Area admin tersembunyi: sesi demo mendapat 404 biasa (bukan redirect ke halaman login)
+  assert.equal((await fetch(`${BASE}/admin/dashboard`, { headers: session, redirect: "manual" })).status, 404);
 });
 
 test("token dipakai dua kali -> ditolak (USED)", async () => {
