@@ -11,6 +11,8 @@
  * Aman untuk client & server (tanpa import server-only).
  */
 
+import { linksToAdminArea } from "@/lib/admin-route";
+
 export type Lang = "ID" | "EN";
 
 export interface LinkItem {
@@ -154,7 +156,6 @@ export const DEFAULT_FOOTER: FooterContent = {
         link("l-integration-3", "Rekam Medis (RME)", "Electronic Medical Record (EMR)", "/integration#rme"),
         link("l-integration-4", "500+ Analyzer Medis", "500+ Medical Analyzers", "/integration#analyzer"),
         link("l-integration-5", "SATUSEHAT Kemenkes", "SATUSEHAT Kemenkes", "/integration#satusehat"),
-        link("l-integration-6", "Portal Admin LIS", "LIS Admin Portal", "/admin/login"),
       ],
     },
   ],
@@ -192,7 +193,7 @@ function toLinks(v: unknown, fallback: LinkItem[]): LinkItem[] {
     labelEn: str(l.labelEn),
     url: str(l.url),
     isActive: bool(l.isActive, true),
-  }));
+  })).filter((l) => !linksToAdminArea(l.url)); // tautan ke area admin tidak pernah tampil di publik
 }
 
 export function resolveFooter(raw: unknown): FooterContent {

@@ -82,7 +82,7 @@ async function main() {
       // Tulis file password dulu (wx = gagal bila file sudah ada), baru buat akunnya.
       fs.writeFileSync(
         resolvedOut,
-        `Diagnova production admin\nURL: /admin/login\nEmail: ${ADMIN_EMAIL}\nPassword: ${password}\n\nSimpan di password manager, lalu hapus file ini.\n`,
+        `Diagnova production admin\nURL login: ${process.env.ADMIN_LOGIN_PATH || "(nilai env ADMIN_LOGIN_PATH; /admin/login tidak tersedia di production)"}\nEmail: ${ADMIN_EMAIL}\nPassword: ${password}\n\nSimpan di password manager, lalu hapus file ini.\n`,
         { flag: "wx" }
       );
     }

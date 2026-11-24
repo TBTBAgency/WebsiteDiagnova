@@ -160,7 +160,7 @@ const text = (max: number) => z.string().max(max, `Maksimal ${max} karakter`).op
 const url = z
   .string()
   .max(500)
-  .refine(isSafeCmsUrl, "URL harus berupa path relatif (/...), anchor (#...), atau http(s)://")
+  .refine(isSafeCmsUrl, "URL harus berupa path relatif (/...), anchor (#...), atau http(s)://, dan tidak boleh mengarah ke area admin")
   .optional();
 
 const contentSchema = z

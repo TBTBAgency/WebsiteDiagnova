@@ -105,7 +105,7 @@ const safeUrl = (required: boolean) =>
     .trim()
     .max(500)
     .refine((v) => (required ? v !== "" : true), "URL wajib diisi")
-    .refine(isSafeCmsUrl, "URL harus berupa path relatif (/...), anchor (#...), atau http(s)://");
+    .refine(isSafeCmsUrl, "URL harus berupa path relatif (/...), anchor (#...), atau http(s)://, dan tidak boleh mengarah ke area admin");
 const linkSchema = z.object({ id, labelId: t(80), labelEn: t(80), url: safeUrl(true), isActive: z.boolean() }).refine(
   (l) => l.labelId !== "" || l.labelEn !== "",
   "Label tautan wajib diisi (ID atau EN)"

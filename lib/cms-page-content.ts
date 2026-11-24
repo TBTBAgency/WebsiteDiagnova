@@ -17,6 +17,8 @@
  * Modul ini aman untuk client & server.
  */
 
+import { linksToAdminArea } from "@/lib/admin-route";
+
 export type ContentLang = "ID" | "EN";
 
 export type ContentFieldType = "text" | "textarea" | "url" | "image" | "select";
@@ -99,11 +101,12 @@ export function fieldMax(f: ContentFieldDef): number {
   return 300;
 }
 
-/** URL aman: path relatif, anchor, atau http(s). (Sama dengan isSafeCmsUrl.) */
+/** URL aman: path relatif, anchor, atau http(s), dan bukan ke area admin. (Sama dengan isSafeCmsUrl.) */
 export function isSafeContentUrl(url: string): boolean {
   const v = url.trim();
   if (v === "") return true;
   if (v.startsWith("//")) return false;
+  if (linksToAdminArea(v)) return false;
   if (v.startsWith("/") || v.startsWith("#")) return true;
   return /^https?:\/\/[^\s]+$/i.test(v);
 }

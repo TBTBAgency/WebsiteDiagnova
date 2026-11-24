@@ -3,6 +3,7 @@ import { recordAuditLog } from "@/lib/models/audit.model";
 import { Prisma } from "@prisma/client";
 import type { CmsPageHero } from "@/lib/cms-hero";
 import { isSafeCmsUrl } from "@/lib/cms-layout";
+import { linksToAdminArea } from "@/lib/admin-route";
 
 /** Error domain CMS Homepage (pesan aman untuk admin). */
 export class CmsHubError extends Error {
@@ -705,12 +706,13 @@ export async function getCmsNavigationMenus(): Promise<CmsNavMenu[]> {
 export async function getPublicCmsNavigationMenus(): Promise<CmsNavMenu[]> {
   const allMenus = await getCmsNavigationMenus();
   return allMenus
-    .filter((m) => m.isActive)
+    // Menu yang menautkan ke area admin (data lama) tidak pernah ditampilkan di publik
+    .filter((m) => m.isActive && !linksToAdminArea(String(m.url ?? "")))
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((m) => ({
       ...m,
       submenus: (m.submenus || [])
-        .filter((s) => s.isActive)
+        .filter((s) => s.isActive && !linksToAdminArea(String(s.url ?? "")))
         .sort((a, b) => a.sortOrder - b.sortOrder),
     }));
 }
@@ -746,7 +748,7 @@ function normalizeNavInput(raw: unknown): NavInput {
   const url = str(d.url, 300, "URL tujuan");
   if (!sectionKey && !url) throw new CmsHubError("URL tujuan wajib diisi (mis. /platform#automation).", 400);
   if (url && !isSafeCmsUrl(url)) {
-    throw new CmsHubError("URL tujuan harus berupa path (/...), anchor (#...), atau http(s)://", 400);
+    throw new CmsHubError("URL tujuan harus berupa path (/...), anchor (#...), atau http(s)://, dan tidak boleh mengarah ke area admin", 400);
   }
   const sortOrder = Number(d.sortOrder);
   return {
@@ -996,11 +998,15 @@ export async function getPublicNavigation(): Promise<PublicNavMenu[] | null> {
       iconColor: x.iconColor || null,
     });
     return (menus as CmsNavMenu[])
-      .filter((m) => m && m.isActive)
+      // Menu yang menautkan ke area admin (data lama) tidak pernah ditampilkan di publik
+      .filter((m) => m && m.isActive && !linksToAdminArea(String(m.url ?? "")))
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((m) => ({
         ...pick(m),
-        submenus: (m.submenus || []).filter((s) => s && s.isActive).sort((a, b) => a.sortOrder - b.sortOrder).map(pick),
+        submenus: (m.submenus || [])
+          .filter((s) => s && s.isActive && !linksToAdminArea(String(s.url ?? "")))
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map(pick),
       }));
   } catch (error) {
     console.error("Gagal memuat navigasi CMS, memakai navigasi bawaan:", error);
