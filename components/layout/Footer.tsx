@@ -47,7 +47,7 @@ const footerSectionsID = [
       { label: "Rekam Medis (RME)", href: "/integration/rme" },
       { label: "500+ Analyzer Medis", href: "/integration/analyzer" },
       { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-      { label: "Portal Admin LIS", href: "/admin/login" },
+      // Tautan "Portal Admin LIS" sengaja dihapus: area admin tidak boleh ditautkan dari halaman publik.
     ],
   },
 ];
@@ -94,7 +94,7 @@ const footerSectionsEN = [
       { label: "Electronic Medical Record (EMR)", href: "/integration/rme" },
       { label: "500+ Medical Analyzers", href: "/integration/analyzer" },
       { label: "SATUSEHAT Kemenkes", href: "/integration/satusehat" },
-      { label: "LIS Admin Portal", href: "/admin/login" },
+      // "LIS Admin Portal" link removed on purpose: the admin area must not be linked from public pages.
     ],
   },
 ];

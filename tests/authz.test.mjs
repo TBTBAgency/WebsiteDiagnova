@@ -1,7 +1,7 @@
 // Test otorisasi server-side untuk /api/admin/* dan /api/lis/*.
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
-import { BASE, db, signSession, cookieHeader, loginAdmin, createUser, getRole, uid } from "./helpers.mjs";
+import { BASE, db, signSession, cookieHeader, loginAdmin, createUser, getRole, uid, ADMIN_LOGIN_PATH } from "./helpers.mjs";
 
 const GET_ENDPOINTS = [
   "/api/lis/patients",
@@ -128,20 +128,19 @@ test("login password akun non-admin ditolak 403", async () => {
   assert.equal(res.status, 403);
 });
 
-test("sesi non-admin membuka halaman /admin -> redirect login + cookie dihapus", async () => {
+test("sesi non-admin membuka halaman /admin -> 404 seperti halaman tidak ada (tanpa petunjuk login)", async () => {
   const demo = await createUser({ roleName: "Demo User" });
   created.push(demo.id);
   const h = cookieHeader(await signSession({ userId: demo.id, role: "Demo User" }));
   for (const p of ["/admin/dashboard", "/admin/leads", "/admin/orders", "/admin/users", "/admin/cms/homepage"]) {
     const res = await req("GET", p, h);
-    assert.equal(res.status, 307, p);
-    assert.match(res.headers.get("location") || "", /\/admin\/login/, p);
-    assert.match((res.headers.getSetCookie?.() ?? []).join(";"), /diagnova_session=;/, p);
+    assert.equal(res.status, 404, p);
+    assert.equal(res.headers.get("location"), null, p);
   }
 });
 
 test("halaman publik tetap 200 tanpa login", async () => {
-  for (const p of ["/", "/platform", "/solutions", "/modules", "/nova-ai", "/integration", "/request-demo", "/admin/login"]) {
+  for (const p of ["/", "/platform", "/solutions", "/modules", "/nova-ai", "/integration", "/request-demo", ADMIN_LOGIN_PATH]) {
     assert.equal((await req("GET", p)).status, 200, p);
   }
 });

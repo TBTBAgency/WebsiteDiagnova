@@ -32,8 +32,8 @@ export default function AdminDashboardLayout({
     setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      router.push("/admin/login");
-      router.refresh();
+      // Kembali ke beranda: path login admin bersifat rahasia dan tidak ditulis di kode client
+      window.location.replace("/");
     } catch (err) {
       console.error("Logout error:", err);
       setIsLoggingOut(false);

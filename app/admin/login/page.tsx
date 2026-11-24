@@ -18,7 +18,9 @@ import {
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get("from") || "/admin/dashboard";
+  // Hanya path internal area admin (mencegah open redirect ke situs lain)
+  const rawFrom = searchParams.get("from") || "";
+  const from = /^\/admin\/[A-Za-z0-9/_-]*$/.test(rawFrom) ? rawFrom : "/admin/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

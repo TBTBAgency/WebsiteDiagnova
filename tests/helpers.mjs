@@ -20,6 +20,9 @@ if (!/test/i.test(dbName)) {
 export const db = new PrismaClient();
 
 export const uid = () => crypto.randomBytes(6).toString("hex");
+
+// Path login admin yang berlaku di server uji (sama dengan ADMIN_LOGIN_PATH server). Default development: /admin/login.
+export const ADMIN_LOGIN_PATH = process.env.TEST_ADMIN_LOGIN_PATH || "/admin/login";
 export const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 
 export async function signSession(payload) {
