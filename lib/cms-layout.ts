@@ -9,6 +9,7 @@
  * Modul ini aman untuk client & server (tanpa import server-only).
  */
 
+import { linksToAdminArea } from "@/lib/admin-route";
 import type { CmsPageHero } from "@/lib/cms-hero";
 import type { ResolvedPageContent } from "@/lib/cms-page-content";
 
@@ -513,11 +514,16 @@ export function getSectionOverride(
   return nonEmpty(content[`${field}${suffix}` as keyof SectionTextContent]);
 }
 
-/** URL yang aman untuk tautan/ gambar dari CMS: path relatif, anchor, atau http(s). */
+/**
+ * URL yang aman untuk tautan/ gambar dari CMS: path relatif, anchor, atau http(s).
+ * Tautan ke area admin (/admin/... atau path login rahasia) ditolak: halaman publik tidak boleh
+ * mengungkap keberadaan area admin.
+ */
 export function isSafeCmsUrl(url: string): boolean {
   const v = url.trim();
   if (v === "") return true;
   if (v.startsWith("//")) return false;
+  if (linksToAdminArea(v)) return false;
   if (v.startsWith("/") || v.startsWith("#")) return true;
   return /^https?:\/\/[^\s]+$/i.test(v);
 }

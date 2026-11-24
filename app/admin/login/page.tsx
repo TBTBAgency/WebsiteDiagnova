@@ -172,7 +172,9 @@ function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useAdminLang();
-  const from = searchParams.get("from") || "/admin/dashboard";
+  // Hanya ikuti tujuan internal di area admin (cegah open redirect, mis. ?from=//situs-lain.com)
+  const rawFrom = searchParams.get("from") || "";
+  const from = /^\/admin\/[A-Za-z0-9/_-]*$/.test(rawFrom) ? rawFrom : "/admin/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -31,7 +31,8 @@ export default function AdminDashboardLayout({
     setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      router.push("/admin/login");
+      // Kembali ke beranda: URL login admin tidak ditampilkan di mana pun
+      router.replace("/");
       router.refresh();
     } catch (err) {
       console.error("Logout error:", err);
