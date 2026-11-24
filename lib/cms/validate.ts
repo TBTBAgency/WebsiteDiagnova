@@ -7,6 +7,8 @@ export const MAX_STRING_LENGTH = 20_000;
 const ITEM_META_KEYS = new Set(["id", "hidden", "deletedAt"]);
 const URL_KEY = /(href|url|src)$/i;
 const SAFE_URL = /^(\/(?!\/)|#|https?:\/\/|mailto:|tel:)/i;
+/** Area admin bersifat tersembunyi: tidak boleh ditautkan dari konten publik. */
+const ADMIN_LINK = /^\/admin(\/|$|\?|#)/i;
 
 function kind(v: unknown): string {
   if (Array.isArray(v)) return "array";
@@ -21,6 +23,9 @@ function check(value: unknown, template: unknown, path: string, key: string, err
     if (value.length > MAX_STRING_LENGTH) errors.push(`${path}: teks terlalu panjang (maks ${MAX_STRING_LENGTH} karakter).`);
     if (URL_KEY.test(key) && value !== "" && !SAFE_URL.test(value.trim())) {
       errors.push(`${path}: URL tidak diizinkan (gunakan path "/...", "#anchor", https://, mailto: atau tel:).`);
+    }
+    if (URL_KEY.test(key) && ADMIN_LINK.test(value.trim())) {
+      errors.push(`${path}: halaman publik tidak boleh menautkan ke area admin.`);
     }
   }
 

@@ -359,7 +359,7 @@ async function apiRequest<T>(url: string, init?: { method?: string; body?: unkno
       cache: "no-store",
     });
     if (res.status === 401) {
-      window.location.href = "/admin/login";
+      window.location.href = "/"; // sesi habis: path login tidak diungkap
       return { ok: false, message: "Sesi Anda telah berakhir. Silakan login kembali." };
     }
     const json = (await res.json().catch(() => null)) as ApiResponse<T> | null;

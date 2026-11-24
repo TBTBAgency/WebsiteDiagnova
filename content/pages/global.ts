@@ -727,15 +727,8 @@ export const globalPage = {
                   en: "SATUSEHAT Kemenkes"
                 },
                 href: "/integration/satusehat"
-              },
-              {
-                id: "integration-6",
-                label: {
-                  id: "Portal Admin LIS",
-                  en: "LIS Admin Portal"
-                },
-                href: "/admin/login"
               }
+              // Tautan "Portal Admin LIS" sengaja dihapus: area admin tidak boleh ditautkan dari halaman publik.
             ]
           }
         ],

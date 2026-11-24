@@ -135,7 +135,7 @@ export default function AdminAuditLogsPage() {
     try {
       const res = await fetch("/api/admin/audit-logs", { cache: "no-store" });
       if (res.status === 401) {
-        router.replace("/admin/login");
+        window.location.replace("/"); // sesi habis: kembali ke beranda (path login tidak diungkap)
         return;
       }
       const json = (await res.json().catch(() => null)) as ApiResponse<AuditLogRecord[]> | null;

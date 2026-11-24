@@ -2,7 +2,7 @@
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import bcrypt from "bcryptjs";
-import { BASE, db, uid, getRoleByCode, signSession, cookieHeader, loginAdmin, ipHeader } from "./helpers.mjs";
+import { BASE, db, uid, getRoleByCode, signSession, cookieHeader, loginAdmin, ipHeader, ADMIN_LOGIN_PATH } from "./helpers.mjs";
 
 const created = [];
 after(async () => {
@@ -82,7 +82,7 @@ test("POST lintas origin ke API ditolak 403; origin sama tetap diproses", async 
 });
 
 test("header keamanan terpasang di halaman publik & admin", async () => {
-  for (const p of ["/", "/admin/login"]) {
+  for (const p of ["/", ADMIN_LOGIN_PATH]) {
     const res = await fetch(`${BASE}${p}`);
     assert.equal(res.headers.get("x-frame-options"), "DENY", p);
     assert.equal(res.headers.get("x-content-type-options"), "nosniff", p);

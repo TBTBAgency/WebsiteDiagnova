@@ -22,6 +22,9 @@ export const db = new PrismaClient();
 
 export const uid = () => crypto.randomBytes(6).toString("hex");
 
+// Path login admin yang berlaku di server uji (sama dengan ADMIN_LOGIN_PATH server). Default development: /admin/login.
+export const ADMIN_LOGIN_PATH = process.env.TEST_ADMIN_LOGIN_PATH || "/admin/login";
+
 // IP klien unik per proses test: Next.js mengisi X-Forwarded-For dari koneksi, sehingga tanpa header ini
 // seluruh test berbagi satu IP dan terkena pembatas laju (perilaku produksi yang memang diinginkan).
 export const TEST_IP = `10.${crypto.randomInt(1, 250)}.${crypto.randomInt(1, 250)}.${crypto.randomInt(1, 250)}`;

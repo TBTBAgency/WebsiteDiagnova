@@ -9,6 +9,7 @@ Status: **belum di-deploy.** Deployment dilakukan setelah infrastruktur tersedia
 | `DATABASE_URL` (runtime aplikasi) | Ya | PostgreSQL 15+. **Wajib role `diagnova_app`** (bukan superuser, bukan pemilik tabel) — lihat §2 |
 | `DATABASE_URL` (langkah migrasi) | Saat migrasi | Role pemilik schema `diagnova_owner`, hanya di proses `prisma migrate deploy`; jangan dipakai aplikasi |
 | `AUTH_SECRET` | Ya | Acak ≥ 32 karakter. Bila kosong/pendek di production, aplikasi **tetap start** tetapi setiap operasi sesi gagal: login dan seluruh area admin tidak dapat dipakai, dan error muncul saat request pertama, bukan saat start. Mengganti nilai ini mengakhiri semua sesi |
+| `ADMIN_LOGIN_PATH` | Ya | Path **rahasia** halaman login admin (satu segmen, 8–64 karakter, mis. `/masuk-7f3k9q2x`). Seluruh `/admin/*` mengembalikan 404 bagi selain ADMIN; `/admin/login` langsung juga 404. Tanpa nilai ini di production, login admin tidak tersedia (fail-closed). Bagikan hanya ke admin; jangan ditautkan dari halaman publik |
 | `APP_BASE_URL` | Ya | URL publik HTTPS (dipakai di magic link). Wajib di production |
 | `NEXT_PUBLIC_APP_URL` | Ya | URL publik (sitemap, metadata) |
 | `UPLOAD_DIR` | Ya | Direktori upload CMS di **volume persisten** (OD-08) |

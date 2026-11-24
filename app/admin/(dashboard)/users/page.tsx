@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
     async <T,>(url: string, init?: RequestInit): Promise<{ ok: boolean; json: ApiResponse<T> | null }> => {
       const res = await fetch(url, init);
       if (res.status === 401) {
-        router.replace("/admin/login");
+        window.location.replace("/"); // sesi habis: kembali ke beranda (path login tidak diungkap)
         return { ok: false, json: { success: false, message: "Sesi berakhir. Silakan login kembali." } };
       }
       const json = (await res.json().catch(() => null)) as ApiResponse<T> | null;

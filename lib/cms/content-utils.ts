@@ -22,11 +22,16 @@ export function mergeWithDefaults<T>(defaults: T, stored: unknown): T {
   return result as T;
 }
 
-/** Menghapus item array yang `hidden` atau ber-`deletedAt` (rekursif) — untuk konten publik. */
+/** Item yang menautkan ke area admin (tersembunyi) tidak pernah ditampilkan di halaman publik. */
+function linksToAdmin(item: Record<string, unknown>): boolean {
+  return typeof item.href === "string" && /^\/admin(\/|$|\?|#)/i.test(item.href.trim());
+}
+
+/** Menghapus item array yang `hidden`, ber-`deletedAt`, atau menautkan ke area admin (rekursif) — untuk konten publik. */
 export function sanitizePublicContent<T>(value: T): T {
   if (Array.isArray(value)) {
     return value
-      .filter((item) => !(isPlainObject(item) && (item.hidden === true || !!item.deletedAt)))
+      .filter((item) => !(isPlainObject(item) && (item.hidden === true || !!item.deletedAt || linksToAdmin(item))))
       .map((item) => sanitizePublicContent(item)) as T;
   }
   if (isPlainObject(value)) {

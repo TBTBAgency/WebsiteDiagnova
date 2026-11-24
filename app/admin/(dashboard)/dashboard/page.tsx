@@ -113,7 +113,7 @@ export default function AdminOverviewDashboard() {
     try {
       const res = await fetch("/api/admin/overview", { cache: "no-store" });
       if (res.status === 401) {
-        window.location.href = "/admin/login";
+        window.location.href = "/"; // sesi habis: path login tidak diungkap
         return;
       }
       const json = await res.json();

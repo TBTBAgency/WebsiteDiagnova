@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 import { isAdminRole } from "@/lib/roles";
 import { getSessionSecret } from "@/lib/session-secret";
+import { getAdminLoginPath, getEffectiveAdminLoginPath, isAdminAreaPath } from "@/lib/admin-route";
 
 const SESSION_COOKIE_NAME = "diagnova_session";
 
@@ -29,8 +30,70 @@ function isCrossOriginMutation(request: NextRequest): boolean {
   }
 }
 
+const NO_INDEX = "noindex, nofollow, noarchive";
+
+/** 404 yang identik dengan halaman tidak dikenal (rewrite ke path yang tidak ada). */
+function notFound(request: NextRequest): NextResponse {
+  const response = NextResponse.rewrite(new URL("/_halaman-tidak-ditemukan", request.url));
+  response.headers.set("X-Robots-Tag", NO_INDEX);
+  return response;
+}
+
+function noIndex(response: NextResponse): NextResponse {
+  response.headers.set("X-Robots-Tag", NO_INDEX);
+  response.headers.set("Cache-Control", "no-store");
+  return response;
+}
+
+async function readSession(request: NextRequest): Promise<Record<string, any> | null> {
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+  if (!sessionCookie) return null;
+  try {
+    // getSessionSecret() melempar error di production bila AUTH_SECRET kosong -> sesi dianggap tidak ada
+    const { payload } = await jwtVerify(sessionCookie, getSessionSecret());
+    return payload as Record<string, any>;
+  } catch {
+    return null;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ---- Halaman login admin lewat path rahasia (ADMIN_LOGIN_PATH) ----
+  const secretLoginPath = getAdminLoginPath();
+  if (secretLoginPath && pathname === secretLoginPath) {
+    const session = await readSession(request);
+    if (session && isAdminRole(session.role)) {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+    return noIndex(NextResponse.rewrite(new URL("/admin/login", request.url)));
+  }
+
+  // ---- Area /admin: hanya ADMIN yang tahu area ini ada; selain itu 404 biasa ----
+  if (isAdminAreaPath(pathname)) {
+    const session = await readSession(request);
+    const isAdmin = !!session && isAdminRole(session.role);
+
+    if (pathname === "/admin/login") {
+      // Diakses langsung: hanya berlaku bila path rahasia tidak dikonfigurasi (development)
+      if (getEffectiveAdminLoginPath() !== "/admin/login") return notFound(request);
+      if (isAdmin) return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      return noIndex(NextResponse.next());
+    }
+
+    // Anonim, USER demo, sesi kedaluwarsa/palsu -> 404 (tanpa redirect ke login, tanpa petunjuk)
+    if (!isAdmin) return notFound(request);
+
+    if (pathname === "/admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+    return noIndex(NextResponse.next());
+  }
+
+  if (!pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
 
   if (pathname.startsWith("/api/") && isCrossOriginMutation(request)) {
     return NextResponse.json(
@@ -44,30 +107,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  let sessionPayload: Record<string, any> | null = null;
-
-  if (sessionCookie) {
-    try {
-      // getSessionSecret() melempar error di production bila AUTH_SECRET kosong -> sesi dianggap tidak ada
-      const { payload } = await jwtVerify(sessionCookie, getSessionSecret());
-      sessionPayload = payload as Record<string, any>;
-    } catch {
-      sessionPayload = null;
-    }
-  }
-
-  const isAdmin = !!sessionPayload && isAdminRole(sessionPayload.role);
-
-  // ---- API admin & LIS: tolak lebih awal dengan JSON ----
+  // ---- API admin & LIS: tolak lebih awal dengan JSON (data dijaga lagi oleh requireAdmin di server) ----
   if (pathname.startsWith("/api/admin") || pathname.startsWith("/api/lis")) {
-    if (!sessionPayload) {
+    const session = await readSession(request);
+    if (!session) {
       return NextResponse.json(
         { success: false, message: "Akses ditolak. Silakan login terlebih dahulu." },
         { status: 401 }
       );
     }
-    if (!isAdmin) {
+    if (!isAdminRole(session.role)) {
       return NextResponse.json(
         { success: false, message: "Akses ditolak. Endpoint ini khusus administrator." },
         { status: 403 }
@@ -76,50 +125,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ---- Halaman /admin ----
-  // Sesi non-admin (mis. akun demo) tidak boleh membuka area admin mana pun.
-  if (sessionPayload && !isAdmin) {
-    const isDemoExpired =
-      sessionPayload.demoExpiresAt &&
-      Date.now() > new Date(sessionPayload.demoExpiresAt).getTime();
-
-    const target = isDemoExpired
-      ? new URL("/demo-expired", request.url)
-      : new URL("/admin/login?error=forbidden", request.url);
-
-    if (pathname === "/admin/login" && !isDemoExpired) {
-      const response = NextResponse.next();
-      response.cookies.delete(SESSION_COOKIE_NAME);
-      return response;
-    }
-
-    const response = NextResponse.redirect(target);
-    response.cookies.delete(SESSION_COOKIE_NAME);
-    return response;
-  }
-
-  // Jika membuka halaman login tapi sudah login sebagai admin, redirect ke dashboard
-  if (pathname === "/admin/login") {
-    if (isAdmin) {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Rute admin lain tanpa sesi -> login
-  if (!sessionPayload) {
-    const loginUrl = new URL("/admin/login", request.url);
-    loginUrl.searchParams.set("from", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  if (pathname === "/admin") {
-    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/:path*"],
+  // Semua halaman kecuali aset statis: path login rahasia berasal dari env sehingga tidak dapat
+  // dicantumkan di matcher statis. Rute publik keluar lebih awal tanpa verifikasi JWT.
+  matcher: ["/((?!_next/static|_next/image|images/|favicon.ico).*)"],
 };

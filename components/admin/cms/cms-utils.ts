@@ -167,7 +167,7 @@ export async function cmsFetch<T = unknown>(url: string, init?: RequestInit): Pr
     return { ok: false, status: 0, body: { success: false, message: "Tidak dapat terhubung ke server. Periksa koneksi Anda." } };
   }
   if (res.status === 401) {
-    window.location.href = "/admin/login";
+    window.location.href = "/"; // sesi habis: path login tidak diungkap
     return { ok: false, status: 401, body: { success: false, message: "Sesi berakhir. Silakan login kembali." } };
   }
   const body = (await res.json().catch(() => null)) as ApiResponse<T> | null;
