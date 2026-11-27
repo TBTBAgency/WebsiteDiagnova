@@ -63,13 +63,15 @@ export function PageHero({
   return (
     <section
       className={cn(
-        // Exact same outer dimensions as Home Hero on desktop, auto-height breathable layout on mobile
-        "relative w-full min-h-[600px] lg:h-[100dvh] lg:min-h-[760px] pt-[calc(76px+var(--announcement-bar-height,0px))] lg:pt-[calc(96px+var(--announcement-bar-height,0px))] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
+        // Desktop: minimal setinggi layar, tetapi boleh memanjang bila isi tidak muat (tidak pernah
+        // memotong kartu statistik). Layar pendek (tinggi <= 860px) memakai jarak yang lebih rapat
+        // (varian lg:[@media(max-height:860px)]) agar seluruh hero tetap terlihat tanpa zoom out.
+        "relative w-full min-h-[600px] lg:min-h-[100dvh] pt-[calc(76px+var(--announcement-bar-height,0px))] lg:pt-[calc(96px+var(--announcement-bar-height,0px))] pb-3 sm:pb-4 px-3 sm:px-5 lg:px-6 bg-white flex flex-col transition-[padding-top] duration-300 ease-in-out",
         className
       )}
     >
       {/* ─── Framed Hero Card with Luminous Diagnova Blue Gradient ─── */}
-      <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-br from-[#DCEBFA] via-[#ECF4FD] to-[#F8FBFF] border border-blue-200/70 shadow-[0_14px_40px_-14px_rgba(37,104,186,0.12)] flex items-center justify-center px-5 py-9 sm:p-8 lg:p-12">
+      <div className="relative w-full flex-1 rounded-[24px] sm:rounded-[32px] lg:rounded-[36px] overflow-hidden bg-gradient-to-br from-[#DCEBFA] via-[#ECF4FD] to-[#F8FBFF] border border-blue-200/70 shadow-[0_14px_40px_-14px_rgba(37,104,186,0.12)] flex items-center justify-center px-5 py-9 sm:p-8 lg:p-12 lg:[@media(max-height:860px)]:py-6 lg:[@media(max-height:700px)]:!py-4">
         {/* Multi-layer Ambient Blue Gradient Glows */}
         <div className="absolute -top-36 -right-16 w-[520px] h-[520px] rounded-full bg-[#56ADE2]/25 blur-[115px] pointer-events-none z-0" />
         <div className="absolute -top-24 -left-24 w-[440px] h-[440px] rounded-full bg-[#2764B8]/12 blur-[120px] pointer-events-none z-0" />
@@ -80,13 +82,13 @@ export function PageHero({
         <div className="relative z-10 w-full max-w-[1560px] mx-auto px-0 sm:px-4 lg:px-10 my-auto flex flex-col items-center justify-center text-center">
           <div className="max-w-4xl mx-auto flex flex-col items-center w-full">
             {/* Section Badge */}
-            <div className="mb-4 sm:mb-6 animate-ll-hero" style={{ animationDelay: "0ms" }}>
+            <div className="mb-4 sm:mb-6 lg:[@media(max-height:860px)]:mb-3 lg:[@media(max-height:700px)]:!mb-2 animate-ll-hero" style={{ animationDelay: "0ms" }}>
               <SectionBadge variant={badgeVariant}>{heroBadge}</SectionBadge>
             </div>
 
             {/* Headline - Standardized font size & line-height */}
             <h1
-              className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-slate-900 min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] flex items-center justify-center animate-ll-hero"
+              className="font-display text-3xl sm:text-5xl lg:text-[52px] xl:text-[54px] font-bold leading-[1.14] sm:leading-[1.16] tracking-tight text-slate-900 min-h-[72px] sm:min-h-[114px] lg:min-h-[126px] lg:[@media(max-height:860px)]:min-h-0 lg:[@media(max-height:860px)]:text-[42px] xl:[@media(max-height:860px)]:text-[44px] lg:[@media(max-height:700px)]:!text-[38px] xl:[@media(max-height:700px)]:!text-[38px] flex items-center justify-center animate-ll-hero"
               style={{ animationDelay: "80ms" }}
             >
               {heroTitle}
@@ -94,7 +96,7 @@ export function PageHero({
 
             {/* Subtitle - Generous breathing room, standardized typography */}
             <p
-              className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] flex items-center justify-center animate-ll-hero"
+              className="mt-4 sm:mt-5 lg:[@media(max-height:860px)]:mt-3 text-sm sm:text-base lg:text-lg lg:[@media(max-height:860px)]:text-base leading-relaxed text-slate-500 max-w-2xl font-light min-h-[48px] sm:min-h-[56px] lg:[@media(max-height:860px)]:min-h-0 flex items-center justify-center animate-ll-hero"
               style={{ animationDelay: "160ms" }}
             >
               {heroSubtitle}
@@ -103,7 +105,7 @@ export function PageHero({
             {/* CTA Buttons */}
             {(primaryCta || secondaryCta) && (
               <div
-                className="mt-8 sm:mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4 animate-ll-hero"
+                className="mt-8 sm:mt-9 lg:[@media(max-height:860px)]:mt-5 lg:[@media(max-height:700px)]:!mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4 animate-ll-hero"
                 style={{ animationDelay: "240ms" }}
               >
                 {primaryCta && (
@@ -132,18 +134,18 @@ export function PageHero({
             {/* Architectural Hairline-Divided Hero Metric Strip (tidak dirender bila semua metrik dinonaktifkan) */}
             {metrics.length > 0 && (
             <div
-              className="mt-10 sm:mt-12 lg:mt-14 w-full max-w-4xl rounded-2xl bg-white/95 backdrop-blur-xs border border-slate-200/85 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-2 lg:grid-cols-4 divide-y divide-slate-200/75 lg:divide-y-0 lg:divide-x animate-ll-hero"
+              className="mt-10 sm:mt-12 lg:mt-14 lg:[@media(max-height:860px)]:mt-6 lg:[@media(max-height:700px)]:!mt-4 w-full max-w-4xl rounded-2xl bg-white/95 backdrop-blur-xs border border-slate-200/85 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-2 lg:grid-cols-4 divide-y divide-slate-200/75 lg:divide-y-0 lg:divide-x animate-ll-hero"
               style={{ animationDelay: "300ms" }}
             >
               {metrics.map((kpi, idx) => (
                 <div
                   key={idx}
                   className={cn(
-                    "group px-5 py-4 sm:px-6 sm:py-5 text-left transition-colors duration-200 hover:bg-[#F8FBFF]",
+                    "group px-5 py-4 sm:px-6 sm:py-5 lg:[@media(max-height:860px)]:py-3.5 lg:[@media(max-height:700px)]:!py-3 text-left transition-colors duration-200 hover:bg-[#F8FBFF]",
                     idx % 2 === 1 && "border-l border-slate-200/75 lg:border-l-0"
                   )}
                 >
-                  <p className="font-display text-2xl sm:text-[28px] font-bold tracking-tight text-slate-900 group-hover:text-[#0073FC] transition-colors duration-200 tabular-nums">
+                  <p className="font-display text-2xl sm:text-[28px] lg:[@media(max-height:860px)]:text-2xl font-bold tracking-tight text-slate-900 group-hover:text-[#0073FC] transition-colors duration-200 tabular-nums">
                     {kpi.value}
                   </p>
                   <p className="text-xs sm:text-[13px] font-semibold text-slate-800 mt-1">
